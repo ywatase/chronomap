@@ -1,6 +1,6 @@
 # ADR 0003: MapLibre GL JSと地理院タイル
 
-作成日: 2026-09-14
+Date: 2026-09-14
 
 Status: Accepted
 

@@ -2,9 +2,9 @@
 
 作成日: 2026-09-14
 
-ADRは、長期的に影響する設計判断、その背景、代替案、結果を追跡する文書である。ファイル名は`NNNN-kebab-case-title.md`とし、番号は4桁の連番にする。新規ADRは「Context」「Decision」「Alternatives」「Consequences」「References」を含める。
+ADRは、長期的に影響する設計判断、その背景、代替案、結果を追跡する文書である。ファイル名は`NNNN-kebab-case-title.md`とし、番号は4桁の連番にする。新規ADRは`Date`、`Status`、「Context」「Decision」「Alternatives」「Consequences」「References」を含める。
 
-状態はProposedからAccepted、Rejected、またはSupersededへ遷移する。Acceptedの判断を変更するときは本文を上書きせず、新しいADRを作成して旧ADRをSupersededとし、新旧の相互参照を置く。誤字など判断を変えない編集は、変更履歴を明記して修正できる。
+状態はProposed、Accepted、Supersededに限定する。ProposedはAcceptedまたはSupersededへ遷移できる。Accepted後の本文は例外なく不変とし、判断を変更するときは新しいADRを作成して旧ADRをSupersededとし、新旧の相互参照を置く。
 
 ## 初期ADR
 
