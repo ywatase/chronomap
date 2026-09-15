@@ -60,6 +60,31 @@ def _file_identity(file_status: os.stat_result) -> tuple[int, int]:
     return file_status.st_dev, file_status.st_ino
 
 
+def _directory_changed(diagnostic_path: Path) -> PackageLoadError:
+    return PackageLoadError(str(diagnostic_path), "dataset directory changed during loading")
+
+
+def _directory_identity(
+    path: Path, original_identity: tuple[int, int] | None = None, diagnostic_path: Path | None = None
+) -> tuple[int, int]:
+    diagnostic_path = diagnostic_path or path
+    try:
+        directory_status = path.stat()
+    except OSError as error:
+        if original_identity is not None:
+            raise _directory_changed(diagnostic_path) from error
+        detail = getattr(error, "strerror", None) or str(error)
+        raise PackageLoadError(str(diagnostic_path), f"cannot inspect dataset directory: {detail}") from error
+    if not stat.S_ISDIR(directory_status.st_mode):
+        if original_identity is not None:
+            raise _directory_changed(diagnostic_path)
+        raise PackageLoadError(str(diagnostic_path), "dataset directory does not exist or is not a directory")
+    identity = _file_identity(directory_status)
+    if original_identity is not None and identity != original_identity:
+        raise _directory_changed(diagnostic_path)
+    return identity
+
+
 def _initial_entry_status(file_path: Path, filename: str) -> os.stat_result:
     try:
         entry_status = file_path.lstat()
@@ -159,9 +184,17 @@ def _read_json(package_dir: Path, filename: str) -> JsonValue:
 
 def load_package(path: Path) -> DatasetPackage:
     """Load exactly the five normalized package files from *path*."""
-    package_dir = Path(path)
-    if not package_dir.is_dir():
-        raise PackageLoadError(str(package_dir), "dataset directory does not exist or is not a directory")
+    requested_dir = Path(path)
+    try:
+        package_dir = requested_dir.resolve(strict=True)
+    except FileNotFoundError as error:
+        raise PackageLoadError(
+            str(requested_dir), "dataset directory does not exist or is not a directory"
+        ) from error
+    except (OSError, RuntimeError) as error:
+        detail = getattr(error, "strerror", None) or str(error)
+        raise PackageLoadError(str(requested_dir), f"cannot resolve dataset directory: {detail}") from error
+    source_identity = _directory_identity(package_dir, diagnostic_path=requested_dir)
 
     try:
         unexpected_entries = sorted(entry.name for entry in package_dir.iterdir() if entry.name not in PACKAGE_FILENAMES)
@@ -174,8 +207,10 @@ def load_package(path: Path) -> DatasetPackage:
             "unexpected top-level package entry; only the five required package files are allowed",
         )
     loaded = {filename: _read_json(package_dir, filename) for filename in PACKAGE_FILENAMES}
+    _directory_identity(package_dir, source_identity, requested_dir)
     return DatasetPackage(
         path=package_dir,
+        directory_identity=source_identity,
         dataset=loaded["dataset.json"],
         entities=loaded["entities.json"],
         sources=loaded["sources.json"],

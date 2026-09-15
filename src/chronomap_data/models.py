@@ -26,7 +26,10 @@ class ValidationIssue:
 
 @dataclass(frozen=True, slots=True)
 class DatasetPackage:
+    """Loaded package data bound to its canonical source directory identity."""
+
     path: Path
+    directory_identity: tuple[int, int]
     dataset: JsonValue
     entities: JsonValue
     sources: JsonValue

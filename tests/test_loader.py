@@ -39,6 +39,52 @@ def test_load_package_reads_the_complete_five_file_package_into_an_immutable_val
         package.dataset["title"]["en"] = "Changed synthetic title"
 
 
+def test_load_package_canonicalizes_a_directory_symlink_and_captures_its_identity(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    alias = tmp_path / "package-alias"
+    try:
+        alias.symlink_to(package_dir, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"directory symlinks unavailable: {error}")
+
+    package = load_package(alias)
+
+    source_status = package_dir.stat()
+    assert package.path == package_dir.resolve()
+    assert package.directory_identity == (source_status.st_dev, source_status.st_ino)
+    with pytest.raises(FrozenInstanceError):
+        package.directory_identity = (0, 0)
+
+
+def test_load_package_rejects_a_source_directory_replaced_during_loading(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    package_dir = copy_package(tmp_path)
+    replacement = copy_package(tmp_path / "replacement-parent")
+    displaced = tmp_path / "displaced-package"
+    original_read_json = loader._read_json
+    replaced = False
+
+    def replace_directory_after_first_read(directory: Path, filename: str):
+        nonlocal replaced
+        value = original_read_json(directory, filename)
+        if not replaced:
+            replaced = True
+            package_dir.replace(displaced)
+            replacement.replace(package_dir)
+        return value
+
+    monkeypatch.setattr(loader, "_read_json", replace_directory_after_first_read)
+
+    with pytest.raises(PackageLoadError, match=r"synthetic-package.*directory changed during loading"):
+        load_package(package_dir)
+
+
+def test_load_package_keeps_a_relative_missing_directory_diagnostic_relative(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(PackageLoadError, match=r"^missing-package: dataset directory does not exist or is not a directory$"):
+        load_package(Path("missing-package"))
+
+
 def test_load_package_reports_the_missing_required_filename(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     (package_dir / "sources.json").unlink()

@@ -3,8 +3,10 @@
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 import json
+import os
 from pathlib import Path
 import shutil
+import stat
 import tempfile
 from uuid import uuid4
 
@@ -52,6 +54,22 @@ class PublicBuildValidationError(Exception):
 
 class PublicBuildIOError(Exception):
     """The public bundle could not be safely written or replaced."""
+
+
+def _source_identity(source_status: os.stat_result) -> tuple[int, int]:
+    return source_status.st_dev, source_status.st_ino
+
+
+def _verify_package_source(package: DatasetPackage) -> Path:
+    """Ensure the source captured by the loader still names the same directory."""
+    source_path = package.path
+    try:
+        source_status = source_path.stat()
+    except OSError as error:
+        raise PublicBuildIOError(f"source directory changed or is unavailable: {source_path}: {error}") from error
+    if not stat.S_ISDIR(source_status.st_mode) or _source_identity(source_status) != package.directory_identity:
+        raise PublicBuildIOError(f"source directory changed or is unavailable: {source_path}")
+    return source_path
 
 
 def _records(value: JsonValue) -> Sequence[Mapping[str, JsonValue]]:
@@ -218,10 +236,10 @@ def _swap_output(temp_directory: Path, output: Path) -> None:
 def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
     """Validate and atomically project *package* into the public *output* directory."""
     try:
-        package_path = package.path.resolve()
         output = Path(output).resolve()
     except (OSError, RuntimeError) as error:
-        raise PublicBuildIOError(f"could not resolve input and output paths: {error}") from error
+        raise PublicBuildIOError(f"could not resolve output path: {error}") from error
+    package_path = _verify_package_source(package)
     if package_path == output or package_path in output.parents or output in package_path.parents:
         raise PublicBuildIOError(
             f"input and output paths overlap: package {package_path} and output {output}"

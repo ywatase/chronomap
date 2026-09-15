@@ -56,6 +56,67 @@ def test_build_public_bundle_rejects_input_output_path_overlap_without_changing_
     assert read_tree(package_dir) == before
 
 
+def test_build_public_bundle_rejects_a_retargeted_load_alias_when_output_is_the_original_source(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    alias = tmp_path / "package-alias"
+    retarget = copy_package(tmp_path / "retarget-parent")
+    try:
+        alias.symlink_to(package_dir, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"directory symlinks unavailable: {error}")
+    package = load_package(alias)
+    before = read_tree(package_dir)
+
+    alias.unlink()
+    alias.symlink_to(retarget, target_is_directory=True)
+
+    with pytest.raises(PublicBuildIOError, match="overlap"):
+        build_public_bundle(package, package_dir)
+
+    assert read_tree(package_dir) == before
+
+
+def test_build_public_bundle_rejects_a_source_directory_replaced_after_loading(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    package = load_package(package_dir)
+    before = read_tree(package_dir)
+    replacement = copy_package(tmp_path / "replacement-parent")
+    displaced = tmp_path / "displaced-package"
+    package_dir.replace(displaced)
+    replacement.replace(package_dir)
+
+    with pytest.raises(PublicBuildIOError, match="source directory changed"):
+        build_public_bundle(package, tmp_path / "public")
+
+    assert read_tree(package_dir) == before
+    assert not (tmp_path / "public").exists()
+
+
+@pytest.mark.parametrize("replacement", ["missing", "regular-file"])
+def test_build_public_bundle_rejects_a_missing_or_non_directory_source_after_loading(tmp_path: Path, replacement: str):
+    package_dir = copy_package(tmp_path)
+    package = load_package(package_dir)
+    package_dir.replace(tmp_path / "displaced-package")
+    if replacement == "regular-file":
+        package_dir.write_text("not a directory", encoding="utf-8")
+
+    with pytest.raises(PublicBuildIOError, match="source directory changed"):
+        build_public_bundle(package, tmp_path / "public")
+
+    assert not (tmp_path / "public").exists()
+
+
+def test_build_public_bundle_accepts_a_sibling_output_without_mutating_the_authoring_directory(tmp_path: Path):
+    input_parent = tmp_path / "input"
+    input_parent.mkdir()
+    package_dir = copy_package(input_parent)
+    before = read_tree(package_dir)
+
+    build_public_bundle(load_package(package_dir), input_parent / "public")
+
+    assert read_tree(package_dir) == before
+
+
 def test_build_public_cli_maps_path_overlap_to_exit_2_without_changing_authoring_data(tmp_path: Path, capsys):
     package_dir = copy_package(tmp_path)
     before = read_tree(package_dir)
@@ -70,7 +131,9 @@ def test_build_public_cli_maps_path_overlap_to_exit_2_without_changing_authoring
 
 
 def test_build_public_bundle_projects_only_reachable_public_records_without_mutating_input(tmp_path: Path):
-    package = load_package(copy_package(tmp_path))
+    package_dir = copy_package(tmp_path)
+    before = read_tree(package_dir)
+    package = load_package(package_dir)
     output = tmp_path / "public"
 
     summary = build_public_bundle(package, output)
@@ -99,6 +162,7 @@ def test_build_public_bundle_projects_only_reachable_public_records_without_muta
     assert "synthetic:version:polygon-private" not in b"".join(read_tree(output).values()).decode("utf-8")
     assert "Synthetic Private Polygon" not in b"".join(read_tree(output).values()).decode("utf-8")
     assert package.feature_versions["features"][3]["properties"]["rights"]["status"] == "restricted"
+    assert read_tree(package_dir) == before
 
 
 def test_build_public_bundle_is_byte_identical_when_rebuilt(tmp_path: Path):
