@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 
 import pytest
 
@@ -22,10 +21,10 @@ def copy_package(tmp_path: Path) -> Path:
 
 
 def run_installed_cli(*arguments: str) -> subprocess.CompletedProcess[str]:
-    command = Path(sys.executable).with_name("chronomap-data")
-    assert command.is_file()
+    command = shutil.which("chronomap-data")
+    assert command is not None, "chronomap-data must be installed in the active environment"
     return subprocess.run(
-        [str(command), *arguments],
+        [command, *arguments],
         cwd=ROOT,
         text=True,
         capture_output=True,

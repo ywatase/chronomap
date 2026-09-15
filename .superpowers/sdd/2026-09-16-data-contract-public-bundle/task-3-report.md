@@ -115,3 +115,9 @@ $ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py::test_load_packag
 - Diagnostic tests assert complete lines rather than prefixes, including an escaped `/a~0~1b` pointer line and the exact unsupported-version diagnostic.
 
 Final fix-round verification was run with `PYTHONDONTWRITEBYTECODE=1`, `-p no:cacheprovider`, `uv lock --check`, `git diff --check`, and a cache scan excluding `.venv`; all commands completed successfully with no cache paths reported. The full collection contains 71 tests, including the two pre-existing Task 4 strict xfails.
+
+## Fix round 2 — portable installed-entry-point lookup
+
+The subprocess helper now resolves `chronomap-data` through `shutil.which("chronomap-data")` and asserts with an actionable message when the active environment lacks the installed console script. This removes the POSIX-only `.venv/bin` assumption while preserving the real installed-process boundary.
+
+No behavioral production code changed, so a separate behavioral RED cycle was not applicable. The focused CLI suite was rerun with bytecode and pytest caching disabled after the test-only portability change; the full suite, lock check, whitespace check, and cache scan are recorded below before commit.
