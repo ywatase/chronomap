@@ -102,6 +102,18 @@ def test_semantic_validation_casefolds_every_text_map_language_key(tmp_path: Pat
     }
 
 
+def test_semantic_validation_escapes_actual_text_map_key_pointers(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    duplicate_key = "en-a-foo-a-bar/"
+    mutate_json(package_dir, "sources.json", lambda sources: sources[0]["title"].__setitem__(duplicate_key, "Duplicate"))
+
+    issues = validate_semantics(load_package(package_dir), ValidationProfile.AUTHORING)
+
+    assert ("ref.missing", "sources.json", "/0/title/en-a-foo-a-bar~1") in {
+        (issue.code, issue.file, issue.pointer) for issue in issues
+    }
+
+
 def test_validate_package_skips_shape_dependent_semantics_after_a_schema_error(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     mutate_json(package_dir, "dataset.json", lambda dataset: dataset.__setitem__("unexpected", "synthetic"))
@@ -119,7 +131,7 @@ def test_semantic_validation_rejects_casefolded_duplicate_bcp47_variants_and_ext
 
     issues = issues_for(package_dir)
 
-    assert ("ref.missing", "dataset.json", f"/defaultLanguage/{tag}") in {
+    assert ("ref.missing", "dataset.json", "/defaultLanguage") in {
         (issue.code, issue.file, issue.pointer) for issue in issues
     }
 
@@ -201,6 +213,25 @@ def test_semantic_validation_requires_uncertainty_evidence_to_be_a_supporting_fe
     assert ("uncertainty.invalid", "feature-versions.geojson", "/features/0/properties/uncertainty/geometry/evidenceIds/0") in {
         (issue.code, issue.file, issue.pointer) for issue in issues
     }
+
+
+def test_semantic_validation_reports_missing_uncertainty_evidence_alongside_subset_failure(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    missing_evidence_id = "synthetic:evidence:missing-geometry"
+    mutate_json(
+        package_dir,
+        "feature-versions.geojson",
+        lambda versions: versions["features"][0]["properties"]["uncertainty"]["geometry"].__setitem__(
+            "evidenceIds", [missing_evidence_id]
+        ),
+    )
+
+    issues = issues_for(package_dir)
+
+    shapes = {(issue.code, issue.file, issue.pointer) for issue in issues}
+    pointer = "/features/0/properties/uncertainty/geometry/evidenceIds/0"
+    assert ("ref.missing", "feature-versions.geojson", pointer) in shapes
+    assert ("uncertainty.invalid", "feature-versions.geojson", pointer) in shapes
 
 
 def test_semantic_validation_requires_uncertainty_notes_even_without_schema_dispatch(tmp_path: Path):

@@ -50,3 +50,11 @@ def test_geometry_validation_requires_each_multipolygon_to_contain_an_exterior_r
     assert issues == {
         ("geometry.invalid", "/features/0/geometry/coordinates/0"),
     }
+
+
+def test_geometry_validation_requires_multipolygons_to_contain_a_polygon():
+    issues = issue_shapes({"type": "MultiPolygon", "coordinates": []})
+
+    assert issues == {
+        ("geometry.invalid", "/features/0/geometry/coordinates"),
+    }

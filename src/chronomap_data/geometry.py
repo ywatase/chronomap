@@ -100,6 +100,8 @@ def validate_geometry(
     elif geometry_type == "MultiPolygon":
         if not isinstance(coordinates, Sequence) or isinstance(coordinates, str | bytes):
             issues.append(_issue(file, coordinates_pointer, "multi-polygon coordinates must be an array"))
+        elif not coordinates:
+            issues.append(_issue(file, coordinates_pointer, "multi-polygon must contain a polygon"))
         else:
             for polygon_index, polygon in enumerate(coordinates):
                 if not isinstance(polygon, Sequence) or isinstance(polygon, str | bytes):

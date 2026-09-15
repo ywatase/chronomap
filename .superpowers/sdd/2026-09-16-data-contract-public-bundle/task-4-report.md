@@ -115,3 +115,71 @@ $ find . -path './.venv' -prune -o \( -name '__pycache__' -o -name '.pytest_cach
 ```
 
 No generated cache or bytecode artifact remains outside `.venv`.
+
+## Fix round 1 — reviewer regressions
+
+The review identified three independent diagnostics gaps.  Each production
+change was made only after its focused behavioral regression failed.
+
+### MultiPolygon cardinality
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_geometry.py::test_geometry_validation_requires_multipolygons_to_contain_a_polygon -q -p no:cacheprovider
+1 failed in 0.14s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_geometry.py -q -p no:cacheprovider
+7 passed in 0.07s
+```
+
+An empty top-level `MultiPolygon.coordinates` now produces `geometry.invalid`
+at the coordinates pointer.  The existing per-member exterior-ring check stays
+in place and remains independently covered.
+
+### Missing uncertainty evidence
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_semantic_validation.py::test_semantic_validation_reports_missing_uncertainty_evidence_alongside_subset_failure -q -p no:cacheprovider
+1 failed in 5.55s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_semantic_validation.py::test_semantic_validation_reports_missing_uncertainty_evidence_alongside_subset_failure -q -p no:cacheprovider
+1 passed in 5.44s
+```
+
+Uncertainty evidence existence is now checked separately from feature-subset
+and dimension-support validation.  A nonexistent uncertainty ID therefore
+emits `ref.missing` at its exact ID pointer as well as the applicable
+`uncertainty.invalid` subset diagnostic.
+
+### Scalar BCP 47 pointer accuracy
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_semantic_validation.py::test_semantic_validation_rejects_casefolded_duplicate_bcp47_variants_and_extension_singletons -q -p no:cacheprovider
+2 failed in 5.78s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_semantic_validation.py::test_semantic_validation_rejects_casefolded_duplicate_bcp47_variants_and_extension_singletons -q -p no:cacheprovider
+2 passed in 5.56s
+```
+
+The scalar `Dataset.defaultLanguage` case now reports `/defaultLanguage`, not
+a fabricated object-key child.  A focused direct semantic test also confirms a
+real text-map key still receives its RFC 6901-escaped child pointer.
+
+### Round-1 verification
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_geometry.py tests/test_semantic_validation.py tests/test_schemas.py -q -p no:cacheprovider
+79 passed in 8.56s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py tests/test_geometry.py tests/test_schemas.py tests/test_semantic_validation.py -q -p no:cacheprovider
+85 passed in 8.22s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py -q -p no:cacheprovider -k 'not installed'
+8 passed, 5 deselected in 6.66s
+```
+
+The execution bridge's foreground-process limit requires running the five
+installed-process CLI cases one at a time.  Each passed with cache and bytecode
+writing disabled: valid package (1 in 11.27s), schema diagnostic (1 in 12.59s),
+missing input (1 in 11.49s), malformed JSON (1 in 11.38s), and non-finite JSON
+(1 in 10.81s).  The 85 non-CLI, 8 non-installed CLI, and 5 installed CLI cases
+cover all 98 collected tests.

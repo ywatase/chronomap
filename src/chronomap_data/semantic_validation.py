@@ -149,9 +149,11 @@ def _uncertainty_issues(
         for evidence_index, evidence_id in enumerate(evidence_ids):
             evidence_pointer = _pointer(*base.strip("/").split("/"), "evidenceIds", evidence_index)
             evidence_record = evidence_by_id.get(evidence_id)
+            if evidence_record is None:
+                issues.append(_issue("ref.missing", "feature-versions.geojson", evidence_pointer, f"evidence {evidence_id!r} does not exist"))
             if evidence_id not in feature_evidence:
                 issues.append(_issue("uncertainty.invalid", "feature-versions.geojson", evidence_pointer, "uncertainty evidence must be a feature evidence subset"))
-            elif evidence_record is None or dimension not in _records(evidence_record.get("supports")):
+            elif dimension not in _records(_mapping(evidence_record).get("supports")):
                 issues.append(_issue("uncertainty.invalid", "feature-versions.geojson", evidence_pointer, "uncertainty evidence must support its dimension"))
     return issues
 
@@ -257,7 +259,15 @@ def validate_semantics(package: DatasetPackage, profile: ValidationProfile) -> l
         issues.extend(_text_map_issues(dataset.get(field), "dataset.json", _pointer(field)))
         if isinstance(default_language, str) and default_language.casefold() not in {tag.casefold() for tag in text_map}:
             issues.append(_issue("ref.missing", "dataset.json", _pointer(field), f"text map must contain default language {default_language!r}"))
-    issues.extend(_text_map_issues(default_language and {default_language: "_"}, "dataset.json", "/defaultLanguage"))
+    if _language_duplicate(default_language):
+        issues.append(
+            _issue(
+                "ref.missing",
+                "dataset.json",
+                "/defaultLanguage",
+                "language tag repeats a BCP 47 variant or extension singleton",
+            )
+        )
     issues.extend(validate_temporal(dataset.get("temporalExtent"), "dataset.json", "/temporalExtent"))
 
     entity_ids = {record.get("id") for record in entities}
