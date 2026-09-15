@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import shutil
+import sys
 
 import pytest
 
@@ -514,3 +515,96 @@ def test_build_public_cli_maps_serialization_unicode_errors_to_exit_2_without_a_
 
     assert exit_code == 2
     assert "could not serialize public output" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("invalid_number", [float("nan"), float("inf"), float("-inf")])
+@pytest.mark.parametrize("existing_output", [False, True])
+def test_build_public_bundle_rejects_nonfinite_projected_numbers_without_mutating_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, invalid_number: float, existing_output: bool
+):
+    package = load_package(copy_package(tmp_path))
+    documents = ({"invalid": invalid_number}, [], [], [], {"features": []})
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    output = tmp_path / "public"
+    if existing_output:
+        output.mkdir()
+        (output / "previous.json").write_bytes(b"previous bundle\n")
+    before = read_tree(output) if existing_output else None
+
+    with pytest.raises(PublicBuildIOError, match="could not serialize public output"):
+        build_public_bundle(package, output)
+
+    if existing_output:
+        assert read_tree(output) == before
+    else:
+        assert not output.exists()
+
+
+def test_build_public_cli_maps_nonfinite_projected_numbers_to_exit_2_without_a_traceback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+):
+    documents = ({"invalid": float("nan")}, [], [], [], {"features": []})
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+
+    exit_code = main(["build-public", str(copy_package(tmp_path)), "--output", str(tmp_path / "public")])
+
+    assert exit_code == 2
+    stderr = capsys.readouterr().err
+    assert "could not serialize public output" in stderr
+    assert "Traceback" not in stderr
+
+
+@pytest.mark.parametrize("existing_output", [False, True])
+def test_build_public_bundle_maps_deeply_nested_projected_values_without_mutating_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, existing_output: bool
+):
+    package = load_package(copy_package(tmp_path))
+    deeply_nested: object = None
+    for _ in range(250):
+        deeply_nested = {"nested": deeply_nested}
+    documents = ({"deep": deeply_nested}, [], [], [], {"features": []})
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    output = tmp_path / "public"
+    if existing_output:
+        output.mkdir()
+        (output / "previous.json").write_bytes(b"previous bundle\n")
+    before = read_tree(output) if existing_output else None
+
+    previous_recursion_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(200)
+    try:
+        with pytest.raises(PublicBuildIOError, match="could not serialize public output"):
+            build_public_bundle(package, output)
+    finally:
+        sys.setrecursionlimit(previous_recursion_limit)
+
+    if existing_output:
+        assert read_tree(output) == before
+    else:
+        assert not output.exists()
+
+
+def test_build_public_cli_maps_deeply_nested_projected_values_to_exit_2_without_a_traceback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+):
+    deeply_nested: object = None
+    for _ in range(250):
+        deeply_nested = {"nested": deeply_nested}
+    documents = ({"deep": deeply_nested}, [], [], [], {"features": []})
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+
+    previous_recursion_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(200)
+    try:
+        exit_code = main(["build-public", str(copy_package(tmp_path)), "--output", str(tmp_path / "public")])
+    finally:
+        sys.setrecursionlimit(previous_recursion_limit)
+
+    assert exit_code == 2
+    stderr = capsys.readouterr().err
+    assert "could not serialize public output" in stderr
+    assert "Traceback" not in stderr

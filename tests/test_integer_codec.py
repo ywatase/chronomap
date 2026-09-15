@@ -4,7 +4,10 @@ from pathlib import Path
 import subprocess
 import sys
 
+import pytest
+
 from chronomap_data import loader, public_builder
+from chronomap_data.public_builder import PublicBuildIOError
 
 
 ROOT = Path(__file__).parents[1]
@@ -23,6 +26,15 @@ def test_canonical_serialization_retains_standard_json_scalars_key_sorting_and_i
     assert public_builder._serialized(value) == (
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     ).encode("utf-8")
+
+
+def test_canonical_serialization_keeps_cycle_and_type_errors_mapped():
+    cyclic: list[object] = []
+    cyclic.append(cyclic)
+
+    for value in (cyclic, {"unsupported": object()}):
+        with pytest.raises(PublicBuildIOError, match="could not serialize public output"):
+            public_builder._serialized(value)
 
 
 def test_chunked_decimal_conversion_works_past_a_low_process_digit_limit_without_mutating_it():

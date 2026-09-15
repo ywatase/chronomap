@@ -60,3 +60,40 @@ The chunked algorithms intentionally impose no application-level digit bound.
 Like arbitrary-precision integer arithmetic generally, extremely large values
 still consume time and memory proportional to their size; no process-global
 interpreter setting is changed to accommodate them.
+
+## Fix round 1: strict scalar and recursion serialization failures
+
+The chunked canonical encoder initially used `json.dumps()` for floats without
+its strict finite-number setting, so defensive projected `NaN`, positive
+infinity, and negative infinity values could be written as non-standard JSON.
+It also did not convert a `RecursionError` from an unexpectedly deep projected
+value into the builder's documented I/O error boundary.
+
+- Floats now use `allow_nan=False`; every non-finite float raises `ValueError`,
+  which `_serialized()` maps to `PublicBuildIOError`, and the CLI returns 2
+  without a traceback.
+- `_serialized()` now maps `RecursionError` in the same way. This happens
+  before staging can be committed, so both absent output and an existing output
+  directory remain unchanged.
+- The defensive tests begin with a real loaded package and only inject the
+  otherwise schema-unreachable projected documents after public validation is
+  deliberately bypassed. The deep-value regression invokes the actual encoder
+  under a temporary, test-only low recursion limit rather than relying on a
+  mocked exception.
+- Cycle, unsupported-type, and Unicode serialization mappings remain covered;
+  standard finite float output remains byte-compatible with the former JSON
+  scalar behavior.
+
+### Round-1 TDD and verification
+
+The new non-finite build regressions were red because the prior float branch
+emitted `NaN`/`Infinity`, and the deep projection regressions were red because
+`RecursionError` escaped the public builder and CLI. The smallest corrective
+change made both paths green.
+
+- Public-builder plus integer-codec regressions: 46 tests, 0 failures.
+- Updated public-builder regression suite: 42 tests, 0 failures.
+- Focused integer-codec/public-builder/CLI/clean-wheel suite: 67 tests, 0
+  failures, 0 errors, 0 skips.
+- Full suite: 209 tests, 0 failures, 0 errors, 0 skips.
+- `uv lock --check` and `git diff --check` passed.

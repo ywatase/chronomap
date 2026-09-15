@@ -192,7 +192,7 @@ def _canonical_json(value: object, indentation: int = 0, active: set[int] | None
     if isinstance(value, int):
         return _format_json_integer(value)
     if isinstance(value, float):
-        return json.dumps(value, ensure_ascii=False)
+        return json.dumps(value, ensure_ascii=False, allow_nan=False)
     if isinstance(value, str):
         return json.dumps(value, ensure_ascii=False)
 
@@ -236,7 +236,7 @@ def _canonical_json(value: object, indentation: int = 0, active: set[int] | None
 def _serialized(value: object) -> bytes:
     try:
         return (_canonical_json(value) + "\n").encode("utf-8")
-    except (TypeError, UnicodeError, ValueError) as error:
+    except (RecursionError, TypeError, UnicodeError, ValueError) as error:
         raise PublicBuildIOError(f"could not serialize public output: {error}") from error
 
 
