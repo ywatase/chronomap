@@ -2,9 +2,13 @@ from dataclasses import FrozenInstanceError
 import os
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 
 import pytest
 
+import chronomap_data.loader as loader
+from chronomap_data.cli import main
 from chronomap_data.loader import PackageLoadError, load_package
 
 
@@ -153,6 +157,120 @@ def test_load_package_rejects_a_required_entry_replaced_after_lstat_before_descr
 
     if replacement == "external-symlink":
         assert external_file.read_text(encoding="utf-8") == "[]"
+
+
+@pytest.mark.skipif(
+    not hasattr(os, "mkfifo") or not hasattr(os, "O_NONBLOCK"),
+    reason="bounded FIFO-open regression requires POSIX FIFO and O_NONBLOCK support",
+)
+def test_load_package_rejects_a_regular_entry_replaced_with_a_fifo_before_any_blocking_read(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    script = """
+import os
+from pathlib import Path
+import sys
+
+from chronomap_data import loader
+
+package_dir = Path(sys.argv[1])
+source_path = package_dir / 'sources.json'
+original_lstat = Path.lstat
+replaced = False
+
+def replace_after_validation(path):
+    global replaced
+    result = original_lstat(path)
+    if path == source_path and not replaced:
+        replaced = True
+        source_path.unlink()
+        os.mkfifo(source_path)
+    return result
+
+Path.lstat = replace_after_validation
+try:
+    loader.load_package(package_dir)
+except loader.PackageLoadError as error:
+    raise SystemExit(0 if 'sources.json: required package entry changed during loading' == str(error) else 1)
+raise SystemExit(1)
+"""
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = str(ROOT / "src")
+    try:
+        result = subprocess.run(
+            [sys.executable, "-c", script, str(package_dir)],
+            cwd=ROOT,
+            env=environment,
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=2,
+        )
+    except subprocess.TimeoutExpired:
+        pytest.fail("FIFO replacement blocked before descriptor validation")
+
+    assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize("primary_operation", ["fstat", "read"])
+def test_primary_descriptor_error_is_preserved_when_closing_the_descriptor_also_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, primary_operation: str
+):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    close_calls: list[int] = []
+    original_close = loader.os.close
+
+    def close_then_fail(descriptor: int):
+        close_calls.append(descriptor)
+        original_close(descriptor)
+        raise OSError("close failure")
+
+    monkeypatch.setattr(loader.os, "close", close_then_fail)
+    if primary_operation == "fstat":
+        monkeypatch.setattr(loader.os, "fstat", lambda descriptor: (_ for _ in ()).throw(OSError("fstat failure")))
+    else:
+        monkeypatch.setattr(loader.os, "read", lambda descriptor, count: (_ for _ in ()).throw(OSError("read failure")))
+
+    with pytest.raises(PackageLoadError, match=rf"sources\.json.*{primary_operation} failure"):
+        loader._read_json(package_dir, "sources.json")
+
+    assert len(close_calls) == 1
+
+
+def test_standalone_descriptor_close_failure_is_an_actionable_package_load_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    package_dir = copy_package(tmp_path)
+    close_calls: list[int] = []
+    original_close = loader.os.close
+
+    def close_then_fail(descriptor: int):
+        close_calls.append(descriptor)
+        original_close(descriptor)
+        raise OSError("close failure")
+
+    monkeypatch.setattr(loader.os, "close", close_then_fail)
+
+    with pytest.raises(PackageLoadError, match=r"sources\.json.*cannot close package file.*close failure"):
+        loader._read_json(package_dir, "sources.json")
+
+    assert len(close_calls) == 1
+
+
+def test_validate_maps_a_standalone_descriptor_close_failure_to_exit_2(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys):
+    package_dir = copy_package(tmp_path)
+    original_close = loader.os.close
+
+    def close_then_fail(descriptor: int):
+        original_close(descriptor)
+        raise OSError("close failure")
+
+    monkeypatch.setattr(loader.os, "close", close_then_fail)
+
+    assert main(["validate", str(package_dir)]) == 2
+    stderr = capsys.readouterr().err
+    assert "cannot close package file: close failure" in stderr
+    assert "Traceback" not in stderr
 
 
 @pytest.mark.parametrize("nonfinite_token", ["NaN", "Infinity", "-Infinity"])

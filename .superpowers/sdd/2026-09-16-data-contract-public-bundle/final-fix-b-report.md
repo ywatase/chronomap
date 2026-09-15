@@ -89,3 +89,21 @@ not accepted. Focused loader/CLI/schema/wheel verification passed 96 tests
 with no failures or errors; the complete suite passed 145 tests with no
 failures or errors. Lock, whitespace, package-schema synchronization, and
 cache checks passed as well.
+
+## Fix round 3: bounded raced opens and close-error precedence
+
+The descriptor open now includes `O_NONBLOCK` whenever the platform provides
+it, before `fstat` confirms the descriptor is a regular file. This prevents a
+regular-to-FIFO replacement from blocking the loader on supported POSIX
+platforms. Reads are direct `os.read` calls only after the regular identity
+checks pass.
+
+Descriptor cleanup has one explicit `os.close` call. A primary fstat/read/load
+error is retained if close also fails; if close is the sole error, it becomes
+an actionable `PackageLoadError`, and the CLI maps it to exit 2 without a
+traceback. Bounded FIFO subprocess coverage and injected fstat/read/close
+failures were red before this change and green afterwards. The FIFO regression
+is skipped where the platform cannot create FIFOs or lacks `O_NONBLOCK`.
+Focused loader/CLI/schema/wheel verification passed 101 tests with no failures
+or errors; the full suite passed 150 tests with no failures or errors. Lock,
+whitespace, package-schema synchronization, and cache checks passed as well.

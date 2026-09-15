@@ -84,10 +84,19 @@ def _entry_changed(filename: str) -> PackageLoadError:
     return PackageLoadError(filename, "required package entry changed during loading")
 
 
+def _read_descriptor_bytes(descriptor: int) -> bytes:
+    chunks = []
+    while chunk := os.read(descriptor, 64 * 1024):
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
 def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat_result) -> bytes:
     open_flags = os.O_RDONLY
     if hasattr(os, "O_NOFOLLOW"):
         open_flags |= os.O_NOFOLLOW
+    if hasattr(os, "O_NONBLOCK"):
+        open_flags |= os.O_NONBLOCK
     try:
         descriptor = os.open(file_path, open_flags)
     except OSError as error:
@@ -95,6 +104,8 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
             raise _entry_changed(filename) from error
         detail = getattr(error, "strerror", None) or str(error)
         raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
+    primary_error: PackageLoadError | None = None
+    contents: bytes | None = None
     try:
         descriptor_status = os.fstat(descriptor)
         if not stat.S_ISREG(descriptor_status.st_mode) or (
@@ -109,15 +120,23 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
             _file_identity(current_status) != _file_identity(initial_status)
         ):
             raise _entry_changed(filename)
-        with os.fdopen(descriptor, "rb") as package_file:
-            descriptor = -1
-            return package_file.read()
+        contents = _read_descriptor_bytes(descriptor)
+    except PackageLoadError as error:
+        primary_error = error
     except OSError as error:
         detail = getattr(error, "strerror", None) or str(error)
-        raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
-    finally:
-        if descriptor >= 0:
-            os.close(descriptor)
+        primary_error = PackageLoadError(filename, f"cannot read package file: {detail}")
+    try:
+        os.close(descriptor)
+    except OSError as error:
+        if primary_error is None:
+            detail = getattr(error, "strerror", None) or str(error)
+            primary_error = PackageLoadError(filename, f"cannot close package file: {detail}")
+    if primary_error is not None:
+        raise primary_error
+    if contents is None:
+        raise AssertionError("verified descriptor read returned no result")
+    return contents
 
 
 def _read_json(package_dir: Path, filename: str) -> JsonValue:
