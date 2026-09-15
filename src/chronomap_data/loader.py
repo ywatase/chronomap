@@ -35,6 +35,10 @@ def _freeze(value: object) -> JsonValue:
     raise TypeError(f"unsupported JSON value: {type(value).__name__}")
 
 
+def _reject_json_constant(token: str) -> None:
+    raise ValueError(f"non-JSON constant {token!r}")
+
+
 def _read_json(package_dir: Path, filename: str) -> JsonValue:
     file_path = package_dir / filename
     try:
@@ -45,9 +49,10 @@ def _read_json(package_dir: Path, filename: str) -> JsonValue:
         detail = getattr(error, "strerror", None) or str(error)
         raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
     try:
-        return _freeze(json.loads(text))
-    except json.JSONDecodeError as error:
-        raise PackageLoadError(filename, f"invalid JSON: {error.msg}") from error
+        return _freeze(json.loads(text, parse_constant=_reject_json_constant))
+    except (json.JSONDecodeError, ValueError) as error:
+        detail = getattr(error, "msg", None) or str(error)
+        raise PackageLoadError(filename, f"invalid JSON: {detail}") from error
 
 
 def load_package(path: Path) -> DatasetPackage:

@@ -26,8 +26,12 @@ def test_load_package_reads_the_complete_five_file_package_into_an_immutable_val
     assert len(package.sources) == 2
     assert len(package.evidence) == 3
     assert len(package.feature_versions["features"]) == 4
+    assert isinstance(package.entities, tuple)
+    assert isinstance(package.feature_versions["features"], tuple)
     with pytest.raises(FrozenInstanceError):
         package.path = tmp_path
+    with pytest.raises(TypeError):
+        package.dataset["title"]["en"] = "Changed synthetic title"
 
 
 def test_load_package_reports_the_missing_required_filename(tmp_path: Path):
@@ -41,6 +45,15 @@ def test_load_package_reports_the_missing_required_filename(tmp_path: Path):
 def test_load_package_reports_malformed_json_with_its_filename(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     (package_dir / "evidence.json").write_text("{ invalid json", encoding="utf-8")
+
+    with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON"):
+        load_package(package_dir)
+
+
+@pytest.mark.parametrize("nonfinite_token", ["NaN", "Infinity", "-Infinity"])
+def test_load_package_rejects_nonfinite_json_constants(tmp_path: Path, nonfinite_token: str):
+    package_dir = copy_package(tmp_path)
+    (package_dir / "evidence.json").write_text(nonfinite_token, encoding="utf-8")
 
     with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON"):
         load_package(package_dir)

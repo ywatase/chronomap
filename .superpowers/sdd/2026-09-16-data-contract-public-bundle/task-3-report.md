@@ -67,3 +67,51 @@ Resolved 27 packages in 4ms
 ```
 
 `git diff --check` exited successfully with no output. The two strict xfails are the previously recorded Task 4 BCP 47 case-folded duplicate-tag cases. A cache scan excluding `.venv` found no `__pycache__` or `.pytest_cache` paths.
+
+## Fix round 1 — JSON Pointer, strict JSON decoding, and process-boundary coverage
+
+### RED: RFC 6901 root pointer
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py::test_json_pointer_uses_the_empty_string_for_the_root_and_escapes_tokens -q -p no:cacheprovider
+F                                                                        [100%]
+E       AssertionError: assert '/' == ''
+1 failed in 5.86s
+```
+
+### GREEN: RFC 6901 root pointer
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py::test_json_pointer_uses_the_empty_string_for_the_root_and_escapes_tokens -q -p no:cacheprovider
+.                                                                        [100%]
+1 passed in 5.86s
+```
+
+`json_pointer(())` now returns the RFC 6901 empty string, while a token containing `~` and `/` renders as `/a~0~1b/2`. Root diagnostics therefore render as `dataset.json: [schema.invalid] ...`.
+
+### RED: non-finite JSON constants
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py::test_load_package_rejects_nonfinite_json_constants -q -p no:cacheprovider
+FFF                                                                      [100%]
+E       Failed: DID NOT RAISE PackageLoadError
+3 failed in 0.21s
+```
+
+### GREEN: non-finite JSON constants
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py::test_load_package_rejects_nonfinite_json_constants -q -p no:cacheprovider
+...                                                                      [100%]
+3 passed in 0.10s
+```
+
+`json.loads` now receives a rejecting `parse_constant` callback, so `NaN`, `Infinity`, and `-Infinity` uniformly become actionable `PackageLoadError` parser failures.
+
+### Coverage added
+
+- The real installed `.venv/bin/chronomap-data` subprocess is exercised for a valid package (0), an exact schema diagnostic (1), and missing, malformed, and non-finite inputs (2 with no traceback).
+- Loader tests now prove that nested JSON maps reject mutation and JSON arrays are tuples.
+- Diagnostic tests assert complete lines rather than prefixes, including an escaped `/a~0~1b` pointer line and the exact unsupported-version diagnostic.
+
+Final fix-round verification was run with `PYTHONDONTWRITEBYTECODE=1`, `-p no:cacheprovider`, `uv lock --check`, `git diff --check`, and a cache scan excluding `.venv`; all commands completed successfully with no cache paths reported. The full collection contains 71 tests, including the two pre-existing Task 4 strict xfails.

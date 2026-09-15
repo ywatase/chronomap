@@ -47,8 +47,8 @@ def _validator_for(filename: str) -> Draft202012Validator:
 
 def json_pointer(parts: Iterable[object]) -> str:
     """Convert an absolute validation path to a stable JSON Pointer."""
-    encoded = (str(part).replace("~", "~0").replace("/", "~1") for part in parts)
-    return "/" + "/".join(encoded)
+    tokens = [str(part).replace("~", "~0").replace("/", "~1") for part in parts]
+    return "" if not tokens else "/" + "/".join(tokens)
 
 
 def _schema_version_issue(dataset: JsonValue) -> ValidationIssue | None:
