@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chronomap.example/schemas/v1/sources.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "type", "citation", "title", "creators", "publishedYear", "url", "accessedDate", "rights"],
+    "properties": {
+      "id": { "$ref": "common.schema.json#/$defs/sourceId" },
+      "type": { "type": "string", "minLength": 1 },
+      "citation": { "type": "string", "minLength": 1 },
+      "title": { "$ref": "common.schema.json#/$defs/textMap" },
+      "creators": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+      "publishedYear": { "type": "integer" },
+      "url": { "type": "string", "format": "uri" },
+      "accessedDate": { "type": "string", "format": "date" },
+      "rights": { "$ref": "common.schema.json#/$defs/rights" }
+    },
+    "additionalProperties": false
+  }
+}

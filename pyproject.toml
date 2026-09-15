@@ -11,6 +11,9 @@ dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/chronomap_data"]
+
 [project.scripts]
 chronomap-data = "chronomap_data.cli:main"
 

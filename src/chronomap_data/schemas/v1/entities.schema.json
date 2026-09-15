@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chronomap.example/schemas/v1/entities.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "type", "labels", "description"],
+    "properties": {
+      "id": { "$ref": "common.schema.json#/$defs/entityId" },
+      "type": { "enum": ["waterbody", "watercourse", "coastline", "fortification", "settlement", "port", "battlefield", "route", "boundary", "polity", "sphere-of-influence", "archaeological-site", "other"] },
+      "labels": { "$ref": "common.schema.json#/$defs/textMap" },
+      "description": { "$ref": "common.schema.json#/$defs/textMap" }
+    },
+    "additionalProperties": false
+  }
+}

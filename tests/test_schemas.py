@@ -1,4 +1,5 @@
 import json
+from importlib import resources
 from pathlib import Path
 
 import pytest
@@ -78,6 +79,12 @@ def test_every_schema_is_a_valid_draft_2020_12_schema():
         Draft202012Validator.check_schema(load_json(path))
 
 
+def test_package_schema_resources_are_byte_identical_to_the_repository_contract_schemas():
+    package_schema_dir = resources.files("chronomap_data").joinpath("schemas", "v1")
+    for schema_path in sorted(SCHEMA_DIR.glob("*.schema.json")):
+        assert package_schema_dir.joinpath(schema_path.name).read_bytes() == schema_path.read_bytes()
+
+
 def test_complete_synthetic_package_is_structurally_valid():
     assert package_errors(ROOT / "tests/fixtures/valid/synthetic-package") == []
 
@@ -123,6 +130,39 @@ def test_json_and_ecma_line_terminators_are_rejected_from_language_tags(tag):
     dataset["defaultLanguage"] = tag
     errors = list(validator_for("dataset.schema.json").iter_errors(dataset))
     assert_error(errors, ["defaultLanguage"], "not")
+
+
+@pytest.mark.parametrize(
+    ("data_filename", "schema_filename", "path", "terminator"),
+    [
+        ("dataset.json", "dataset.schema.json", ["id"], "\n"),
+        ("entities.json", "entities.schema.json", [0, "id"], "\r"),
+        ("sources.json", "sources.schema.json", [0, "id"], "\u2028"),
+        ("evidence.json", "evidence.schema.json", [0, "id"], "\u2029"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "id"], "\n"),
+        ("evidence.json", "evidence.schema.json", [0, "sourceId"], "\r"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "entityId"], "\u2028"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "evidenceIds", 0], "\u2029"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "uncertainty", "temporal", "evidenceIds", 0], "\n"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "uncertainty", "location", "evidenceIds", 0], "\r"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "uncertainty", "geometry", "evidenceIds", 0], "\u2028"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 0, "properties", "uncertainty", "identity", "evidenceIds", 0], "\u2029"),
+        ("feature-versions.geojson", "feature-versions.schema.json", ["features", 1, "properties", "hypothesisGroupId"], "\n"),
+    ],
+)
+def test_every_resource_and_reference_id_schema_rejects_final_line_terminators(
+    data_filename, schema_filename, path, terminator
+):
+    instance = valid_instance(data_filename)
+    target = instance
+    for component in path[:-1]:
+        target = target[component]
+    assert isinstance(target[path[-1]], str)
+    target[path[-1]] += terminator
+
+    errors = list(validator_for(schema_filename).iter_errors(instance))
+
+    assert_error(errors, path, "not")
 
 
 @pytest.mark.parametrize("tag", ["de-1901-1901", "en-a-foo-a-bar"])

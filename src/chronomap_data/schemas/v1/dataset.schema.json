@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chronomap.example/schemas/v1/dataset.schema.json",
+  "type": "object",
+  "required": ["schemaVersion", "id", "title", "description", "defaultLanguage", "bbox", "temporalExtent", "rights", "files"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "id": { "$ref": "common.schema.json#/$defs/datasetId" },
+    "title": { "$ref": "common.schema.json#/$defs/textMap" },
+    "description": { "$ref": "common.schema.json#/$defs/textMap" },
+    "defaultLanguage": { "$ref": "common.schema.json#/$defs/languageTag" },
+    "bbox": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "temporalExtent": { "$ref": "common.schema.json#/$defs/temporal" },
+    "rights": { "$ref": "common.schema.json#/$defs/rights" },
+    "files": {
+      "type": "object",
+      "required": ["entities", "sources", "evidence", "featureVersions"],
+      "properties": {
+        "entities": { "const": "entities.json" },
+        "sources": { "const": "sources.json" },
+        "evidence": { "const": "evidence.json" },
+        "featureVersions": { "const": "feature-versions.geojson" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chronomap.example/schemas/v1/evidence.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "sourceId", "locator", "usage", "supports", "note"],
+    "properties": {
+      "id": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "sourceId": { "$ref": "common.schema.json#/$defs/sourceId" },
+      "locator": { "type": "string", "minLength": 1 },
+      "usage": { "enum": ["citation", "derived-geometry"] },
+      "supports": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["temporal", "location", "geometry", "identity"] } },
+      "note": { "type": "string" },
+      "publicationBasis": { "enum": ["open-license", "public-domain", "permission", "original-reconstruction"] }
+    },
+    "allOf": [
+      {
+        "if": { "properties": { "usage": { "const": "derived-geometry" } }, "required": ["usage"] },
+        "then": { "required": ["publicationBasis"], "properties": { "note": { "minLength": 1 } } }
+      }
+    ],
+    "additionalProperties": false
+  }
+}

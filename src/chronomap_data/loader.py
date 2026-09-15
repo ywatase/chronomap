@@ -25,6 +25,19 @@ class PackageLoadError(Exception):
         super().__init__(f"{file}: {message}")
 
 
+class _DuplicateJsonMemberError(ValueError):
+    """An object name appears more than once in one JSON object."""
+
+
+def _reject_duplicate_json_members(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for name, value in pairs:
+        if name in result:
+            raise _DuplicateJsonMemberError(f"duplicate JSON object member name {name!r}")
+        result[name] = value
+    return result
+
+
 def _freeze(value: object) -> JsonValue:
     if value is None or isinstance(value, bool | int | float | str):
         return value
@@ -49,7 +62,13 @@ def _read_json(package_dir: Path, filename: str) -> JsonValue:
         detail = getattr(error, "strerror", None) or str(error)
         raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
     try:
-        return _freeze(json.loads(text, parse_constant=_reject_json_constant))
+        return _freeze(
+            json.loads(
+                text,
+                object_pairs_hook=_reject_duplicate_json_members,
+                parse_constant=_reject_json_constant,
+            )
+        )
     except (json.JSONDecodeError, ValueError) as error:
         detail = getattr(error, "msg", None) or str(error)
         raise PackageLoadError(filename, f"invalid JSON: {detail}") from error
@@ -60,6 +79,23 @@ def load_package(path: Path) -> DatasetPackage:
     package_dir = Path(path)
     if not package_dir.is_dir():
         raise PackageLoadError(str(package_dir), "dataset directory does not exist or is not a directory")
+
+    try:
+        unexpected_entries = sorted(entry.name for entry in package_dir.iterdir() if entry.name not in PACKAGE_FILENAMES)
+    except OSError as error:
+        detail = getattr(error, "strerror", None) or str(error)
+        raise PackageLoadError(str(package_dir), f"cannot list dataset directory: {detail}") from error
+    if unexpected_entries:
+        raise PackageLoadError(
+            unexpected_entries[0],
+            "unexpected top-level package entry; only the five required package files are allowed",
+        )
+    for filename in PACKAGE_FILENAMES:
+        entry = package_dir / filename
+        if not entry.exists():
+            raise PackageLoadError(filename, "required package file is missing")
+        if not entry.is_file():
+            raise PackageLoadError(filename, "required package entry must be a file")
 
     loaded = {filename: _read_json(package_dir, filename) for filename in PACKAGE_FILENAMES}
     return DatasetPackage(

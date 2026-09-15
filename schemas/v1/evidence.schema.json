@@ -6,8 +6,8 @@
     "type": "object",
     "required": ["id", "sourceId", "locator", "usage", "supports", "note"],
     "properties": {
-      "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:evidence:[a-z0-9]+(?:-[a-z0-9]+)*$" },
-      "sourceId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:source:[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "id": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "sourceId": { "$ref": "common.schema.json#/$defs/sourceId" },
       "locator": { "type": "string", "minLength": 1 },
       "usage": { "enum": ["citation", "derived-geometry"] },
       "supports": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["temporal", "location", "geometry", "identity"] } },

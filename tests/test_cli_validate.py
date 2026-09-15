@@ -123,6 +123,27 @@ def test_installed_validate_command_reports_a_complete_schema_diagnostic(tmp_pat
     assert result.stderr == "dataset.json: [schema.invalid] Additional properties are not allowed ('unexpected' was unexpected)\n"
 
 
+@pytest.mark.parametrize(
+    ("filename", "content", "member_name"),
+    [
+        ("dataset.json", '{"rights":{"status":"public-domain","status":"restricted"}}', "status"),
+        ("feature-versions.geojson", '{"type":"FeatureCollection","features":[{"properties":{"publicationStatus":"public","publicationStatus":"private"}}]}', "publicationStatus"),
+    ],
+)
+def test_installed_validate_command_maps_duplicate_json_members_to_exit_2_without_a_traceback(
+    tmp_path: Path, filename: str, content: str, member_name: str
+):
+    package_dir = copy_package(tmp_path)
+    (package_dir / filename).write_text(content, encoding="utf-8")
+
+    result = run_installed_cli("validate", str(package_dir))
+
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert f"duplicate JSON object member name {member_name!r}" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
 @pytest.mark.parametrize("invalid_input", ["missing", "malformed", "nonfinite"])
 def test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback(tmp_path: Path, invalid_input: str):
     if invalid_input == "missing":

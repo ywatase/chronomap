@@ -6,7 +6,7 @@
     "type": "object",
     "required": ["id", "type", "labels", "description"],
     "properties": {
-      "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:entity:[a-z0-9]+(?:-[a-z0-9]+)*$" },
+      "id": { "$ref": "common.schema.json#/$defs/entityId" },
       "type": { "enum": ["waterbody", "watercourse", "coastline", "fortification", "settlement", "port", "battlefield", "route", "boundary", "polity", "sphere-of-influence", "archaeological-site", "other"] },
       "labels": { "$ref": "common.schema.json#/$defs/textMap" },
       "description": { "$ref": "common.schema.json#/$defs/textMap" }

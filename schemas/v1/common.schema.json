@@ -4,8 +4,23 @@
   "$defs": {
     "id": {
       "type": "string",
-      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:(?:dataset|entity|version|source|evidence|hypothesis):[a-z0-9]+(?:-[a-z0-9]+)*$"
+      "allOf": [
+        {
+          "not": {
+            "pattern": "[\\r\\n\\u2028\\u2029]"
+          }
+        },
+        {
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:(?:dataset|entity|version|source|evidence|hypothesis):[a-z0-9]+(?:-[a-z0-9]+)*$"
+        }
+      ]
     },
+    "datasetId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:dataset:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
+    "entityId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:entity:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
+    "versionId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:version:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
+    "sourceId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:source:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
+    "evidenceId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:evidence:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
+    "hypothesisId": { "allOf": [{ "$ref": "#/$defs/id" }, { "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:hypothesis:[a-z0-9]+(?:-[a-z0-9]+)*$" }] },
     "languageTag": {
       "type": "string",
       "allOf": [
@@ -86,7 +101,7 @@
         "evidenceIds": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*:evidence:[a-z0-9]+(?:-[a-z0-9]+)*$" }
+          "items": { "$ref": "#/$defs/evidenceId" }
         }
       },
       "allOf": [

@@ -2,7 +2,9 @@
 
 Chronomap packages are normalized, versioned historical-data records.  This
 repository contains their JSON Schemas, validator, and fail-closed public
-bundle builder.  The included fixture is synthetic test data, not history.
+bundle builder. Installed wheels include the versioned schemas as internal
+package resources, so validation does not depend on a checkout. The included
+fixture is synthetic test data, not history.
 
 ## Setup
 

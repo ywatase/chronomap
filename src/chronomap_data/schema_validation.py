@@ -1,8 +1,8 @@
 """Draft 2020-12 structural validation for loaded dataset packages."""
 
 from functools import cache
+from importlib import resources
 import json
-from pathlib import Path
 from typing import Iterable, Mapping
 
 from jsonschema import Draft202012Validator, FormatChecker
@@ -12,7 +12,7 @@ from .models import DatasetPackage, JsonValue, ValidationIssue, ValidationProfil
 
 
 SUPPORTED_SCHEMA_VERSION = "1.0.0"
-SCHEMA_DIR = Path(__file__).parents[2] / "schemas" / "v1"
+SCHEMA_DIR = resources.files("chronomap_data").joinpath("schemas", "v1")
 PACKAGE_DOCUMENTS = (
     ("dataset.json", "dataset.schema.json", "dataset"),
     ("entities.json", "entities.schema.json", "entities"),
@@ -23,15 +23,16 @@ PACKAGE_DOCUMENTS = (
 
 
 def _load_schema(filename: str) -> dict[str, object]:
-    with (SCHEMA_DIR / filename).open(encoding="utf-8") as schema_file:
-        return json.load(schema_file)
+    return json.loads(SCHEMA_DIR.joinpath(filename).read_text(encoding="utf-8"))
 
 
 @cache
 def _schema_registry() -> Registry:
     resources = []
-    for path in sorted(SCHEMA_DIR.glob("*.schema.json")):
-        schema = _load_schema(path.name)
+    for resource in sorted(SCHEMA_DIR.iterdir(), key=lambda item: item.name):
+        if not resource.name.endswith(".schema.json"):
+            continue
+        schema = _load_schema(resource.name)
         resources.append((schema["$id"], Resource.from_contents(schema)))
     return Registry().with_resources(resources)
 
