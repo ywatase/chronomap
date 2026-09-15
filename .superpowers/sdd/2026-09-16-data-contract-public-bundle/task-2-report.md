@@ -43,3 +43,62 @@ Resolved 13 packages in 4ms
 ## Decision notes
 
 JSON Schema Draft 2020-12 cannot express the dynamic requirement that an arbitrary `defaultLanguage` value must also be a key in each associated text map. The schemas validate all language tags and text-map shape; enforcement of that cross-field invariant is intentionally left for the Task 4 semantic validator, along with the other rules explicitly reserved for semantic validation.
+
+## Fix round 1 — BCP 47 and structural coverage
+
+Changed files:
+
+- `pyproject.toml` and `uv.lock`: use `jsonschema[format-nongpl]` so the test validator has registered `uri` and `date` format checkers.
+- `schemas/v1/common.schema.json`: replace the narrowed language-tag expression with an anchored RFC 5646 lexical expression that covers language/script/region/variant sequences, extensions, private use, and registered grandfathered forms.
+- `tests/test_schemas.py`: add focused, path-asserting mutations for language syntax, fixed version and filenames, each root-record required/additional-property boundary, every enum family, and source URI/date formats.
+
+RED for the review cases:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q
+..........FFFF......................FF.F.                                [100%]
+7 failed, 34 passed in 1.36s
+```
+
+The first four failures were the required valid RFC 5646 tags (`en-u-ca-gregory`, `x-private`, `i-klingon`, and an extended tag with extension/private use) rejected by the old narrowed pattern. The URI case also proved that the previous dependency set had no registered `uri` checker. The two temporal enum cases identified that `anyOf` reports its detailed enum locations in nested validation contexts; the test assertion was updated to inspect those real contexts.
+
+GREEN after the schema pattern and format dependency change:
+
+```text
+$ uv lock
+Resolved 27 packages in 274ms
+Added arrow v1.4.0
+Added fqdn v1.5.1
+Added idna v3.19
+Added isoduration v20.11.0
+Added jsonpointer v3.1.1
+Added lark v1.3.1
+Added python-dateutil v2.9.0.post0
+Added rfc3339-validator v0.1.4
+Added rfc3986-validator v0.1.1
+Added rfc3987-syntax v1.1.0
+Added six v1.17.0
+Added tzdata v2026.4
+Added uri-template v1.3.0
+Added webcolors v25.10.0
+Installed 14 packages in 578ms
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q
+.........................................                                [100%]
+41 passed in 8.59s
+```
+
+Final verification before commit:
+
+```text
+$ uv lock --check
+Resolved 27 packages in 3ms
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+.........................................                                [100%]
+41 passed in 6.10s
+
+$ git diff --check
+```
+
+`git diff --check` exited successfully with no output. The repository-level pytest cache was removed and no cache directories remain outside `.venv`.
