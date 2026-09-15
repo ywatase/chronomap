@@ -146,3 +146,43 @@ $ git diff --check
 ```
 
 `git diff --check` exited successfully with no output. The cache scan, excluding `.venv`, produced no paths.
+
+## Fix round 3 — language-tag line terminators
+
+Changed files:
+
+- `schemas/v1/common.schema.json`: add an explicit ECMA-262 character-class rejection for CR, LF, U+2028, and U+2029 before evaluating the anchored BCP 47 grammar.
+- `tests/test_schemas.py`: add focused ordinary and grandfathered language-tag regressions with trailing CR/LF/U+2028/U+2029.
+
+RED before the explicit terminator guard:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+................FFFFF..xx...........................                     [100%]
+5 failed, 45 passed, 2 xfailed in 7.54s
+```
+
+GREEN:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+.......................xx...........................                     [100%]
+50 passed, 2 xfailed in 6.71s
+```
+
+The guard is an explicit line-terminator rejection rather than reliance on the meaning of `$`, so it is portable across JSON Schema implementations using ECMA-262 regular expressions.
+
+Final verification before commit:
+
+```text
+$ uv lock --check
+Resolved 27 packages in 3ms
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+.......................xx...........................                     [100%]
+50 passed, 2 xfailed in 6.65s
+
+$ git diff --check
+```
+
+`git diff --check` exited successfully with no output, and the cache scan excluding `.venv` produced no paths.

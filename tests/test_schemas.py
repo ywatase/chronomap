@@ -117,6 +117,14 @@ def test_mixed_case_grandfathered_rfc_5646_language_tags_are_accepted(tag):
     assert list(validator_for("dataset.schema.json").iter_errors(dataset)) == []
 
 
+@pytest.mark.parametrize("tag", ["en\n", "en\r", "en\u2028", "en\u2029", "I-KLINGON\n"])
+def test_json_and_ecma_line_terminators_are_rejected_from_language_tags(tag):
+    dataset = valid_instance("dataset.json")
+    dataset["defaultLanguage"] = tag
+    errors = list(validator_for("dataset.schema.json").iter_errors(dataset))
+    assert_error(errors, ["defaultLanguage"], "not")
+
+
 @pytest.mark.parametrize("tag", ["de-1901-1901", "en-a-foo-a-bar"])
 def test_exact_duplicate_rfc_5646_variants_and_extension_singletons_are_rejected(tag):
     dataset = valid_instance("dataset.json")
