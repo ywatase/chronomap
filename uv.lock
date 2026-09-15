@@ -27,7 +27,7 @@ wheels = [
 [[package]]
 name = "chronomap-data"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "jsonschema", extra = ["format-nongpl"] },
 ]
