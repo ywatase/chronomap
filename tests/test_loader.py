@@ -123,6 +123,38 @@ def test_load_package_rejects_a_fifo_required_entry_without_attempting_to_read_i
         load_package(package_dir)
 
 
+@pytest.mark.parametrize("replacement", ["external-symlink", "different-regular-file"])
+def test_load_package_rejects_a_required_entry_replaced_after_lstat_before_descriptor_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, replacement: str
+):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    external_file = tmp_path / "external-sources.json"
+    external_file.write_text("[]", encoding="utf-8")
+    original_lstat = Path.lstat
+    replaced = False
+
+    def replace_after_validation(path: Path):
+        nonlocal replaced
+        result = original_lstat(path)
+        if path == source_path and not replaced:
+            replaced = True
+            if replacement == "external-symlink":
+                source_path.unlink()
+                source_path.symlink_to(external_file)
+            else:
+                external_file.replace(source_path)
+        return result
+
+    monkeypatch.setattr(Path, "lstat", replace_after_validation)
+
+    with pytest.raises(PackageLoadError, match=r"sources\.json.*changed during loading"):
+        load_package(package_dir)
+
+    if replacement == "external-symlink":
+        assert external_file.read_text(encoding="utf-8") == "[]"
+
+
 @pytest.mark.parametrize("nonfinite_token", ["NaN", "Infinity", "-Infinity"])
 def test_load_package_rejects_nonfinite_json_constants(tmp_path: Path, nonfinite_token: str):
     package_dir = copy_package(tmp_path)

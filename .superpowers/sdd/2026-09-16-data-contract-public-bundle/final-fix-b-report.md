@@ -69,3 +69,23 @@ Round-one verification: the focused loader/CLI/schema/wheel partition passed
 with no failures or errors. Lock, whitespace, schema-sync, and cache checks
 also passed; the cache check continues to list only the intentionally
 force-added SDD reports.
+
+## Fix round 2: descriptor-verified package reads
+
+The lstat-only validation of fix round 1 left a replacement window before the
+later path-based read. Each entry now records a pre-read `lstat` device/inode
+identity, opens a descriptor with `O_NOFOLLOW` where the platform supplies it,
+checks the descriptor with `fstat`, checks the path identity again with
+`lstat`, and only then reads bytes from that descriptor. Any replacement,
+including a symlink or a different regular inode, is reported as a changed
+package entry. This identity-checked descriptor approach remains valid on
+platforms without `O_NOFOLLOW`.
+
+TDD evidence: deterministic real-filesystem regressions replace a previously
+validated `sources.json` immediately after `lstat`, once with an external
+symlink and once with a different regular inode. Both were red before the
+descriptor implementation and green afterwards; the external JSON bytes are
+not accepted. Focused loader/CLI/schema/wheel verification passed 96 tests
+with no failures or errors; the complete suite passed 145 tests with no
+failures or errors. Lock, whitespace, package-schema synchronization, and
+cache checks passed as well.
