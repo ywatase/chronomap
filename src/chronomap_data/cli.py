@@ -6,6 +6,7 @@ import sys
 
 from .loader import PackageLoadError, load_package
 from .models import ValidationIssue, ValidationProfile
+from .public_builder import PublicBuildIOError, PublicBuildValidationError, build_public_bundle
 from .schema_validation import validate_package
 
 
@@ -19,6 +20,9 @@ def _parser() -> argparse.ArgumentParser:
         choices=tuple(profile.value for profile in ValidationProfile),
         default=ValidationProfile.AUTHORING.value,
     )
+    build_public = commands.add_parser("build-public")
+    build_public.add_argument("dataset_dir")
+    build_public.add_argument("--output", required=True)
     return parser
 
 
@@ -39,10 +43,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 2
 
-    issues = validate_package(package, ValidationProfile(arguments.profile))
-    for issue in issues:
-        print(format_issue(issue), file=sys.stderr)
-    return 1 if issues else 0
+    if arguments.command == "validate":
+        issues = validate_package(package, ValidationProfile(arguments.profile))
+        for issue in issues:
+            print(format_issue(issue), file=sys.stderr)
+        return 1 if issues else 0
+
+    try:
+        summary = build_public_bundle(package, arguments.output)
+    except PublicBuildValidationError as error:
+        for issue in error.issues:
+            print(format_issue(issue), file=sys.stderr)
+        return 1
+    except PublicBuildIOError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    print(
+        f"built public bundle: {summary.versions} versions, {summary.entities} entities, "
+        f"{summary.evidence} evidence, {summary.sources} sources -> {summary.output}"
+    )
+    return 0
 
 
 if __name__ == "__main__":

@@ -1,0 +1,183 @@
+"""Deterministic, fail-closed projection of authoring packages for publication."""
+
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+import json
+from pathlib import Path
+import shutil
+import tempfile
+from uuid import uuid4
+
+from .models import DatasetPackage, JsonValue, ValidationIssue, ValidationProfile
+from .schema_validation import validate_package
+
+
+@dataclass(frozen=True, slots=True)
+class BuildSummary:
+    """Counts and location of a completed public-bundle build."""
+
+    versions: int
+    entities: int
+    evidence: int
+    sources: int
+    output: Path
+
+    @property
+    def version_count(self) -> int:
+        return self.versions
+
+    @property
+    def entity_count(self) -> int:
+        return self.entities
+
+    @property
+    def evidence_count(self) -> int:
+        return self.evidence
+
+    @property
+    def source_count(self) -> int:
+        return self.sources
+
+
+class PublicBuildValidationError(Exception):
+    """The authoring package cannot safely be emitted as a public bundle."""
+
+    def __init__(self, issues: Sequence[ValidationIssue]) -> None:
+        self.issues = tuple(issues)
+        super().__init__("public bundle validation failed")
+
+
+class PublicBuildIOError(Exception):
+    """The public bundle could not be safely written or replaced."""
+
+
+def _records(value: JsonValue) -> Sequence[Mapping[str, JsonValue]]:
+    return value if isinstance(value, tuple) else ()
+
+
+def _mapping(value: JsonValue) -> Mapping[str, JsonValue]:
+    return value if isinstance(value, Mapping) else {}
+
+
+def _plain_json(value: JsonValue) -> object:
+    if isinstance(value, Mapping):
+        return {key: _plain_json(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_plain_json(item) for item in value]
+    return value
+
+
+def _sorted_records(records: Sequence[Mapping[str, JsonValue]]) -> list[object]:
+    return [_plain_json(record) for record in sorted(records, key=lambda record: str(record["id"]))]
+
+
+def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]:
+    collection = _mapping(package.feature_versions)
+    public_features = [
+        feature
+        for feature in _records(collection.get("features"))
+        if _mapping(feature.get("properties")).get("publicationStatus") == "public"
+    ]
+    entity_ids = {_mapping(feature.get("properties")).get("entityId") for feature in public_features}
+    evidence_ids = {
+        evidence_id
+        for feature in public_features
+        for evidence_id in _records(_mapping(feature.get("properties")).get("evidenceIds"))
+    }
+    entities = [record for record in _records(package.entities) if record.get("id") in entity_ids]
+    evidence = [record for record in _records(package.evidence) if record.get("id") in evidence_ids]
+    source_ids = {record.get("sourceId") for record in evidence}
+    sources = [record for record in _records(package.sources) if record.get("id") in source_ids]
+    feature_collection = _plain_json(collection)
+    assert isinstance(feature_collection, dict)
+    feature_collection["features"] = _sorted_records(public_features)
+    dataset = _plain_json(package.dataset)
+    assert isinstance(dataset, dict)
+    return dataset, _sorted_records(entities), _sorted_records(sources), _sorted_records(evidence), feature_collection
+
+
+def _serialized(value: object) -> bytes:
+    return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _write_bundle(directory: Path, documents: tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]) -> None:
+    dataset, entities, sources, evidence, feature_collection = documents
+    for filename, value in (
+        ("dataset.json", dataset),
+        ("entities.json", entities),
+        ("sources.json", sources),
+        ("evidence.json", evidence),
+        ("feature-versions.geojson", feature_collection),
+    ):
+        (directory / filename).write_bytes(_serialized(value))
+
+
+def _remove_tree(path: Path) -> None:
+    if path.exists():
+        shutil.rmtree(path)
+
+
+def _swap_output(temp_directory: Path, output: Path) -> None:
+    """Replace *output*, restoring its prior directory when replacement fails."""
+    backup = output.parent / f".{output.name}.backup-{uuid4().hex}"
+    had_output = output.exists()
+    previous_moved = False
+    installed = False
+    try:
+        if had_output:
+            output.replace(backup)
+            previous_moved = True
+        temp_directory.replace(output)
+        installed = True
+        if previous_moved:
+            _remove_tree(backup)
+            previous_moved = False
+    except OSError as error:
+        try:
+            if installed and output.exists():
+                output.replace(temp_directory)
+                installed = False
+            if previous_moved and backup.exists():
+                backup.replace(output)
+                previous_moved = False
+        except OSError as rollback_error:
+            raise PublicBuildIOError(f"could not replace public output or restore its prior contents: {rollback_error}") from error
+        raise PublicBuildIOError(f"could not replace public output: {error}") from error
+    finally:
+        if temp_directory.exists():
+            _remove_tree(temp_directory)
+        if not previous_moved and backup.exists():
+            _remove_tree(backup)
+
+
+def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
+    """Validate and atomically project *package* into the public *output* directory."""
+    issues = validate_package(package, ValidationProfile.PUBLIC)
+    if issues:
+        raise PublicBuildValidationError(issues)
+
+    output = Path(output)
+    if not output.parent.is_dir():
+        raise PublicBuildIOError(f"output parent directory does not exist: {output.parent}")
+    if output.exists() and not output.is_dir():
+        raise PublicBuildIOError(f"output path is not a directory: {output}")
+
+    documents = _project(package)
+    temp_directory: Path | None = None
+    try:
+        temp_directory = Path(tempfile.mkdtemp(prefix=f".{output.name}.tmp-", dir=output.parent))
+        _write_bundle(temp_directory, documents)
+        _swap_output(temp_directory, output)
+    except OSError as error:
+        raise PublicBuildIOError(f"could not write public output: {error}") from error
+    finally:
+        if temp_directory is not None and temp_directory.exists():
+            _remove_tree(temp_directory)
+
+    return BuildSummary(
+        versions=len(documents[4]["features"]),
+        entities=len(documents[1]),
+        evidence=len(documents[3]),
+        sources=len(documents[2]),
+        output=output,
+    )
