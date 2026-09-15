@@ -37,3 +37,11 @@ Scope: semantic language tags, geometry diagnostics, bbox validation, and contra
 
 No project linter or type checker is declared in `pyproject.toml`; `ruff` is
 not installed, so no non-configured lint command was added to the gate.
+
+## Fix round 1 — serialization wording
+
+- Corrected the Task 1 plan wording to limit canonical sorting to public
+  top-level record arrays and ID-reference arrays, with Features sorted by
+  Feature ID. Coordinate and non-ID semantic arrays retain authored order.
+- Confirmed that this matches `docs/data/model.md`, the public builder, and
+  the builder regression that preserves coordinates and Evidence `supports`.

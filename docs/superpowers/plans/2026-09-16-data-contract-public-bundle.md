@@ -52,7 +52,7 @@
 - [ ] Define uncertainty dimensions `temporal`, `location`, `geometry`, `identity` and assessments `well-supported|approximate|disputed|unknown|not-applicable`, including note/evidence requirements.
 - [ ] Define parallel hypotheses: a group has at least two versions for one entity with overlapping possible periods; every grouped version has a hypothesis label; no preferred flag exists.
 - [ ] Define `Rights.status` as `public-domain|open-license|permission|restricted|unknown`. Public Dataset and FeatureVersion rights must be publishable. Evidence `usage` is `citation|derived-geometry`; derived geometry requires `publicationBasis` in `open-license|public-domain|permission|original-reconstruction` plus an explanatory note and attribution/terms where applicable.
-- [ ] Define publication projection and deterministic serialization: arrays by ID, GeoJSON Features by Feature ID, JSON keys sorted, UTF-8, two-space indentation, trailing newline, coordinate order preserved.
+- [ ] Define publication projection and deterministic serialization: canonical public output sorts only top-level record arrays and ID-reference arrays by ID, and GeoJSON Features by Feature ID; JSON keys are sorted and encoded as UTF-8 with two-space indentation and a trailing newline; coordinate arrays and non-ID semantic arrays retain authored order.
 - [ ] Add ADRs 0005-0007 as Accepted with Date `2026-09-16` and `Superseded by: なし`; extend ADR index and architecture data flow/concept model without editing accepted ADR bodies.
 - [ ] Verify relative links, run the repository placeholder scan without embedding its literal tokens in documentation, and run `git diff --check`; then commit `docs: specify the historical data contract`.
 
