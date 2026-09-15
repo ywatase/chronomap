@@ -71,6 +71,28 @@ def _sorted_records(records: Sequence[Mapping[str, JsonValue]]) -> list[object]:
     return [_plain_json(record) for record in sorted(records, key=lambda record: str(record["id"]))]
 
 
+def _canonicalize_feature_identifier_arrays(feature_collection: dict[str, object]) -> None:
+    """Sort FeatureVersion evidence references without changing semantic arrays."""
+    features = feature_collection.get("features")
+    if not isinstance(features, list):
+        return
+    for feature in features:
+        if not isinstance(feature, dict):
+            continue
+        properties = feature.get("properties")
+        if not isinstance(properties, dict):
+            continue
+        evidence_ids = properties.get("evidenceIds")
+        if isinstance(evidence_ids, list):
+            properties["evidenceIds"] = sorted(evidence_ids)
+        uncertainty = properties.get("uncertainty")
+        if not isinstance(uncertainty, dict):
+            continue
+        for assessment in uncertainty.values():
+            if isinstance(assessment, dict) and isinstance(assessment.get("evidenceIds"), list):
+                assessment["evidenceIds"] = sorted(assessment["evidenceIds"])
+
+
 def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]:
     collection = _mapping(package.feature_versions)
     public_features = [
@@ -91,6 +113,7 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
     feature_collection = _plain_json(collection)
     assert isinstance(feature_collection, dict)
     feature_collection["features"] = _sorted_records(public_features)
+    _canonicalize_feature_identifier_arrays(feature_collection)
     dataset = _plain_json(package.dataset)
     assert isinstance(dataset, dict)
     return dataset, _sorted_records(entities), _sorted_records(sources), _sorted_records(evidence), feature_collection
@@ -117,12 +140,28 @@ def _remove_tree(path: Path) -> None:
         shutil.rmtree(path)
 
 
+def _cleanup_paths(*paths: Path | None) -> None:
+    """Attempt every cleanup, then raise the first filesystem error."""
+    cleanup_error: OSError | None = None
+    for path in paths:
+        if path is None:
+            continue
+        try:
+            _remove_tree(path)
+        except OSError as error:
+            if cleanup_error is None:
+                cleanup_error = error
+    if cleanup_error is not None:
+        raise cleanup_error
+
+
 def _swap_output(temp_directory: Path, output: Path) -> None:
     """Replace *output*, restoring its prior directory when replacement fails."""
     backup = output.parent / f".{output.name}.backup-{uuid4().hex}"
     had_output = output.exists()
     previous_moved = False
     installed = False
+    primary_error: PublicBuildIOError | None = None
     try:
         if had_output:
             output.replace(backup)
@@ -141,13 +180,18 @@ def _swap_output(temp_directory: Path, output: Path) -> None:
                 backup.replace(output)
                 previous_moved = False
         except OSError as rollback_error:
-            raise PublicBuildIOError(f"could not replace public output or restore its prior contents: {rollback_error}") from error
-        raise PublicBuildIOError(f"could not replace public output: {error}") from error
+            primary_error = PublicBuildIOError(
+                f"could not replace public output or restore its prior contents: {rollback_error}"
+            )
+            raise primary_error from error
+        primary_error = PublicBuildIOError(f"could not replace public output: {error}")
+        raise primary_error from error
     finally:
-        if temp_directory.exists():
-            _remove_tree(temp_directory)
-        if not previous_moved and backup.exists():
-            _remove_tree(backup)
+        try:
+            _cleanup_paths(temp_directory, backup if not previous_moved else None)
+        except OSError as cleanup_error:
+            if primary_error is None:
+                raise PublicBuildIOError(f"could not clean public output staging: {cleanup_error}") from cleanup_error
 
 
 def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
@@ -164,15 +208,24 @@ def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
 
     documents = _project(package)
     temp_directory: Path | None = None
+    primary_error: PublicBuildIOError | None = None
     try:
         temp_directory = Path(tempfile.mkdtemp(prefix=f".{output.name}.tmp-", dir=output.parent))
         _write_bundle(temp_directory, documents)
         _swap_output(temp_directory, output)
     except OSError as error:
-        raise PublicBuildIOError(f"could not write public output: {error}") from error
+        primary_error = PublicBuildIOError(f"could not write public output: {error}")
+        raise primary_error from error
+    except PublicBuildIOError as error:
+        primary_error = error
+        raise
     finally:
-        if temp_directory is not None and temp_directory.exists():
-            _remove_tree(temp_directory)
+        if temp_directory is not None:
+            try:
+                _cleanup_paths(temp_directory)
+            except OSError as cleanup_error:
+                if primary_error is None:
+                    raise PublicBuildIOError(f"could not clean public output staging: {cleanup_error}") from cleanup_error
 
     return BuildSummary(
         versions=len(documents[4]["features"]),

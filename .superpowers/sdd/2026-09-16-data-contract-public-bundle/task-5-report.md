@@ -92,3 +92,51 @@ Final repository checks passed: `uv lock --check`, `git diff --check`, Markdown
 relative-link validation, the placeholder scan, cache scan, and confirmation
 that schemas, fixtures, and `uv.lock` remain tracked.  No generated caches
 remain outside the ignored virtualenv.
+
+## Fix round 1 — canonical references and cleanup errors
+
+Review found that only top-level record and Feature arrays had canonical
+ordering.  The fix canonicalizes FeatureVersion `evidenceIds` and every
+uncertainty assessment's `evidenceIds`, while deliberately leaving coordinate
+arrays and non-ID semantic arrays such as Evidence `supports` untouched.
+
+The new regressions were witnessed RED before the production correction:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_public_builder.py -q -p no:cacheprovider
+3 failed, 9 passed in 6.17s
+```
+
+The failures proved reversed nested evidence references were emitted in author
+order, a staging-cleanup error replaced an earlier wrapped write error, and a
+cleanup-only failure escaped the CLI as an unwrapped exception.  The GREEN
+focused run includes injected write/cleanup failures, cleanup-only CLI mapping,
+feature-to-evidence closure equality, absent-output rejection, and successful
+staging/backup sibling cleanup:
+
+```text
+12 passed in 6.38s
+```
+
+Fresh full-suite partitions cover all 110 tests:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py tests/test_geometry.py tests/test_schemas.py tests/test_semantic_validation.py tests/test_public_builder.py -q -p no:cacheprovider
+97 passed in 8.29s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py -q -p no:cacheprovider -k 'not installed'
+8 passed, 5 deselected in 6.81s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py::test_installed_validate_command_succeeds_for_a_valid_package tests/test_cli_validate.py::test_installed_validate_command_reports_a_complete_schema_diagnostic -q -p no:cacheprovider
+2 passed in 16.40s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[missing]' 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[malformed]' -q -p no:cacheprovider
+2 passed in 18.28s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[nonfinite]' -q -p no:cacheprovider
+1 passed in 12.19s
+```
+
+Both profiles accepted the synthetic fixture.  Two real public builds were
+byte-identical across all five files, and the private-ID/content scan found no
+private records in the emitted output.
