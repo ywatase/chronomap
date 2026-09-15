@@ -7,10 +7,11 @@
 ## 共通規約
 
 - データセット形式の`schemaVersion`は正確に`1.0.0`とする。JSON Schemaの方言はDraft 2020-12とする。
-- すべてのIDはパッケージ全体で一意とし、`<namespace>:<kind>:<slug>`形式を用いる。`kind`は`dataset`、`entity`、`version`、`source`、`evidence`、`hypothesis`のいずれかとする。
-- テキストの言語別値はBCP 47の言語タグをキーにしたオブジェクト（以下、テキストマップ）で表す。`defaultLanguage`はテキストマップに使う既定のBCP 47タグである。
+- `Dataset.id`、`HistoricalEntity.id`、`Source.id`、`Evidence.id`、Featureの`id`はリソースIDであり、パッケージ全体で一意とする。リソースIDを指す参照値は同じリソースを複数回参照してよい。`hypothesisGroupId`は独立したレコードのIDではなく、一つの論理的な仮説グループが所有するIDを各メンバーが参照する値であり、同じグループのメンバー間で意図して反復する。
+- すべてのIDとID参照は、ASCII小文字、数字、単一ハイフンだけを用い、正規表現`^[a-z0-9]+(?:-[a-z0-9]+)*:(dataset|entity|version|source|evidence|hypothesis):[a-z0-9]+(?:-[a-z0-9]+)*$`に一致しなければならない。ID値のkindはフィールドが期待するkindと一致させる。
+- テキストの言語別値はBCP 47の言語タグをキーにした空でないオブジェクト（以下、テキストマップ）で表す。`defaultLanguage`はデータセットの既定のBCP 47タグである。`Dataset.title`、`Dataset.description`、`HistoricalEntity.labels`、FeatureVersionの`labels`は`defaultLanguage`の値を必ず含む。その他のテキストマップは`defaultLanguage`を省略でき、その場合の利用者向け表示は辞書順で最初の言語タグの値にフォールバックする。
 - 年は天文学的年番号で表す。すなわち、1 BCEは`0`、2 BCEは`-1`である。
-- 座標は二次元WGS84の経度、緯度の順で表す。GeometryCollectionは使用しない。
+- すべての座標位置は、二次元WGS84の経度、緯度の順の、ちょうど二つの有限なJSON数値で表す。経度は`[-180, 180]`、緯度は`[-90, 90]`の範囲内とする。GeometryCollectionは使用しない。
 
 ## パッケージ
 
@@ -46,7 +47,7 @@
 
 ### HistoricalEntity
 
-`HistoricalEntity`は時代や仮説をまたぐ対象の同一性である。`id`、`type`、`labels`、`description`をすべて持つ。`id`のkindは`entity`、`labels`と`description`はテキストマップである。`type`は次のいずれかとし、geometry typeを拘束しない。
+`HistoricalEntity`は時代や仮説をまたぐ対象の同一性である。`id`、`type`、`labels`、`description`をすべて持つ。`id`のkindは`entity`、`labels`と`description`はテキストマップであり、`labels`は`defaultLanguage`の値を含む。`type`は次のいずれかとし、geometry typeを拘束しない。
 
 `waterbody`、`watercourse`、`coastline`、`fortification`、`settlement`、`port`、`battlefield`、`route`、`boundary`、`polity`、`sphere-of-influence`、`archaeological-site`、`other`
 
@@ -67,7 +68,7 @@
 | フィールド | 値 | 制約 |
 | --- | --- | --- |
 | `entityId` | ID | `HistoricalEntity.id`を参照する |
-| `labels` | テキストマップ | 当該版で用いる名称 |
+| `labels` | テキストマップ | 当該版で用いる名称。`defaultLanguage`の値を含む |
 | `description` | テキストマップ | 当該版の説明 |
 | `temporal` | `Temporal` | 可能な活動期間 |
 | `uncertainty` | `Uncertainty` | 4次元すべてを評価する |
@@ -83,9 +84,9 @@ FeatureVersionの`evidenceIds`は、時間・位置・形状・同一性の主�
 
 `Temporal`は`start`と`end`から成る。各値は`TemporalBoundary`又は`null`である。一方だけを`null`にして開区間にできるが、両方を`null`にしてはならない。
 
-`TemporalBoundary`は`earliestYear`、`latestYear`、`precision`、`qualifier`を持つ。年フィールドは整数又は`null`であり、境界が存在するときは少なくとも一方の年を持つ。両方がある場合は`earliestYear <= latestYear`でなければならない。
+`TemporalBoundary`は`earliestYear`、`latestYear`、`precision`、`qualifier`を持つ。年フィールドは有限なJSON整数又は`null`であり、境界が存在するときは少なくとも一方の年を持つ。両方が有限なら`earliestYear <= latestYear`でなければならない。
 
-`precision`は`year`、`decade`、`century`、`period`、`unknown`のいずれか、`qualifier`は`exact`、`circa`、`before`、`after`、`unknown`のいずれかとする。可能な活動期間は、開始境界の`earliestYear`（なければ負の無限大）から終了境界の`latestYear`（なければ正の無限大）までを両端を含めて評価する。開始と終了の可能な範囲が矛盾してはならない。時間フィルタはこの可能性優先の範囲と選択年が重なるときにFeatureVersionを対象にする。
+`precision`は`year`、`decade`、`century`、`period`、`unknown`のいずれか、`qualifier`は`exact`、`circa`、`before`、`after`、`unknown`のいずれかとする。可能な活動期間は、開始境界の`earliestYear`（なければ負の無限大）から終了境界の`latestYear`（なければ正の無限大）までを両端を含めて評価する。`start.earliestYear`と`end.latestYear`の両方が有限なら、可能な活動期間には`start.earliestYear <= end.latestYear`を要求する。時間フィルタはこの可能性優先の範囲と選択年が重なるときにFeatureVersionを対象にする。
 
 ## 不確実性
 
@@ -98,7 +99,7 @@ FeatureVersionの`evidenceIds`は、時間・位置・形状・同一性の主�
 
 ## 並行仮説
 
-並行仮説グループは、同じ`entityId`を持つ少なくとも2件のFeatureVersionをまとめる。グループのIDは`hypothesisGroupId`であり、すべての参加FeatureVersionは`hypothesisLabel`を持つ。参加するFeatureVersionの可能な活動期間は少なくとも一部で重ならなければならない。グループ外の版や別のEntityを混在させてはならない。仮説間に優劣を示すフラグは存在せず、`preferred`その他の同等の手動優先指定を設けない。
+並行仮説グループは、同じ`entityId`を持つ少なくとも2件のFeatureVersionをまとめる。グループのIDは、一つの論理的グループが所有し、そのメンバーの`hypothesisGroupId`で反復して参照するkindが`hypothesis`のIDである。すべての参加FeatureVersionは`hypothesisLabel`を持つ。参加するFeatureVersionの可能な活動期間は少なくとも一部で重ならなければならない。グループ外の版や別のEntityを混在させてはならない。仮説間に優劣を示すフラグは存在せず、`preferred`その他の同等の手動優先指定を設けない。
 
 ## 権利と公開投影
 
