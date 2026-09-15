@@ -74,12 +74,7 @@ def _plain_json(value: JsonValue) -> object:
 
 
 def validate_package(package: DatasetPackage, profile: ValidationProfile) -> list[ValidationIssue]:
-    """Return deterministic structural diagnostics for a loaded package.
-
-    Profiles intentionally share structural checks; public cross-file policy is
-    added by the semantic validation layer in Task 4.
-    """
-    _ = profile
+    """Return deterministic structural and semantic diagnostics for a package."""
     unsupported_version = _schema_version_issue(package.dataset)
     if unsupported_version is not None:
         return [unsupported_version]
@@ -97,4 +92,9 @@ def validate_package(package: DatasetPackage, profile: ValidationProfile) -> lis
             )
             for error in validator.iter_errors(instance)
         )
-    return sorted(issues, key=lambda issue: (issue.file, issue.pointer, issue.code, issue.message))
+    if issues:
+        return sorted(issues, key=lambda issue: (issue.file, issue.pointer, issue.code, issue.message))
+
+    from .semantic_validation import validate_semantics
+
+    return sorted(validate_semantics(package, profile), key=lambda issue: (issue.file, issue.pointer, issue.code, issue.message))
