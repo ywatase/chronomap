@@ -33,6 +33,10 @@ class _DuplicateJsonMemberError(ValueError):
     """An object name appears more than once in one JSON object."""
 
 
+class _LoneSurrogateError(ValueError):
+    """A JSON string contains a code point outside the Unicode scalar range."""
+
+
 def _reject_duplicate_json_members(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for name, value in pairs:
@@ -42,13 +46,21 @@ def _reject_duplicate_json_members(pairs: list[tuple[str, object]]) -> dict[str,
     return result
 
 
+def _reject_lone_surrogates(value: str) -> str:
+    if any(0xD800 <= ord(character) <= 0xDFFF for character in value):
+        raise _LoneSurrogateError("JSON strings must not contain lone surrogate code points")
+    return value
+
+
 def _freeze(value: object) -> JsonValue:
-    if value is None or isinstance(value, bool | int | float | str):
+    if value is None or isinstance(value, bool | int | float):
         return value
+    if isinstance(value, str):
+        return _reject_lone_surrogates(value)
     if isinstance(value, list):
         return tuple(_freeze(item) for item in value)
     if isinstance(value, dict):
-        return MappingProxyType({str(key): _freeze(item) for key, item in value.items()})
+        return MappingProxyType({_reject_lone_surrogates(str(key)): _freeze(item) for key, item in value.items()})
     raise TypeError(f"unsupported JSON value: {type(value).__name__}")
 
 
@@ -69,7 +81,7 @@ def _directory_identity(
 ) -> tuple[int, int]:
     diagnostic_path = diagnostic_path or path
     try:
-        directory_status = path.stat()
+        directory_status = path.lstat()
     except OSError as error:
         if original_identity is not None:
             raise _directory_changed(diagnostic_path) from error
@@ -177,6 +189,8 @@ def _read_json(package_dir: Path, filename: str) -> JsonValue:
                 parse_constant=_reject_json_constant,
             )
         )
+    except RecursionError as error:
+        raise PackageLoadError(filename, "invalid JSON: JSON structure is too deeply nested") from error
     except (json.JSONDecodeError, ValueError) as error:
         detail = getattr(error, "msg", None) or str(error)
         raise PackageLoadError(filename, f"invalid JSON: {detail}") from error

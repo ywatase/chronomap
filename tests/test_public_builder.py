@@ -92,6 +92,32 @@ def test_build_public_bundle_rejects_a_source_directory_replaced_after_loading(t
     assert not (tmp_path / "public").exists()
 
 
+def test_build_public_bundle_rejects_the_canonical_source_name_replaced_with_a_symlink_to_the_same_inode(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    package = load_package(package_dir)
+    moved_package = tmp_path / "moved-package"
+    package_dir.replace(moved_package)
+    package_dir.symlink_to(moved_package, target_is_directory=True)
+    output = tmp_path / "public"
+    output.mkdir()
+    (output / "previous.json").write_bytes(b"previous bundle\n")
+    before = read_tree(output)
+
+    with pytest.raises(PublicBuildIOError, match="source directory changed"):
+        build_public_bundle(package, output)
+
+    assert read_tree(output) == before
+
+
+def test_build_public_bundle_accepts_an_intact_canonical_source_directory(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    output = tmp_path / "public"
+
+    build_public_bundle(load_package(package_dir), output)
+
+    assert output.is_dir()
+
+
 @pytest.mark.parametrize("replacement", ["missing", "regular-file"])
 def test_build_public_bundle_rejects_a_missing_or_non_directory_source_after_loading(tmp_path: Path, replacement: str):
     package_dir = copy_package(tmp_path)
@@ -414,3 +440,51 @@ def test_build_public_cli_maps_output_io_errors_to_exit_2(tmp_path: Path, capsys
     captured = capsys.readouterr()
     assert exit_code == 2
     assert "Traceback" not in captured.err
+
+
+@pytest.mark.parametrize("existing_output", [False, True])
+def test_build_public_bundle_maps_serialization_unicode_errors_without_mutating_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, existing_output: bool
+):
+    package = load_package(copy_package(tmp_path))
+    documents = (
+        {"invalid": "\ud800"},
+        [],
+        [],
+        [],
+        {"features": []},
+    )
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    output = tmp_path / "public"
+    if existing_output:
+        output.mkdir()
+        (output / "previous.json").write_bytes(b"previous bundle\n")
+    before = read_tree(output) if existing_output else None
+
+    with pytest.raises(PublicBuildIOError, match="could not serialize public output"):
+        build_public_bundle(package, output)
+
+    if existing_output:
+        assert read_tree(output) == before
+    else:
+        assert not output.exists()
+
+
+def test_build_public_cli_maps_serialization_unicode_errors_to_exit_2_without_a_traceback(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+):
+    documents = (
+        {"invalid": "\ud800"},
+        [],
+        [],
+        [],
+        {"features": []},
+    )
+    monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
+    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+
+    exit_code = main(["build-public", str(copy_package(tmp_path)), "--output", str(tmp_path / "public")])
+
+    assert exit_code == 2
+    assert "could not serialize public output" in capsys.readouterr().err

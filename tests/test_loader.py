@@ -78,6 +78,29 @@ def test_load_package_rejects_a_source_directory_replaced_during_loading(tmp_pat
         load_package(package_dir)
 
 
+def test_load_package_rejects_the_canonical_directory_name_replaced_with_a_symlink_to_the_same_inode(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    package_dir = copy_package(tmp_path)
+    moved_package = tmp_path / "moved-package"
+    original_read_json = loader._read_json
+    renamed = False
+
+    def rename_after_first_read(directory: Path, filename: str):
+        nonlocal renamed
+        value = original_read_json(directory, filename)
+        if not renamed:
+            renamed = True
+            package_dir.replace(moved_package)
+            package_dir.symlink_to(moved_package, target_is_directory=True)
+        return value
+
+    monkeypatch.setattr(loader, "_read_json", rename_after_first_read)
+
+    with pytest.raises(PackageLoadError, match=r"synthetic-package.*directory changed during loading"):
+        load_package(package_dir)
+
+
 def test_load_package_keeps_a_relative_missing_directory_diagnostic_relative(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(tmp_path)
 
@@ -375,3 +398,52 @@ def test_load_package_rejects_nonfinite_json_constants(tmp_path: Path, nonfinite
 
     with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON"):
         load_package(package_dir)
+
+
+def test_load_package_maps_deeply_nested_json_to_an_actionable_invalid_json_error(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    (package_dir / "evidence.json").write_text("[" * 2_000 + "]" * 2_000, encoding="utf-8")
+
+    with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON.*too deeply nested"):
+        load_package(package_dir)
+
+
+def test_read_json_maps_recursion_during_freezing_to_an_actionable_invalid_json_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    package_dir = copy_package(tmp_path)
+    deeply_nested: object = None
+    for _ in range(2_000):
+        deeply_nested = [deeply_nested]
+    monkeypatch.setattr(loader.json, "loads", lambda *args, **kwargs: deeply_nested)
+
+    with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON.*too deeply nested"):
+        loader._read_json(package_dir, "evidence.json")
+
+
+@pytest.mark.parametrize(
+    ("filename", "content"),
+    [
+        ("evidence.json", r'[{"note":"\ud800"}]'),
+        ("evidence.json", r'[{"\udfff":"value"}]'),
+    ],
+)
+def test_load_package_rejects_lone_surrogate_json_strings_and_object_keys(
+    tmp_path: Path, filename: str, content: str
+):
+    package_dir = copy_package(tmp_path)
+    (package_dir / filename).write_text(content, encoding="utf-8")
+
+    with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON.*lone surrogate"):
+        load_package(package_dir)
+
+
+@pytest.mark.parametrize("unicode_text", ["😀", r"\ud83d\ude00"])
+def test_load_package_accepts_supplementary_unicode_scalars(tmp_path: Path, unicode_text: str):
+    package_dir = copy_package(tmp_path)
+    content = f'[{{"note":"{unicode_text}"}}]'
+    (package_dir / "evidence.json").write_text(content, encoding="utf-8")
+
+    package = load_package(package_dir)
+
+    assert package.evidence[0]["note"] == "😀"

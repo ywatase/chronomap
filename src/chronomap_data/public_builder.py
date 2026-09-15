@@ -64,7 +64,7 @@ def _verify_package_source(package: DatasetPackage) -> Path:
     """Ensure the source captured by the loader still names the same directory."""
     source_path = package.path
     try:
-        source_status = source_path.stat()
+        source_status = source_path.lstat()
     except OSError as error:
         raise PublicBuildIOError(f"source directory changed or is unavailable: {source_path}: {error}") from error
     if not stat.S_ISDIR(source_status.st_mode) or _source_identity(source_status) != package.directory_identity:
@@ -165,7 +165,10 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
 
 
 def _serialized(value: object) -> bytes:
-    return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    try:
+        return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    except UnicodeError as error:
+        raise PublicBuildIOError(f"could not serialize public output: {error}") from error
 
 
 def _write_bundle(directory: Path, documents: tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]) -> None:

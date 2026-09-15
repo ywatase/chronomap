@@ -158,3 +158,30 @@ def test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceb
     assert result.returncode == 2
     assert result.stdout == ""
     assert "Traceback" not in result.stderr
+
+
+def test_installed_validate_command_maps_deeply_nested_json_to_exit_2_without_a_traceback(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    (package_dir / "evidence.json").write_text("[" * 2_000 + "]" * 2_000, encoding="utf-8")
+
+    result = run_installed_cli("validate", str(package_dir))
+
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert "too deeply nested" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+@pytest.mark.parametrize("content", [r'[{"note":"\ud800"}]', r'[{"\udfff":"value"}]'])
+def test_installed_validate_command_maps_lone_surrogate_json_strings_to_exit_2_without_a_traceback(
+    tmp_path: Path, content: str
+):
+    package_dir = copy_package(tmp_path)
+    (package_dir / "evidence.json").write_text(content, encoding="utf-8")
+
+    result = run_installed_cli("validate", str(package_dir))
+
+    assert result.returncode == 2
+    assert result.stdout == ""
+    assert "lone surrogate" in result.stderr
+    assert "Traceback" not in result.stderr
