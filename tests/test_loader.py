@@ -301,6 +301,27 @@ def test_descriptor_closes_once_and_preserves_a_primary_base_exception_when_clos
     assert len(close_calls) == 1
 
 
+def test_descriptor_primary_failure_traceback_contains_one_verified_read_frame(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    package_dir = copy_package(tmp_path)
+    primary_error = KeyboardInterrupt("primary interruption")
+
+    def raise_primary_error(descriptor: int):
+        raise primary_error
+
+    monkeypatch.setattr(loader.os, "fstat", raise_primary_error)
+
+    with pytest.raises(KeyboardInterrupt) as raised:
+        loader._read_json(package_dir, "sources.json")
+
+    verified_read_frames = []
+    traceback = raised.value.__traceback__
+    while traceback is not None:
+        if traceback.tb_frame.f_code.co_name == "_read_verified_bytes":
+            verified_read_frames.append(traceback)
+        traceback = traceback.tb_next
+    assert len(verified_read_frames) == 1
+
+
 @pytest.mark.parametrize("nonfinite_token", ["NaN", "Infinity", "-Infinity"])
 def test_load_package_rejects_nonfinite_json_constants(tmp_path: Path, nonfinite_token: str):
     package_dir = copy_package(tmp_path)

@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import stat
+import sys
 from types import MappingProxyType
 
 from .models import DatasetPackage, JsonValue
@@ -104,8 +105,6 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
             raise _entry_changed(filename) from error
         detail = getattr(error, "strerror", None) or str(error)
         raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
-    primary_error: BaseException | None = None
-    contents: bytes | None = None
     try:
         descriptor_status = os.fstat(descriptor)
         if not stat.S_ISREG(descriptor_status.st_mode) or (
@@ -120,29 +119,21 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
             _file_identity(current_status) != _file_identity(initial_status)
         ):
             raise _entry_changed(filename)
-        contents = _read_descriptor_bytes(descriptor)
-    except PackageLoadError as error:
-        primary_error = error
+        return _read_descriptor_bytes(descriptor)
     except OSError as error:
         detail = getattr(error, "strerror", None) or str(error)
-        primary_error = PackageLoadError(filename, f"cannot read package file: {detail}")
-    except BaseException as error:
-        primary_error = error
+        raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
     finally:
+        primary_error = sys.exception()
         try:
             os.close(descriptor)
         except BaseException as error:
             if primary_error is None:
                 if isinstance(error, OSError):
                     detail = getattr(error, "strerror", None) or str(error)
-                    primary_error = PackageLoadError(filename, f"cannot close package file: {detail}")
+                    raise PackageLoadError(filename, f"cannot close package file: {detail}") from error
                 else:
-                    primary_error = error
-    if primary_error is not None:
-        raise primary_error
-    if contents is None:
-        raise AssertionError("verified descriptor read returned no result")
-    return contents
+                    raise
 
 
 def _read_json(package_dir: Path, filename: str) -> JsonValue:

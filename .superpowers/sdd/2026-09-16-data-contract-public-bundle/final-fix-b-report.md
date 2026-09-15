@@ -119,3 +119,19 @@ retain their native semantics. The new cancellation and memory-pressure
 regressions were red before the refactor and green afterwards. The focused
 loader partition passed 23 tests and the full suite passed 152 tests, both
 with no failures or errors.
+
+## Fix round 5: natural primary exception propagation
+
+The descriptor path no longer catches, stores, and re-raises its primary
+exception. It lets normal `PackageLoadError`, `OSError` mappings, and
+`BaseException` values propagate through `finally`; `sys.exception()` only
+decides whether a close failure is suppressed. A close-only `OSError` is still
+mapped to `PackageLoadError`, while a close-only non-`OSError` retains native
+semantics. The traceback regression was red with two verified-read frames for
+an injected `KeyboardInterrupt` and green with exactly one frame after this
+change. All prior identity and close-precedence loader regressions remain
+green.
+
+The focused loader partition passed 24 tests and the full suite passed 153
+tests, both with no failures or errors. Lock, whitespace, package-schema
+synchronization, and cache checks also passed.
