@@ -4,6 +4,8 @@ Date: 2026-09-14
 
 Status: Accepted
 
+Superseded by: なし
+
 ## Context
 
 Chronomapは日本から開始し、中国史・世界史へ拡張する構想である。地域ごとに利用者体験と年代比較の基本機能を重複実装すると、修正と品質保証が分散する。

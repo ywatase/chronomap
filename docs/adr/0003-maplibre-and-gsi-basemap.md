@@ -4,6 +4,8 @@ Date: 2026-09-14
 
 Status: Accepted
 
+Superseded by: なし
+
 ## Context
 
 日本MVPでは、歴史データを現在の地図と重ねて比較する。描画エンジンと背景地図は、静的クライアント構成、GeoJSONレイヤー、出典表示の方針と整合する必要がある。
