@@ -140,3 +140,97 @@ $ PYTHONDONTWRITEBYTECODE=1 uv run pytest 'tests/test_cli_validate.py::test_inst
 Both profiles accepted the synthetic fixture.  Two real public builds were
 byte-identical across all five files, and the private-ID/content scan found no
 private records in the emitted output.
+
+## Final correction — builder safety
+
+The whole-branch review identified three integrated builder risks.  The final
+correction resolves and compares the authoring and output paths before any
+staging, makes the staging-to-output rename the irrevocable commit point, and
+sanitizes citation-only Evidence for restricted or unknown Sources.
+
+### Path overlap
+
+Real temporary-filesystem regressions cover the same path, an output below the
+package, an output above the package, and an output reached through a symlinked
+parent.  Each snapshots the complete authoring tree.  The API and CLI tests
+were witnessed RED because the existing transaction accepted every overlap:
+
+```text
+5 failed, 12 deselected in 6.38s
+```
+
+Resolving both paths and rejecting equality or either ancestor relationship
+before validation/staging made the same group GREEN:
+
+```text
+5 passed, 12 deselected in 5.85s
+```
+
+### Transaction commit point
+
+A stateful cleanup failure deletes one file from the old-output backup before
+raising.  The RED run showed that the partial backup replaced the newly built
+valid output.  It also showed the immediate cleanup-only failure following the
+same unsafe rollback path:
+
+```text
+2 failed, 16 deselected in 6.69s
+```
+
+Backup deletion now begins only after the staging rename commits the new
+output.  A deletion failure leaves the new validated bundle installed, retains
+the backup recovery artifact, reports its exact path through
+`PublicBuildIOError`, and still maps through the CLI as exit 2 without a
+traceback.  Pre-commit failures retain their original error precedence:
+
+```text
+4 passed, 14 deselected in 6.08s
+```
+
+### Restricted citation projection
+
+The content-smuggling regressions set a private marker in an authored Evidence
+`note` and add an optional `publicationBasis`.  Both restricted and unknown
+Source variants were witnessed RED because both values appeared verbatim in
+the public bundle:
+
+```text
+2 failed, 18 deselected in 5.82s
+```
+
+The public projection now retains the required citation fields, locator, and
+Source metadata, replaces the note with one fixed generated notice, and omits
+`publicationBasis`.  The emitted bundle remains structurally and publicly
+valid:
+
+```text
+2 passed, 18 deselected in 7.54s
+20 passed in 9.19s
+```
+
+### Final verification
+
+The complete 118-test collection passed through fresh disjoint partitions:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_loader.py tests/test_geometry.py tests/test_schemas.py tests/test_semantic_validation.py tests/test_public_builder.py -q -p no:cacheprovider
+105 passed in 9.44s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py -q -p no:cacheprovider -k 'not installed'
+8 passed, 5 deselected in 7.09s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_cli_validate.py::test_installed_validate_command_succeeds_for_a_valid_package tests/test_cli_validate.py::test_installed_validate_command_reports_a_complete_schema_diagnostic -q -p no:cacheprovider
+2 passed in 16.86s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[missing]' 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[malformed]' -q -p no:cacheprovider
+2 passed in 16.88s
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest 'tests/test_cli_validate.py::test_installed_validate_command_maps_input_errors_to_exit_2_without_a_traceback[nonfinite]' -q -p no:cacheprovider
+1 passed in 10.53s
+```
+
+A temporary authoring package containing the private note marker validated in
+both profiles.  Two CLI public builds were byte-identical across all five
+files; scans found neither private fixture content nor the note marker, found
+the fixed safe notice, and the emitted bundle revalidated under the public
+profile.

@@ -12,6 +12,9 @@ from .models import DatasetPackage, JsonValue, ValidationIssue, ValidationProfil
 from .schema_validation import validate_package
 
 
+SAFE_CITATION_NOTE = "Citation-only metadata; no authored source content is reproduced."
+
+
 @dataclass(frozen=True, slots=True)
 class BuildSummary:
     """Counts and location of a completed public-bundle build."""
@@ -93,6 +96,29 @@ def _canonicalize_feature_identifier_arrays(feature_collection: dict[str, object
                 assessment["evidenceIds"] = sorted(assessment["evidenceIds"])
 
 
+def _project_evidence(
+    evidence: Sequence[Mapping[str, JsonValue]], source_by_id: Mapping[object, Mapping[str, JsonValue]]
+) -> list[object]:
+    projected: list[object] = []
+    for record in sorted(evidence, key=lambda item: str(item["id"])):
+        source = source_by_id.get(record.get("sourceId"))
+        source_status = _mapping(_mapping(source).get("rights")).get("status")
+        if record.get("usage") == "citation" and source_status in {"restricted", "unknown"}:
+            projected.append(
+                {
+                    "id": _plain_json(record["id"]),
+                    "sourceId": _plain_json(record["sourceId"]),
+                    "locator": _plain_json(record["locator"]),
+                    "usage": "citation",
+                    "supports": _plain_json(record["supports"]),
+                    "note": SAFE_CITATION_NOTE,
+                }
+            )
+        else:
+            projected.append(_plain_json(record))
+    return projected
+
+
 def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]:
     collection = _mapping(package.feature_versions)
     public_features = [
@@ -108,6 +134,7 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
     }
     entities = [record for record in _records(package.entities) if record.get("id") in entity_ids]
     evidence = [record for record in _records(package.evidence) if record.get("id") in evidence_ids]
+    source_by_id = {record.get("id"): record for record in _records(package.sources)}
     source_ids = {record.get("sourceId") for record in evidence}
     sources = [record for record in _records(package.sources) if record.get("id") in source_ids]
     feature_collection = _plain_json(collection)
@@ -116,7 +143,7 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
     _canonicalize_feature_identifier_arrays(feature_collection)
     dataset = _plain_json(package.dataset)
     assert isinstance(dataset, dict)
-    return dataset, _sorted_records(entities), _sorted_records(sources), _sorted_records(evidence), feature_collection
+    return dataset, _sorted_records(entities), _sorted_records(sources), _project_evidence(evidence, source_by_id), feature_collection
 
 
 def _serialized(value: object) -> bytes:
@@ -156,51 +183,54 @@ def _cleanup_paths(*paths: Path | None) -> None:
 
 
 def _swap_output(temp_directory: Path, output: Path) -> None:
-    """Replace *output*, restoring its prior directory when replacement fails."""
+    """Commit *temp_directory*, rolling back only before its rename succeeds."""
     backup = output.parent / f".{output.name}.backup-{uuid4().hex}"
     had_output = output.exists()
-    previous_moved = False
-    installed = False
-    primary_error: PublicBuildIOError | None = None
     try:
         if had_output:
             output.replace(backup)
-            previous_moved = True
-        temp_directory.replace(output)
-        installed = True
-        if previous_moved:
-            _remove_tree(backup)
-            previous_moved = False
     except OSError as error:
-        try:
-            if installed and output.exists():
-                output.replace(temp_directory)
-                installed = False
-            if previous_moved and backup.exists():
+        raise PublicBuildIOError(f"could not preserve prior public output: {error}") from error
+
+    try:
+        temp_directory.replace(output)
+    except OSError as error:
+        if had_output and backup.exists():
+            try:
                 backup.replace(output)
-                previous_moved = False
-        except OSError as rollback_error:
-            primary_error = PublicBuildIOError(
-                f"could not replace public output or restore its prior contents: {rollback_error}"
-            )
-            raise primary_error from error
-        primary_error = PublicBuildIOError(f"could not replace public output: {error}")
-        raise primary_error from error
-    finally:
+            except OSError as rollback_error:
+                raise PublicBuildIOError(
+                    f"could not commit public output: {error}; prior output recovery artifact retained at "
+                    f"{backup}; restore also failed: {rollback_error}"
+                ) from error
+        raise PublicBuildIOError(f"could not commit public output: {error}") from error
+
+    if had_output:
         try:
-            _cleanup_paths(temp_directory, backup if not previous_moved else None)
+            _remove_tree(backup)
         except OSError as cleanup_error:
-            if primary_error is None:
-                raise PublicBuildIOError(f"could not clean public output staging: {cleanup_error}") from cleanup_error
+            raise PublicBuildIOError(
+                f"public output installed but backup cleanup incomplete; recovery artifact retained at "
+                f"{backup}: {cleanup_error}"
+            ) from cleanup_error
 
 
 def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
     """Validate and atomically project *package* into the public *output* directory."""
+    try:
+        package_path = package.path.resolve()
+        output = Path(output).resolve()
+    except (OSError, RuntimeError) as error:
+        raise PublicBuildIOError(f"could not resolve input and output paths: {error}") from error
+    if package_path == output or package_path in output.parents or output in package_path.parents:
+        raise PublicBuildIOError(
+            f"input and output paths overlap: package {package_path} and output {output}"
+        )
+
     issues = validate_package(package, ValidationProfile.PUBLIC)
     if issues:
         raise PublicBuildValidationError(issues)
 
-    output = Path(output)
     if not output.parent.is_dir():
         raise PublicBuildIOError(f"output parent directory does not exist: {output.parent}")
     if output.exists() and not output.is_dir():

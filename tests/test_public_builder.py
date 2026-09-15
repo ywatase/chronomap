@@ -11,6 +11,7 @@ from chronomap_data.loader import load_package
 from chronomap_data.models import ValidationProfile
 from chronomap_data.public_builder import PublicBuildIOError, PublicBuildValidationError, build_public_bundle
 from chronomap_data.cli import main
+from chronomap_data.schema_validation import validate_package
 
 
 ROOT = Path(__file__).parents[1]
@@ -25,6 +26,47 @@ def copy_package(tmp_path: Path) -> Path:
 
 def read_tree(path: Path) -> dict[str, bytes]:
     return {file.relative_to(path).as_posix(): file.read_bytes() for file in sorted(path.rglob("*")) if file.is_file()}
+
+
+@pytest.mark.parametrize("relationship", ["same", "descendant", "ancestor", "symlink-descendant"])
+def test_build_public_bundle_rejects_input_output_path_overlap_without_changing_authoring_data(
+    tmp_path: Path, relationship: str
+):
+    input_parent = tmp_path / "input"
+    input_parent.mkdir()
+    package_dir = copy_package(input_parent)
+    if relationship == "same":
+        output = package_dir
+    elif relationship == "descendant":
+        output = package_dir / "public"
+    elif relationship == "ancestor":
+        output = input_parent
+    else:
+        alias = tmp_path / "package-alias"
+        try:
+            alias.symlink_to(package_dir, target_is_directory=True)
+        except OSError as error:
+            pytest.skip(f"directory symlinks unavailable: {error}")
+        output = alias / "public"
+    before = read_tree(package_dir)
+
+    with pytest.raises(PublicBuildIOError, match="overlap"):
+        build_public_bundle(load_package(package_dir), output)
+
+    assert read_tree(package_dir) == before
+
+
+def test_build_public_cli_maps_path_overlap_to_exit_2_without_changing_authoring_data(tmp_path: Path, capsys):
+    package_dir = copy_package(tmp_path)
+    before = read_tree(package_dir)
+
+    exit_code = main(["build-public", str(package_dir), "--output", str(package_dir)])
+
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "overlap" in captured.err
+    assert "Traceback" not in captured.err
+    assert read_tree(package_dir) == before
 
 
 def test_build_public_bundle_projects_only_reachable_public_records_without_mutating_input(tmp_path: Path):
@@ -185,7 +227,39 @@ def test_build_public_cli_maps_cleanup_only_failure_to_exit_2_without_traceback(
     captured = capsys.readouterr()
     assert exit_code == 2
     assert "Traceback" not in captured.err
-    assert read_tree(output) == {"old.json": b"old\n"}
+    assert not (output / "old.json").exists()
+    assert validate_package(load_package(output), ValidationProfile.PUBLIC) == []
+    backups = list(tmp_path.glob(".public.backup-*"))
+    assert len(backups) == 1
+    assert read_tree(backups[0]) == {"old.json": b"old\n"}
+
+
+def test_partial_backup_cleanup_keeps_committed_output_and_recovery_artifact(tmp_path: Path, monkeypatch):
+    output = tmp_path / "public"
+    output.mkdir()
+    (output / "old-a.json").write_text("old a\n", encoding="utf-8")
+    (output / "old-b.json").write_text("old b\n", encoding="utf-8")
+    real_remove_tree = public_builder._remove_tree
+
+    def partially_remove_backup(path: Path) -> None:
+        if path.name.startswith(".public.backup-"):
+            (path / "old-a.json").unlink()
+            raise OSError("partial backup cleanup failure")
+        real_remove_tree(path)
+
+    monkeypatch.setattr(public_builder, "_remove_tree", partially_remove_backup)
+
+    with pytest.raises(PublicBuildIOError, match="recovery artifact retained") as error:
+        build_public_bundle(load_package(copy_package(tmp_path)), output)
+
+    assert not (output / "old-a.json").exists()
+    assert not (output / "old-b.json").exists()
+    assert validate_package(load_package(output), ValidationProfile.PUBLIC) == []
+    backups = list(tmp_path.glob(".public.backup-*"))
+    assert len(backups) == 1
+    assert str(backups[0]) in str(error.value)
+    assert not (backups[0] / "old-a.json").exists()
+    assert (backups[0] / "old-b.json").read_bytes() == b"old b\n"
 
 
 def test_build_public_bundle_accepts_citation_only_unknown_source(tmp_path: Path):
@@ -199,6 +273,45 @@ def test_build_public_bundle_accepts_citation_only_unknown_source(tmp_path: Path
 
     assert summary.sources == 2
     assert ValidationProfile.PUBLIC.value == "public"
+
+
+@pytest.mark.parametrize("source_status", ["restricted", "unknown"])
+def test_build_public_bundle_sanitizes_citation_only_evidence_for_nonpublishable_sources(
+    tmp_path: Path, source_status: str
+):
+    package_dir = copy_package(tmp_path)
+    sources_path = package_dir / "sources.json"
+    sources = json.loads(sources_path.read_text(encoding="utf-8"))
+    restricted_source = next(source for source in sources if source["id"] == "synthetic:source:restricted-citation")
+    restricted_source["rights"]["status"] = source_status
+    sources_path.write_text(json.dumps(sources), encoding="utf-8")
+    evidence_path = package_dir / "evidence.json"
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    citation = next(record for record in evidence if record["id"] == "synthetic:evidence:citation-identity")
+    secret = "PRIVATE-SMUGGLED-CITATION-NOTE"
+    citation["note"] = secret
+    citation["publicationBasis"] = "permission"
+    evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+    output = tmp_path / "public"
+
+    build_public_bundle(load_package(package_dir), output)
+
+    public_evidence = json.loads((output / "evidence.json").read_text(encoding="utf-8"))
+    public_citation = next(record for record in public_evidence if record["id"] == citation["id"])
+    assert public_citation == {
+        "id": "synthetic:evidence:citation-identity",
+        "sourceId": "synthetic:source:restricted-citation",
+        "locator": "Synthetic identifier A",
+        "usage": "citation",
+        "supports": ["identity"],
+        "note": "Citation-only metadata; no authored source content is reproduced.",
+    }
+    assert secret not in b"".join(read_tree(output).values()).decode("utf-8")
+    public_sources = json.loads((output / "sources.json").read_text(encoding="utf-8"))
+    public_source = next(source for source in public_sources if source["id"] == citation["sourceId"])
+    assert public_source["citation"] == "Synthetic Restricted Citation (test data only)."
+    assert public_source["rights"]["status"] == source_status
+    assert validate_package(load_package(output), ValidationProfile.PUBLIC) == []
 
 
 def test_build_public_cli_returns_success_for_a_valid_package(tmp_path: Path, capsys):
