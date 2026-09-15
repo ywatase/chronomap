@@ -97,7 +97,10 @@ def test_build_public_bundle_rejects_the_canonical_source_name_replaced_with_a_s
     package = load_package(package_dir)
     moved_package = tmp_path / "moved-package"
     package_dir.replace(moved_package)
-    package_dir.symlink_to(moved_package, target_is_directory=True)
+    try:
+        package_dir.symlink_to(moved_package, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"directory symlinks unavailable: {error}")
     output = tmp_path / "public"
     output.mkdir()
     (output / "previous.json").write_bytes(b"previous bundle\n")

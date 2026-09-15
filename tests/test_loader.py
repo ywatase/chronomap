@@ -92,7 +92,10 @@ def test_load_package_rejects_the_canonical_directory_name_replaced_with_a_symli
         if not renamed:
             renamed = True
             package_dir.replace(moved_package)
-            package_dir.symlink_to(moved_package, target_is_directory=True)
+            try:
+                package_dir.symlink_to(moved_package, target_is_directory=True)
+            except OSError as error:
+                pytest.skip(f"directory symlinks unavailable: {error}")
         return value
 
     monkeypatch.setattr(loader, "_read_json", rename_after_first_read)

@@ -54,3 +54,15 @@ supplied directory alias: it is resolved once, then the resulting canonical
 pathname itself must remain a direct directory entry. Earlier focused test
 runs created only ignored Python/pytest cache artifacts; they do not appear in
 the version-control status.
+
+## Fix round 1: portable symlink setup
+
+The two same-inode symlink-back regressions now catch `OSError` only around
+their directory `symlink_to()` setup and call `pytest.skip`, matching the
+existing symlink fixture pattern. Assertions and the loader/build operation
+remain outside that handler, so an unavailable platform feature skips solely
+the setup-dependent test and cannot mask a behavioral failure.
+
+Focused normal execution of those two regressions passed (`2 passed`), while a
+subprocess that replaced `Path.symlink_to()` with an `OSError` simulation
+reported exactly those two tests as skipped (`2 skipped`).
