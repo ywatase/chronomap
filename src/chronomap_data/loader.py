@@ -104,7 +104,7 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
             raise _entry_changed(filename) from error
         detail = getattr(error, "strerror", None) or str(error)
         raise PackageLoadError(filename, f"cannot read package file: {detail}") from error
-    primary_error: PackageLoadError | None = None
+    primary_error: BaseException | None = None
     contents: bytes | None = None
     try:
         descriptor_status = os.fstat(descriptor)
@@ -126,12 +126,18 @@ def _read_verified_bytes(file_path: Path, filename: str, initial_status: os.stat
     except OSError as error:
         detail = getattr(error, "strerror", None) or str(error)
         primary_error = PackageLoadError(filename, f"cannot read package file: {detail}")
-    try:
-        os.close(descriptor)
-    except OSError as error:
-        if primary_error is None:
-            detail = getattr(error, "strerror", None) or str(error)
-            primary_error = PackageLoadError(filename, f"cannot close package file: {detail}")
+    except BaseException as error:
+        primary_error = error
+    finally:
+        try:
+            os.close(descriptor)
+        except BaseException as error:
+            if primary_error is None:
+                if isinstance(error, OSError):
+                    detail = getattr(error, "strerror", None) or str(error)
+                    primary_error = PackageLoadError(filename, f"cannot close package file: {detail}")
+                else:
+                    primary_error = error
     if primary_error is not None:
         raise primary_error
     if contents is None:

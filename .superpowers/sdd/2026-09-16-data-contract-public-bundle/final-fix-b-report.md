@@ -107,3 +107,15 @@ is skipped where the platform cannot create FIFOs or lacks `O_NONBLOCK`.
 Focused loader/CLI/schema/wheel verification passed 101 tests with no failures
 or errors; the full suite passed 150 tests with no failures or errors. Lock,
 whitespace, package-schema synchronization, and cache checks passed as well.
+
+## Fix round 4: BaseException-safe descriptor cleanup
+
+All post-open descriptor processing now executes under `finally`. If a primary
+exception occurs, including `KeyboardInterrupt` or `MemoryError`, the loader
+closes the descriptor exactly once and re-raises that same exception even when
+close also fails. A standalone `OSError` from close continues to become an
+actionable `PackageLoadError`; other standalone close `BaseException` values
+retain their native semantics. The new cancellation and memory-pressure
+regressions were red before the refactor and green afterwards. The focused
+loader partition passed 23 tests and the full suite passed 152 tests, both
+with no failures or errors.

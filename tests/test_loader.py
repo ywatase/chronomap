@@ -273,6 +273,34 @@ def test_validate_maps_a_standalone_descriptor_close_failure_to_exit_2(tmp_path:
     assert "Traceback" not in stderr
 
 
+@pytest.mark.parametrize("exception_type", [KeyboardInterrupt, MemoryError])
+def test_descriptor_closes_once_and_preserves_a_primary_base_exception_when_close_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, exception_type: type[BaseException]
+):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    primary_error = exception_type("primary interruption")
+    close_calls: list[int] = []
+    original_close = loader.os.close
+
+    def close_then_fail(descriptor: int):
+        close_calls.append(descriptor)
+        original_close(descriptor)
+        raise OSError("close failure")
+
+    def raise_primary_error(descriptor: int):
+        raise primary_error
+
+    monkeypatch.setattr(loader.os, "close", close_then_fail)
+    monkeypatch.setattr(loader.os, "fstat", raise_primary_error)
+
+    with pytest.raises(exception_type) as raised:
+        loader._read_json(package_dir, "sources.json")
+
+    assert raised.value is primary_error
+    assert len(close_calls) == 1
+
+
 @pytest.mark.parametrize("nonfinite_token", ["NaN", "Infinity", "-Infinity"])
 def test_load_package_rejects_nonfinite_json_constants(tmp_path: Path, nonfinite_token: str):
     package_dir = copy_package(tmp_path)
