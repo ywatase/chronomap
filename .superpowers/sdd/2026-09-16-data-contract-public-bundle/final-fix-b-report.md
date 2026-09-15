@@ -48,3 +48,24 @@ regressions green.
 The only package-data duplication is intentional and guarded by the byte-sync
 test. Fresh installed CLI processes are relatively slow in this environment,
 but the clean-wheel integration and full suite completed successfully.
+
+## Fix round 1: required-entry symlink boundary
+
+The initial exact-five-file check used `Path.exists()` and `Path.is_file()`,
+which follow symlinks. A required filename could therefore refer to a regular
+file outside the package directory. The loader now uses `lstat()` and
+`stat.S_ISREG` so the directory entry itself must be a non-symlink regular
+file. A dangling symlink retains the required-file-missing diagnostic, while
+an extant symlink, directory, FIFO, or other non-regular entry receives the
+actionable required-entry type diagnostic before any attempt to read it.
+
+TDD evidence: the real external-file symlink regression failed before the
+change and passed afterwards. Focused loader coverage also passes for missing
+names, dangling symlinks, extant external symlinks, directories, FIFOs, and
+ordinary JSON loading.
+
+Round-one verification: the focused loader/CLI/schema/wheel partition passed
+94 tests with no failures or errors, and the complete suite passed 143 tests
+with no failures or errors. Lock, whitespace, schema-sync, and cache checks
+also passed; the cache check continues to list only the intentionally
+force-added SDD reports.

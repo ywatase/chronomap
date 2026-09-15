@@ -1,4 +1,5 @@
 from dataclasses import FrozenInstanceError
+import os
 from pathlib import Path
 import shutil
 
@@ -84,6 +85,39 @@ def test_load_package_requires_each_named_entry_to_be_a_file(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     (package_dir / "sources.json").unlink()
     (package_dir / "sources.json").mkdir()
+
+    with pytest.raises(PackageLoadError, match=r"sources\.json.*required package entry must be a file"):
+        load_package(package_dir)
+
+
+def test_load_package_rejects_a_required_entry_symlink_to_an_external_file(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    external_file = tmp_path / "external-sources.json"
+    external_file.write_bytes(source_path.read_bytes())
+    source_path.unlink()
+    source_path.symlink_to(external_file)
+
+    with pytest.raises(PackageLoadError, match=r"sources\.json.*required package entry must be a file"):
+        load_package(package_dir)
+
+
+def test_load_package_reports_a_dangling_required_entry_symlink_as_missing(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    source_path.unlink()
+    source_path.symlink_to(tmp_path / "missing-sources.json")
+
+    with pytest.raises(PackageLoadError, match=r"sources\.json.*missing"):
+        load_package(package_dir)
+
+
+@pytest.mark.skipif(not hasattr(os, "mkfifo"), reason="FIFO creation is unavailable on this platform")
+def test_load_package_rejects_a_fifo_required_entry_without_attempting_to_read_it(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    source_path.unlink()
+    os.mkfifo(source_path)
 
     with pytest.raises(PackageLoadError, match=r"sources\.json.*required package entry must be a file"):
         load_package(package_dir)

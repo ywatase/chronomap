@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+import stat
 from types import MappingProxyType
 
 from .models import DatasetPackage, JsonValue
@@ -92,9 +93,22 @@ def load_package(path: Path) -> DatasetPackage:
         )
     for filename in PACKAGE_FILENAMES:
         entry = package_dir / filename
-        if not entry.exists():
+        try:
+            entry_mode = entry.lstat().st_mode
+        except FileNotFoundError as error:
             raise PackageLoadError(filename, "required package file is missing")
-        if not entry.is_file():
+        except OSError as error:
+            detail = getattr(error, "strerror", None) or str(error)
+            raise PackageLoadError(filename, f"cannot inspect required package entry: {detail}") from error
+        if stat.S_ISLNK(entry_mode):
+            try:
+                entry.stat()
+            except FileNotFoundError as error:
+                raise PackageLoadError(filename, "required package file is missing") from error
+            except OSError:
+                pass
+            raise PackageLoadError(filename, "required package entry must be a file")
+        if not stat.S_ISREG(entry_mode):
             raise PackageLoadError(filename, "required package entry must be a file")
 
     loaded = {filename: _read_json(package_dir, filename) for filename in PACKAGE_FILENAMES}
