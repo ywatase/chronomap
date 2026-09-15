@@ -102,3 +102,47 @@ $ git diff --check
 ```
 
 `git diff --check` exited successfully with no output. The repository-level pytest cache was removed and no cache directories remain outside `.venv`.
+
+## Fix round 2 — RFC 5646 casing and duplicate subtags
+
+Changed files:
+
+- `schemas/v1/common.schema.json`: make every grandfathered literal case-insensitive using portable ASCII character classes and add anchored, JSON Schema `not` guards for exact duplicate variants and extension singletons.
+- `tests/test_schemas.py`: cover mixed-case grandfathered forms, exact duplicate variants/singletons, and document the mixed-case duplicate limitation as strict expected failures.
+
+RED before the schema change:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+..............FFFFxx...........................                          [100%]
+4 failed, 41 passed, 2 xfailed in 7.02s
+```
+
+The failures were `I-KLINGON` and `EN-gb-OED` rejected by case-sensitive grandfathered alternatives, plus accepted exact duplicate variant (`de-1901-1901`) and extension singleton (`en-a-foo-a-bar`) tags. The two mixed-case duplicate tests are intentionally strict expected failures, described below.
+
+GREEN for the portable schema subset:
+
+```text
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+..................xx...........................                          [100%]
+45 passed, 2 xfailed in 6.82s
+```
+
+### Standards limitation and semantic split
+
+JSON Schema Draft 2020-12 patterns use ECMA-262 regular expressions and do not provide a portable case-insensitive flag or case-folding transform. An ECMA-262 backreference can reject an exact repeat, but cannot compare an arbitrary captured subtag with a differently cased repeat. The schema therefore accepts BCP 47 syntax case-insensitively, rejects exact duplicate variants and extension singletons at schema level, and deliberately does **not** claim full case-insensitive duplicate detection. The two strict expected-failure tests (`sl-rozaj-ROZAJ` and `en-a-foo-A-bar`) preserve this visible boundary. Task 4 semantic validation must case-fold variants and singleton keys before enforcing RFC 5646 uniqueness.
+
+Final verification before commit:
+
+```text
+$ uv lock --check
+Resolved 27 packages in 4ms
+
+$ PYTHONDONTWRITEBYTECODE=1 uv run pytest tests/test_schemas.py -q -p no:cacheprovider
+..................xx...........................                          [100%]
+45 passed, 2 xfailed in 6.42s
+
+$ git diff --check
+```
+
+`git diff --check` exited successfully with no output. The cache scan, excluding `.venv`, produced no paths.
