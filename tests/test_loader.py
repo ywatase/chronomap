@@ -10,6 +10,8 @@ import pytest
 import chronomap_data.loader as loader
 from chronomap_data.cli import main
 from chronomap_data.loader import PackageLoadError, load_package
+from chronomap_data.models import ValidationProfile
+from chronomap_data.schema_validation import validate_package
 
 
 ROOT = Path(__file__).parents[1]
@@ -122,6 +124,34 @@ def test_load_package_reports_the_missing_required_filename(tmp_path: Path):
 def test_load_package_reports_malformed_json_with_its_filename(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     (package_dir / "evidence.json").write_text("{ invalid json", encoding="utf-8")
+
+    with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON"):
+        load_package(package_dir)
+
+
+@pytest.mark.parametrize("coordinate", ["9" * 5_001, "-" + "9" * 5_001])
+def test_load_package_accepts_unbounded_json_integer_coordinates_then_reports_geometry_invalid(
+    tmp_path: Path, coordinate: str
+):
+    package_dir = copy_package(tmp_path)
+    feature_path = package_dir / "feature-versions.geojson"
+    feature_path.write_text(
+        feature_path.read_text(encoding="utf-8").replace("[0, 0]", f"[{coordinate}, 0]", 1),
+        encoding="utf-8",
+    )
+
+    package = load_package(package_dir)
+    issues = validate_package(package, ValidationProfile.AUTHORING)
+
+    assert [(issue.code, issue.pointer) for issue in issues] == [
+        ("geometry.invalid", "/features/2/geometry/coordinates")
+    ]
+
+
+@pytest.mark.parametrize("integer", ["01", "-01"])
+def test_load_package_keeps_json_integer_leading_zero_grammar(tmp_path: Path, integer: str):
+    package_dir = copy_package(tmp_path)
+    (package_dir / "evidence.json").write_text(integer, encoding="utf-8")
 
     with pytest.raises(PackageLoadError, match=r"evidence\.json.*invalid JSON"):
         load_package(package_dir)

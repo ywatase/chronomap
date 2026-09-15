@@ -86,6 +86,26 @@ def test_validate_reports_an_unsupported_schema_version(tmp_path: Path, capsys):
     assert capsys.readouterr().err == "dataset.json:/schemaVersion [schema.unsupported_version] unsupported schema version '9.9.9'; expected '1.0.0'\n"
 
 
+@pytest.mark.parametrize("coordinate", ["9" * 5_001, "-" + "9" * 5_001])
+def test_validate_reports_huge_integer_coordinates_as_validation_issues_not_load_errors(
+    tmp_path: Path, capsys, coordinate: str
+):
+    package_dir = copy_package(tmp_path)
+    feature_path = package_dir / "feature-versions.geojson"
+    feature_path.write_text(
+        feature_path.read_text(encoding="utf-8").replace("[0, 0]", f"[{coordinate}, 0]", 1),
+        encoding="utf-8",
+    )
+
+    exit_code = main(["validate", str(package_dir)])
+
+    stderr = capsys.readouterr().err
+    assert exit_code == 1
+    assert "feature-versions.geojson:/features/2/geometry/coordinates [geometry.invalid]" in stderr
+    assert "PackageLoadError" not in stderr
+    assert "Traceback" not in stderr
+
+
 @pytest.mark.parametrize(
     "argv",
     [

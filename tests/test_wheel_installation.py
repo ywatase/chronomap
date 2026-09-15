@@ -40,3 +40,23 @@ def test_built_wheel_installs_schemas_and_runs_the_installed_cli_in_a_clean_envi
     assert invalid.returncode == 2
     assert "duplicate JSON object member name 'id'" in invalid.stderr
     assert "Traceback" not in invalid.stderr
+
+    for coordinate in ("9" * 5_001, "-" + "9" * 5_001):
+        huge_coordinate_dir = tmp_path / f"huge-coordinate-{len(coordinate)}-{coordinate.startswith('-')}"
+        shutil.copytree(SYNTHETIC_PACKAGE, huge_coordinate_dir)
+        feature_path = huge_coordinate_dir / "feature-versions.geojson"
+        feature_path.write_text(
+            feature_path.read_text(encoding="utf-8").replace("[0, 0]", f"[{coordinate}, 0]", 1),
+            encoding="utf-8",
+        )
+        huge_coordinate = subprocess.run(
+            [command, "validate", str(huge_coordinate_dir)],
+            cwd=tmp_path,
+            env=clean_environment,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        assert huge_coordinate.returncode == 1, huge_coordinate.stderr
+        assert "geometry.invalid" in huge_coordinate.stderr
+        assert "Traceback" not in huge_coordinate.stderr

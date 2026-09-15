@@ -37,6 +37,20 @@ class _LoneSurrogateError(ValueError):
     """A JSON string contains a code point outside the Unicode scalar range."""
 
 
+def _parse_json_integer(token: str) -> int:
+    """Parse a JSON integer without Python's decimal-string digit limit."""
+    negative = token.startswith("-")
+    digits = token[1:] if negative else token
+    chunk_size = 18
+    base = 10**chunk_size
+    value = 0
+    first_chunk_size = len(digits) % chunk_size or chunk_size
+    value = int(digits[:first_chunk_size])
+    for start in range(first_chunk_size, len(digits), chunk_size):
+        value = value * base + int(digits[start : start + chunk_size])
+    return -value if negative else value
+
+
 def _reject_duplicate_json_members(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for name, value in pairs:
@@ -187,6 +201,7 @@ def _read_json(package_dir: Path, filename: str) -> JsonValue:
                 text,
                 object_pairs_hook=_reject_duplicate_json_members,
                 parse_constant=_reject_json_constant,
+                parse_int=_parse_json_integer,
             )
         )
     except RecursionError as error:

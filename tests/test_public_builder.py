@@ -206,6 +206,29 @@ def test_build_public_bundle_is_byte_identical_when_rebuilt(tmp_path: Path):
     assert all(content.endswith(b"\n") for content in first_build.values())
 
 
+@pytest.mark.parametrize("published_year", ["1" + "0" * 5_000, "-" + "9" * 5_001])
+def test_build_public_bundle_serializes_unbounded_integer_fields_deterministically_and_reloads(
+    tmp_path: Path, published_year: str
+):
+    package_dir = copy_package(tmp_path)
+    source_path = package_dir / "sources.json"
+    source_path.write_text(
+        source_path.read_text(encoding="utf-8").replace('"publishedYear": 2020', f'"publishedYear": {published_year}'),
+        encoding="utf-8",
+    )
+    package = load_package(package_dir)
+    assert validate_package(package, ValidationProfile.PUBLIC) == []
+    output = tmp_path / "public"
+
+    build_public_bundle(package, output)
+    first_build = read_tree(output)
+    build_public_bundle(package, output)
+
+    assert read_tree(output) == first_build
+    assert f'"publishedYear": {published_year}'.encode("utf-8") in first_build["sources.json"]
+    assert validate_package(load_package(output), ValidationProfile.PUBLIC) == []
+
+
 def test_build_public_bundle_sorts_records_features_and_object_keys(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     for filename in ("entities.json", "sources.json", "evidence.json"):

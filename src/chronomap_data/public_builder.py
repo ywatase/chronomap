@@ -164,10 +164,79 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
     return dataset, _sorted_records(entities), _sorted_records(sources), _project_evidence(evidence, source_by_id), feature_collection
 
 
+def _format_json_integer(value: int) -> str:
+    """Format an integer without Python's decimal-string digit limit."""
+    if value == 0:
+        return "0"
+    negative = value < 0
+    remaining = -value if negative else value
+    chunk_size = 18
+    base = 10**chunk_size
+    chunks: list[int] = []
+    while remaining:
+        remaining, chunk = divmod(remaining, base)
+        chunks.append(chunk)
+    head = str(chunks.pop())
+    tail = "".join(f"{chunk:0{chunk_size}d}" for chunk in reversed(chunks))
+    return ("-" if negative else "") + head + tail
+
+
+def _canonical_json(value: object, indentation: int = 0, active: set[int] | None = None) -> str:
+    """Encode contract JSON with sorted object keys and two-space indentation."""
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if isinstance(value, int):
+        return _format_json_integer(value)
+    if isinstance(value, float):
+        return json.dumps(value, ensure_ascii=False)
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False)
+
+    active = set() if active is None else active
+    marker = id(value)
+    if marker in active:
+        raise ValueError("Circular reference detected")
+    if isinstance(value, list | tuple):
+        active.add(marker)
+        try:
+            if not value:
+                return "[]"
+            child_indent = indentation + 1
+            prefix = "  " * child_indent
+            joined = ",\n".join(prefix + _canonical_json(item, child_indent, active) for item in value)
+            return f"[\n{joined}\n{'  ' * indentation}]"
+        finally:
+            active.remove(marker)
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise TypeError("JSON object keys must be strings")
+        active.add(marker)
+        try:
+            if not value:
+                return "{}"
+            child_indent = indentation + 1
+            prefix = "  " * child_indent
+            joined = ",\n".join(
+                prefix
+                + json.dumps(key, ensure_ascii=False)
+                + ": "
+                + _canonical_json(value[key], child_indent, active)
+                for key in sorted(value)
+            )
+            return f"{{\n{joined}\n{'  ' * indentation}}}"
+        finally:
+            active.remove(marker)
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+
 def _serialized(value: object) -> bytes:
     try:
-        return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
-    except UnicodeError as error:
+        return (_canonical_json(value) + "\n").encode("utf-8")
+    except (TypeError, UnicodeError, ValueError) as error:
         raise PublicBuildIOError(f"could not serialize public output: {error}") from error
 
 
