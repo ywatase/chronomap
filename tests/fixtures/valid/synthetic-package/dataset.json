@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "synthetic:dataset:contract-sample",
+  "title": { "en": "Synthetic Contract Sample" },
+  "description": { "en": "Non-historical data used only to exercise the contract." },
+  "defaultLanguage": "en",
+  "bbox": [-10, -10, 10, 10],
+  "temporalExtent": {
+    "start": { "earliestYear": -2, "latestYear": -2, "precision": "year", "qualifier": "exact" },
+    "end": null
+  },
+  "rights": { "status": "public-domain" },
+  "files": {
+    "entities": "entities.json",
+    "sources": "sources.json",
+    "evidence": "evidence.json",
+    "featureVersions": "feature-versions.geojson"
+  }
+}

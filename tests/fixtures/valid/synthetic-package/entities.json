@@ -1,0 +1,20 @@
+[
+  {
+    "id": "synthetic:entity:line-subject",
+    "type": "route",
+    "labels": { "en": "Synthetic Line Subject" },
+    "description": { "en": "A non-historical line-shaped subject." }
+  },
+  {
+    "id": "synthetic:entity:point-subject",
+    "type": "settlement",
+    "labels": { "en": "Synthetic Point Subject" },
+    "description": { "en": "A non-historical point-shaped subject." }
+  },
+  {
+    "id": "synthetic:entity:polygon-subject",
+    "type": "boundary",
+    "labels": { "en": "Synthetic Polygon Subject" },
+    "description": { "en": "A non-historical polygon-shaped subject." }
+  }
+]

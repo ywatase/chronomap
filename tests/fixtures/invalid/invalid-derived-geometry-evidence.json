@@ -1,0 +1,10 @@
+[
+  {
+    "id": "synthetic:evidence:missing-basis",
+    "sourceId": "synthetic:source:open-method-note",
+    "locator": "Synthetic method D",
+    "usage": "derived-geometry",
+    "supports": ["geometry"],
+    "note": "Synthetic derived geometry without the required basis."
+  }
+]

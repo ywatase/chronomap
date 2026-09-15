@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "id": "synthetic:version:invalid-temporal",
+    "geometry": { "type": "Point", "coordinates": [0, 0] },
+    "properties": {
+      "entityId": "synthetic:entity:point-subject",
+      "labels": { "en": "Invalid Temporal" },
+      "description": { "en": "Non-historical invalid fixture." },
+      "temporal": { "start": { "earliestYear": null, "latestYear": null, "precision": "unknown", "qualifier": "unknown" }, "end": null },
+      "uncertainty": {
+        "temporal": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "location": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "geometry": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "identity": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] }
+      },
+      "evidenceIds": ["synthetic:evidence:citation-temporal"],
+      "rights": { "status": "public-domain" }
+    }
+  }]
+}

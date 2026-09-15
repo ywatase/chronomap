@@ -1,0 +1,27 @@
+[
+  {
+    "id": "synthetic:evidence:citation-identity",
+    "sourceId": "synthetic:source:restricted-citation",
+    "locator": "Synthetic identifier A",
+    "usage": "citation",
+    "supports": ["identity"],
+    "note": "Citation only; no source content is reproduced."
+  },
+  {
+    "id": "synthetic:evidence:citation-temporal",
+    "sourceId": "synthetic:source:restricted-citation",
+    "locator": "Synthetic interval B",
+    "usage": "citation",
+    "supports": ["temporal", "location"],
+    "note": "Citation only; this is entirely synthetic."
+  },
+  {
+    "id": "synthetic:evidence:derived-geometry",
+    "sourceId": "synthetic:source:open-method-note",
+    "locator": "Synthetic method C",
+    "usage": "derived-geometry",
+    "supports": ["geometry"],
+    "note": "Synthetic geometry reconstructed for schema testing.",
+    "publicationBasis": "original-reconstruction"
+  }
+]

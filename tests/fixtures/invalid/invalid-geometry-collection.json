@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "id": "synthetic:version:geometry-collection",
+    "geometry": { "type": "GeometryCollection", "geometries": [] },
+    "properties": {
+      "entityId": "synthetic:entity:point-subject",
+      "labels": { "en": "Invalid Geometry Collection" },
+      "description": { "en": "Non-historical invalid fixture." },
+      "temporal": { "start": null, "end": { "earliestYear": 1, "latestYear": 1, "precision": "year", "qualifier": "exact" } },
+      "uncertainty": {
+        "temporal": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "location": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "geometry": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "identity": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] }
+      },
+      "evidenceIds": ["synthetic:evidence:citation-temporal"],
+      "rights": { "status": "public-domain" }
+    }
+  }]
+}

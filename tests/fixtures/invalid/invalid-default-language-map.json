@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "synthetic:dataset:invalid-language-map",
+  "title": { "not a language tag": "Synthetic Invalid Dataset" },
+  "description": { "en": "Non-historical invalid fixture." },
+  "defaultLanguage": "en",
+  "bbox": [-10, -10, 10, 10],
+  "temporalExtent": { "start": null, "end": { "earliestYear": 1, "latestYear": 1, "precision": "year", "qualifier": "exact" } },
+  "rights": { "status": "public-domain" },
+  "files": { "entities": "entities.json", "sources": "sources.json", "evidence": "evidence.json", "featureVersions": "feature-versions.geojson" }
+}

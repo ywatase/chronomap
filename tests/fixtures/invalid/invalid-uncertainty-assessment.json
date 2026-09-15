@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "features": [{
+    "type": "Feature",
+    "id": "synthetic:version:invalid-uncertainty",
+    "geometry": { "type": "Point", "coordinates": [0, 0] },
+    "properties": {
+      "entityId": "synthetic:entity:point-subject",
+      "labels": { "en": "Invalid Uncertainty" },
+      "description": { "en": "Non-historical invalid fixture." },
+      "temporal": { "start": null, "end": { "earliestYear": 1, "latestYear": 1, "precision": "year", "qualifier": "exact" } },
+      "uncertainty": {
+        "temporal": { "assessment": "well-supported", "note": "", "evidenceIds": [] },
+        "location": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "geometry": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] },
+        "identity": { "assessment": "unknown", "note": "No evidence.", "evidenceIds": [] }
+      },
+      "evidenceIds": ["synthetic:evidence:citation-temporal"],
+      "rights": { "status": "public-domain" }
+    }
+  }]
+}
