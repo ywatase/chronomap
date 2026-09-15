@@ -214,6 +214,106 @@ def test_temporal_validation_rejects_a_possible_activity_range_that_cannot_overl
     ]
 
 
+def test_validate_package_rejects_integral_decimal_boundary_years_in_reverse_order(tmp_path: Path):
+    """A schema-valid 10.0 must not bypass per-boundary ordering."""
+    package_dir = copy_package(tmp_path)
+    mutate_json(
+        package_dir,
+        "dataset.json",
+        lambda dataset: dataset.__setitem__(
+            "temporalExtent",
+            {
+                "start": {"earliestYear": 10.0, "latestYear": 5.0, "precision": "year", "qualifier": "exact"},
+                "end": None,
+            },
+        ),
+    )
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues_for(package_dir)] == [
+        ("temporal.invalid", "dataset.json", "/temporalExtent/start"),
+    ]
+
+
+def test_validate_package_rejects_integral_decimal_possible_range_in_reverse_order(tmp_path: Path):
+    """A schema-valid 10.0/5.0 possible range must be checked."""
+    package_dir = copy_package(tmp_path)
+    mutate_json(
+        package_dir,
+        "feature-versions.geojson",
+        lambda versions: versions["features"][2]["properties"].__setitem__(
+            "temporal",
+            {
+                "start": {"earliestYear": 10.0, "latestYear": 10.0, "precision": "year", "qualifier": "exact"},
+                "end": {"earliestYear": 5.0, "latestYear": 5.0, "precision": "year", "qualifier": "exact"},
+            },
+        ),
+    )
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues_for(package_dir)] == [
+        ("temporal.invalid", "feature-versions.geojson", "/features/2/properties/temporal"),
+    ]
+
+
+def test_validate_package_rejects_nonoverlapping_hypotheses_with_integral_decimal_years(tmp_path: Path):
+    """A schema-valid decimal start must contribute to hypothesis overlap."""
+    package_dir = copy_package(tmp_path)
+    mutate_json(
+        package_dir,
+        "feature-versions.geojson",
+        lambda versions: versions["features"][0]["properties"].__setitem__(
+            "temporal",
+            {
+                "start": {"earliestYear": 10.0, "latestYear": 10.0, "precision": "year", "qualifier": "exact"},
+                "end": {"earliestYear": 11.0, "latestYear": 11.0, "precision": "year", "qualifier": "exact"},
+            },
+        ),
+    )
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues_for(package_dir)] == [
+        ("hypothesis.invalid", "feature-versions.geojson", "/features/0/properties/hypothesisGroupId"),
+        ("hypothesis.invalid", "feature-versions.geojson", "/features/1/properties/hypothesisGroupId"),
+    ]
+
+
+def test_validate_package_keeps_open_bce_integral_decimal_hypotheses_inclusively_overlapping(tmp_path: Path):
+    """Astronomical BCE years and open bounds remain possibility-first and inclusive."""
+    package_dir = copy_package(tmp_path)
+
+    def set_open_bce_hypothesis_ranges(versions) -> None:
+        versions["features"][0]["properties"]["temporal"] = {
+            "start": None,
+            "end": {"earliestYear": -4.0, "latestYear": -3.0, "precision": "year", "qualifier": "exact"},
+        }
+        versions["features"][1]["properties"]["temporal"] = {
+            "start": {"earliestYear": -3.0, "latestYear": -3.0, "precision": "year", "qualifier": "exact"},
+            "end": None,
+        }
+
+    mutate_json(package_dir, "feature-versions.geojson", set_open_bce_hypothesis_ranges)
+
+    assert issues_for(package_dir) == []
+
+
+def test_validate_package_orders_extremely_large_integral_decimal_years_without_float_overflow(tmp_path: Path):
+    """Finite integral floats accepted by the schema remain comparable semantically."""
+    package_dir = copy_package(tmp_path)
+    mutate_json(
+        package_dir,
+        "dataset.json",
+        lambda dataset: dataset.__setitem__(
+            "temporalExtent",
+            {
+                "start": {"earliestYear": 1e308, "latestYear": 1e308, "precision": "year", "qualifier": "exact"},
+                "end": {"earliestYear": -1e308, "latestYear": -1e308, "precision": "year", "qualifier": "exact"},
+            },
+        ),
+    )
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues_for(package_dir)] == [
+        ("temporal.invalid", "dataset.json", "/temporalExtent"),
+    ]
+
+
 def test_semantic_validation_requires_hypothesis_members_to_overlap_for_one_entity(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     mutate_json(

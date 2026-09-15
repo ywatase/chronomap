@@ -1,6 +1,7 @@
 """Pure cross-file validation for structurally valid Chronomap packages."""
 
 from collections.abc import Mapping, Sequence
+import math
 
 from .geometry import validate_bbox, validate_geometry_with_bounds
 from .models import DatasetPackage, JsonValue, ValidationIssue, ValidationProfile
@@ -71,7 +72,11 @@ def _language_duplicate(tag: object) -> bool:
 
 
 def _year(value: object) -> int | None:
-    return value if isinstance(value, int) and not isinstance(value, bool) else None
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    if isinstance(value, float) and math.isfinite(value) and value.is_integer():
+        return int(value)
+    return None
 
 
 def validate_temporal(value: object, file: str, pointer: str) -> list[ValidationIssue]:
@@ -91,7 +96,7 @@ def validate_temporal(value: object, file: str, pointer: str) -> list[Validation
     return sorted(issues, key=lambda issue: (issue.file, issue.pointer, issue.code, issue.message))
 
 
-def _possible_range(value: object) -> tuple[float, float]:
+def _possible_range(value: object) -> tuple[int | float, int | float]:
     temporal = _mapping(value)
     start = _mapping(temporal.get("start"))
     end = _mapping(temporal.get("end"))
