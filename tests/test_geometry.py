@@ -28,6 +28,24 @@ def test_geometry_validation_requires_lines_to_have_two_positions():
     assert issues == {("geometry.invalid", "/features/0/geometry/coordinates")}
 
 
+def test_geometry_validation_rejects_an_empty_multi_line_string_and_short_member_lines():
+    empty_issues = issue_shapes({"type": "MultiLineString", "coordinates": []})
+    short_line_issues = issue_shapes({"type": "MultiLineString", "coordinates": [[[0, 0]]]})
+
+    assert empty_issues == {("geometry.invalid", "/features/0/geometry/coordinates")}
+    assert short_line_issues == {("geometry.invalid", "/features/0/geometry/coordinates/0")}
+
+
+def test_geometry_validation_rejects_huge_json_integer_coordinates_and_bbox_without_overflowing():
+    enormous = 10**1000
+
+    coordinate_issues = issue_shapes({"type": "Point", "coordinates": [enormous, 0]})
+    bbox_issues = issue_shapes({"type": "Point", "coordinates": [0, 0]}, bbox=(-enormous, -10, enormous, 10))
+
+    assert coordinate_issues == {("geometry.invalid", "/features/0/geometry/coordinates")}
+    assert bbox_issues == {("geometry.invalid", "/bbox")}
+
+
 def test_geometry_validation_requires_polygon_rings_to_be_closed_and_have_four_positions():
     issues = issue_shapes({"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [1, 1]]]})
 

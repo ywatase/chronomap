@@ -2,7 +2,7 @@
 
 from collections.abc import Mapping, Sequence
 
-from .geometry import validate_geometry
+from .geometry import validate_bbox, validate_geometry_with_bounds
 from .models import DatasetPackage, JsonValue, ValidationIssue, ValidationProfile
 
 
@@ -38,6 +38,8 @@ def _language_duplicate(tag: object) -> bool:
         return False
     parts = tag.split("-")
     if not parts:
+        return False
+    if parts[0].casefold() == "x":
         return False
     index = 1
     if index < len(parts) and len(parts[index]) == 4 and parts[index].isalpha():
@@ -220,7 +222,7 @@ def _text_map_issues(value: JsonValue, file: str, pointer: str) -> list[Validati
     for tag in text_map:
         folded = tag.casefold()
         if folded in seen or _language_duplicate(tag):
-            issues.append(_issue("ref.missing", file, _pointer(*pointer.strip("/").split("/"), tag), "language tag repeats a BCP 47 variant or extension singleton"))
+            issues.append(_issue("language.invalid", file, _pointer(*pointer.strip("/").split("/"), tag), "language tag repeats a BCP 47 variant or extension singleton"))
         seen.add(folded)
     return issues
 
@@ -235,6 +237,8 @@ def validate_semantics(package: DatasetPackage, profile: ValidationProfile) -> l
     evidence = _records(package.evidence)
     collection = _mapping(package.feature_versions)
     features = _records(collection.get("features"))
+    bbox_issues, bounds = validate_bbox(dataset.get("bbox"))
+    issues.extend(bbox_issues)
 
     resources: dict[str, tuple[str, str]] = {}
     for identifier, expected, file, pointer in [
@@ -262,7 +266,7 @@ def validate_semantics(package: DatasetPackage, profile: ValidationProfile) -> l
     if _language_duplicate(default_language):
         issues.append(
             _issue(
-                "ref.missing",
+                "language.invalid",
                 "dataset.json",
                 "/defaultLanguage",
                 "language tag repeats a BCP 47 variant or extension singleton",
@@ -292,8 +296,11 @@ def validate_semantics(package: DatasetPackage, profile: ValidationProfile) -> l
             issues.append(_issue("ref.missing", "evidence.json", pointer, f"source {source_id!r} does not exist"))
     for index, feature in enumerate(features):
         properties = _mapping(feature.get("properties"))
-        geometry_issues = validate_geometry(feature.get("geometry"), dataset.get("bbox"), "feature-versions.geojson", _pointer("features", index, "geometry"))
-        issues.extend(issue for issue in geometry_issues if index == 0 or issue.pointer != "/bbox")
+        issues.extend(
+            validate_geometry_with_bounds(
+                feature.get("geometry"), bounds, "feature-versions.geojson", _pointer("features", index, "geometry")
+            )
+        )
         labels = _mapping(properties.get("labels"))
         issues.extend(_text_map_issues(properties.get("labels"), "feature-versions.geojson", _pointer("features", index, "properties", "labels")))
         issues.extend(_text_map_issues(properties.get("description"), "feature-versions.geojson", _pointer("features", index, "properties", "description")))

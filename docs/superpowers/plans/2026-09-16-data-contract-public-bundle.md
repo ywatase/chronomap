@@ -103,7 +103,7 @@
 
 **Interfaces:**
 - Extend `validate_package` after schema validation; if structural validation fails, do not run semantic rules that depend on invalid shapes.
-- Stable codes: `id.duplicate`, `id.invalid_kind`, `ref.missing`, `temporal.invalid`, `geometry.invalid`, `hypothesis.invalid`, `uncertainty.invalid`, `publication.rights`, `publication.evidence`.
+- Stable codes: `id.duplicate`, `id.invalid_kind`, `ref.missing`, `language.invalid`, `temporal.invalid`, `geometry.invalid`, `hypothesis.invalid`, `uncertainty.invalid`, `publication.rights`, `publication.evidence`.
 
 - [ ] Add one failing behavior test at a time for global ID uniqueness/kind, references, bbox containment, longitude/latitude limits, LineString length, Polygon ring length/closure, temporal boundary ordering, possibility overlap, hypothesis membership, uncertainty notes/evidence, and evidence subsets; witness RED before each implementation group.
 - [ ] Implement pure validation functions returning issues instead of raising, and keep deterministic issue ordering in the public facade.

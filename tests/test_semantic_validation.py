@@ -33,6 +33,26 @@ def issues_for(package_dir: Path, profile: ValidationProfile = ValidationProfile
     return validate_package(load_package(package_dir), profile)
 
 
+def set_default_language(package_dir: Path, language: str) -> None:
+    """Replace every required default-language map with one valid value."""
+    def replace_dataset_language(dataset) -> None:
+        dataset["defaultLanguage"] = language
+        dataset["title"] = {language: "Synthetic dataset"}
+        dataset["description"] = {language: "Synthetic dataset description"}
+
+    def replace_entity_languages(entities) -> None:
+        for entity in entities:
+            entity["labels"] = {language: "Synthetic entity"}
+
+    def replace_feature_languages(collection) -> None:
+        for feature in collection["features"]:
+            feature["properties"]["labels"] = {language: "Synthetic feature"}
+
+    mutate_json(package_dir, "dataset.json", replace_dataset_language)
+    mutate_json(package_dir, "entities.json", replace_entity_languages)
+    mutate_json(package_dir, "feature-versions.geojson", replace_feature_languages)
+
+
 def test_semantic_validation_rejects_a_duplicate_resource_id(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     mutate_json(package_dir, "entities.json", lambda entities: entities[1].__setitem__("id", entities[0]["id"]))
@@ -97,7 +117,7 @@ def test_semantic_validation_casefolds_every_text_map_language_key(tmp_path: Pat
 
     issues = issues_for(package_dir)
 
-    assert ("ref.missing", "sources.json", "/0/title/EN") in {
+    assert ("language.invalid", "sources.json", "/0/title/EN") in {
         (issue.code, issue.file, issue.pointer) for issue in issues
     }
 
@@ -109,7 +129,7 @@ def test_semantic_validation_escapes_actual_text_map_key_pointers(tmp_path: Path
 
     issues = validate_semantics(load_package(package_dir), ValidationProfile.AUTHORING)
 
-    assert ("ref.missing", "sources.json", "/0/title/en-a-foo-a-bar~1") in {
+    assert ("language.invalid", "sources.json", "/0/title/en-a-foo-a-bar~1") in {
         (issue.code, issue.file, issue.pointer) for issue in issues
     }
 
@@ -131,9 +151,41 @@ def test_semantic_validation_rejects_casefolded_duplicate_bcp47_variants_and_ext
 
     issues = issues_for(package_dir)
 
-    assert ("ref.missing", "dataset.json", "/defaultLanguage") in {
+    assert ("language.invalid", "dataset.json", "/defaultLanguage") in {
         (issue.code, issue.file, issue.pointer) for issue in issues
     }
+
+
+@pytest.mark.parametrize("tag", ["x-a-foo-a-bar", "x-abcde-abcde"])
+def test_package_facade_accepts_whole_tag_private_use_language_subtags(tmp_path: Path, tag: str):
+    package_dir = copy_package(tmp_path)
+    set_default_language(package_dir, tag)
+    mutate_json(package_dir, "sources.json", lambda sources: sources[0].__setitem__("title", {tag: "Synthetic source"}))
+
+    assert issues_for(package_dir) == []
+
+
+def test_semantic_validation_reports_dataset_bbox_when_feature_collection_is_empty(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    mutate_json(package_dir, "dataset.json", lambda dataset: dataset.__setitem__("bbox", [10, -10, -10, 10]))
+    mutate_json(package_dir, "feature-versions.geojson", lambda collection: collection.__setitem__("features", []))
+
+    issues = issues_for(package_dir)
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues] == [
+        ("geometry.invalid", "dataset.json", "/bbox"),
+    ]
+
+
+def test_semantic_validation_reports_dataset_bbox_once_for_multiple_features(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    mutate_json(package_dir, "dataset.json", lambda dataset: dataset.__setitem__("bbox", [10, -10, -10, 10]))
+
+    issues = issues_for(package_dir)
+
+    assert [(issue.code, issue.file, issue.pointer) for issue in issues] == [
+        ("geometry.invalid", "dataset.json", "/bbox"),
+    ]
 
 
 def test_temporal_validation_rejects_a_boundary_with_reversed_years():

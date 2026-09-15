@@ -6,6 +6,9 @@ import math
 from .models import ValidationIssue
 
 
+Bounds = tuple[int | float, int | float, int | float, int | float]
+
+
 def _pointer(base: str, *parts: object) -> str:
     suffix = "/".join(str(part).replace("~", "~0").replace("/", "~1") for part in parts)
     return base if not suffix else f"{base}/{suffix}"
@@ -16,7 +19,26 @@ def _issue(file: str, pointer: str, message: str) -> ValidationIssue:
 
 
 def _number(value: object) -> bool:
-    return isinstance(value, int | float) and not isinstance(value, bool) and math.isfinite(value)
+    if isinstance(value, bool):
+        return False
+    if isinstance(value, int):
+        return True
+    return isinstance(value, float) and math.isfinite(value)
+
+
+def validate_bbox(bbox: object) -> tuple[list[ValidationIssue], Bounds | None]:
+    """Return dataset bbox diagnostics and usable bounds for coordinate containment."""
+    if (
+        not isinstance(bbox, Sequence)
+        or isinstance(bbox, str | bytes)
+        or len(bbox) != 4
+        or not all(_number(value) for value in bbox)
+    ):
+        return [_issue("dataset.json", "/bbox", "bbox must contain four finite WGS84 numbers")], None
+    west, south, east, north = bbox
+    if not (-180 <= west <= east <= 180 and -90 <= south <= north <= 90):
+        return [_issue("dataset.json", "/bbox", "bbox must be ordered and within WGS84 bounds")], None
+    return [], (west, south, east, north)
 
 
 def validate_geometry(
@@ -26,18 +48,19 @@ def validate_geometry(
     pointer: str,
 ) -> list[ValidationIssue]:
     """Return WGS84, containment, and GeoJSON primitive invariant issues."""
-    issues: list[ValidationIssue] = []
-    valid_bbox = isinstance(bbox, Sequence) and not isinstance(bbox, str | bytes) and len(bbox) == 4 and all(_number(value) for value in bbox)
-    if not valid_bbox:
-        issues.append(_issue("dataset.json", "/bbox", "bbox must contain four finite WGS84 numbers"))
-        bounds: tuple[float, float, float, float] | None = None
-    else:
-        west, south, east, north = bbox
-        if not (-180 <= west <= east <= 180 and -90 <= south <= north <= 90):
-            issues.append(_issue("dataset.json", "/bbox", "bbox must be ordered and within WGS84 bounds"))
-            bounds = None
-        else:
-            bounds = (west, south, east, north)
+    bbox_issues, bounds = validate_bbox(bbox)
+    return validate_geometry_with_bounds(geometry, bounds, file, pointer, bbox_issues)
+
+
+def validate_geometry_with_bounds(
+    geometry: object,
+    bounds: Bounds | None,
+    file: str,
+    pointer: str,
+    initial_issues: Sequence[ValidationIssue] = (),
+) -> list[ValidationIssue]:
+    """Return geometry issues using already-validated dataset bounds."""
+    issues = list(initial_issues)
 
     if not isinstance(geometry, Mapping):
         return sorted(issues + [_issue(file, pointer, "geometry must be an object")], key=lambda issue: (issue.file, issue.pointer, issue.code, issue.message))
@@ -86,6 +109,8 @@ def validate_geometry(
     elif geometry_type == "MultiLineString":
         if not isinstance(coordinates, Sequence) or isinstance(coordinates, str | bytes):
             issues.append(_issue(file, coordinates_pointer, "multi-line coordinates must be an array"))
+        elif not coordinates:
+            issues.append(_issue(file, coordinates_pointer, "multi-line must contain a line"))
         else:
             for index, line in enumerate(coordinates):
                 positions(line, _pointer(coordinates_pointer, index), 2)

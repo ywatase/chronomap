@@ -25,7 +25,7 @@
 | `evidence.json` | 資料と表現の利用関係 | `Evidence`の配列 |
 | `feature-versions.geojson` | 時代・仮説ごとの空間表現 | GeoJSON `FeatureCollection`の`FeatureVersion`群 |
 
-配列はIDの昇順で直列化する。`feature-versions.geojson`の`features`はFeature IDの昇順とする。パッケージは、`Dataset.files`が4つの固定ファイル名をそれぞれ指し、各参照IDが同じパッケージ内に存在するときだけ完全である。
+著者用パッケージでは、トップレベルのレコード配列とID参照配列を任意の順序で記述できる。正規の公開直列化では、トップレベルのレコード配列をID昇順にし、`feature-versions.geojson`の`features`もFeature ID昇順にする。すべてのID参照配列もID昇順にする一方、座標配列と`supports`のような非IDの意味配列は著者が与えた順序を保持する。パッケージは、`Dataset.files`が4つの固定ファイル名をそれぞれ指し、各参照IDが同じパッケージ内に存在するときだけ完全である。
 
 ## レコード
 
@@ -109,7 +109,11 @@ FeatureVersionの`evidenceIds`は、時間・位置・形状・同一性の主�
 
 ## 決定的な直列化
 
-公開バンドルは同じ入力から同一バイト列を生成しなければならない。すべてのJSONはキーを辞書順にし、UTF-8、2スペースのインデント、末尾の改行で直列化する。配列は前記のID順、GeoJSON `features`はFeature ID順にする。座標配列は並べ替えず、入力時の座標順を保持する。
+公開バンドルは同じ入力から同一バイト列を生成しなければならない。すべてのJSONはキーを辞書順にし、UTF-8、2スペースのインデント、末尾の改行で直列化する。トップレベルのレコード配列とすべてのID参照配列はID順、GeoJSON `features`はFeature ID順にする。座標配列と非IDの意味配列は並べ替えず、入力時の順序を保持する。
+
+## 診断コード
+
+構造を通過した言語タグの意味検査で、重複したvariant又はextension singletonを検出した場合は`language.invalid`を報告する。`defaultLanguage`の値そのものは`/defaultLanguage`、テキストマップのキーはエスケープ済みの当該キーのJSON Pointerを指す。`ref.missing`は参照先又は必須の既定言語値が存在しない場合に限る。
 
 ## 関連する判断
 
