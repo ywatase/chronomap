@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 
 const mocked = vi.hoisted(() => {
   const maps: any[] = [];
@@ -38,8 +39,13 @@ describe("map style", () => {
   it("uses distinct point, line, and polygon layers with selected and hypothesis patterns", () => {
     const layers = geometryLayerDefinitions();
     expect(layers.map((layer) => layer.id)).toEqual(expect.arrayContaining(["historical-points", "historical-lines", "historical-polygons", "selected-point-halo", "selected-line-halo", "selected-polygon-outline"]));
-    expect(layers.some((layer) => "line-dasharray" in (layer.layout ?? {}))).toBe(true);
+    expect(layers.some((layer) => "line-dasharray" in (layer.layout ?? {}))).toBe(false);
+    expect(layers.some((layer) => "line-dasharray" in (layer.paint ?? {}))).toBe(true);
     expect(layers.some((layer) => "line-width" in (layer.paint ?? {}) && layer.id.startsWith("selected-"))).toBe(true);
+  });
+
+  it("loads MapLibre's stylesheet at the MapLibre boundary", () => {
+    expect(readFileSync("src/map/map-adapter.ts", "utf8")).toContain('import "maplibre-gl/dist/maplibre-gl.css"');
   });
 });
 
@@ -57,5 +63,12 @@ describe("MapAdapter", () => {
     const map = mocked.maps.at(-1); map.queryRenderedFeatures.mockReturnValue([{ id: "second" }, { id: "first" }, { id: "second" }]);
     map.fire("click", { point: {} });
     expect(received).toEqual([["first", "second"]]);
+  });
+
+  it("reports map rendering errors without assuming a GSI tile error", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const errors: string[] = []; adapter.onBasemapError((message) => errors.push(message));
+    mocked.maps.at(-1).fire("error", { error: new Error("WebGL context lost") });
+    expect(errors).toEqual(["WebGL context lost"]);
   });
 });

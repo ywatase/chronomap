@@ -53,4 +53,11 @@ describe("reduce", () => {
     const selected = reduce(readyState(null), { type: "featureSelected", featureId: "synthetic:version:point-open-boundary" });
     expect(reduce(selected, { type: "detailClosed" })).toMatchObject({ status: "ready", selectedFeatureId: null, activeMobileTab: "list" });
   });
+
+  it("retains a basemap error while selection and year state still change normally", () => {
+    const unavailable = reduce(readyState("synthetic:version:point-open-boundary", 0), { type: "basemapFailed", error: "Map rendering unavailable" });
+    expect(unavailable).toMatchObject({ status: "ready", basemapError: "Map rendering unavailable" });
+    expect(reduce(unavailable, { type: "detailClosed" })).toMatchObject({ status: "ready", basemapError: "Map rendering unavailable" });
+    expect(reduce(unavailable, { type: "yearChanged", year: -4 })).toMatchObject({ status: "selection-cleared", basemapError: "Map rendering unavailable" });
+  });
 });

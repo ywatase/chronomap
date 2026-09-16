@@ -1,4 +1,5 @@
 import * as maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import type { FeatureVersion } from "../domain/types";
 import { createGsiStyle } from "./map-style";
 
@@ -16,7 +17,7 @@ export class MapAdapter {
     this.destroy();
     this.map = new maplibregl.Map({ container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => this.updateSource());
-    this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "The GSI basemap could not be loaded."));
+    this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
       const clicked = this.map?.queryRenderedFeatures(event.point, { layers: interactiveLayerIds }) ?? [];
       const clickedIds = new Set(clicked.map((feature: maplibregl.MapGeoJSONFeature) => String(feature.id)).filter((id: string) => this.features.some((feature) => feature.id === id)));

@@ -18,3 +18,10 @@
 
 - The direct web test command needs the project Python environment for `chronomap-data`; `uv run --project .. -- npm test` supplies it.
 - The Vite production build succeeds but reports its standard MapLibre-related chunk-size warning (1.03 MB JavaScript); no generated assets or lockfiles were changed.
+
+## Review follow-up
+
+- Moved all `line-dasharray` styling to valid paint properties and used literal array branches for the data-driven hypothesis dash expression.
+- Imported MapLibre's distributed CSS solely at the adapter boundary.
+- Separated persistent `basemapError` from UI status, so temporal selection-cleared announcements and normal detail/list transitions remain accurate while the map notice persists.
+- Added map-rendering error, style-placement, and candidate/detail focus regression coverage. Candidate controls carry stable `data-map-candidate-id` values and regain focus after details close.

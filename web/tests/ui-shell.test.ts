@@ -24,4 +24,17 @@ describe("ui shell", () => {
     expect(root.querySelectorAll("footer")).toHaveLength(1);
     expect(root.querySelectorAll("main main")).toHaveLength(0);
   });
+
+  it("moves a map-candidate selection to details and restores focus to that candidate", () => {
+    const second = structuredClone(bundle) as PublicBundle; (second.features as any).push({ ...second.features[0], id: "second", properties: { ...second.features[0]!.properties, labels: { en: "Second" } } });
+    const root = document.createElement("div"); document.body.append(root); const controller = mountUiShell(root, second, () => undefined);
+    let select: ((ids: readonly string[]) => void) | undefined;
+    controller.setMapAdapter({ mount: () => undefined, setFeatures: () => undefined, setSelectedFeature: () => undefined, onSelect: (handler) => { select = handler; } });
+    select?.(["feature", "second"]);
+    const candidate = root.querySelector<HTMLButtonElement>('[data-map-candidate-id="second"]')!; candidate.click();
+    expect(document.activeElement).toBe(root.querySelector("#tab-detail"));
+    root.querySelector<HTMLButtonElement>(".detail-panel button")!.click();
+    expect(document.activeElement).toBe(root.querySelector('[data-map-candidate-id="second"]'));
+    root.remove();
+  });
 });

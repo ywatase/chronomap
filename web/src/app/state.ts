@@ -1,7 +1,7 @@
 import { filterFeaturesByYear } from "../domain/temporal-filter";
 import type { FeatureVersion } from "../domain/types";
 
-export type AppStatus = "loading" | "ready" | "no-match" | "selection-cleared" | "failed" | "retrying" | "basemap-failure";
+export type AppStatus = "loading" | "ready" | "no-match" | "selection-cleared" | "failed" | "retrying";
 export type MobileTab = "list" | "detail";
 
 export interface AppState {
@@ -15,6 +15,8 @@ export interface AppState {
   readonly allFeatures: readonly FeatureVersion[];
   /** Candidate IDs from the most recent map click, retained in authored order. */
   readonly mapCandidateIds?: readonly string[];
+  /** Map rendering health is independent of dataset and selection status. */
+  readonly basemapError?: string | null;
 }
 
 export type AppEvent =
@@ -41,13 +43,13 @@ export function reduce(state: AppState, event: AppEvent): AppState {
     case "mobileTabChanged": return { ...state, activeMobileTab: event.tab };
     case "featureSelected":
       return state.visibleFeatures.some((feature) => feature.id === event.featureId)
-        ? { ...state, status: state.status === "basemap-failure" ? "basemap-failure" : "ready", selectedFeatureId: event.featureId, activeMobileTab: "detail", mapCandidateIds: [] }
+        ? { ...state, status: "ready", selectedFeatureId: event.featureId, activeMobileTab: "detail" }
         : state;
     case "mapCandidatesReported":
       return event.featureIds.length === 1
         ? reduce(state, { type: "featureSelected", featureId: event.featureIds[0]! })
         : { ...state, mapCandidateIds: event.featureIds.filter((id) => state.visibleFeatures.some((feature) => feature.id === id)) };
-    case "basemapFailed": return { ...state, status: "basemap-failure", error: event.error };
+    case "basemapFailed": return { ...state, basemapError: event.error };
     case "selectionCleared": return { ...state, status: "selection-cleared", selectedFeatureId: null, activeMobileTab: "list" };
     case "detailClosed": return { ...state, status: state.visibleFeatures.length ? "ready" : "no-match", selectedFeatureId: null, activeMobileTab: "list" };
     case "yearChanged": {
@@ -58,7 +60,7 @@ export function reduce(state: AppState, event: AppEvent): AppState {
         ...state, selectedYear: event.year, visibleFeatures,
         selectedFeatureId: selectedIsVisible ? state.selectedFeatureId : null,
         activeMobileTab: selectedIsVisible ? state.activeMobileTab : "list",
-        status: state.status === "basemap-failure" ? "basemap-failure" : (selectedIsVisible || state.selectedFeatureId === null ? (visibleFeatures.length ? "ready" : "no-match") : "selection-cleared"),
+        status: selectedIsVisible || state.selectedFeatureId === null ? (visibleFeatures.length ? "ready" : "no-match") : "selection-cleared",
         mapCandidateIds: [],
       };
     }
