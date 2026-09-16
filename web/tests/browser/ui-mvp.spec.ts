@@ -6,6 +6,9 @@ test.describe("Chronomap UI MVP", () => {
     await expect(page.locator("main [role=status]")).toContainText(/available/i);
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative A/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative B/ })).toBeVisible();
+    const mapCanvas = page.locator(".maplibregl-canvas");
+    await mapCanvas.focus();
+    await expect(mapCanvas).toBeFocused();
     await expect(page.getByText("Synthetic Private Polygon")).toHaveCount(0);
 
     await page.getByLabel(/Year|年/).fill("0");
