@@ -53,14 +53,19 @@ test.describe("Chronomap UI MVP", () => {
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative A/ })).toBeFocused();
   });
 
-  test("a blocked GSI basemap leaves the text list usable", async ({ page }) => {
-    await page.route(/(?:cyberjapandata|maps)\.gsi\.go\.jp/, (route) => route.abort());
+  test("a blocked GSI basemap can retry without losing the selected detail", async ({ page }) => {
+    let blockBasemap = true;
+    await page.route(/(?:cyberjapandata|maps)\.gsi\.go\.jp/, (route) => blockBasemap ? route.abort() : route.continue());
     await page.goto("/");
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative A/ })).toBeVisible();
     const failure = page.getByRole("alert");
     await expect(failure).toBeVisible();
     await expect(failure).toContainText(/Basemap|map rendering/i);
     await page.getByRole("button", { name: /Synthetic Line Alternative B/ }).click();
+    await expect(page.getByRole("heading", { name: "Entity" })).toBeVisible();
+    blockBasemap = false;
+    await page.getByRole("button", { name: /Retry basemap/i }).click();
+    await expect(failure).toBeHidden();
     await expect(page.getByRole("heading", { name: "Entity" })).toBeVisible();
   });
 

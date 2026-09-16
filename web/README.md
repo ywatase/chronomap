@@ -6,6 +6,17 @@ the Python public-bundle builder, not a record of real history.
 
 ## Setup and commands
 
+The unit suite regenerates the public demo bundle through the repository's
+`chronomap-data` command. Prepare the repository virtual environment and put it
+on `PATH` before running the web commands:
+
+```sh
+cd ..
+uv sync
+export PATH="$PWD/.venv/bin:$PATH"
+cd web
+```
+
 From this directory, install Node dependencies and start the development server:
 
 ```sh
@@ -29,6 +40,9 @@ npm run test:browser
 The browser tests run both 390×844 smartphone and 1440×900 desktop projects.
 Install Playwright's Chromium browser if it is not already available with
 `npx playwright install chromium`.
+
+If `npm test` reports that `chronomap-data` is missing, confirm that the
+repository `.venv/bin` directory is still present on `PATH` in the same shell.
 
 ## Demo data
 

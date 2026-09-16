@@ -24,12 +24,17 @@
   selection-cleared, and retry states; dataset failure remains an alert.
 - Added responsive focus handling (desktop detail panel, mobile detail tab) and
   verified mobile arrow-key tab selection, `aria-selected`, and tabpanel state.
+- Added an explicit bilingual basemap retry action. Retrying rebuilds only the
+  MapLibre map, restores the current feature collection and selection, and
+  leaves the authoritative list and open detail panel in place.
+- Documented that the web unit suite requires the repository `.venv/bin` on
+  `PATH` because its public-asset regression invokes `chronomap-data`.
 
 ## Verification
 
-- `PATH=/home/ywatase/.nvm/versions/node/v24.21.0/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm test` — PASS (33 tests).
-- `PATH=/home/ywatase/.nvm/versions/node/v24.21.0/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm run build` — PASS (Vite chunk-size warning only).
-- `PYTHONDONTWRITEBYTECODE=1 uv run pytest -q -p no:cacheprovider` — PASS.
+- `PATH=/tmp/chronomap-node22.bQpa1j/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm test` — PASS (37 tests).
+- `PATH=/tmp/chronomap-node22.bQpa1j/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm run build` — PASS (Vite chunk-size warning only).
+- `PYTHONDONTWRITEBYTECODE=1 uv run pytest -q -p no:cacheprovider` — PASS (209 tests).
 - `npm run test:browser` — PASS for both configured Chromium projects (eight
   acceptance tests). Chromium was installed locally for this verification.
 

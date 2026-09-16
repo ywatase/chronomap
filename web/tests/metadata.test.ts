@@ -53,4 +53,20 @@ describe("metadata and list rendering", () => {
     expect(container.textContent).toContain("Alternative B");
     expect(container.textContent).toContain("No preferred hypothesis");
   });
+
+  it("renders an unsafe source URL as text instead of a navigable link", () => {
+    const unsafeBundle: PublicBundle = {
+      ...bundle,
+      sourcesById: {
+        ...bundle.sourcesById,
+        "source:one": { ...bundle.sourcesById["source:one"]!, url: "javascript:alert(document.domain)" },
+      },
+    };
+    const container = document.createElement("div");
+
+    renderMetadataPanel(container, feature, unsafeBundle, () => undefined);
+
+    expect(container.textContent).toContain("javascript:alert(document.domain)");
+    expect(container.querySelector('a[href^="javascript:"]')).toBeNull();
+  });
 });

@@ -43,9 +43,55 @@ describe("ui shell", () => {
     const controller = mountUiShell(root, bundle, () => undefined);
     controller.setMapAdapter({ mount: () => { throw new Error("WebGL unavailable"); }, setFeatures: () => undefined, setSelectedFeature: () => undefined });
     expect(root.querySelector('[role="alert"]')?.textContent).toMatch(/Basemap or map rendering could not start/);
+    expect(root.querySelector<HTMLButtonElement>("[data-basemap-retry]")?.hidden).toBe(true);
     const feature = root.querySelector<HTMLButtonElement>(".feature-choice")!;
     feature.click();
     expect(root.querySelector("h3")?.textContent).toBe("Entity");
     root.remove();
+  });
+
+  it("retries only the failed basemap while preserving the selected detail", () => {
+    const root = document.createElement("div"); document.body.append(root);
+    const controller = mountUiShell(root, bundle, () => undefined);
+    let reportError: ((message: string) => void) | undefined;
+    let retries = 0;
+    controller.setMapAdapter({
+      mount: () => undefined,
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      onBasemapError: (handler) => { reportError = handler; },
+      retry: () => { retries += 1; },
+    });
+    root.querySelector<HTMLButtonElement>(".feature-choice")!.click();
+    reportError?.("GSI tiles unavailable");
+
+    const retry = root.querySelector<HTMLButtonElement>("[data-basemap-retry]")!;
+    expect(retry.hidden).toBe(false);
+    retry.click();
+
+    expect(retries).toBe(1);
+    expect(root.querySelector("[role=alert]")?.hasAttribute("hidden")).toBe(true);
+    expect(root.querySelector("h3")?.textContent).toBe("Entity");
+    root.remove();
+  });
+
+  it("keeps the basemap error visible when its retry throws", () => {
+    const root = document.createElement("div");
+    const controller = mountUiShell(root, bundle, () => undefined);
+    let reportError: ((message: string) => void) | undefined;
+    controller.setMapAdapter({
+      mount: () => undefined,
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      onBasemapError: (handler) => { reportError = handler; },
+      retry: () => { throw new Error("WebGL still unavailable"); },
+    });
+    reportError?.("GSI tiles unavailable");
+
+    root.querySelector<HTMLButtonElement>("[data-basemap-retry]")!.click();
+
+    const alert = root.querySelector<HTMLElement>("[role=alert]")!;
+    expect(alert.hidden).toBe(false);
+    expect(alert.textContent).toContain("could not restart");
   });
 });

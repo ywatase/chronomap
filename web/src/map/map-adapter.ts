@@ -8,14 +8,26 @@ const interactiveLayerIds = ["historical-points", "historical-lines", "historica
 
 export class MapAdapter {
   private map: maplibregl.Map | null = null;
+  private container: HTMLElement | null = null;
   private features: readonly FeatureVersion[] = [];
   private selectedFeatureId: string | null = null;
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
 
   mount(container: HTMLElement): void {
-    this.destroy();
-    this.map = new maplibregl.Map({ container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
+    this.container = container;
+    this.createMap();
+  }
+
+  retry(): void {
+    if (!this.container) return;
+    this.createMap();
+  }
+
+  private createMap(): void {
+    if (!this.container) return;
+    this.map?.remove();
+    this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => this.updateSource());
     this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
@@ -30,7 +42,7 @@ export class MapAdapter {
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(); }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onBasemapError(handler: (message: string) => void): void { this.basemapErrorHandler = handler; }
-  destroy(): void { this.map?.remove(); this.map = null; }
+  destroy(): void { this.map?.remove(); this.map = null; this.container = null; }
 
   private updateSource(): void {
     const source = this.map?.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;

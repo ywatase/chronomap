@@ -27,6 +27,7 @@ export type AppEvent =
   | { readonly type: "featureSelected"; readonly featureId: string }
   | { readonly type: "mapCandidatesReported"; readonly featureIds: readonly string[] }
   | { readonly type: "basemapFailed"; readonly error: string }
+  | { readonly type: "basemapRecovered" }
   | { readonly type: "selectionCleared" }
   | { readonly type: "detailClosed" }
   | { readonly type: "mobileTabChanged"; readonly tab: MobileTab }
@@ -50,6 +51,7 @@ export function reduce(state: AppState, event: AppEvent): AppState {
         ? reduce(state, { type: "featureSelected", featureId: event.featureIds[0]! })
         : { ...state, mapCandidateIds: event.featureIds.filter((id) => state.visibleFeatures.some((feature) => feature.id === id)) };
     case "basemapFailed": return { ...state, basemapError: event.error };
+    case "basemapRecovered": return { ...state, basemapError: null };
     case "selectionCleared": return { ...state, status: "selection-cleared", selectedFeatureId: null, activeMobileTab: "list" };
     case "detailClosed": return { ...state, status: state.visibleFeatures.length ? "ready" : "no-match", selectedFeatureId: null, activeMobileTab: "list" };
     case "yearChanged": {

@@ -71,4 +71,22 @@ describe("MapAdapter", () => {
     mocked.maps.at(-1).fire("error", { error: new Error("WebGL context lost") });
     expect(errors).toEqual(["WebGL context lost"]);
   });
+
+  it("recreates the map on retry and restores visible and selected features", () => {
+    const adapter = new MapAdapter();
+    adapter.mount(document.createElement("div"));
+    adapter.setFeatures([point("first", [139.7, 35.6])]);
+    adapter.setSelectedFeature("first");
+    const firstMap = mocked.maps.at(-1);
+
+    adapter.retry();
+
+    const retriedMap = mocked.maps.at(-1);
+    expect(retriedMap).not.toBe(firstMap);
+    expect(firstMap.remove).toHaveBeenCalledOnce();
+    retriedMap.fire("load");
+    expect(retriedMap.source.setData).toHaveBeenLastCalledWith(expect.objectContaining({
+      features: [expect.objectContaining({ id: "first", properties: expect.objectContaining({ selected: true }) })],
+    }));
+  });
 });
