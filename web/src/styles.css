@@ -33,7 +33,10 @@ body {
 .year-controls, .mobile-tabs { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
 .year-controls p { flex-basis: 100%; margin: .5rem 0; }
 main { display: grid; gap: 1rem; }
-.map-placeholder { min-height: 14rem; padding: 1rem; border: 2px dashed #607080; background: #e9eef2; }
+.map-placeholder { min-height: 18rem; overflow: hidden; border: 2px solid #607080; background: #e9eef2; }
+.map-placeholder .maplibregl-canvas { outline: none; }
+.map-candidates { padding: .75rem; border: 2px solid #526273; background: #fff; }
+.map-candidates h2 { margin-top: 0; font-size: 1rem; }
 .sidebar { min-width: 0; }
 .feature-list, .feature-list ul { margin: 0; padding-left: 1.2rem; }
 .feature-list > li { margin-bottom: 1rem; }
