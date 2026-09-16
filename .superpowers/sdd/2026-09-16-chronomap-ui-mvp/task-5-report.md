@@ -15,10 +15,19 @@
   documentation, generated-report ignores, and Vite test/dev configuration
   that excludes browser specifications from Vitest and MapLibre from dependency
   prebundling.
+- Separated bundle-load failures from synchronous MapLibre startup failures so a
+  map/WebGL/style error becomes a basemap alert while the text list and detail
+  path remain mounted. Added a regression test for that boundary.
+- Replaced deprecated geometry filters with `geometry-type` expressions,
+  preserved the skip-link main target while loading or failing, and made retry
+  completion use one persistent live region while visible state text remains
+  the canonical status display.
+- Added responsive focus handling (desktop detail panel, mobile detail tab) and
+  verified mobile arrow-key tab selection, `aria-selected`, and tabpanel state.
 
 ## Verification
 
-- `PATH=/home/ywatase/.nvm/versions/node/v24.21.0/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm test` — PASS (32 tests).
+- `PATH=/home/ywatase/.nvm/versions/node/v24.21.0/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm test` — PASS (33 tests).
 - `PATH=/home/ywatase/.nvm/versions/node/v24.21.0/bin:/home/ywatase/git/github.com/ywatase/chronomap/.venv/bin:$PATH npm run build` — PASS (Vite chunk-size warning only).
 - `PYTHONDONTWRITEBYTECODE=1 uv run pytest -q -p no:cacheprovider` — PASS.
 - `npm run test:browser` — PASS for both configured Chromium projects (eight

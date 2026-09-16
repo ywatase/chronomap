@@ -31,7 +31,6 @@ function renderLoading(retrying: boolean): void {
   const status = document.createElement("p");
   status.setAttribute("role", "status");
   status.textContent = retrying ? "Retrying dataset load…" : "Loading dataset…";
-  announce(status.textContent);
   shell.append(status);
   appRoot.append(shell);
 }
@@ -44,7 +43,6 @@ function renderFailure(): void {
   const alert = document.createElement("p");
   alert.setAttribute("role", "alert");
   alert.textContent = "Dataset failed to load. The public demo data could not be read. Please retry.";
-  announce(alert.textContent);
   const retry = document.createElement("button");
   retry.type = "button";
   retry.textContent = "Retry loading dataset";
@@ -68,7 +66,7 @@ async function loadDataset(retrying = false): Promise<void> {
   if (currentRequest !== requestId) return;
   const nextController = mountUiShell(appRoot, bundle, () => undefined);
   controller = nextController;
-  announce("Dataset available.");
+  if (retrying) announce("Retry complete. Dataset available.");
   try {
     nextController.setMapAdapter(new MapAdapter());
   } catch {

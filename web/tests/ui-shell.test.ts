@@ -37,4 +37,15 @@ describe("ui shell", () => {
     expect(document.activeElement).toBe(root.querySelector('[data-map-candidate-id="second"]'));
     root.remove();
   });
+
+  it("keeps the text list and detail path available when map startup throws", () => {
+    const root = document.createElement("div"); document.body.append(root);
+    const controller = mountUiShell(root, bundle, () => undefined);
+    controller.setMapAdapter({ mount: () => { throw new Error("WebGL unavailable"); }, setFeatures: () => undefined, setSelectedFeature: () => undefined });
+    expect(root.querySelector('[role="alert"]')?.textContent).toMatch(/Basemap or map rendering could not start/);
+    const feature = root.querySelector<HTMLButtonElement>(".feature-choice")!;
+    feature.click();
+    expect(root.querySelector("h3")?.textContent).toBe("Entity");
+    root.remove();
+  });
 });
