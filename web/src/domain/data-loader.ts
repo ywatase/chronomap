@@ -69,8 +69,10 @@ function isEntityArray(value: unknown): value is Entity[] {
   return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.type === "string" && isTextMap(item.labels) && isTextMap(item.description));
 }
 function isSourceArray(value: unknown): value is Source[] {
-  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.type === "string" && typeof item.citation === "string" && isTextMap(item.title) && Array.isArray(item.creators) && item.creators.every((creator) => typeof creator === "string") && isYear(item.publishedYear) && typeof item.url === "string" && typeof item.accessedDate === "string" && isRights(item.rights));
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.type === "string" && typeof item.citation === "string" && isTextMap(item.title) && Array.isArray(item.creators) && item.creators.every((creator) => typeof creator === "string") && isYear(item.publishedYear) && typeof item.url === "string" && isSafeHttpUrl(item.url) && typeof item.accessedDate === "string" && isRights(item.rights));
 }
+
+function isSafeHttpUrl(value: string): boolean { try { const url = new URL(value); return url.protocol === "http:" || url.protocol === "https:"; } catch { return false; } }
 function isEvidenceArray(value: unknown): value is Evidence[] {
   return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.sourceId === "string" && typeof item.locator === "string" && (item.usage === "citation" || item.usage === "derived-geometry") && Array.isArray(item.supports) && item.supports.length > 0 && item.supports.every((support) => ["temporal", "location", "geometry", "identity"].includes(support as string)) && typeof item.note === "string" && (item.publicationBasis === undefined || ["open-license", "public-domain", "permission", "original-reconstruction"].includes(item.publicationBasis as string)));
 }
