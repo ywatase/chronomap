@@ -37,12 +37,16 @@ describe("metadata and list rendering", () => {
     expect(container.textContent).toContain("Citation-only metadata; no authored source content is reproduced.");
     expect(container.textContent).toContain("Version terms");
     expect(container.textContent).toContain("Dataset terms");
+    expect(container.textContent).toContain("circa");
+    expect(container.querySelector('a[href="#source-source%3Aone"]')?.textContent).toContain("Restricted citation");
+    expect(container.querySelector('a[href="https://example.invalid/source"]')?.getAttribute("target")).toBe("_blank");
   });
 
   it("renders a semantic selectable list with shape, year, uncertainty, and unranked hypothesis labels", () => {
     const container = document.createElement("div");
     renderFeatureList(container, state, bundle, () => undefined);
     expect(container.querySelector("ul button")?.textContent).toContain("LineString");
+    expect(container.querySelector("ul button")?.textContent).toContain("Entity label");
     expect(container.querySelector("ul button")?.textContent).toContain("2 BCE");
     expect(container.textContent).toContain("Alternative B");
     expect(container.textContent).toContain("No preferred hypothesis");

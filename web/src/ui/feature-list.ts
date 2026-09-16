@@ -16,8 +16,11 @@ export function renderFeatureList(container: HTMLElement, state: AppState, bundl
     for (const feature of group.features) {
       const member = document.createElement("li"); const button = document.createElement("button"); button.type = "button";
       button.className = "feature-choice"; button.setAttribute("aria-pressed", String(state.selectedFeatureId === feature.id));
+      button.dataset.featureId = feature.id;
       const hypothesis = feature.properties.hypothesisLabel ? `, ${localizedText(feature.properties.hypothesisLabel, bundle.dataset.defaultLanguage)}` : "";
-      button.textContent = `${localizedText(feature.properties.labels, bundle.dataset.defaultLanguage)}${hypothesis}. ${feature.geometry.type}; ${periodText(feature.properties.temporal)}; uncertainty: ${uncertaintySummary(feature)}.`;
+      const entity = bundle.entitiesById[feature.properties.entityId];
+      const entityLabel = entity ? localizedText(entity.labels, bundle.dataset.defaultLanguage) : "Unknown entity";
+      button.textContent = `${localizedText(feature.properties.labels, bundle.dataset.defaultLanguage)} (${entityLabel})${hypothesis}. ${feature.geometry.type}; ${periodText(feature.properties.temporal)}; uncertainty: ${uncertaintySummary(feature)}.`;
       button.addEventListener("click", () => onSelect(feature.id, button)); member.append(button); members.append(member);
     }
     item.append(members); list.append(item);

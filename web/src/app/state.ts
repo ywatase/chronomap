@@ -22,6 +22,7 @@ export type AppEvent =
   | { readonly type: "yearChanged"; readonly year: number }
   | { readonly type: "featureSelected"; readonly featureId: string }
   | { readonly type: "selectionCleared" }
+  | { readonly type: "detailClosed" }
   | { readonly type: "mobileTabChanged"; readonly tab: MobileTab }
   | { readonly type: "retryStarted" }
   | { readonly type: "retryFinished" };
@@ -39,6 +40,7 @@ export function reduce(state: AppState, event: AppEvent): AppState {
         ? { ...state, status: "ready", selectedFeatureId: event.featureId, activeMobileTab: "detail" }
         : state;
     case "selectionCleared": return { ...state, status: "selection-cleared", selectedFeatureId: null, activeMobileTab: "list" };
+    case "detailClosed": return { ...state, status: state.visibleFeatures.length ? "ready" : "no-match", selectedFeatureId: null, activeMobileTab: "list" };
     case "yearChanged": {
       if (!Number.isInteger(event.year)) return state;
       const visibleFeatures = filterFeaturesByYear(state.allFeatures, event.year);

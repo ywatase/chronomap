@@ -18,3 +18,10 @@
 ## Findings
 
 - The map is intentionally represented by an accessible placeholder in this task; Task 4 owns the MapLibre adapter and GSI attribution integration.
+
+## Review follow-up
+
+- Kept the shell DOM, map host, and live region stable across state changes; the Task 4 adapter boundary now requires `mount(container)`.
+- Added semantic close behavior and focus return to the newly-rendered selected list button.
+- Added entity labels to list choices, temporal precision/qualifier text, source anchors from evidence, safe source links, and BCE/CE source-year formatting.
+- Follow-up verification: focused UI tests (9), complete web suite (23), and production build all passed.

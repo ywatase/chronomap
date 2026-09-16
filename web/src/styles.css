@@ -53,11 +53,10 @@ footer { margin-top: 1.5rem; font-size: .9rem; }
   .app-shell {
     padding: 2.5rem;
   }
-  main { grid-template-columns: minmax(0, 2fr) minmax(20rem, 1fr); }
+  .shell-content { display: grid; gap: 1rem; grid-template-columns: minmax(0, 2fr) minmax(20rem, 1fr); }
   .map-placeholder { grid-row: 2; }
   .sidebar { grid-column: 2; grid-row: 2; }
   .mobile-tabs { display: none; }
-  .list-panel, .detail-panel { display: block !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

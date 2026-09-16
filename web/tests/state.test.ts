@@ -48,4 +48,9 @@ describe("reduce", () => {
   it("changes the active mobile tab", () => {
     expect(reduce(readyState(null), { type: "mobileTabChanged", tab: "detail" }).activeMobileTab).toBe("detail");
   });
+
+  it("closes a still-visible detail without reporting a temporal selection clear", () => {
+    const selected = reduce(readyState(null), { type: "featureSelected", featureId: "synthetic:version:point-open-boundary" });
+    expect(reduce(selected, { type: "detailClosed" })).toMatchObject({ status: "ready", selectedFeatureId: null, activeMobileTab: "list" });
+  });
 });
