@@ -9,17 +9,6 @@ if (!app) {
   throw new Error("Chronomap app root is missing.");
 }
 const appRoot = app;
-const persistentStatus = document.querySelector<HTMLElement>("#chronomap-status");
-
-if (!persistentStatus) {
-  throw new Error("Chronomap status region is missing.");
-}
-const persistentStatusRegion = persistentStatus;
-
-function announce(message: string): void {
-  persistentStatusRegion.textContent = message;
-}
-
 let controller: ReturnType<typeof mountUiShell> | null = null;
 let requestId = 0;
 
@@ -66,7 +55,6 @@ async function loadDataset(retrying = false): Promise<void> {
   if (currentRequest !== requestId) return;
   const nextController = mountUiShell(appRoot, bundle, () => undefined);
   controller = nextController;
-  if (retrying) announce("Retry complete. Dataset available.");
   try {
     nextController.setMapAdapter(new MapAdapter());
   } catch {

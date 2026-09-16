@@ -18,10 +18,10 @@
 - Separated bundle-load failures from synchronous MapLibre startup failures so a
   map/WebGL/style error becomes a basemap alert while the text list and detail
   path remain mounted. Added a regression test for that boundary.
-- Replaced deprecated geometry filters with `geometry-type` expressions,
-  preserved the skip-link main target while loading or failing, and made retry
-  completion use one persistent live region while visible state text remains
-  the canonical status display.
+- Replaced deprecated geometry filters with `geometry-type` expressions and
+  preserved the skip-link main target while loading or failing. The visible UI
+  status is the sole polite live notifier for normal, no-match,
+  selection-cleared, and retry states; dataset failure remains an alert.
 - Added responsive focus handling (desktop detail panel, mobile detail tab) and
   verified mobile arrow-key tab selection, `aria-selected`, and tabpanel state.
 
