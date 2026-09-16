@@ -94,7 +94,15 @@ function isFeatureVersion(value: unknown): value is FeatureVersion {
     && isTemporalExtent(value.properties.temporal)
     && isUncertainty(value.properties.uncertainty)
     && Array.isArray(value.properties.evidenceIds) && value.properties.evidenceIds.every((id) => typeof id === "string")
-    && isRights(value.properties.rights);
+    && isRights(value.properties.rights)
+    && isHypothesisPair(value.properties);
+}
+
+function isHypothesisPair(properties: Record<string, unknown>): boolean {
+  const hasGroup = properties.hypothesisGroupId !== undefined;
+  const hasLabel = properties.hypothesisLabel !== undefined;
+  return hasGroup === hasLabel
+    && (!hasGroup || (typeof properties.hypothesisGroupId === "string" && properties.hypothesisGroupId.length > 0 && isTextMap(properties.hypothesisLabel)));
 }
 
 function isTextMap(value: unknown): boolean {

@@ -121,4 +121,11 @@ describe("loadPublicBundle", () => {
     vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
     await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "entities.json" } satisfies Partial<BundleLoadError>);
   });
+
+  it("rejects a public feature with an incomplete hypothesis pair", async () => {
+    const malformedPublicFeature = { ...publicFeature, properties: { ...publicFeature.properties, hypothesisGroupId: "synthetic:hypothesis:one" } };
+    const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [malformedPublicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "feature-versions.geojson" } satisfies Partial<BundleLoadError>);
+  });
 });
