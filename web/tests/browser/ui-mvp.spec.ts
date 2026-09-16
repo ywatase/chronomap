@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("Chronomap UI MVP", () => {
   test("mobile lists public hypotheses and exposes complete point metadata", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("status")).toContainText(/available/i);
+    await expect(page.locator("main [role=status]")).toContainText(/available/i);
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative A/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative B/ })).toBeVisible();
     await expect(page.getByText("Synthetic Private Polygon")).toHaveCount(0);
@@ -27,13 +27,23 @@ test.describe("Chronomap UI MVP", () => {
 
   test("keyboard flow selects and closes a detail panel", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("status")).toContainText(/available/i);
+    await expect(page.locator("main [role=status]")).toContainText(/available/i);
     await page.getByLabel(/Year|年/).press("Tab");
     await page.getByRole("button", { name: /Synthetic Line Alternative A/ }).focus();
     await page.keyboard.press("Enter");
     if (isMobileProject(test.info())) {
-      await expect(page.getByRole("tab", { name: /Details|詳細/ })).toBeFocused();
-      await page.getByRole("tab", { name: /Details|詳細/ }).press("Enter");
+      const listTab = page.getByRole("tab", { name: /Feature list|地物一覧/ });
+      const detailTab = page.getByRole("tab", { name: /Details|詳細/ });
+      await expect(detailTab).toBeFocused();
+      await expect(detailTab).toHaveAttribute("aria-selected", "true");
+      await detailTab.press("ArrowLeft");
+      await expect(listTab).toBeFocused();
+      await expect(listTab).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("tabpanel", { name: /Feature list|地物一覧/ })).toBeVisible();
+      await listTab.press("ArrowRight");
+      await expect(detailTab).toBeFocused();
+      await expect(detailTab).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("tabpanel", { name: /Details|詳細/ })).toBeVisible();
     }
     await expect(page.getByRole("heading", { name: "Entity" })).toBeVisible();
     await page.getByRole("button", { name: /Close details/ }).press("Enter");
@@ -59,7 +69,7 @@ test.describe("Chronomap UI MVP", () => {
     await expect(page.locator("body")).not.toContainText("at loadPublicBundle");
     fail = false;
     await page.getByRole("button", { name: /Retry loading dataset/ }).click();
-    await expect(page.getByRole("status")).toContainText(/available/i);
+    await expect(page.locator("main [role=status]")).toContainText(/available/i);
   });
 });
 

@@ -18,9 +18,9 @@ const historicalSource = "historical-features";
 
 export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const source = historicalSource;
-  const pointFilter = ["in", "$type", "Point"] as const;
-  const lineFilter = ["in", "$type", "LineString"] as const;
-  const polygonFilter = ["in", "$type", "Polygon"] as const;
+  const pointFilter = ["==", ["geometry-type"], "Point"] as const;
+  const lineFilter = ["==", ["geometry-type"], "LineString"] as const;
+  const polygonFilter = ["==", ["geometry-type"], "Polygon"] as const;
   const selected = ["==", ["get", "selected"], true] as const;
   const unselected = ["!=", ["get", "selected"], true] as const;
 

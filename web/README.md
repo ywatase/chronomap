@@ -36,7 +36,7 @@ The five checked-in public files under `public/data/synthetic/` are generated
 with the repository's Python builder:
 
 ```sh
-uv run chronomap-data build-public tests/fixtures/valid/synthetic-package --output web/public/data/synthetic
+cd .. && uv run chronomap-data build-public tests/fixtures/valid/synthetic-package --output web/public/data/synthetic
 ```
 
 Only those public projection files are served to the browser. Authoring data,
