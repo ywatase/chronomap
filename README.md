@@ -37,3 +37,9 @@ uv run chronomap-data build-public tests/fixtures/valid/synthetic-package --outp
 
 See [the normative data model](docs/data/model.md) for the complete package
 contract.
+
+## Web demo
+
+The static responsive UI, setup instructions, and browser acceptance tests are
+documented in [web/README.md](web/README.md). Its `/data/synthetic/` bundle is
+a generated non-historical public demo.

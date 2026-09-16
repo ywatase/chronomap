@@ -7,3 +7,5 @@ __pycache__/
 public-bundles/
 web/node_modules/
 web/dist/
+web/playwright-report/
+web/test-results/

@@ -42,7 +42,7 @@ export function reduce(state: AppState, event: AppEvent): AppState {
     case "retryFinished": return { ...state, status: "loading" };
     case "mobileTabChanged": return { ...state, activeMobileTab: event.tab };
     case "featureSelected":
-      return state.visibleFeatures.some((feature) => feature.id === event.featureId)
+      return state.visibleFeatures.some((feature) => String(feature.id) === event.featureId)
         ? { ...state, status: "ready", selectedFeatureId: event.featureId, activeMobileTab: "detail" }
         : state;
     case "mapCandidatesReported":
