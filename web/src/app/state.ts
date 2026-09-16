@@ -1,0 +1,59 @@
+import { filterFeaturesByYear } from "../domain/temporal-filter";
+import type { FeatureVersion } from "../domain/types";
+
+export type AppStatus = "loading" | "ready" | "no-match" | "selection-cleared" | "failed" | "retrying";
+export type MobileTab = "list" | "detail";
+
+export interface AppState {
+  readonly status: AppStatus;
+  readonly selectedYear: number;
+  readonly visibleFeatures: readonly FeatureVersion[];
+  readonly selectedFeatureId: string | null;
+  readonly activeMobileTab: MobileTab;
+  readonly error: string | null;
+  /** Immutable public features retained so a year change can recompute visibility. */
+  readonly allFeatures: readonly FeatureVersion[];
+}
+
+export type AppEvent =
+  | { readonly type: "bundleLoading" }
+  | { readonly type: "bundleReady"; readonly features: readonly FeatureVersion[]; readonly year: number }
+  | { readonly type: "bundleFailed"; readonly error: string }
+  | { readonly type: "yearChanged"; readonly year: number }
+  | { readonly type: "featureSelected"; readonly featureId: string }
+  | { readonly type: "selectionCleared" }
+  | { readonly type: "mobileTabChanged"; readonly tab: MobileTab }
+  | { readonly type: "retryStarted" }
+  | { readonly type: "retryFinished" };
+
+export function reduce(state: AppState, event: AppEvent): AppState {
+  switch (event.type) {
+    case "bundleLoading": return { ...state, status: "loading", error: null, visibleFeatures: [], selectedFeatureId: null };
+    case "bundleReady": return readyState(state, event.features, event.year);
+    case "bundleFailed": return { ...state, status: "failed", error: event.error, visibleFeatures: [], selectedFeatureId: null };
+    case "retryStarted": return { ...state, status: "retrying", error: null };
+    case "retryFinished": return { ...state, status: "loading" };
+    case "mobileTabChanged": return { ...state, activeMobileTab: event.tab };
+    case "featureSelected":
+      return state.visibleFeatures.some((feature) => feature.id === event.featureId)
+        ? { ...state, status: "ready", selectedFeatureId: event.featureId, activeMobileTab: "detail" }
+        : state;
+    case "selectionCleared": return { ...state, status: "selection-cleared", selectedFeatureId: null, activeMobileTab: "list" };
+    case "yearChanged": {
+      if (!Number.isInteger(event.year)) return state;
+      const visibleFeatures = filterFeaturesByYear(state.allFeatures, event.year);
+      const selectedIsVisible = state.selectedFeatureId !== null && visibleFeatures.some((feature) => feature.id === state.selectedFeatureId);
+      return {
+        ...state, selectedYear: event.year, visibleFeatures,
+        selectedFeatureId: selectedIsVisible ? state.selectedFeatureId : null,
+        activeMobileTab: selectedIsVisible ? state.activeMobileTab : "list",
+        status: selectedIsVisible || state.selectedFeatureId === null ? (visibleFeatures.length ? "ready" : "no-match") : "selection-cleared",
+      };
+    }
+  }
+}
+
+function readyState(state: AppState, features: readonly FeatureVersion[], year: number): AppState {
+  const visibleFeatures = filterFeaturesByYear(features, year);
+  return { ...state, status: visibleFeatures.length ? "ready" : "no-match", selectedYear: year, visibleFeatures, selectedFeatureId: null, error: null, allFeatures: features };
+}
