@@ -14,7 +14,9 @@ test.describe("Chronomap UI MVP", () => {
     const openPoint = page.locator('[data-feature-id="synthetic:version:point-open-boundary"]');
     await openPoint.click();
     await expect(openPoint).toHaveAttribute("aria-pressed", "true");
-    await page.getByRole("tab", { name: /Details|詳細/ }).click();
+    if (isMobileProject(test.info())) {
+      await page.getByRole("tab", { name: /Details|詳細/ }).click();
+    }
     await expect(page.getByRole("heading", { name: "Entity" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Version" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Evidence" })).toBeVisible();
@@ -29,8 +31,11 @@ test.describe("Chronomap UI MVP", () => {
     await page.getByLabel(/Year|年/).press("Tab");
     await page.getByRole("button", { name: /Synthetic Line Alternative A/ }).focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("tab", { name: /Details|詳細/ })).toBeFocused();
-    await page.getByRole("tab", { name: /Details|詳細/ }).press("Enter");
+    if (isMobileProject(test.info())) {
+      await expect(page.getByRole("tab", { name: /Details|詳細/ })).toBeFocused();
+      await page.getByRole("tab", { name: /Details|詳細/ }).press("Enter");
+    }
+    await expect(page.getByRole("heading", { name: "Entity" })).toBeVisible();
     await page.getByRole("button", { name: /Close details/ }).press("Enter");
     await expect(page.getByRole("button", { name: /Synthetic Line Alternative A/ })).toBeFocused();
   });
@@ -57,3 +62,7 @@ test.describe("Chronomap UI MVP", () => {
     await expect(page.getByRole("status")).toContainText(/available/i);
   });
 });
+
+function isMobileProject(info: ReturnType<typeof test.info>): boolean {
+  return info.project.name === "mobile-chromium";
+}
