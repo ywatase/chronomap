@@ -1,0 +1,244 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -2,
+            -2
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "synthetic:version:line-alternative-a",
+      "properties": {
+        "description": {
+          "en": "Non-historical parallel hypothesis A."
+        },
+        "entityId": "synthetic:entity:line-subject",
+        "evidenceIds": [
+          "synthetic:evidence:citation-identity",
+          "synthetic:evidence:citation-temporal",
+          "synthetic:evidence:derived-geometry"
+        ],
+        "hypothesisGroupId": "synthetic:hypothesis:line-alternatives",
+        "hypothesisLabel": {
+          "en": "Alternative A"
+        },
+        "labels": {
+          "en": "Synthetic Line Alternative A"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Test Author",
+          "status": "open-license",
+          "terms": "Synthetic CC-style test terms."
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 2,
+            "latestYear": 3,
+            "precision": "year",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": -4,
+            "latestYear": -3,
+            "precision": "year",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:derived-geometry"
+            ],
+            "note": ""
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-identity"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": "Synthetic location is approximate."
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            -2,
+            2
+          ],
+          [
+            2,
+            -2
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "synthetic:version:line-alternative-b",
+      "properties": {
+        "description": {
+          "en": "Non-historical parallel hypothesis B."
+        },
+        "entityId": "synthetic:entity:line-subject",
+        "evidenceIds": [
+          "synthetic:evidence:citation-identity",
+          "synthetic:evidence:citation-temporal",
+          "synthetic:evidence:derived-geometry"
+        ],
+        "hypothesisGroupId": "synthetic:hypothesis:line-alternatives",
+        "hypothesisLabel": {
+          "en": "Alternative B"
+        },
+        "labels": {
+          "en": "Synthetic Line Alternative B"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Test Author",
+          "status": "open-license",
+          "terms": "Synthetic CC-style test terms."
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1,
+            "latestYear": 2,
+            "precision": "year",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": -3,
+            "latestYear": -2,
+            "precision": "year",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:derived-geometry"
+            ],
+            "note": ""
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-identity"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": "Synthetic location is approximate."
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          0,
+          0
+        ],
+        "type": "Point"
+      },
+      "id": "synthetic:version:point-open-boundary",
+      "properties": {
+        "description": {
+          "en": "Non-historical feature with an open end boundary."
+        },
+        "entityId": "synthetic:entity:point-subject",
+        "evidenceIds": [
+          "synthetic:evidence:citation-identity",
+          "synthetic:evidence:citation-temporal",
+          "synthetic:evidence:derived-geometry"
+        ],
+        "labels": {
+          "en": "Synthetic Open Boundary Point"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "status": "permission",
+          "terms": "Synthetic permission statement."
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 0,
+            "latestYear": 0,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:derived-geometry"
+            ],
+            "note": ""
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-identity"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": ""
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "synthetic:evidence:citation-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

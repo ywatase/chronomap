@@ -1,0 +1,22 @@
+[
+  {
+    "description": {
+      "en": "A non-historical line-shaped subject."
+    },
+    "id": "synthetic:entity:line-subject",
+    "labels": {
+      "en": "Synthetic Line Subject"
+    },
+    "type": "route"
+  },
+  {
+    "description": {
+      "en": "A non-historical point-shaped subject."
+    },
+    "id": "synthetic:entity:point-subject",
+    "labels": {
+      "en": "Synthetic Point Subject"
+    },
+    "type": "settlement"
+  }
+]

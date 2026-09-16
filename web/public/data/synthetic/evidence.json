@@ -1,0 +1,34 @@
+[
+  {
+    "id": "synthetic:evidence:citation-identity",
+    "locator": "Synthetic identifier A",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "synthetic:source:restricted-citation",
+    "supports": [
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "synthetic:evidence:citation-temporal",
+    "locator": "Synthetic interval B",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "synthetic:source:restricted-citation",
+    "supports": [
+      "temporal",
+      "location"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "synthetic:evidence:derived-geometry",
+    "locator": "Synthetic method C",
+    "note": "Synthetic geometry reconstructed for schema testing.",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "synthetic:source:open-method-note",
+    "supports": [
+      "geometry"
+    ],
+    "usage": "derived-geometry"
+  }
+]

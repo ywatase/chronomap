@@ -1,0 +1,39 @@
+[
+  {
+    "accessedDate": "2026-09-16",
+    "citation": "Synthetic Open Method Note (test data only).",
+    "creators": [
+      "Test Author"
+    ],
+    "id": "synthetic:source:open-method-note",
+    "publishedYear": 2020,
+    "rights": {
+      "attribution": "Test Author",
+      "status": "open-license",
+      "terms": "Synthetic CC-style test terms."
+    },
+    "title": {
+      "en": "Synthetic Open Method Note"
+    },
+    "type": "synthetic-reference",
+    "url": "https://example.invalid/open-method-note"
+  },
+  {
+    "accessedDate": "2026-09-16",
+    "citation": "Synthetic Restricted Citation (test data only).",
+    "creators": [
+      "Test Editor"
+    ],
+    "id": "synthetic:source:restricted-citation",
+    "publishedYear": -1,
+    "rights": {
+      "status": "restricted",
+      "terms": "Citation metadata only."
+    },
+    "title": {
+      "en": "Synthetic Restricted Citation"
+    },
+    "type": "synthetic-reference",
+    "url": "https://example.invalid/restricted-citation"
+  }
+]
