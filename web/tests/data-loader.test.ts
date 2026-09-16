@@ -107,4 +107,18 @@ describe("loadPublicBundle", () => {
       message: "Unable to load feature-versions.geojson.",
     } satisfies Partial<BundleLoadError>);
   });
+
+  it("rejects a public feature missing a required property", async () => {
+    const { entityId: _entityId, ...properties } = publicFeature.properties;
+    const malformedPublicFeature = { ...publicFeature, properties };
+    const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [malformedPublicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "feature-versions.geojson" } satisfies Partial<BundleLoadError>);
+  });
+
+  it("rejects a malformed entity payload", async () => {
+    const payloads = [dataset, [{ id: "synthetic:entity:one" }], sources, evidence, { type: "FeatureCollection", features: [publicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "entities.json" } satisfies Partial<BundleLoadError>);
+  });
 });

@@ -77,7 +77,7 @@ describe("temporal labels", () => {
   it("chooses the end of a known start before the end boundary and clamps to bounds", () => {
     expect(initialYear(dataset({ start: { earliestYear: -10, latestYear: 5, precision: "year", qualifier: "exact" }, end: { earliestYear: 6, latestYear: 8, precision: "year", qualifier: "exact" } }))).toBe(5);
     expect(initialYear(dataset({ start: null, end: { earliestYear: -2, latestYear: 7, precision: "year", qualifier: "exact" } }))).toBe(7);
-    expect(initialYear(dataset({ start: { earliestYear: null, latestYear: null, precision: "unknown", qualifier: "unknown" }, end: null }))).toBe(0);
+    expect(initialYear(dataset({ start: null, end: { earliestYear: 0, latestYear: null, precision: "year", qualifier: "after" } }))).toBe(0);
     expect(initialYear(dataset({ start: { earliestYear: -5, latestYear: 100, precision: "year", qualifier: "exact" }, end: { earliestYear: 4, latestYear: 4, precision: "year", qualifier: "exact" } }))).toBe(4);
   });
 

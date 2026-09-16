@@ -73,9 +73,6 @@ export interface Uncertainty {
   readonly location: UncertaintyAssessment;
   readonly geometry: UncertaintyAssessment;
   readonly identity: UncertaintyAssessment;
-  readonly spatial?: UncertaintyAssessment;
-  readonly semantic?: UncertaintyAssessment;
-  readonly source?: UncertaintyAssessment;
 }
 
 export type GeometryType = "Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon";
