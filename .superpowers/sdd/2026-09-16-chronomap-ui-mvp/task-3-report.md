@@ -25,3 +25,10 @@
 - Added semantic close behavior and focus return to the newly-rendered selected list button.
 - Added entity labels to list choices, temporal precision/qualifier text, source anchors from evidence, safe source links, and BCE/CE source-year formatting.
 - Follow-up verification: focused UI tests (9), complete web suite (23), and production build all passed.
+
+## Final review follow-up
+
+- Time metadata now expresses the possibility-first endpoints independently (`start.earliestYear` and `end.latestYear`), retaining each boundary's precision and qualifier and naming null endpoints as open.
+- Evidence links and Source targets use matching literal fragment IDs, including colon-containing resource IDs.
+- The document root is neutral; the shell supplies the one `chronomap-main` landmark between sibling header and footer elements.
+- Final verification: focused UI tests (10), complete web suite (24), and production build all passed.

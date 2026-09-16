@@ -16,4 +16,12 @@ describe("ui shell", () => {
     expect(root.querySelector("[role=status]")).toBe(live);
     expect(host.textContent).toContain("map canvas");
   });
+
+  it("uses the provided neutral root for one header, main, and footer landmark", () => {
+    const root = document.createElement("div"); mountUiShell(root, bundle, () => undefined);
+    expect(root.querySelectorAll("header")).toHaveLength(1);
+    expect(root.querySelectorAll("main#chronomap-main")).toHaveLength(1);
+    expect(root.querySelectorAll("footer")).toHaveLength(1);
+    expect(root.querySelectorAll("main main")).toHaveLength(0);
+  });
 });

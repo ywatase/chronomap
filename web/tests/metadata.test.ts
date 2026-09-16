@@ -10,7 +10,7 @@ const feature = {
   properties: {
     entityId: "entity:one", labels: { en: "Version label" }, description: { en: "Version description" }, publicationStatus: "public",
     hypothesisGroupId: "hypothesis:one", hypothesisLabel: { en: "Alternative B" },
-    temporal: { start: { earliestYear: -1, latestYear: -1, precision: "year", qualifier: "circa" }, end: null },
+    temporal: { start: { earliestYear: -1, latestYear: -1, precision: "year", qualifier: "circa" }, end: { earliestYear: 4, latestYear: 5, precision: "decade", qualifier: "after" } },
     uncertainty: Object.fromEntries(["temporal", "location", "geometry", "identity"].map((key) => [key, { assessment: "approximate", note: `${key} note`, evidenceIds: ["evidence:one"] }])),
     evidenceIds: ["evidence:one"], rights: { status: "permission", terms: "Version terms" },
   },
@@ -38,7 +38,9 @@ describe("metadata and list rendering", () => {
     expect(container.textContent).toContain("Version terms");
     expect(container.textContent).toContain("Dataset terms");
     expect(container.textContent).toContain("circa");
-    expect(container.querySelector('a[href="#source-source%3Aone"]')?.textContent).toContain("Restricted citation");
+    expect(container.textContent).toContain("5 CE");
+    expect(container.querySelector('a[href="#source-source:one"]')?.textContent).toContain("Restricted citation");
+    expect(container.querySelector<HTMLElement>("#source-source\\:one")).not.toBeNull();
     expect(container.querySelector('a[href="https://example.invalid/source"]')?.getAttribute("target")).toBe("_blank");
   });
 
