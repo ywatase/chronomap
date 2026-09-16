@@ -3,16 +3,40 @@ import { BundleLoadError, loadPublicBundle } from "../src/domain/data-loader";
 
 const dataset = {
   id: "synthetic:dataset:sample",
-  temporalExtent: { start: { earliestYear: -2, latestYear: -2 }, end: null },
+  schemaVersion: "1.0.0",
+  title: { en: "Sample" },
+  description: { en: "Sample" },
+  defaultLanguage: "en",
+  bbox: [-1, -1, 1, 1],
+  temporalExtent: {
+    start: { earliestYear: -2, latestYear: -2, precision: "year", qualifier: "exact" },
+    end: null,
+  },
+  rights: { status: "public-domain" },
+  files: { entities: "entities.json", sources: "sources.json", evidence: "evidence.json", featureVersions: "feature-versions.geojson" },
 };
-const entities = [{ id: "synthetic:entity:one" }];
-const sources = [{ id: "synthetic:source:one" }];
-const evidence = [{ id: "synthetic:evidence:one" }];
+const entities = [{ id: "synthetic:entity:one", type: "settlement", labels: { en: "One" }, description: { en: "One" } }];
+const sources = [{ id: "synthetic:source:one", type: "reference", citation: "One", title: { en: "One" }, creators: ["Author"], publishedYear: 1, url: "https://example.invalid/one", accessedDate: "2026-09-16", rights: { status: "public-domain" } }];
+const evidence = [{ id: "synthetic:evidence:one", sourceId: "synthetic:source:one", locator: "One", usage: "citation", supports: ["temporal"], note: "" }];
 const publicFeature = {
   type: "Feature",
   id: "synthetic:version:public",
   geometry: { type: "Point", coordinates: [0, 0] },
-  properties: { publicationStatus: "public", temporal: { start: null, end: null } },
+  properties: {
+    entityId: "synthetic:entity:one",
+    labels: { en: "Public" },
+    description: { en: "Public" },
+    publicationStatus: "public",
+    temporal: { start: { earliestYear: 0, latestYear: 0, precision: "year", qualifier: "exact" }, end: null },
+    uncertainty: {
+      temporal: { assessment: "well-supported", note: "", evidenceIds: ["synthetic:evidence:one"] },
+      location: { assessment: "well-supported", note: "", evidenceIds: ["synthetic:evidence:one"] },
+      geometry: { assessment: "well-supported", note: "", evidenceIds: ["synthetic:evidence:one"] },
+      identity: { assessment: "well-supported", note: "", evidenceIds: ["synthetic:evidence:one"] },
+    },
+    evidenceIds: ["synthetic:evidence:one"],
+    rights: { status: "public-domain" },
+  },
 };
 const privateFeature = {
   ...publicFeature,
@@ -59,6 +83,20 @@ describe("loadPublicBundle", () => {
 
   it("rejects a malformed GeoJSON collection", async () => {
     const payloads = [dataset, entities, sources, evidence, { type: "Feature", features: [] }];
+    vi.stubGlobal("fetch", async (input: string) => {
+      const index = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!);
+      return new Response(JSON.stringify(payloads[index]), { status: 200 });
+    });
+
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({
+      resource: "feature-versions.geojson",
+      message: "Unable to load feature-versions.geojson.",
+    } satisfies Partial<BundleLoadError>);
+  });
+
+  it("rejects a malformed feature that declares itself public", async () => {
+    const malformedPublicFeature = { ...publicFeature, geometry: null };
+    const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [malformedPublicFeature] }];
     vi.stubGlobal("fetch", async (input: string) => {
       const index = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!);
       return new Response(JSON.stringify(payloads[index]), { status: 200 });
