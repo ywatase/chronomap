@@ -13,7 +13,7 @@ const lesson: Lesson = {
 };
 
 function actions() {
-  return { onStart: vi.fn(), onPrevious: vi.fn(), onNext: vi.fn(), onClose: vi.fn(), onDetails: vi.fn(), onShare: vi.fn(), onReport: vi.fn(), onPack: vi.fn() };
+  return { onStart: vi.fn(), onPrevious: vi.fn(), onNext: vi.fn(), onClose: vi.fn(), onDetails: vi.fn(), onShare: vi.fn(), onReport: vi.fn(), onPack: vi.fn(), onWorkshop: vi.fn() };
 }
 
 describe("lesson panel", () => {
@@ -23,7 +23,9 @@ describe("lesson panel", () => {
     renderLessonPanel(root, lesson, null, uiCopy("ja"), callbacks);
     expect(root.querySelector("[data-lesson-panel]")?.textContent).toContain("巨椋池教材");
     root.querySelector<HTMLButtonElement>("[data-lesson-start]")!.click();
+    root.querySelector<HTMLButtonElement>("[data-lesson-workshop-open]")!.click();
     expect(callbacks.onStart).toHaveBeenCalledTimes(1);
+    expect(callbacks.onWorkshop).toHaveBeenCalledTimes(1);
   });
 
   it("renders progress and completion actions on the final step", () => {
@@ -34,8 +36,10 @@ describe("lesson panel", () => {
     root.querySelector<HTMLButtonElement>("[data-lesson-share]")!.click();
     root.querySelector<HTMLButtonElement>("[data-lesson-report]")!.click();
     root.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")!.click();
+    root.querySelector<HTMLButtonElement>("[data-lesson-workshop-open]")!.click();
     expect(callbacks.onShare).toHaveBeenCalledTimes(1);
     expect(callbacks.onReport).toHaveBeenCalledTimes(1);
     expect(callbacks.onPack).toHaveBeenCalledTimes(1);
+    expect(callbacks.onWorkshop).toHaveBeenCalledTimes(1);
   });
 });

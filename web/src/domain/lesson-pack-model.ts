@@ -67,6 +67,9 @@ export interface LessonPackModel {
   readonly steps: readonly LessonPackStep[];
   readonly sources: readonly LessonPackSource[];
   readonly startUrl: string;
+  /** Optional fields supplied by the in-browser classroom editor. */
+  readonly classLabel?: string;
+  readonly includeTeacher?: boolean;
 }
 
 /**

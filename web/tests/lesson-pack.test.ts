@@ -48,4 +48,20 @@ describe("lesson pack preview", () => {
     expect(onPrint).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it("shows the edited class label and can omit teacher references", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, { ...model, title: "地域の水辺を読む", classLabel: "中学2年A組", includeTeacher: false }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.querySelector("[data-lesson-pack-class-label]")?.textContent).toContain("中学2年A組");
+    expect(root.textContent).toContain("地域の水辺を読む");
+    expect(root.querySelector("[data-lesson-pack-teacher]")).toBeNull();
+  });
+
+  it("does not invent a class label when the optional field is blank", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, { ...model, classLabel: "" }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.querySelector("[data-lesson-pack-class-label]")).toBeNull();
+  });
 });

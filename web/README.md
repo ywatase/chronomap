@@ -108,9 +108,17 @@ mode.
 
 ## Classroom pack (beta)
 
-After completing the guided lesson, `授業用教材パックを作成（β版無料）` opens a
-print preview with three sections: a student worksheet, a teacher reference
-sheet, and a sources/rights sheet. It includes one start URL and one share URL
+After starting or completing the guided lesson, `この教材を授業用に整える`
+opens a browser-only editor. A teacher can set a lesson title and optional class
+label, choose existing steps, rewrite observation prompts, and include or omit
+the teacher reference before opening the print preview. The same editor is the
+primary action for lesson cards in the catalog and can be opened directly with
+`/?dataset=tonegawa&lesson=tonegawa-eastward&view=builder`.
+Draft edits are intentionally not saved; reloading the page discards them.
+
+The existing `授業用教材パックを作成（β版無料）` action opens a print preview with
+three sections: a student worksheet, a teacher reference sheet, and a
+sources/rights sheet. It includes one start URL and one share URL
 for each lesson step, observation prompts and writing space, feature
 descriptions, uncertainty notes, evidence locators, and deduplicated source
 metadata. Restricted sources remain citation-only; source body text, images, and
@@ -123,7 +131,7 @@ Use `地域・教材を選ぶ` in the header to open the allow-listed region and
 catalog. Each card derives its recorded years and public feature/entity/source
 counts from the bundle, and its lesson duration/step count from the validated
 manifest. Available cards link to a free map view and, when published, a guided
-lesson; a failed card shows the failure without hiding the other dataset. The
+lesson plus the classroom editor; a failed card shows the failure without hiding the other dataset. The
 catalog itself can be opened directly and restored with `?view=catalog`, for
 example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
 pilot functions from future teacher-workflow candidates and does not assert a

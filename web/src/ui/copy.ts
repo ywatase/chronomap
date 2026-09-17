@@ -102,6 +102,9 @@ export interface UiCopy {
   readonly lessonPackNoSources: string;
   readonly lessonPackPrint: string;
   readonly lessonPackClose: string;
+  readonly lessonWorkshopOpen: string;
+  readonly lessonWorkshopBack: string;
+  readonly lessonPackClassLabel: string;
   readonly datasetCatalogOpen: string;
   readonly datasetCatalogDialogLabel: string;
   readonly datasetCatalogHeading: string;
@@ -118,6 +121,7 @@ export interface UiCopy {
   readonly datasetCatalogShare: string;
   readonly datasetCatalogReport: string;
   readonly datasetCatalogPack: string;
+  readonly datasetCatalogCustomize: string;
   readonly datasetCatalogFreeDemo: string;
   readonly datasetCatalogPackBeta: string;
   readonly datasetCatalogStartLesson: string;
@@ -275,6 +279,9 @@ const EN_COPY: UiCopy = {
   lessonPackNoSources: "No source metadata is available.",
   lessonPackPrint: "Print / save classroom pack",
   lessonPackClose: "Close classroom pack",
+  lessonWorkshopOpen: "Customize for this class",
+  lessonWorkshopBack: "Back to editor",
+  lessonPackClassLabel: "Class / audience",
   datasetCatalogOpen: "Choose a region or lesson",
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
@@ -291,6 +298,7 @@ const EN_COPY: UiCopy = {
   datasetCatalogShare: "Share a view",
   datasetCatalogReport: "Print a report",
   datasetCatalogPack: "Create a classroom pack",
+  datasetCatalogCustomize: "Customize for class",
   datasetCatalogFreeDemo: "Free demo",
   datasetCatalogPackBeta: "Classroom pack: free beta",
   datasetCatalogStartLesson: "Start free lesson",
@@ -440,6 +448,9 @@ const JA_COPY: UiCopy = {
   lessonPackNoSources: "出典メタデータはありません。",
   lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
   lessonPackClose: "教材パックを閉じる",
+  lessonWorkshopOpen: "この教材を授業用に整える",
+  lessonWorkshopBack: "編集に戻る",
+  lessonPackClassLabel: "対象・クラス",
   datasetCatalogOpen: "地域・教材を選ぶ",
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",
@@ -456,6 +467,7 @@ const JA_COPY: UiCopy = {
   datasetCatalogShare: "表示を共有",
   datasetCatalogReport: "レポートを保存",
   datasetCatalogPack: "授業用教材パックを作成",
+  datasetCatalogCustomize: "授業用に編集",
   datasetCatalogFreeDemo: "無料デモ",
   datasetCatalogPackBeta: "教材パックはβ版無料",
   datasetCatalogStartLesson: "無料教材を始める",

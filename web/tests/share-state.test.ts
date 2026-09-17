@@ -32,10 +32,12 @@ describe("shareable map state", () => {
     expect(parseSharedState("?lat=90&z=24")).toEqual({});
   });
 
-  it("parses and serializes the catalog view without accepting arbitrary view names", () => {
+  it("parses and serializes allow-listed catalog and builder views without accepting arbitrary view names", () => {
     expect(parseSharedState("?dataset=tonegawa&view=catalog")).toEqual({ dataset: "tonegawa", view: "catalog" });
+    expect(parseSharedState("?dataset=tonegawa&lesson=tonegawa-eastward&view=builder")).toEqual({ dataset: "tonegawa", lessonId: "tonegawa-eastward", view: "builder" });
     expect(parseSharedState("?view=admin")).toEqual({});
     expect(sharedQuery({ dataset: "tonegawa", view: "catalog", year: 1654, featureId: null })).toBe("?dataset=tonegawa&view=catalog&year=1654");
+    expect(sharedQuery({ dataset: "tonegawa", view: "builder", lessonId: "tonegawa-eastward", year: 1654, featureId: null })).toBe("?dataset=tonegawa&view=builder&lesson=tonegawa-eastward&year=1654");
     expect(sharedQuery({ dataset: "tonegawa", view: null, year: 1654, featureId: null })).toBe("?dataset=tonegawa&year=1654");
   });
 

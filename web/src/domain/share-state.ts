@@ -1,6 +1,6 @@
 export interface SharedState {
   readonly dataset?: string;
-  readonly view?: "catalog";
+  readonly view?: "catalog" | "builder";
   readonly lessonId?: string;
   readonly lessonStepId?: string;
   readonly year?: number;
@@ -21,7 +21,8 @@ export function parseSharedState(search: string): SharedState {
   const year = rawYear !== null && /^-?\d+$/.test(rawYear) ? Number(rawYear) : undefined;
   const featureId = params.get("feature")?.trim() || undefined;
   const dataset = params.get("dataset")?.trim() || undefined;
-  const view = params.get("view") === "catalog" ? "catalog" as const : undefined;
+  const rawView = params.get("view");
+  const view = rawView === "catalog" || rawView === "builder" ? rawView : undefined;
   const lessonId = params.get("lesson")?.trim() || undefined;
   const lessonStepId = params.get("step")?.trim() || undefined;
   const longitude = boundedNumber(params.get("lng"), -180, 180);
@@ -40,10 +41,10 @@ export function parseSharedState(search: string): SharedState {
   };
 }
 
-export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null }): string {
+export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | "builder" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null }): string {
   const params = new URLSearchParams();
   if (state.dataset) params.set("dataset", state.dataset);
-  if (state.view === "catalog") params.set("view", "catalog");
+  if (state.view === "catalog" || state.view === "builder") params.set("view", state.view);
   if (state.lessonId && /^[a-z0-9-]+$/.test(state.lessonId)) params.set("lesson", state.lessonId);
   if (state.lessonStepId && /^[a-z0-9-]+$/.test(state.lessonStepId)) params.set("step", state.lessonStepId);
   if (state.year !== null && Number.isSafeInteger(state.year)) params.set("year", String(state.year));

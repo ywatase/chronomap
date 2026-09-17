@@ -11,6 +11,7 @@ export interface LessonPanelActions {
   readonly onShare: () => void;
   readonly onReport: () => void;
   readonly onPack: () => void;
+  readonly onWorkshop?: () => void;
 }
 
 /** Render the optional static guided lesson without owning map or application state. */
@@ -52,6 +53,13 @@ export function renderLessonPanel(
     start.dataset.lessonStart = "";
     start.addEventListener("click", actions.onStart);
     section.append(start);
+    if (actions.onWorkshop) {
+      const workshop = button(copy.lessonWorkshopOpen, "lesson-workshop-open");
+      workshop.dataset.lessonWorkshopOpen = "";
+      workshop.setAttribute("aria-expanded", "false");
+      workshop.addEventListener("click", actions.onWorkshop);
+      section.append(workshop);
+    }
     container.append(section);
     return;
   }
@@ -123,6 +131,13 @@ export function renderLessonPanel(
     pack.setAttribute("aria-expanded", "false");
     pack.addEventListener("click", actions.onPack);
     completionActions.append(share, report, pack);
+    if (actions.onWorkshop) {
+      const workshop = button(copy.lessonWorkshopOpen, "lesson-workshop-open");
+      workshop.dataset.lessonWorkshopOpen = "";
+      workshop.setAttribute("aria-expanded", "false");
+      workshop.addEventListener("click", actions.onWorkshop);
+      completionActions.append(workshop);
+    }
     section.append(completionActions);
   }
   section.append(close);

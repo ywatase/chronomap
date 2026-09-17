@@ -77,6 +77,7 @@ describe("dataset catalog view model", () => {
     expect(ogurike.lesson).toMatchObject({ id: "ogurike-intro", durationMinutes: 15, stepCount: 1, firstStepId: "first", title: "巨椋池をたどる" });
     expect(ogurike.mapUrl).toBe("/map?dataset=ogurike");
     expect(ogurike.lessonUrl).toBe("/map?dataset=ogurike&lesson=ogurike-intro&step=first");
+    expect(ogurike.builderUrl).toBe("/map?dataset=ogurike&lesson=ogurike-intro&view=builder");
 
     expect(tonegawa.status).toBe("unavailable");
     expect(tonegawa.title).toBe("利根川東遷");
@@ -84,6 +85,7 @@ describe("dataset catalog view model", () => {
     expect(tonegawa.featureCount).toBe(0);
     expect(tonegawa.lesson).toBeNull();
     expect(tonegawa.lessonUrl).toBeNull();
+    expect(tonegawa.builderUrl).toBeNull();
   });
 
   it("uses English labels when the active dataset language is English", () => {

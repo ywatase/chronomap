@@ -96,7 +96,8 @@ function renderCard(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {
   const actions = document.createElement("div");
   actions.className = "dataset-catalog-actions";
   if (card.status === "available") {
-    if (card.lessonUrl) actions.append(link(card.lessonUrl, copy.datasetCatalogStartLesson, "dataset-catalog-lesson", true));
+    if (card.builderUrl) actions.append(link(card.builderUrl, copy.datasetCatalogCustomize, "dataset-catalog-builder", true));
+    if (card.lessonUrl) actions.append(link(card.lessonUrl, copy.datasetCatalogStartLesson, "dataset-catalog-lesson", false));
     actions.append(link(card.mapUrl, copy.datasetCatalogViewMap, "dataset-catalog-map", false));
     article.append(actions);
   }
@@ -174,7 +175,7 @@ function label(text: string): HTMLSpanElement {
   return element;
 }
 
-function link(href: string, text: string, dataName: "dataset-catalog-lesson" | "dataset-catalog-map", primary: boolean): HTMLAnchorElement {
+function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map", primary: boolean): HTMLAnchorElement {
   const element = document.createElement("a");
   element.href = href;
   element.textContent = text;

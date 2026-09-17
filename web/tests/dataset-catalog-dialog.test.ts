@@ -22,6 +22,7 @@ const model: DatasetCatalogViewModel = {
       availabilityMessage: "",
       mapUrl: "/?dataset=ogurike",
       lessonUrl: "/?dataset=ogurike&lesson=ogurike-intro&step=uji-1590",
+      builderUrl: "/?dataset=ogurike&lesson=ogurike-intro&view=builder",
     },
     {
       slug: "tonegawa",
@@ -38,6 +39,7 @@ const model: DatasetCatalogViewModel = {
       availabilityMessage: "読み込みに失敗しました",
       mapUrl: "/?dataset=tonegawa",
       lessonUrl: null,
+      builderUrl: null,
     },
     {
       slug: "heijokyo",
@@ -54,6 +56,7 @@ const model: DatasetCatalogViewModel = {
       availabilityMessage: "",
       mapUrl: "/?dataset=heijokyo",
       lessonUrl: "/?dataset=heijokyo&lesson=heijokyo-intro&step=capital-710",
+      builderUrl: "/?dataset=heijokyo&lesson=heijokyo-intro&view=builder",
     },
   ],
 };
@@ -69,10 +72,13 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("無料デモ");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("教材パックはβ版無料");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-lesson]")?.href).toContain("lesson=ogurike-intro");
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-builder]")?.href).toContain("view=builder");
+    expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("授業用に編集");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-map]")?.href).toContain("dataset=ogurike");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("4");
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"]')?.textContent).toContain("読み込みに失敗しました");
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-lesson]')).toBeNull();
+    expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-builder]')).toBeNull();
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-map]')).toBeNull();
     expect(root.querySelector('[data-dataset-catalog-card="heijokyo"]')?.textContent).toContain("平城京の都市軸をたどる");
     expect(root.querySelector('[data-dataset-catalog-card="heijokyo"]')?.textContent).toContain("10分");
@@ -94,6 +100,7 @@ describe("dataset catalog dialog", () => {
       ...model.cards[0]!,
       lesson: null,
       lessonUrl: null,
+      builderUrl: null,
     };
     const root = document.createElement("section");
     renderDatasetCatalog(root, { ...model, cards: [noLesson] }, uiCopy("ja"), { onClose: vi.fn() });

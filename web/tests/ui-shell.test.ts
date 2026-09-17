@@ -2,6 +2,7 @@
 import { describe, expect, it } from "vitest";
 import { mountUiShell, type MapAdapterLike } from "../src/ui/ui-shell";
 import type { PublicBundle } from "../src/domain/types";
+import type { Lesson } from "../src/domain/lesson";
 
 const bundle = { dataset: { id: "dataset", schemaVersion: "1.0.0", title: { en: "Dataset" }, description: { en: "Description" }, defaultLanguage: "en", bbox: [0, 0, 1, 1], temporalExtent: { start: { earliestYear: 0, latestYear: 0, precision: "year", qualifier: "exact" }, end: null }, rights: { status: "public-domain" }, files: { entities: "entities.json", sources: "sources.json", evidence: "evidence.json", featureVersions: "feature-versions.geojson" } }, entitiesById: { entity: { id: "entity", type: "place", labels: { en: "Entity" }, description: { en: "Entity description" } } }, sourcesById: {}, evidenceById: {}, features: [{ type: "Feature", id: "feature", geometry: { type: "Point", coordinates: [0, 0] }, properties: { entityId: "entity", labels: { en: "Feature" }, description: { en: "Feature description" }, publicationStatus: "public", temporal: { start: { earliestYear: 0, latestYear: 0, precision: "year", qualifier: "exact" }, end: null }, uncertainty: { temporal: { assessment: "unknown", note: "", evidenceIds: [] }, location: { assessment: "unknown", note: "", evidenceIds: [] }, geometry: { assessment: "unknown", note: "", evidenceIds: [] }, identity: { assessment: "unknown", note: "", evidenceIds: [] } }, evidenceIds: [], rights: { status: "public-domain" } } }] } as unknown as PublicBundle;
 
@@ -128,6 +129,36 @@ describe("ui shell", () => {
     expect(dialog.hidden).toBe(true);
     expect(new URLSearchParams(window.location.search).get("view")).toBeNull();
     expect(document.activeElement).toBe(trigger);
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
+  it("opens the classroom builder from an allow-listed direct URL and previews edited values", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/?dataset=dataset&lesson=intro&view=builder");
+    const controller = mountUiShell(root, bundle, () => undefined, lesson);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const builder = root.querySelector<HTMLElement>("[data-lesson-pack-builder]")!;
+    expect(builder.hidden).toBe(false);
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-title]")!.value = "Edited lesson";
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-preview]")!.click();
+    const pack = root.querySelector<HTMLElement>("[data-lesson-pack-dialog]")!;
+    expect(pack.hidden).toBe(false);
+    expect(pack.textContent).toContain("Edited lesson");
+    expect(pack.textContent).toContain("Observe this");
+    expect(new URLSearchParams(window.location.search).get("view")).toBe("builder");
+    pack.querySelector<HTMLButtonElement>("[data-lesson-pack-back]")!.click();
+    expect(builder.hidden).toBe(false);
     controller.destroy();
     window.history.replaceState(null, "", "/");
     root.remove();

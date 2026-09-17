@@ -16,7 +16,10 @@ import type { Lesson } from "../domain/lesson";
 import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
+import { customizeLessonPackModel, type LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import { renderLessonPack } from "./lesson-pack";
+import { renderLessonPackBuilder } from "./lesson-pack-builder";
+import type { LessonPackModel } from "../domain/lesson-pack-model";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
 import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../domain/dataset-catalog-view-model";
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
@@ -31,14 +34,18 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
-  const requestedLessonIndex = lesson && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
+  const requestedLessonIndex = lesson && shared.view !== "builder" && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
   const requestedLessonStep = requestedLessonIndex !== null && lesson ? lesson.steps[requestedLessonIndex] : null;
   const sharedYear = sharedMatchesDataset && shared.year !== undefined && yearWithinDataset(shared.year, bundle.dataset) ? shared.year : undefined;
   const requestedCamera = sharedMatchesDataset ? cameraFromSharedState(shared) : null;
   let lessonIndex: number | null = requestedLessonIndex;
   let catalogOpen = shared.view === "catalog";
+  let builderOpen = shared.view === "builder" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id);
   let catalogSnapshots: DatasetCatalogSnapshots | null = null;
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
+  let workshopBaseModel: LessonPackModel | null = null;
+  let workshopInput: LessonPackCustomizationInput | null = null;
+  let workshopPreviewOpen = false;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
   let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
@@ -104,6 +111,16 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (event.target === lessonPackDialog) closeLessonPack();
   });
   shell.append(lessonPackDialog);
+  const lessonPackBuilderDialog = document.createElement("section");
+  lessonPackBuilderDialog.hidden = true;
+  lessonPackBuilderDialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); closeLessonWorkshop(); }
+    if (event.key === "Tab") cycleDialogFocus(lessonPackBuilderDialog, event);
+  });
+  lessonPackBuilderDialog.addEventListener("click", (event) => {
+    if (event.target === lessonPackBuilderDialog) closeLessonWorkshop();
+  });
+  shell.append(lessonPackBuilderDialog);
   const datasetCatalogDialog = document.createElement("section");
   datasetCatalogDialog.hidden = true;
   datasetCatalogDialog.addEventListener("keydown", (event) => {
@@ -137,9 +154,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const syncUrl = () => {
     if (typeof window === "undefined" || !window.history?.replaceState) return;
     const camera = adapter?.getCamera?.() ?? requestedCamera;
-    const activeLesson = lesson && lessonIndex !== null ? lesson : null;
+    const activeLesson = lesson && (lessonIndex !== null || builderOpen) ? lesson : null;
     const activeStep = activeLesson && lessonIndex !== null ? activeLesson.steps[lessonIndex] ?? null : null;
-    const query = sharedQuery({ dataset: datasetSlug, view: catalogOpen ? "catalog" : null, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
+    const query = sharedQuery({ dataset: datasetSlug, view: builderOpen ? "builder" : catalogOpen ? "catalog" : null, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
     window.history.replaceState(null, "", `${window.location.pathname}${query}${window.location.hash}`);
   };
   const setShareNotice = (message: string) => { shareNotice.hidden = false; shareNotice.textContent = message; };
@@ -158,7 +175,23 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     reportButton.setAttribute("aria-expanded", "true");
     reportDialog.querySelector<HTMLButtonElement>("[data-report-close]")?.focus();
   };
+  const focusWorkshopTrigger = () => {
+    const trigger = lessonHost.querySelector<HTMLButtonElement>("[data-lesson-workshop-open]");
+    trigger?.setAttribute("aria-expanded", "false");
+    trigger?.focus();
+  };
+  const closeLessonWorkshop = () => {
+    lessonPackBuilderDialog.hidden = true;
+    lessonPackDialog.hidden = true;
+    workshopPreviewOpen = false;
+    builderOpen = false;
+    workshopBaseModel = null;
+    workshopInput = null;
+    syncUrl();
+    focusWorkshopTrigger();
+  };
   const closeLessonPack = () => {
+    if (workshopPreviewOpen) { closeLessonWorkshop(); return; }
     lessonPackDialog.hidden = true;
     const trigger = lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]");
     trigger?.setAttribute("aria-expanded", "false");
@@ -179,10 +212,48 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (!lesson) return;
     const model = buildLessonPackModel(lesson, bundle, typeof window === "undefined" ? "" : window.location.href);
     if (!model) return;
+    builderOpen = false;
+    workshopPreviewOpen = false;
     renderLessonPack(lessonPackDialog, model, copy, { onClose: closeLessonPack, onPrint: printLessonPack });
     lessonPackDialog.hidden = false;
     lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")?.setAttribute("aria-expanded", "true");
     lessonPackDialog.querySelector<HTMLButtonElement>("[data-lesson-pack-close]")?.focus();
+  };
+  const openLessonWorkshop = (initialInput: LessonPackCustomizationInput | null = null) => {
+    if (!lesson) return;
+    const model = buildLessonPackModel(lesson, bundle, typeof window === "undefined" ? "" : window.location.href);
+    if (!model) return;
+    workshopBaseModel = model;
+    workshopInput = initialInput;
+    builderOpen = true;
+    workshopPreviewOpen = false;
+    renderLessonPackBuilder(lessonPackBuilderDialog, model, copy, {
+      onClose: closeLessonWorkshop,
+      onReset: () => { workshopInput = null; },
+      onPreview: (input) => {
+        const customized = workshopBaseModel ? customizeLessonPackModel(workshopBaseModel, input) : null;
+        if (!customized) return;
+        workshopInput = input;
+        workshopPreviewOpen = true;
+        lessonPackBuilderDialog.hidden = true;
+        renderLessonPack(lessonPackDialog, customized, copy, {
+          onClose: closeLessonWorkshop,
+          onBack: () => {
+            workshopPreviewOpen = false;
+            lessonPackDialog.hidden = true;
+            openLessonWorkshop(workshopInput);
+          },
+          onPrint: printLessonPack,
+        });
+        lessonPackDialog.hidden = false;
+        lessonPackDialog.querySelector<HTMLButtonElement>("[data-lesson-pack-back]")?.focus();
+      },
+    }, initialInput);
+    lessonPackBuilderDialog.hidden = false;
+    lessonPackDialog.hidden = true;
+    syncUrl();
+    lessonHost.querySelector<HTMLButtonElement>("[data-lesson-workshop-open]")?.setAttribute("aria-expanded", "true");
+    lessonPackBuilderDialog.querySelector<HTMLInputElement>("[data-lesson-pack-title]")?.focus();
   };
   const renderCatalogLoading = () => {
     datasetCatalogDialog.replaceChildren();
@@ -260,6 +331,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     onShare: () => { void shareCurrentView(); },
     onReport: openReport,
     onPack: openLessonPack,
+    onWorkshop: () => openLessonWorkshop(),
   };
   const update = () => {
     input.value = String(state.selectedYear);
@@ -311,6 +383,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
   retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear });
   if (catalogOpen) queueMicrotask(() => { void openDatasetCatalog(); });
+  if (builderOpen) queueMicrotask(() => openLessonWorkshop());
   return controller;
 }
 

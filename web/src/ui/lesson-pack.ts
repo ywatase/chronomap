@@ -4,6 +4,7 @@ import type { UiCopy } from "./copy";
 export interface LessonPackActions {
   readonly onClose: () => void;
   readonly onPrint: () => void;
+  readonly onBack?: () => void;
 }
 
 /** Render a print-ready, citation-only classroom pack. */
@@ -20,6 +21,12 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   const print = button(copy.lessonPackPrint, "lesson-pack-print");
   print.dataset.lessonPackPrint = "";
   print.addEventListener("click", actions.onPrint);
+  if (actions.onBack) {
+    const back = button(copy.lessonWorkshopBack, "lesson-pack-back");
+    back.dataset.lessonPackBack = "";
+    back.addEventListener("click", actions.onBack);
+    toolbar.append(back);
+  }
   const close = button(copy.lessonPackClose, "lesson-pack-close");
   close.dataset.lessonPackClose = "";
   close.addEventListener("click", actions.onClose);
@@ -43,6 +50,13 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   beta.className = "lesson-pack-beta";
   beta.textContent = copy.lessonPackBeta;
   header.append(eyebrow, heading, lead, beta);
+  if (model.classLabel) {
+    const classLabel = document.createElement("p");
+    classLabel.className = "lesson-pack-class-label";
+    classLabel.dataset.lessonPackClassLabel = "";
+    classLabel.textContent = `${copy.lessonPackClassLabel}: ${model.classLabel}`;
+    header.append(classLabel);
+  }
   sheet.append(header);
 
   const student = page(copy.lessonPackStudent);
@@ -62,11 +76,13 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   student.append(packNotice(copy.lessonPackApproximation));
   sheet.append(student);
 
-  const teacher = page(copy.lessonPackTeacher);
-  teacher.dataset.lessonPackTeacher = "";
-  teacher.append(detail(model.datasetDescription));
-  for (const [index, step] of model.steps.entries()) teacher.append(renderTeacherStep(step, index + 1, copy));
-  sheet.append(teacher);
+  if (model.includeTeacher !== false) {
+    const teacher = page(copy.lessonPackTeacher);
+    teacher.dataset.lessonPackTeacher = "";
+    teacher.append(detail(model.datasetDescription));
+    for (const [index, step] of model.steps.entries()) teacher.append(renderTeacherStep(step, index + 1, copy));
+    sheet.append(teacher);
+  }
 
   const sources = page(copy.lessonPackSources);
   sources.dataset.lessonPackSources = "";

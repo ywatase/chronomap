@@ -33,6 +33,7 @@ export interface DatasetCatalogCardModel {
   readonly availabilityMessage: string;
   readonly mapUrl: string;
   readonly lessonUrl: string | null;
+  readonly builderUrl: string | null;
 }
 
 export interface DatasetCatalogViewModel {
@@ -68,6 +69,7 @@ export function buildDatasetCatalogViewModel(
       availabilityMessage: bundle ? "" : entry.failureMessage[language],
       mapUrl,
       lessonUrl: lessonModel ? datasetUrl(baseUrl, entry.slug, lessonModel.id, lessonModel.firstStepId) : null,
+      builderUrl: lessonModel ? datasetUrl(baseUrl, entry.slug, lessonModel.id, undefined, "builder") : null,
     });
   });
   return Object.freeze({ language, cards: Object.freeze(cards) });
@@ -83,12 +85,13 @@ function lessonViewModel(lesson: Lesson, language: "ja" | "en"): DatasetCatalogL
   });
 }
 
-function datasetUrl(baseUrl: string, slug: string, lessonId?: string, stepId?: string): string {
+function datasetUrl(baseUrl: string, slug: string, lessonId?: string, stepId?: string, view?: "builder"): string {
   const url = new URL(baseUrl || "/", "https://chronomap.invalid");
   url.search = "";
   url.hash = "";
   url.searchParams.set("dataset", slug);
   if (lessonId) url.searchParams.set("lesson", lessonId);
   if (stepId) url.searchParams.set("step", stepId);
+  if (view) url.searchParams.set("view", view);
   return `${url.pathname || "/"}${url.search}`;
 }
