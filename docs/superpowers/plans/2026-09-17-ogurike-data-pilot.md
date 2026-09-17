@@ -4,7 +4,7 @@
 
 **Goal:** 承認済みの巨椋池データ設計を、検証済み著者用パッケージ・決定的な公開バンドル・既定Web表示まで実装する。
 
-**Architecture:** `data/ogurike/` を正規の著者用5ファイルとして追加し、既存のPython validator/public builderで `web/public/data/ogurike/` に投影する。Webは合成fixtureをテスト用に残したまま、実行時の既定URLだけを巨椋池バンドルへ切り替える。図形は近似形状として記録し、外部資料のcitationとChronomapの加工メモをEvidenceで分離する。
+**Architecture:** `data/ogurike/` を正規の著者用5ファイルとして追加し、既存のPython validator/public builderで `web/public/data/ogurike/` に投影する。Webは合成fixtureをテスト用に残したまま、実行時の既定URLだけを巨椋池バンドルへ切り替え、Dataset bboxに初期表示をfitする。図形は近似形状として記録し、外部資料のcitationとChronomapの加工メモをEvidenceで分離する。
 
 **Tech Stack:** Python 3.12、uv、JSON Schema Draft 2020-12、既存 `chronomap-data` CLI、TypeScript/Vite、Vitest、Playwright、MapLibre GL JS。
 
@@ -21,6 +21,7 @@
 - restricted/unknown Sourceを参照するEvidenceは `usage: "citation"` に限定し、本文・画像・碑文・第三者写真を保存しない。
 - 位置・形状は概略であることを説明し、FeatureVersionの `uncertainty` の4次元をすべて埋める。
 - 合成fixture、既存の障害時挙動、既存の安全なSource URL表示を壊さない。
+- 実データ接続時は全国表示のままにせず、Dataset bboxへfitして初回表示で巨椋池の地物が見える状態にする。
 - すべての変更はテストを先に追加し、対象テスト、全Pythonテスト、Web unit/build/browserを順に実行してからコミットする。
 
 ---
@@ -233,13 +234,16 @@ git commit -m "feat: build ogurike public bundle"
 
 **Files:**
 - Modify: `web/src/main.ts:36-52`（既定URLと失敗メッセージのデータセット名を切替）
+- Modify: `web/src/map/map-adapter.ts:15-55`（Dataset bboxへ初期表示をfitするインターフェースと実装）
+- Modify: `web/src/ui/ui-shell.ts:15-40`（MapAdapterへDataset bboxを渡す）
 - Modify: `web/tests/public-asset-sync.test.ts`（ogurike公開投影同期テストを追加）
 - Create: `web/tests/ogurike-data.test.ts`
+- Modify: `web/tests/map-style.test.ts` または `web/tests/ui-shell.test.ts`（bbox fitの呼び出し契約を追加）
 - Modify: `web/README.md`（実データバンドルとsynthetic fixtureの役割を記載）
 
 **Interfaces:**
 - Consumes: Task 2の `web/public/data/ogurike/`。
-- Produces: 実行時 `/data/ogurike/` を読み込むWebと、5ファイル同期テスト。
+- Produces: 実行時 `/data/ogurike/` を読み込み、Dataset bboxへfitするWebと、5ファイル同期テスト。
 
 - [ ] **Step 1: URLの失敗テストを書く**
 
@@ -255,17 +259,23 @@ Expected: FAIL because the new test payload/asset path is not wired yet.
 
 `web/src/main.ts` の `loadPublicBundle("/data/synthetic/")` を `loadPublicBundle("/data/ogurike/")` に置き換え、dataset failure messageを「巨椋池データを読み込めませんでした。再試行してください。」相当の日本語へ変更する。操作ラベル全面日本語化は後続Taskに残す。
 
-- [ ] **Step 4: アセット同期を一般化する**
+- [ ] **Step 4: Dataset bboxで地図を初期表示する**
+
+`MapAdapterLike` に `setViewport?(bbox: Dataset["bbox"]): void` を追加し、`mountUiShell` の `setMapAdapter` 内で `adapter.setViewport?.(bundle.dataset.bbox)` を呼ぶ。`MapAdapter` は `fitBounds([[west, south], [east, north]], { padding: 48, maxZoom: 13, duration: 0 })` を使い、MapLibreの `load` 前に呼ばれた場合はbboxを保持してload後に一度だけ適用する。既存synthetic bboxでも動き、retryで同じbboxに戻る。
+
+`web/tests/ui-shell.test.ts` または専用の `web/tests/map-viewport.test.ts` で、fake adapterが `setViewport` にDataset bboxを受け取ること、初回bundleReady後に一度だけ呼ばれることを固定する。実ブラウザでは初回表示の中心が巨椋池周辺になることをTask 4で確認する。
+
+- [ ] **Step 5: アセット同期を一般化する**
 
 `web/tests/public-asset-sync.test.ts` に、builder出力と `public/data/ogurike` の比較を追加する。synthetic同期テストは残し、共通の `files` 配列を使って重複を避ける。
 
-- [ ] **Step 5: Web unit/buildを通す**
+- [ ] **Step 6: Web unit/buildを通す**
 
 Run: `cd web && npm test -- --run && npm run build`
 
 Expected: 全Web unit PASS、Vite build成功（既存のchunk-size warning以外の警告なし）。
 
-- [ ] **Step 6: コミットする**
+- [ ] **Step 7: コミットする**
 
 ```bash
 git add web/src/main.ts web/tests/ogurike-data.test.ts web/tests/public-asset-sync.test.ts web/README.md
@@ -380,4 +390,3 @@ Run: `git diff --check` と公開バンドル5ファイルの `rg` により、p
 git add README.md web/README.md docs/product/overview.md
 git commit -m "docs: document ogurike data workflow"
 ```
-
