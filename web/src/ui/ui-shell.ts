@@ -17,6 +17,7 @@ import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { renderLessonPack } from "./lesson-pack";
+import { DATASET_CATALOG } from "../domain/dataset-catalog";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
@@ -46,6 +47,18 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const eyebrow = document.createElement("p"); eyebrow.className = "eyebrow"; eyebrow.textContent = copy.language === "ja" ? "歴史地図パイロット" : "Historical map pilot";
   const title = document.createElement("h1"); title.textContent = localizedText(bundle.dataset.title, bundle.dataset.defaultLanguage);
   const description = document.createElement("p"); description.className = "dataset-description"; description.textContent = localizedText(bundle.dataset.description, bundle.dataset.defaultLanguage); header.append(eyebrow, title, description); shell.append(header);
+  const datasetNav = document.createElement("nav");
+  datasetNav.className = "dataset-switcher";
+  datasetNav.setAttribute("aria-label", bundle.dataset.defaultLanguage.toLowerCase().startsWith("ja") ? "データセット" : "Datasets");
+  const currentDatasetSlug = datasetKey(bundle.dataset.id);
+  for (const entry of DATASET_CATALOG) {
+    const link = document.createElement("a");
+    link.href = `${window.location.pathname}?dataset=${encodeURIComponent(entry.slug)}`;
+    link.textContent = entry.label[bundle.dataset.defaultLanguage.toLowerCase().startsWith("ja") ? "ja" : "en"];
+    if (entry.slug === currentDatasetSlug) link.setAttribute("aria-current", "page");
+    datasetNav.append(link);
+  }
+  header.append(datasetNav);
 
   const controls = document.createElement("div"); controls.className = "year-controls";
   const previous = button(copy.previousYear); previous.dataset.yearPrevious = "";

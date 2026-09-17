@@ -1,0 +1,22 @@
+[
+  {
+    "description": {
+      "ja": "利根川東遷に関連して会の川を締め切ったとされる地点を示す代表点。"
+    },
+    "id": "tonegawa:entity:kawamata-closure",
+    "labels": {
+      "ja": "会の川締切地点"
+    },
+    "type": "other"
+  },
+  {
+    "description": {
+      "ja": "関東平野を流れ、江戸時代初期の東遷事業によって流路が段階的に変化した水系。"
+    },
+    "id": "tonegawa:entity:river",
+    "labels": {
+      "ja": "利根川"
+    },
+    "type": "watercourse"
+  }
+]

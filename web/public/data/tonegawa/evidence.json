@@ -1,0 +1,74 @@
+[
+  {
+    "id": "tonegawa:evidence:closure-citation",
+    "locator": "会の川締切に関する文化財解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "tonegawa:source:saitama-cultural-pdf",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "tonegawa:evidence:closure-geometry",
+    "locator": "1594年Point",
+    "note": "現在地図上の代表位置を小数第3位に丸めた点であり、施設の精密位置ではない。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "tonegawa:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
+    "id": "tonegawa:evidence:river-1590-citation",
+    "locator": "利根川東遷の解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "tonegawa:source:mlit-river-guide",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "tonegawa:evidence:river-1590-geometry",
+    "locator": "1590年LineString",
+    "note": "資料の相対関係を少数の折れ点にした概略線であり、精密な河道中心線ではない。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "tonegawa:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
+    "id": "tonegawa:evidence:river-1654-citation",
+    "locator": "利根川東遷に関する概要図・解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "tonegawa:source:mlit-plan-pdf",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "tonegawa:evidence:river-1654-geometry",
+    "locator": "1654年LineString",
+    "note": "資料の相対関係を少数の折れ点にした概略線であり、精密な河道中心線ではない。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "tonegawa:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  }
+]

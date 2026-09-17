@@ -1,0 +1,28 @@
+{
+  "id": "tonegawa-eastward",
+  "dataset": "tonegawa",
+  "title": { "ja": "利根川東遷を概略地図でたどる", "en": "Trace the Tone River eastward shift" },
+  "description": { "ja": "1590年・1594年・1654年の根拠付きスナップショットを約10分で観察します。線形は概略復元です。", "en": "Observe evidence-linked snapshots from 1590, 1594, and 1654 in about 10 minutes. Lines are approximate reconstructions." },
+  "durationMinutes": 10,
+  "steps": [
+    {
+      "id": "river-1590",
+      "year": 1590,
+      "featureId": "tonegawa:version:river-1590",
+      "prompt": { "ja": "1590年頃の概略流路は、どの方向へ進み、どの海へ向かっていますか。", "en": "Which direction does the approximate pre-shift channel take, and which sea does it approach?" }
+    },
+    {
+      "id": "closure-1594",
+      "year": 1594,
+      "featureId": "tonegawa:version:kawamata-closure-1594",
+      "prompt": { "ja": "川俣締切跡は、1590年頃の概略流路のどこにありますか。位置の近似にも注意してください。", "en": "Where is the Kawamata closure site in relation to the approximate 1590 channel? Notice the location uncertainty." }
+    },
+    {
+      "id": "river-1654",
+      "year": 1654,
+      "featureId": "tonegawa:version:river-1654",
+      "prompt": { "ja": "1590年頃と1654年の概略流路で、太平洋へ向かう方向はどう変わりますか。比較カードも確認してください。", "en": "How does the direction toward the Pacific differ between the approximate 1590 and 1654 channels? Open the comparison card." },
+      "comparisonEntityId": "tonegawa:entity:river"
+    }
+  ]
+}

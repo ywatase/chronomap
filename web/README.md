@@ -111,6 +111,16 @@ metadata. Restricted sources remain citation-only; source body text, images, and
 inscriptions are not reproduced. The browser print dialog can save the pack as
 an A4 portrait PDF without a server or PDF library.
 
+## Dataset catalog
+
+The header contains an allow-listed dataset switcher. The default `ogurike`
+bundle remains available, and `tonegawa` opens the Tone River eastward-shift
+pilot with a direct URL such as `/?dataset=tonegawa`. Dataset selection starts
+with a clean view, and copied links include the dataset slug so a reload cannot
+apply Ogurike state to the Tone River bundle. The Tone River geometry is an
+explicitly approximate reconstruction; external source text and images remain
+citation-only.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the
