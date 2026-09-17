@@ -107,4 +107,28 @@ describe("ui shell", () => {
     expect(alert.hidden).toBe(false);
     expect(alert.textContent).toContain("could not restart");
   });
+
+  it("opens the catalog, syncs view=catalog, and restores focus on close", async () => {
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/?dataset=ogurike");
+    const controller = mountUiShell(root, bundle, () => undefined, null, async () => ({
+      ogurike: { bundle, lesson: null },
+      tonegawa: { bundle: null, lesson: null },
+    }));
+    const trigger = root.querySelector<HTMLButtonElement>("[data-dataset-catalog-open]")!;
+    trigger.click();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const dialog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
+    expect(dialog.hidden).toBe(false);
+    expect(dialog.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(2);
+    expect(new URLSearchParams(window.location.search).get("view")).toBe("catalog");
+    dialog.querySelector<HTMLButtonElement>("[data-dataset-catalog-close]")!.click();
+    expect(dialog.hidden).toBe(true);
+    expect(new URLSearchParams(window.location.search).get("view")).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
 });

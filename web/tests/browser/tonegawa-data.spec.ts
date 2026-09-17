@@ -5,10 +5,18 @@ test.describe("Tone River eastward-shift dataset", () => {
     await page.goto("/?dataset=tonegawa");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
     await expect(page.getByRole("heading", { name: "利根川東遷パイロットデータ" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "利根川東遷" })).toHaveAttribute("aria-current", "page");
+    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    const catalog = page.locator("[data-dataset-catalog-dialog]");
+    await expect(catalog).toBeVisible();
+    await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(2);
+    await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"]')).toContainText(/関東東部|Eastern Kanto/);
+    await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"]')).toContainText(/3件|3/);
+    await catalog.locator('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-lesson]').click();
+    await expect(page).toHaveURL(/dataset=tonegawa&lesson=tonegawa-eastward&step=river-1590/);
+    await expect(catalog).toBeHidden();
     const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);
     await expect(snapshots.locator("option")).toHaveCount(3);
-    await expect(page.getByRole("button", { name: /利根川（1590年・東遷初期）/ })).toBeVisible();
+    await expect(page.getByRole("tabpanel", { name: /詳細|Details/ }).getByText("利根川（1590年・東遷初期）", { exact: true })).toBeVisible();
 
     await snapshots.selectOption("1654");
     const after = page.getByRole("button", { name: /利根川（1654年・東遷後）/ });
@@ -27,11 +35,35 @@ test.describe("Tone River eastward-shift dataset", () => {
   test("switches back to the Ogurike dataset with a clean URL", async ({ page }) => {
     await page.goto("/?dataset=tonegawa&year=1654&feature=tonegawa%3Aversion%3Ariver-1654");
     await expect(page.getByRole("heading", { name: "利根川東遷パイロットデータ" })).toBeVisible();
-    await page.getByRole("link", { name: "巨椋池" }).click();
+    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await page.locator('[data-dataset-catalog-card="ogurike"] [data-dataset-catalog-map]').click();
     await expect(page).toHaveURL(/\?dataset=ogurike(?:&|$)/);
     await expect(page).not.toHaveURL(/tonegawa|kawamata|river-1654/);
     await expect(page.getByRole("heading", { name: "巨椋池パイロットデータ" })).toBeVisible();
     await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toBeVisible();
+  });
+
+  test("opens the catalog from a reloadable view parameter and isolates a failed card", async ({ page }, testInfo) => {
+    await page.route("**/data/ogurike/entities.json", (route) => route.abort());
+    await page.goto("/?dataset=tonegawa&view=catalog");
+    const catalog = page.locator("[data-dataset-catalog-dialog]");
+    await expect(catalog).toBeVisible();
+    await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"]')).toContainText(/利根川東遷/);
+    await expect(catalog.locator('[data-dataset-catalog-card="ogurike"]')).toContainText(/読み込めません|利用できません|unavailable/i);
+    await page.screenshot({ path: testInfo.outputPath("catalog.png"), fullPage: true });
+    await page.reload();
+    await expect(catalog).toBeVisible();
+    const close = catalog.locator("[data-dataset-catalog-close]");
+    await expect(close).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-map]')).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(catalog).toBeHidden();
+    await expect(page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ })).toBeFocused();
+    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await expect(catalog).toBeVisible();
+    await catalog.locator("[data-dataset-catalog-close]").click();
+    await expect(catalog).toBeHidden();
   });
 
   test("creates the classroom pack from the Tone River lesson", async ({ page }) => {

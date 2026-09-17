@@ -3,6 +3,7 @@ export interface DatasetCatalogEntry {
   readonly bundlePath: string;
   readonly lessonPath: string;
   readonly label: Readonly<{ ja: string; en: string }>;
+  readonly region: Readonly<{ ja: string; en: string }>;
   readonly failureMessage: Readonly<{ ja: string; en: string }>;
 }
 
@@ -17,6 +18,7 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     bundlePath: "/data/ogurike/",
     lessonPath: "/lessons/ogurike-intro.json",
     label: { ja: "巨椋池", en: "Ogurike" },
+    region: { ja: "京都南部", en: "Southern Kyoto" },
     failureMessage: { ja: "巨椋池の公開データを読み込めませんでした。再試行してください。", en: "The Ogurike public dataset could not be loaded. Please retry." },
   },
   {
@@ -24,6 +26,7 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     bundlePath: "/data/tonegawa/",
     lessonPath: "/lessons/tonegawa-eastward.json",
     label: { ja: "利根川東遷", en: "Tone River eastward shift" },
+    region: { ja: "関東東部", en: "Eastern Kanto" },
     failureMessage: { ja: "利根川東遷の公開データを読み込めませんでした。再試行してください。", en: "The Tone River eastward-shift dataset could not be loaded. Please retry." },
   },
 ]);

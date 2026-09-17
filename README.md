@@ -58,9 +58,9 @@ contract.
 
 The static responsive UI, setup instructions, and browser acceptance tests are
 documented in [web/README.md](web/README.md). The default `/data/ogurike/`
-bundle is generated from the pilot package; `/?dataset=tonegawa` selects the
-Tone River pilot. Both bundles keep restricted source material as citation-only
-metadata.
+bundle is generated from the pilot package; the header's region/lesson catalog
+or `/?dataset=tonegawa` selects the Tone River pilot. Both bundles keep
+restricted source material as citation-only metadata.
 
 GitHub Actions runs the Python contract/public-data checks and the Web
 unit/build/Chromium acceptance suite on pushes and pull requests.

@@ -115,12 +115,16 @@ an A4 portrait PDF without a server or PDF library.
 
 ## Dataset catalog
 
-The header contains an allow-listed dataset switcher. The default `ogurike`
-bundle remains available, and `tonegawa` opens the Tone River eastward-shift
-pilot with a direct URL such as `/?dataset=tonegawa`. Dataset selection starts
-with a clean view, and copied links include the dataset slug so a reload cannot
-apply Ogurike state to the Tone River bundle. The Tone River geometry is an
-explicitly approximate reconstruction; external source text and images remain
+Use `地域・教材を選ぶ` in the header to open the allow-listed region and lesson
+catalog. Each card derives its recorded years and public feature/entity/source
+counts from the bundle, and its lesson duration/step count from the validated
+manifest. Available cards link to a free map view and, when published, a guided
+lesson; a failed card shows the failure without hiding the other dataset. The
+catalog itself can be opened directly and restored with `?view=catalog`, for
+example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
+pilot functions from future teacher-workflow candidates and does not assert a
+price, contract, or billing state. The Tone River geometry is an explicitly
+approximate reconstruction; external source text and images remain
 citation-only.
 
 ## Pilot data

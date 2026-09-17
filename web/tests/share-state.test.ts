@@ -32,6 +32,13 @@ describe("shareable map state", () => {
     expect(parseSharedState("?lat=90&z=24")).toEqual({});
   });
 
+  it("parses and serializes the catalog view without accepting arbitrary view names", () => {
+    expect(parseSharedState("?dataset=tonegawa&view=catalog")).toEqual({ dataset: "tonegawa", view: "catalog" });
+    expect(parseSharedState("?view=admin")).toEqual({});
+    expect(sharedQuery({ dataset: "tonegawa", view: "catalog", year: 1654, featureId: null })).toBe("?dataset=tonegawa&view=catalog&year=1654");
+    expect(sharedQuery({ dataset: "tonegawa", view: null, year: 1654, featureId: null })).toBe("?dataset=tonegawa&year=1654");
+  });
+
   it("serializes only the stable share parameters", () => {
     expect(sharedQuery({ dataset: "ogurike", year: 1596, featureId: "ogurike:version:ujigawa-1596", longitude: 135.750004, latitude: 34.890006, zoom: 11.504 })).toBe("?dataset=ogurike&year=1596&feature=ogurike%3Aversion%3Aujigawa-1596&lng=135.75&lat=34.89001&z=11.5");
     expect(sharedQuery({ year: null, featureId: null })).toBe("");

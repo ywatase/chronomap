@@ -102,6 +102,34 @@ export interface UiCopy {
   readonly lessonPackNoSources: string;
   readonly lessonPackPrint: string;
   readonly lessonPackClose: string;
+  readonly datasetCatalogOpen: string;
+  readonly datasetCatalogDialogLabel: string;
+  readonly datasetCatalogHeading: string;
+  readonly datasetCatalogLead: string;
+  readonly datasetCatalogRegion: string;
+  readonly datasetCatalogYears: string;
+  readonly datasetCatalogFeatures: string;
+  readonly datasetCatalogEntities: string;
+  readonly datasetCatalogSources: string;
+  readonly datasetCatalogLesson: string;
+  readonly datasetCatalogCapabilities: string;
+  readonly datasetCatalogCompare: string;
+  readonly datasetCatalogEvidence: string;
+  readonly datasetCatalogShare: string;
+  readonly datasetCatalogReport: string;
+  readonly datasetCatalogPack: string;
+  readonly datasetCatalogFreeDemo: string;
+  readonly datasetCatalogPackBeta: string;
+  readonly datasetCatalogStartLesson: string;
+  readonly datasetCatalogViewMap: string;
+  readonly datasetCatalogUnavailable: string;
+  readonly datasetCatalogLessonUnavailable: string;
+  readonly datasetCatalogFreeHeading: string;
+  readonly datasetCatalogFreeCopy: string;
+  readonly datasetCatalogFutureHeading: string;
+  readonly datasetCatalogFutureCopy: string;
+  readonly datasetCatalogClose: string;
+  readonly datasetCatalogLoading: string;
   readonly comparisonCta: (name: string) => string;
   readonly comparisonTitle: (name: string) => string;
   readonly comparisonYear: (year: number) => string;
@@ -247,6 +275,34 @@ const EN_COPY: UiCopy = {
   lessonPackNoSources: "No source metadata is available.",
   lessonPackPrint: "Print / save classroom pack",
   lessonPackClose: "Close classroom pack",
+  datasetCatalogOpen: "Choose a region or lesson",
+  datasetCatalogDialogLabel: "Region and lesson catalog",
+  datasetCatalogHeading: "Choose a region or lesson",
+  datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
+  datasetCatalogRegion: "Region",
+  datasetCatalogYears: "Recorded years",
+  datasetCatalogFeatures: "Public features",
+  datasetCatalogEntities: "Historical entities",
+  datasetCatalogSources: "Sources",
+  datasetCatalogLesson: "Guided lesson",
+  datasetCatalogCapabilities: "Available in this pilot",
+  datasetCatalogCompare: "Compare snapshots",
+  datasetCatalogEvidence: "Inspect evidence",
+  datasetCatalogShare: "Share a view",
+  datasetCatalogReport: "Print a report",
+  datasetCatalogPack: "Create a classroom pack",
+  datasetCatalogFreeDemo: "Free demo",
+  datasetCatalogPackBeta: "Classroom pack: free beta",
+  datasetCatalogStartLesson: "Start free lesson",
+  datasetCatalogViewMap: "View map only",
+  datasetCatalogUnavailable: "This public dataset is temporarily unavailable.",
+  datasetCatalogLessonUnavailable: "The map is available; a guided lesson is not published yet.",
+  datasetCatalogFreeHeading: "Free to explore now",
+  datasetCatalogFreeCopy: "Map viewing, source checking, sharing, and citation-ready reports are available in this pilot.",
+  datasetCatalogFutureHeading: "For teacher pilots later",
+  datasetCatalogFutureCopy: "Regional packs, lesson templates, and bulk exports are future candidates for teacher workflows.",
+  datasetCatalogClose: "Close catalog",
+  datasetCatalogLoading: "Loading catalog…",
   comparisonCta: (name) => `Compare ${name} snapshots`,
   comparisonTitle: (name) => `${name} snapshots`,
   comparisonYear: (year) => formatYear(year, "en"),
@@ -384,6 +440,34 @@ const JA_COPY: UiCopy = {
   lessonPackNoSources: "出典メタデータはありません。",
   lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
   lessonPackClose: "教材パックを閉じる",
+  datasetCatalogOpen: "地域・教材を選ぶ",
+  datasetCatalogDialogLabel: "地域・教材カタログ",
+  datasetCatalogHeading: "地域・教材を選ぶ",
+  datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
+  datasetCatalogRegion: "地域",
+  datasetCatalogYears: "収録年",
+  datasetCatalogFeatures: "公開地物",
+  datasetCatalogEntities: "歴史対象",
+  datasetCatalogSources: "出典",
+  datasetCatalogLesson: "ガイド教材",
+  datasetCatalogCapabilities: "このパイロットでできること",
+  datasetCatalogCompare: "時点を比較",
+  datasetCatalogEvidence: "根拠を確認",
+  datasetCatalogShare: "表示を共有",
+  datasetCatalogReport: "レポートを保存",
+  datasetCatalogPack: "授業用教材パックを作成",
+  datasetCatalogFreeDemo: "無料デモ",
+  datasetCatalogPackBeta: "教材パックはβ版無料",
+  datasetCatalogStartLesson: "無料教材を始める",
+  datasetCatalogViewMap: "地図だけ見る",
+  datasetCatalogUnavailable: "この公開データセットは現在利用できません。",
+  datasetCatalogLessonUnavailable: "地図は利用できますが、ガイド教材はまだ公開されていません。",
+  datasetCatalogFreeHeading: "今すぐ無料で試せること",
+  datasetCatalogFreeCopy: "地図を見る、出典を確認する、表示を共有する、根拠付きレポートを保存する機能を利用できます。",
+  datasetCatalogFutureHeading: "教員向けに検討中のこと",
+  datasetCatalogFutureCopy: "地域別パック、授業テンプレート、複数教材の一括出力は、教員向けワークフローの将来候補です。",
+  datasetCatalogClose: "カタログを閉じる",
+  datasetCatalogLoading: "カタログを読み込んでいます…",
   comparisonCta: (name) => `${name}の変化を比較`,
   comparisonTitle: (name) => `${name}の変化を比較`,
   comparisonYear: (year) => formatYear(year, "ja"),

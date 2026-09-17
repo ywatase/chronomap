@@ -18,11 +18,14 @@ import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { renderLessonPack } from "./lesson-pack";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
+import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../domain/dataset-catalog-view-model";
+import { renderDatasetCatalog } from "./dataset-catalog-dialog";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
+export type DatasetCatalogLoader = () => Promise<DatasetCatalogSnapshots>;
 
-export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null): AppController {
+export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null, catalogLoader: DatasetCatalogLoader | null = null): AppController {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
   const years = authoredYears(bundle, initialYear(bundle.dataset));
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
@@ -33,6 +36,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const sharedYear = sharedMatchesDataset && shared.year !== undefined && yearWithinDataset(shared.year, bundle.dataset) ? shared.year : undefined;
   const requestedCamera = sharedMatchesDataset ? cameraFromSharedState(shared) : null;
   let lessonIndex: number | null = requestedLessonIndex;
+  let catalogOpen = shared.view === "catalog";
+  let catalogSnapshots: DatasetCatalogSnapshots | null = null;
+  let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
   let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
@@ -49,15 +55,12 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const description = document.createElement("p"); description.className = "dataset-description"; description.textContent = localizedText(bundle.dataset.description, bundle.dataset.defaultLanguage); header.append(eyebrow, title, description); shell.append(header);
   const datasetNav = document.createElement("nav");
   datasetNav.className = "dataset-switcher";
-  datasetNav.setAttribute("aria-label", bundle.dataset.defaultLanguage.toLowerCase().startsWith("ja") ? "データセット" : "Datasets");
-  const currentDatasetSlug = datasetKey(bundle.dataset.id);
-  for (const entry of DATASET_CATALOG) {
-    const link = document.createElement("a");
-    link.href = `${window.location.pathname}?dataset=${encodeURIComponent(entry.slug)}`;
-    link.textContent = entry.label[bundle.dataset.defaultLanguage.toLowerCase().startsWith("ja") ? "ja" : "en"];
-    if (entry.slug === currentDatasetSlug) link.setAttribute("aria-current", "page");
-    datasetNav.append(link);
-  }
+  datasetNav.setAttribute("aria-label", copy.datasetCatalogDialogLabel);
+  const catalogButton = button(copy.datasetCatalogOpen);
+  catalogButton.dataset.datasetCatalogOpen = "";
+  catalogButton.setAttribute("aria-haspopup", "dialog");
+  catalogButton.setAttribute("aria-expanded", "false");
+  datasetNav.append(catalogButton);
   header.append(datasetNav);
 
   const controls = document.createElement("div"); controls.className = "year-controls";
@@ -101,6 +104,16 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (event.target === lessonPackDialog) closeLessonPack();
   });
   shell.append(lessonPackDialog);
+  const datasetCatalogDialog = document.createElement("section");
+  datasetCatalogDialog.hidden = true;
+  datasetCatalogDialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); closeDatasetCatalog(); }
+    if (event.key === "Tab") cycleDialogFocus(datasetCatalogDialog, event);
+  });
+  datasetCatalogDialog.addEventListener("click", (event) => {
+    if (event.target === datasetCatalogDialog) closeDatasetCatalog();
+  });
+  shell.append(datasetCatalogDialog);
 
   const content = document.createElement("main"); content.id = "chronomap-main"; content.tabIndex = -1; content.className = "shell-content"; shell.append(content);
   const live = document.createElement("p"); live.className = "live-status"; live.setAttribute("role", "status"); live.setAttribute("aria-live", "polite"); content.append(live);
@@ -126,7 +139,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     const camera = adapter?.getCamera?.() ?? requestedCamera;
     const activeLesson = lesson && lessonIndex !== null ? lesson : null;
     const activeStep = activeLesson && lessonIndex !== null ? activeLesson.steps[lessonIndex] ?? null : null;
-    const query = sharedQuery({ dataset: datasetSlug, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
+    const query = sharedQuery({ dataset: datasetSlug, view: catalogOpen ? "catalog" : null, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
     window.history.replaceState(null, "", `${window.location.pathname}${query}${window.location.hash}`);
   };
   const setShareNotice = (message: string) => { shareNotice.hidden = false; shareNotice.textContent = message; };
@@ -170,6 +183,44 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     lessonPackDialog.hidden = false;
     lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")?.setAttribute("aria-expanded", "true");
     lessonPackDialog.querySelector<HTMLButtonElement>("[data-lesson-pack-close]")?.focus();
+  };
+  const renderCatalogLoading = () => {
+    datasetCatalogDialog.replaceChildren();
+    datasetCatalogDialog.className = "dataset-catalog-dialog";
+    datasetCatalogDialog.dataset.datasetCatalogDialog = "";
+    datasetCatalogDialog.setAttribute("role", "dialog");
+    datasetCatalogDialog.setAttribute("aria-modal", "true");
+    datasetCatalogDialog.setAttribute("aria-label", copy.datasetCatalogDialogLabel);
+    const loading = document.createElement("p");
+    loading.className = "dataset-catalog-loading";
+    loading.setAttribute("role", "status");
+    loading.textContent = copy.datasetCatalogLoading;
+    datasetCatalogDialog.append(loading);
+  };
+  const fallbackCatalogSnapshots = (): DatasetCatalogSnapshots => Object.freeze(Object.fromEntries(DATASET_CATALOG.map((entry) => [entry.slug, entry.slug === datasetSlug ? { bundle, lesson } : { bundle: null, lesson: null }]))) as DatasetCatalogSnapshots;
+  const openDatasetCatalog = async () => {
+    catalogOpen = true;
+    catalogButton.setAttribute("aria-expanded", "true");
+    datasetCatalogDialog.hidden = false;
+    syncUrl();
+    if (!catalogSnapshots) {
+      renderCatalogLoading();
+      if (!catalogPromise) catalogPromise = catalogLoader ? catalogLoader() : Promise.resolve(fallbackCatalogSnapshots());
+      try { catalogSnapshots = await catalogPromise; }
+      catch { catalogSnapshots = fallbackCatalogSnapshots(); }
+    }
+    if (!catalogOpen || !catalogSnapshots) return;
+    const model = buildDatasetCatalogViewModel(DATASET_CATALOG, catalogSnapshots, copy.language, typeof window === "undefined" ? "/" : window.location.href);
+    renderDatasetCatalog(datasetCatalogDialog, model, copy, { onClose: closeDatasetCatalog });
+    datasetCatalogDialog.hidden = false;
+    datasetCatalogDialog.querySelector<HTMLButtonElement>("[data-dataset-catalog-close]")?.focus();
+  };
+  const closeDatasetCatalog = () => {
+    catalogOpen = false;
+    datasetCatalogDialog.hidden = true;
+    catalogButton.setAttribute("aria-expanded", "false");
+    syncUrl();
+    catalogButton.focus();
   };
   const shareCurrentView = async () => {
     syncUrl();
@@ -254,10 +305,13 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   snapshotSelect.addEventListener("change", () => { const value = Number(snapshotSelect.value); if (Number.isInteger(value)) { leaveLesson(); emit({ type: "yearChanged", year: value }); } });
   shareButton.addEventListener("click", () => void shareCurrentView());
   reportButton.addEventListener("click", openReport);
+  catalogButton.addEventListener("click", () => { void openDatasetCatalog(); });
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
   const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
-  retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear }); return controller;
+  retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear });
+  if (catalogOpen) queueMicrotask(() => { void openDatasetCatalog(); });
+  return controller;
 }
 
 function authoredYears(bundle: PublicBundle, fallback: number): readonly number[] { const years = [...recordedYears(bundle.features)]; if (!years.includes(fallback)) years.push(fallback); return years.sort((a, b) => a - b); }
