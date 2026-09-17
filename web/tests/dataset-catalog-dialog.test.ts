@@ -39,6 +39,22 @@ const model: DatasetCatalogViewModel = {
       mapUrl: "/?dataset=tonegawa",
       lessonUrl: null,
     },
+    {
+      slug: "heijokyo",
+      region: "奈良盆地北部",
+      title: "平城京",
+      description: "平城京の説明",
+      years: [710],
+      yearLabels: ["710年"],
+      featureCount: 3,
+      entityCount: 3,
+      sourceCount: 3,
+      lesson: { id: "heijokyo-intro", title: "平城京の都市軸をたどる", durationMinutes: 10, stepCount: 3, firstStepId: "capital-710" },
+      status: "available",
+      availabilityMessage: "",
+      mapUrl: "/?dataset=heijokyo",
+      lessonUrl: "/?dataset=heijokyo&lesson=heijokyo-intro&step=capital-710",
+    },
   ],
 };
 
@@ -49,7 +65,7 @@ describe("dataset catalog dialog", () => {
 
     expect(root.getAttribute("role")).toBe("dialog");
     expect(root.querySelector("[data-dataset-catalog-heading]")?.textContent).toContain("地域・教材");
-    expect(root.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(2);
+    expect(root.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("無料デモ");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("教材パックはβ版無料");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-lesson]")?.href).toContain("lesson=ogurike-intro");
@@ -58,6 +74,9 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"]')?.textContent).toContain("読み込みに失敗しました");
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-lesson]')).toBeNull();
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-map]')).toBeNull();
+    expect(root.querySelector('[data-dataset-catalog-card="heijokyo"]')?.textContent).toContain("平城京の都市軸をたどる");
+    expect(root.querySelector('[data-dataset-catalog-card="heijokyo"]')?.textContent).toContain("10分");
+    expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-card="heijokyo"] [data-dataset-catalog-lesson]')?.href).toContain("lesson=heijokyo-intro");
     expect(root.querySelector("[data-dataset-catalog-free]")?.textContent).toContain("地図を見る");
     expect(root.querySelector("[data-dataset-catalog-future]")?.textContent).toContain("一括");
   });

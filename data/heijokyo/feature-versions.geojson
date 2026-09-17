@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "heijokyo:version:capital-710",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.77, 34.66], [135.83, 34.66], [135.83, 34.72], [135.77, 34.72], [135.77, 34.66]]]
+      },
+      "properties": {
+        "entityId": "heijokyo:entity:capital",
+        "labels": { "ja": "平城京（710年・概略範囲）" },
+        "description": { "ja": "平城京の表示範囲を示す粗い概略面です。正確な都城境界ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 710, "latestYear": 710, "precision": "year", "qualifier": "exact" },
+          "end": null
+        },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "710年の単年スナップショットとして簡略化しています。", "evidenceIds": ["heijokyo:evidence:nara"] },
+          "location": { "assessment": "approximate", "note": "都城の表示範囲を粗く置いたものです。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "正確な都城境界ではなく、Chronomapの独自概略復元です。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "identity": { "assessment": "approximate", "note": "公式解説の相対関係を地図表示用に簡略化しています。", "evidenceIds": ["heijokyo:evidence:nara"] }
+        },
+        "evidenceIds": ["heijokyo:evidence:nara", "heijokyo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略加工）、奈良市（引用）", "terms": "外部本文・図版・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "heijokyo:version:palace-710",
+      "geometry": { "type": "Point", "coordinates": [135.79, 34.69] },
+      "properties": {
+        "entityId": "heijokyo:entity:palace",
+        "labels": { "ja": "平城宮（710年・代表点）" },
+        "description": { "ja": "平城宮を示す代表点です。宮域の正確な境界や施設配置ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 710, "latestYear": 710, "precision": "year", "qualifier": "exact" },
+          "end": null
+        },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "710年の単年スナップショットとして簡略化しています。", "evidenceIds": ["heijokyo:evidence:nara"] },
+          "location": { "assessment": "approximate", "note": "平城宮の代表位置です。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "宮域を表す精密な境界ではありません。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "identity": { "assessment": "approximate", "note": "公式解説の平城宮を地図表示用に代表点へ簡略化しています。", "evidenceIds": ["heijokyo:evidence:nara"] }
+        },
+        "evidenceIds": ["heijokyo:evidence:nara", "heijokyo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略加工）、奈良市（引用）", "terms": "外部本文・図版・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "heijokyo:version:suzaku-avenue-710",
+      "geometry": { "type": "LineString", "coordinates": [[135.80, 34.675], [135.80, 34.705]] },
+      "properties": {
+        "entityId": "heijokyo:entity:suzaku-avenue",
+        "labels": { "ja": "朱雀大路（710年・概略軸）" },
+        "description": { "ja": "朱雀大路の南北軸を示す粗い概略線です。正確な道路線形・幅員ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 710, "latestYear": 710, "precision": "year", "qualifier": "exact" },
+          "end": null
+        },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "710年の単年スナップショットとして簡略化しています。", "evidenceIds": ["heijokyo:evidence:suzaku"] },
+          "location": { "assessment": "approximate", "note": "南北軸の概略位置です。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "精密な道路線形・幅員ではなく、Chronomapの独自概略復元です。", "evidenceIds": ["heijokyo:evidence:shape"] },
+          "identity": { "assessment": "approximate", "note": "朱雀大路の中心軸を地図表示用に簡略化しています。", "evidenceIds": ["heijokyo:evidence:suzaku"] }
+        },
+        "evidenceIds": ["heijokyo:evidence:suzaku", "heijokyo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略加工）、奈良市（引用）", "terms": "外部本文・図版・地図画像は再現しない。" }
+      }
+    }
+  ]
+}

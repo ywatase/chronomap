@@ -1,0 +1,27 @@
+[
+  {
+    "id": "heijokyo:evidence:nara",
+    "sourceId": "heijokyo:source:nara-heijokyo",
+    "locator": "奈良時代の平城京に関する解説",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "710年の遷都、平城京の都城計画、平城宮と朱雀大路に関する引用メタデータ。本文・図版は再現しない。"
+  },
+  {
+    "id": "heijokyo:evidence:suzaku",
+    "sourceId": "heijokyo:source:nara-suzaku",
+    "locator": "平城京朱雀大路跡の解説",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "朱雀大路の都の中心軸としての説明に関する引用メタデータ。本文・図版は再現しない。"
+  },
+  {
+    "id": "heijokyo:evidence:shape",
+    "sourceId": "heijokyo:source:shape-notes",
+    "locator": "作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "奈良市の説明に示された相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。",
+    "publicationBasis": "original-reconstruction"
+  }
+]

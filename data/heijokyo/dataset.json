@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "heijokyo:dataset:pilot",
+  "title": { "ja": "平城京パイロットデータ" },
+  "description": { "ja": "710年の平城京・平城宮・朱雀大路を粗い独自再構成で示す小規模データです。" },
+  "defaultLanguage": "ja",
+  "bbox": [135.77, 34.66, 135.83, 34.72],
+  "temporalExtent": {
+    "start": { "earliestYear": 710, "latestYear": 710, "precision": "year", "qualifier": "exact" },
+    "end": { "earliestYear": 710, "latestYear": 710, "precision": "year", "qualifier": "exact" }
+  },
+  "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、奈良市（引用メタデータ）", "terms": "外部資料の本文・図版・地図画像は再現しない。" },
+  "files": { "entities": "entities.json", "sources": "sources.json", "evidence": "evidence.json", "featureVersions": "feature-versions.geojson" }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "description": {
+      "ja": "710年に築かれた古代の都城。表示範囲は粗い概略です。"
+    },
+    "id": "heijokyo:entity:capital",
+    "labels": {
+      "ja": "平城京"
+    },
+    "type": "settlement"
+  },
+  {
+    "description": {
+      "ja": "平城京の中心部に置かれた宮。表示位置は代表点です。"
+    },
+    "id": "heijokyo:entity:palace",
+    "labels": {
+      "ja": "平城宮"
+    },
+    "type": "archaeological-site"
+  },
+  {
+    "description": {
+      "ja": "平城宮の南正門から南へ延びる都の中心軸。表示線は概略です。"
+    },
+    "id": "heijokyo:entity:suzaku-avenue",
+    "labels": {
+      "ja": "朱雀大路"
+    },
+    "type": "route"
+  }
+]

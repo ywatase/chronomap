@@ -1,0 +1,38 @@
+[
+  {
+    "id": "heijokyo:evidence:nara",
+    "locator": "奈良時代の平城京に関する解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "heijokyo:source:nara-heijokyo",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "heijokyo:evidence:shape",
+    "locator": "作成方法と限界",
+    "note": "奈良市の説明に示された相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "heijokyo:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
+    "id": "heijokyo:evidence:suzaku",
+    "locator": "平城京朱雀大路跡の解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "heijokyo:source:nara-suzaku",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  }
+]

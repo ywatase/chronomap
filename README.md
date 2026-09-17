@@ -4,9 +4,9 @@ Chronomap packages are normalized, versioned historical-data records.  This
 repository contains their JSON Schemas, validator, and fail-closed public
 bundle builder. Installed wheels include the versioned schemas as internal
 package resources, so validation does not depend on a checkout. The checked-in
-`data/ogurike/` and `data/tonegawa/` are small, citation-linked pilots for the
-Ogurike and Tone River areas; the test fixture remains synthetic and is not
-history.
+`data/ogurike/`, `data/tonegawa/`, and `data/heijokyo/` are small,
+citation-linked pilots for the Ogurike, Tone River, and Heijokyo areas; the
+test fixture remains synthetic and is not history.
 
 ## Setup
 
@@ -44,6 +44,13 @@ uv run chronomap-data validate data/tonegawa --profile public
 uv run chronomap-data build-public data/tonegawa --output web/public/data/tonegawa
 ```
 
+The third public pilot uses the same contract:
+
+```sh
+uv run chronomap-data validate data/heijokyo --profile public
+uv run chronomap-data build-public data/heijokyo --output web/public/data/heijokyo
+```
+
 Build a deterministic public projection.  The target is replaced only after
 public-profile validation and staging both succeed:
 
@@ -59,8 +66,8 @@ contract.
 The static responsive UI, setup instructions, and browser acceptance tests are
 documented in [web/README.md](web/README.md). The default `/data/ogurike/`
 bundle is generated from the pilot package; the header's region/lesson catalog
-or `/?dataset=tonegawa` selects the Tone River pilot. Both bundles keep
-restricted source material as citation-only metadata.
+or `/?dataset=tonegawa` / `/?dataset=heijokyo` selects another pilot. All
+bundles keep restricted source material as citation-only metadata.
 
 GitHub Actions runs the Python contract/public-data checks and the Web
 unit/build/Chromium acceptance suite on pushes and pull requests.

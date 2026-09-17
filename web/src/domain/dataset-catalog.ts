@@ -29,6 +29,14 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     region: { ja: "関東東部", en: "Eastern Kanto" },
     failureMessage: { ja: "利根川東遷の公開データを読み込めませんでした。再試行してください。", en: "The Tone River eastward-shift dataset could not be loaded. Please retry." },
   },
+  {
+    slug: "heijokyo",
+    bundlePath: "/data/heijokyo/",
+    lessonPath: "/lessons/heijokyo-intro.json",
+    label: { ja: "平城京", en: "Heijokyo" },
+    region: { ja: "奈良盆地北部", en: "Northern Nara Basin" },
+    failureMessage: { ja: "平城京の公開データを読み込めませんでした。再試行してください。", en: "The Heijokyo public dataset could not be loaded. Please retry." },
+  },
 ]);
 
 const DEFAULT_DATASET = DATASET_CATALOG[0]!;

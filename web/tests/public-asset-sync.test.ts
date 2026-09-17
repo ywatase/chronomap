@@ -33,4 +33,8 @@ describe("public demo assets", () => {
   it("checked-in Tone River assets equal the public builder output", async () => {
     await expectPublicAssetsMatch("data/tonegawa", "public/data/tonegawa");
   });
+
+  it("checked-in Heijokyo assets equal the public builder output", async () => {
+    await expectPublicAssetsMatch("data/heijokyo", "public/data/heijokyo");
+  });
 });

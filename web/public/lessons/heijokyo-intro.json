@@ -1,0 +1,27 @@
+{
+  "id": "heijokyo-intro",
+  "dataset": "heijokyo",
+  "title": { "ja": "平城京の都市軸をたどる", "en": "Trace Heijokyo's planned axis" },
+  "description": { "ja": "平城京・平城宮・朱雀大路の位置関係を、710年の3ステップで約10分かけて観察します。形状は概略復元です。", "en": "Observe the relationship between Heijokyo, the palace, and Suzaku Avenue in three steps from 710, in about 10 minutes. Shapes are approximate reconstructions." },
+  "durationMinutes": 10,
+  "steps": [
+    {
+      "id": "capital-710",
+      "year": 710,
+      "featureId": "heijokyo:version:capital-710",
+      "prompt": { "ja": "平城京の概略範囲は、どの方向に広がっていますか。面は正確な都城境界ではないことにも注意してください。", "en": "In which direction does the approximate Heijokyo extent spread? Notice that the polygon is not an exact capital boundary." }
+    },
+    {
+      "id": "palace-710",
+      "year": 710,
+      "featureId": "heijokyo:version:palace-710",
+      "prompt": { "ja": "平城宮の代表点は、平城京の概略範囲の中でどこにありますか。代表点は宮域の境界ではありません。", "en": "Where is the palace representative point within the approximate Heijokyo extent? It is not the boundary of the palace precinct." }
+    },
+    {
+      "id": "suzaku-avenue-710",
+      "year": 710,
+      "featureId": "heijokyo:version:suzaku-avenue-710",
+      "prompt": { "ja": "朱雀大路の概略軸は、平城宮からどの方向へ延びていますか。都市計画の軸として読み取れることを振り返りましょう。", "en": "In which direction does the approximate Suzaku Avenue axis extend from the palace? Reflect on what it suggests about the planned city's axis." }
+    }
+  ]
+}

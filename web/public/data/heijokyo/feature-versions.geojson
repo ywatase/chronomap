@@ -1,0 +1,238 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.77,
+              34.66
+            ],
+            [
+              135.83,
+              34.66
+            ],
+            [
+              135.83,
+              34.72
+            ],
+            [
+              135.77,
+              34.72
+            ],
+            [
+              135.77,
+              34.66
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "heijokyo:version:capital-710",
+      "properties": {
+        "description": {
+          "ja": "平城京の表示範囲を示す粗い概略面です。正確な都城境界ではありません。"
+        },
+        "entityId": "heijokyo:entity:capital",
+        "evidenceIds": [
+          "heijokyo:evidence:nara",
+          "heijokyo:evidence:shape"
+        ],
+        "labels": {
+          "ja": "平城京（710年・概略範囲）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略加工）、奈良市（引用）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 710,
+            "latestYear": 710,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "正確な都城境界ではなく、Chronomapの独自概略復元です。"
+          },
+          "identity": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:nara"
+            ],
+            "note": "公式解説の相対関係を地図表示用に簡略化しています。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "都城の表示範囲を粗く置いたものです。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:nara"
+            ],
+            "note": "710年の単年スナップショットとして簡略化しています。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          135.79,
+          34.69
+        ],
+        "type": "Point"
+      },
+      "id": "heijokyo:version:palace-710",
+      "properties": {
+        "description": {
+          "ja": "平城宮を示す代表点です。宮域の正確な境界や施設配置ではありません。"
+        },
+        "entityId": "heijokyo:entity:palace",
+        "evidenceIds": [
+          "heijokyo:evidence:nara",
+          "heijokyo:evidence:shape"
+        ],
+        "labels": {
+          "ja": "平城宮（710年・代表点）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略加工）、奈良市（引用）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 710,
+            "latestYear": 710,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "宮域を表す精密な境界ではありません。"
+          },
+          "identity": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:nara"
+            ],
+            "note": "公式解説の平城宮を地図表示用に代表点へ簡略化しています。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "平城宮の代表位置です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:nara"
+            ],
+            "note": "710年の単年スナップショットとして簡略化しています。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            135.8,
+            34.675
+          ],
+          [
+            135.8,
+            34.705
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "heijokyo:version:suzaku-avenue-710",
+      "properties": {
+        "description": {
+          "ja": "朱雀大路の南北軸を示す粗い概略線です。正確な道路線形・幅員ではありません。"
+        },
+        "entityId": "heijokyo:entity:suzaku-avenue",
+        "evidenceIds": [
+          "heijokyo:evidence:shape",
+          "heijokyo:evidence:suzaku"
+        ],
+        "labels": {
+          "ja": "朱雀大路（710年・概略軸）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略加工）、奈良市（引用）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 710,
+            "latestYear": 710,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "精密な道路線形・幅員ではなく、Chronomapの独自概略復元です。"
+          },
+          "identity": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:suzaku"
+            ],
+            "note": "朱雀大路の中心軸を地図表示用に簡略化しています。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:shape"
+            ],
+            "note": "南北軸の概略位置です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:suzaku"
+            ],
+            "note": "710年の単年スナップショットとして簡略化しています。"
+          }
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}
