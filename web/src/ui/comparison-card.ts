@@ -3,16 +3,16 @@ import type { ComparisonCandidate } from "../domain/comparison-candidates";
 import type { PublicBundle } from "../domain/types";
 import { uiCopy } from "./copy";
 
-export function renderComparisonCard(container: HTMLElement, candidate: ComparisonCandidate | null, bundle: PublicBundle, open: boolean, selectedId: string | null, onToggle: () => void, onSelect: (featureId: string) => void): void {
+export function renderComparisonCard(container: HTMLElement, candidate: ComparisonCandidate | null, bundle: PublicBundle, open: boolean, selectedId: string | null, onToggle: () => void, onSelect: (featureId: string) => void, panelId = "comparison-panel"): void {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
   container.replaceChildren(); container.hidden = !candidate;
   if (!candidate) return;
   const firstFeature = candidate.versions[0]!.feature;
   const entity = bundle.entitiesById[candidate.entityId];
   const name = entity ? localizedText(entity.labels, bundle.dataset.defaultLanguage) : localizedText(firstFeature.properties.labels, bundle.dataset.defaultLanguage);
-  const toggle = document.createElement("button"); toggle.type = "button"; toggle.dataset.comparisonCta = ""; toggle.textContent = copy.comparisonCta(name); toggle.setAttribute("aria-expanded", String(open)); toggle.setAttribute("aria-controls", "comparison-panel"); toggle.addEventListener("click", onToggle); container.append(toggle);
+  const toggle = document.createElement("button"); toggle.type = "button"; toggle.dataset.comparisonCta = ""; toggle.textContent = copy.comparisonCta(name); toggle.setAttribute("aria-expanded", String(open)); toggle.setAttribute("aria-controls", panelId); toggle.addEventListener("click", onToggle); container.append(toggle);
   if (!open) return;
-  const card = document.createElement("section"); card.id = "comparison-panel"; card.className = "comparison-card"; card.dataset.comparisonCard = "";
+  const card = document.createElement("section"); card.id = panelId; card.className = "comparison-card"; card.dataset.comparisonCard = "";
   const heading = document.createElement("h2"); heading.textContent = copy.comparisonTitle(name); card.append(heading);
   const versions = document.createElement("div"); versions.className = "comparison-versions";
   for (const { feature, year } of candidate.versions) {
@@ -30,7 +30,11 @@ export function renderComparisonCards(container: HTMLElement, candidates: readon
   container.replaceChildren(); container.hidden = candidates.length === 0;
   for (const candidate of candidates) {
     const item = document.createElement("div"); item.className = "comparison-item";
-    renderComparisonCard(item, candidate, bundle, openEntityId === candidate.entityId, selectedId, () => onToggle(candidate.entityId), onSelect);
+    renderComparisonCard(item, candidate, bundle, openEntityId === candidate.entityId, selectedId, () => onToggle(candidate.entityId), onSelect, comparisonPanelId(candidate.entityId));
     container.append(item);
   }
+}
+
+function comparisonPanelId(entityId: string): string {
+  return `comparison-panel-${encodeURIComponent(entityId)}`;
 }

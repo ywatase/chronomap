@@ -7,6 +7,11 @@ export interface SharedState {
   readonly zoom?: number;
 }
 
+// Keep a small margin below MapLibre's projection clamp so restoring a URL
+// cannot oscillate between the requested and clamped camera values.
+const MAX_MERCATOR_LATITUDE = 85;
+const MAX_MAP_ZOOM = 22;
+
 export function parseSharedState(search: string): SharedState {
   const params = new URLSearchParams(search);
   const rawYear = params.get("year");
@@ -14,8 +19,8 @@ export function parseSharedState(search: string): SharedState {
   const featureId = params.get("feature")?.trim() || undefined;
   const dataset = params.get("dataset")?.trim() || undefined;
   const longitude = boundedNumber(params.get("lng"), -180, 180);
-  const latitude = boundedNumber(params.get("lat"), -90, 90);
-  const zoom = boundedNumber(params.get("z"), 0, 24);
+  const latitude = boundedNumber(params.get("lat"), -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE);
+  const zoom = boundedNumber(params.get("z"), 0, MAX_MAP_ZOOM);
   return {
     ...(dataset && /^[a-z0-9-]+$/.test(dataset) ? { dataset } : {}),
     ...(typeof year === "number" && Number.isSafeInteger(year) ? { year } : {}),
@@ -32,8 +37,8 @@ export function sharedQuery(state: { readonly dataset?: string | null; readonly 
   if (state.year !== null && Number.isSafeInteger(state.year)) params.set("year", String(state.year));
   if (state.featureId) params.set("feature", state.featureId);
   if (state.longitude !== undefined && state.longitude !== null && boundedNumber(state.longitude, -180, 180) !== undefined) params.set("lng", fixed(state.longitude, 5));
-  if (state.latitude !== undefined && state.latitude !== null && boundedNumber(state.latitude, -90, 90) !== undefined) params.set("lat", fixed(state.latitude, 5));
-  if (state.zoom !== undefined && state.zoom !== null && boundedNumber(state.zoom, 0, 24) !== undefined) params.set("z", fixed(state.zoom, 2));
+  if (state.latitude !== undefined && state.latitude !== null && boundedNumber(state.latitude, -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE) !== undefined) params.set("lat", fixed(state.latitude, 5));
+  if (state.zoom !== undefined && state.zoom !== null && boundedNumber(state.zoom, 0, MAX_MAP_ZOOM) !== undefined) params.set("z", fixed(state.zoom, 2));
   const value = params.toString();
   return value ? `?${value}` : "";
 }

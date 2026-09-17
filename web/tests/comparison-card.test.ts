@@ -26,4 +26,11 @@ describe("comparison card", () => {
     expect(root.textContent).toContain("Uncertainty: approximate, unknown, unknown, unknown");
     expect(root.textContent).not.toContain("不確実性");
   });
+
+  it("uses localized BCE labels for comparison years", () => {
+    const root = document.createElement("div");
+    const bceCandidate = { ...candidate, versions: [{ feature: { ...first, id: "version:bce", properties: { ...first.properties, temporal: { ...first.properties.temporal, start: { earliestYear: -43, latestYear: -43, precision: "year" as const, qualifier: "exact" as const }, end: { earliestYear: -43, latestYear: -43, precision: "year" as const, qualifier: "exact" as const } } } }, year: -43 }, candidate.versions[1]!] };
+    renderComparisonCard(root, bceCandidate, bundle, true, null, () => undefined, () => undefined);
+    expect(root.querySelector("[data-comparison-feature-id=\"version:bce\"]")?.textContent).toBe("44 BCE");
+  });
 });

@@ -20,6 +20,7 @@ describe("shareable map state", () => {
 
   it("rejects unsafe dataset slugs and out-of-range camera values", () => {
     expect(parseSharedState("?dataset=../private&lng=181&lat=-91&z=25")).toEqual({});
+    expect(parseSharedState("?lat=90&z=24")).toEqual({});
   });
 
   it("serializes only the stable share parameters", () => {

@@ -32,6 +32,10 @@ Create a production static build:
 npm run build
 ```
 
+The build bundles MapLibre's worker with Vite (`?worker&url`), so the
+production preview can parse and render the historical GeoJSON source without
+depending on a package-relative worker URL.
+
 Run the unit tests or Chromium browser acceptance tests:
 
 ```sh
@@ -57,7 +61,8 @@ directly, for example:
 ```
 
 Only public bundle records are restored from URL parameters. Invalid or
-out-of-range parameters fall back to the safe default view.
+out-of-range parameters fall back to the safe default view. Camera links use
+the Web Mercator-safe latitude range and MapLibre's default zoom ceiling.
 
 ## Comparing snapshots
 
