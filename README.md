@@ -36,6 +36,13 @@ uv run chronomap-data validate data/ogurike --profile public
 uv run chronomap-data build-public data/ogurike --output web/public/data/ogurike
 ```
 
+The second public pilot uses the same contract:
+
+```sh
+uv run chronomap-data validate data/tonegawa --profile public
+uv run chronomap-data build-public data/tonegawa --output web/public/data/tonegawa
+```
+
 Build a deterministic public projection.  The target is replaced only after
 public-profile validation and staging both succeed:
 
@@ -50,8 +57,9 @@ contract.
 
 The static responsive UI, setup instructions, and browser acceptance tests are
 documented in [web/README.md](web/README.md). The default `/data/ogurike/`
-bundle is generated from the pilot package and keeps restricted source material
-as citation-only metadata.
+bundle is generated from the pilot package; `/?dataset=tonegawa` selects the
+Tone River pilot. Both bundles keep restricted source material as citation-only
+metadata.
 
 GitHub Actions runs the Python contract/public-data checks and the Web
 unit/build/Chromium acceptance suite on pushes and pull requests.
