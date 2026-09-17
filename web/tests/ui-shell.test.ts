@@ -17,6 +17,19 @@ describe("ui shell", () => {
     expect(host.textContent).toContain("map canvas");
   });
 
+  it("passes the dataset bbox to an adapter for the initial viewport", () => {
+    const root = document.createElement("div");
+    const controller = mountUiShell(root, bundle, () => undefined);
+    let viewport: readonly number[] | undefined;
+    controller.setMapAdapter({
+      mount: () => undefined,
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      setViewport: (bbox) => { viewport = bbox; },
+    });
+    expect(viewport).toEqual([0, 0, 1, 1]);
+  });
+
   it("uses the provided neutral root for one header, main, and footer landmark", () => {
     const root = document.createElement("div"); mountUiShell(root, bundle, () => undefined);
     expect(root.querySelectorAll("header")).toHaveLength(1);

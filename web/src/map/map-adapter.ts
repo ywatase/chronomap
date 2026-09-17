@@ -1,6 +1,6 @@
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import type { FeatureVersion } from "../domain/types";
+import type { Dataset, FeatureVersion } from "../domain/types";
 import { createGsiStyle } from "./map-style";
 
 const sourceId = "historical-features";
@@ -11,6 +11,9 @@ export class MapAdapter {
   private container: HTMLElement | null = null;
   private features: readonly FeatureVersion[] = [];
   private selectedFeatureId: string | null = null;
+  private viewport: Dataset["bbox"] | null = null;
+  private mapLoaded = false;
+  private viewportApplied = false;
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
 
@@ -27,8 +30,10 @@ export class MapAdapter {
   private createMap(): void {
     if (!this.container) return;
     this.map?.remove();
+    this.mapLoaded = false;
+    this.viewportApplied = false;
     this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
-    this.map.on("load", () => this.updateSource());
+    this.map.on("load", () => { this.mapLoaded = true; this.updateSource(); this.applyViewport(); });
     this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
       const clicked = this.map?.queryRenderedFeatures(event.point, { layers: interactiveLayerIds }) ?? [];
@@ -40,9 +45,17 @@ export class MapAdapter {
 
   setFeatures(features: readonly FeatureVersion[]): void { this.features = features; this.updateSource(); }
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(); }
+  setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.mapLoaded) this.applyViewport(); }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onBasemapError(handler: (message: string) => void): void { this.basemapErrorHandler = handler; }
   destroy(): void { this.map?.remove(); this.map = null; this.container = null; }
+
+  private applyViewport(): void {
+    if (!this.map || !this.viewport || this.viewportApplied) return;
+    const [west, south, east, north] = this.viewport;
+    this.map.fitBounds([[west, south], [east, north]], { padding: 48, maxZoom: 13, duration: 0 });
+    this.viewportApplied = true;
+  }
 
   private updateSource(): void {
     const source = this.map?.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;

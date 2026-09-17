@@ -2,12 +2,13 @@
 import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 
-const mocked = vi.hoisted(() => {
+  const mocked = vi.hoisted(() => {
   const maps: any[] = [];
   class FakeMap {
     readonly handlers = new Map<string, Array<(event: any) => void>>();
     readonly source = { setData: vi.fn() };
     queryRenderedFeatures = vi.fn(() => []);
+    fitBounds = vi.fn();
     remove = vi.fn();
     constructor(_options: unknown) { maps.push(this); }
     on(event: string, handler: (event: any) => void): this { this.handlers.set(event, [...(this.handlers.get(event) ?? []), handler]); return this; }
@@ -50,6 +51,24 @@ describe("map style", () => {
 });
 
 describe("MapAdapter", () => {
+  it("fits the map to the requested dataset bbox after the map loads", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+    adapter.setViewport([135.73, 34.87, 135.82, 34.94]);
+    expect(map.fitBounds).not.toHaveBeenCalled();
+    map.fire("load");
+    expect(map.fitBounds).toHaveBeenCalledWith([[135.73, 34.87], [135.82, 34.94]], { padding: 48, maxZoom: 13, duration: 0 });
+  });
+
+  it("fits the map to the requested dataset bbox after the map loads", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+    adapter.setViewport([135.73, 34.87, 135.82, 34.94]);
+    expect(map.fitBounds).not.toHaveBeenCalled();
+    map.fire("load");
+    expect(map.fitBounds).toHaveBeenCalledWith([[135.73, 34.87], [135.82, 34.94]], { padding: 48, maxZoom: 13, duration: 0 });
+  });
+
   it("preserves authored coordinate order in its one GeoJSON source", () => {
     const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
     const coordinates = [139.7, 35.6] as const; adapter.setFeatures([point("first", coordinates)]);

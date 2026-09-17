@@ -31,7 +31,7 @@ function renderFailure(): void {
   shell.className = "app-shell";
   const alert = document.createElement("p");
   alert.setAttribute("role", "alert");
-  alert.textContent = "Dataset failed to load. The public demo data could not be read. Please retry.";
+  alert.textContent = "巨椋池の公開データを読み込めませんでした。再試行してください。";
   const retry = document.createElement("button");
   retry.type = "button";
   retry.textContent = "Retry loading dataset";
@@ -47,7 +47,7 @@ async function loadDataset(retrying = false): Promise<void> {
   renderLoading(retrying);
   let bundle;
   try {
-    bundle = await loadPublicBundle("/data/synthetic/");
+    bundle = await loadPublicBundle("/data/ogurike/");
   } catch {
     if (currentRequest === requestId) renderFailure();
     return;
