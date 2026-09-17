@@ -9,6 +9,8 @@ import { comparisonCandidates } from "../domain/comparison-candidates";
 import { renderComparisonCards } from "./comparison-card";
 import { renderMetadataPanel } from "./metadata-panel";
 import { uiCopy, type UiCopy } from "./copy";
+import { buildReportModel } from "../domain/report-model";
+import { renderPrintReport } from "./print-report";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
@@ -50,11 +52,22 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   recordedField.append(recordedLabel, snapshotSelect);
   const next = button(copy.nextYear); next.dataset.yearNext = "";
   const shareButton = button(copy.shareView); shareButton.dataset.shareView = "";
+  const reportButton = button(copy.reportView); reportButton.dataset.reportView = ""; reportButton.hidden = true; reportButton.setAttribute("aria-expanded", "false");
   const hint = document.createElement("p"); hint.id = "recorded-year-hint"; hint.className = "year-hint"; hint.textContent = copy.recordedHint;
   const shownYear = document.createElement("p"); shownYear.className = "shown-year";
   const shareUrl = document.createElement("input"); shareUrl.type = "url"; shareUrl.readOnly = true; shareUrl.hidden = true; shareUrl.className = "share-url"; shareUrl.setAttribute("aria-label", copy.shareUrlLabel); shareUrl.dataset.shareUrl = "";
   const shareNotice = document.createElement("p"); shareNotice.className = "share-notice"; shareNotice.hidden = true; shareNotice.setAttribute("role", "status"); shareNotice.setAttribute("aria-live", "polite"); shareNotice.dataset.shareFeedback = "";
-  controls.append(previous, yearField, recordedField, next, shareButton, hint, shownYear, shareUrl, shareNotice); header.append(controls);
+  controls.append(previous, yearField, recordedField, next, shareButton, reportButton, hint, shownYear, shareUrl, shareNotice); header.append(controls);
+
+  const reportDialog = document.createElement("section");
+  reportDialog.hidden = true;
+  reportDialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); closeReport(); }
+  });
+  reportDialog.addEventListener("click", (event) => {
+    if (event.target === reportDialog) closeReport();
+  });
+  shell.append(reportDialog);
 
   const content = document.createElement("main"); content.id = "chronomap-main"; content.tabIndex = -1; content.className = "shell-content"; shell.append(content);
   const live = document.createElement("p"); live.className = "live-status"; live.setAttribute("role", "status"); live.setAttribute("aria-live", "polite"); content.append(live);
@@ -79,6 +92,21 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     window.history.replaceState(null, "", `${window.location.pathname}${query}${window.location.hash}`);
   };
   const setShareNotice = (message: string) => { shareNotice.hidden = false; shareNotice.textContent = message; };
+  const closeReport = () => { reportDialog.hidden = true; reportButton.setAttribute("aria-expanded", "false"); reportButton.focus(); };
+  const openReport = () => {
+    syncUrl();
+    const selected = state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId);
+    const candidate = comparisons.find((item) => item.entityId === selected?.properties.entityId) ?? null;
+    const model = buildReportModel(bundle, state, typeof window === "undefined" ? "" : window.location.href, candidate);
+    if (!model) return;
+    renderPrintReport(reportDialog, model, {
+      onClose: closeReport,
+      onPrint: () => { if (typeof window !== "undefined" && typeof window.print === "function") window.print(); },
+    });
+    reportDialog.hidden = false;
+    reportButton.setAttribute("aria-expanded", "true");
+    reportDialog.querySelector<HTMLButtonElement>("[data-report-close]")?.focus();
+  };
   const shareCurrentView = async () => {
     syncUrl();
     const url = typeof window === "undefined" ? "" : window.location.href;
@@ -103,6 +131,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     shownYear.textContent = copy.showingYear(state.selectedYear); shownYear.dataset.currentYear = String(state.selectedYear);
     live.textContent = statusText(state, copy);
     basemapAlert.hidden = !state.basemapError; basemapAlert.textContent = state.basemapError ? copy.basemapFailure(state.basemapError) : ""; basemapRetry.hidden = !state.basemapError || !adapter?.retry; retry.hidden = state.status !== "failed";
+    reportButton.hidden = state.status === "loading" || state.status === "retrying" || state.status === "failed" || state.selectedFeatureId === null;
     listPanel.hidden = state.activeMobileTab !== "list"; detailPanel.hidden = state.activeMobileTab !== "detail"; listPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "list")); detailPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "detail")); listTab.setAttribute("aria-selected", String(state.activeMobileTab === "list")); detailTab.setAttribute("aria-selected", String(state.activeMobileTab === "detail"));
     renderMapCandidates(candidates, state, bundle, copy, (featureId) => { lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
     renderComparisonCards(comparison, comparisons, bundle, comparisonEntityId, state.selectedFeatureId, (entityId) => { comparisonEntityId = comparisonEntityId === entityId ? null : entityId; update(); }, (featureId) => selectComparisonVersion(featureId));
@@ -134,6 +163,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   input.addEventListener("change", commitYear); input.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); commitYear(); } });
   snapshotSelect.addEventListener("change", () => { const value = Number(snapshotSelect.value); if (Number.isInteger(value)) emit({ type: "yearChanged", year: value }); });
   shareButton.addEventListener("click", () => void shareCurrentView());
+  reportButton.addEventListener("click", openReport);
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
   const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });

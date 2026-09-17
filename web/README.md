@@ -71,6 +71,15 @@ same entity, the sidebar exposes a comparison card. The pilot currently offers
 the Ujigawa 1590/1596 pair. Selecting either side updates the map, detail panel,
 and share URL together; the card remains usable when the basemap is unavailable.
 
+## Printable reports
+
+After selecting a public feature, use `レポートを出力` to open a citation-ready
+brief containing the selected year, possible period, explanation, uncertainty,
+evidence locators, source rights, and a reproducible share URL. The browser print
+dialog can save the report as a PDF. The report is generated entirely in the
+browser; restricted source body text and images are never copied into it. If the
+GSI basemap is unavailable, the text evidence and share URL remain printable.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the

@@ -23,6 +23,34 @@ export interface UiCopy {
   readonly shareFallback: string;
   readonly shareCancelled: string;
   readonly shareUnavailable: string;
+  readonly reportView: string;
+  readonly reportDialogLabel: string;
+  readonly reportTitle: (dataset: string, year: string) => string;
+  readonly reportLead: string;
+  readonly reportSummary: string;
+  readonly reportVisibleFeatures: (count: number) => string;
+  readonly reportFeature: string;
+  readonly reportFeatureId: string;
+  readonly reportEntity: string;
+  readonly reportDescription: string;
+  readonly reportPeriod: string;
+  readonly reportGeometry: string;
+  readonly reportUncertainty: string;
+  readonly reportComparison: string;
+  readonly reportEvidence: string;
+  readonly reportSupports: string;
+  readonly reportLocator: string;
+  readonly reportSources: string;
+  readonly reportRights: string;
+  readonly reportShareUrl: string;
+  readonly reportMap: string;
+  readonly reportMapUnavailable: string;
+  readonly reportNoEvidence: string;
+  readonly reportNoSources: string;
+  readonly reportCitationOnly: string;
+  readonly reportPrint: string;
+  readonly reportClose: string;
+  readonly reportSourceLink: string;
   readonly comparisonCta: (name: string) => string;
   readonly comparisonTitle: (name: string) => string;
   readonly comparisonYear: (year: number) => string;
@@ -89,6 +117,34 @@ const EN_COPY: UiCopy = {
   shareFallback: "Copy this URL:",
   shareCancelled: "Sharing canceled.",
   shareUnavailable: "The share URL is ready below.",
+  reportView: "Print / save report",
+  reportDialogLabel: "Historical map report",
+  reportTitle: (dataset, year) => `${dataset} — report for ${year}`,
+  reportLead: "A citation-ready brief of the selected historical feature. Use the browser print dialog to save a PDF.",
+  reportSummary: "View summary",
+  reportVisibleFeatures: (count) => `${count} public feature${count === 1 ? "" : "s"} visible in this view.`,
+  reportFeature: "Selected feature",
+  reportFeatureId: "Feature ID",
+  reportEntity: "Entity",
+  reportDescription: "Description",
+  reportPeriod: "Possible period",
+  reportGeometry: "Geometry",
+  reportUncertainty: "Uncertainty",
+  reportComparison: "Other snapshots of this entity",
+  reportEvidence: "Evidence",
+  reportSupports: "Supports",
+  reportLocator: "Locator",
+  reportSources: "Sources",
+  reportRights: "Rights and attribution",
+  reportShareUrl: "Reopen this view",
+  reportMap: "Current map view",
+  reportMapUnavailable: "The basemap could not be retrieved. The text evidence and shared view remain available.",
+  reportNoEvidence: "No evidence references are attached.",
+  reportNoSources: "No source metadata is available.",
+  reportCitationOnly: "Citation-only metadata; no source body or image is reproduced.",
+  reportPrint: "Print / save as PDF",
+  reportClose: "Close report",
+  reportSourceLink: "Open source",
   comparisonCta: (name) => `Compare ${name} snapshots`,
   comparisonTitle: (name) => `${name} snapshots`,
   comparisonYear: (year) => formatYear(year, "en"),
@@ -147,6 +203,34 @@ const JA_COPY: UiCopy = {
   shareFallback: "このURLをコピーしてください:",
   shareCancelled: "共有をキャンセルしました。",
   shareUnavailable: "共有URLを下に表示しました。",
+  reportView: "レポートを出力",
+  reportDialogLabel: "歴史地図レポート",
+  reportTitle: (dataset, year) => `${dataset} — ${year}の表示レポート`,
+  reportLead: "選択した歴史地物を、説明・不確実性・根拠・出典とともにまとめたレポートです。ブラウザの印刷画面からPDF保存できます。",
+  reportSummary: "表示の概要",
+  reportVisibleFeatures: (count) => `この表示には公開地物が${count}件あります。`,
+  reportFeature: "選択した地物",
+  reportFeatureId: "地物ID",
+  reportEntity: "歴史対象",
+  reportDescription: "説明",
+  reportPeriod: "可能期間",
+  reportGeometry: "形状",
+  reportUncertainty: "不確実性",
+  reportComparison: "同じ対象の別時点",
+  reportEvidence: "根拠",
+  reportSupports: "補強する項目",
+  reportLocator: "参照位置",
+  reportSources: "出典",
+  reportRights: "権利・表示",
+  reportShareUrl: "この表示を再び開く",
+  reportMap: "現在の地図表示",
+  reportMapUnavailable: "背景地図を取得できませんでした。文章・根拠・共有URLは出力できます。",
+  reportNoEvidence: "根拠への参照はありません。",
+  reportNoSources: "出典メタデータはありません。",
+  reportCitationOnly: "引用メタデータのみを収録しています。原資料の本文・画像は転載していません。",
+  reportPrint: "印刷 / PDF保存",
+  reportClose: "レポートを閉じる",
+  reportSourceLink: "出典を開く",
   comparisonCta: (name) => `${name}の変化を比較`,
   comparisonTitle: (name) => `${name}の変化を比較`,
   comparisonYear: (year) => formatYear(year, "ja"),
