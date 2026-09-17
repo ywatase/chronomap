@@ -4,8 +4,9 @@ Chronomap packages are normalized, versioned historical-data records.  This
 repository contains their JSON Schemas, validator, and fail-closed public
 bundle builder. Installed wheels include the versioned schemas as internal
 package resources, so validation does not depend on a checkout. The checked-in
-`data/ogurike/` package is a small, citation-linked pilot for the Ogurike area;
-the test fixture remains synthetic and is not history.
+`data/ogurike/` and `data/tonegawa/` are small, citation-linked pilots for the
+Ogurike and Tone River areas; the test fixture remains synthetic and is not
+history.
 
 ## Setup
 

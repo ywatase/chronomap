@@ -1,10 +1,11 @@
 # Chronomap web app
 
 This is Chronomap's static, responsive historical-map pilot. It reads the
-Japanese public bundle at `/data/ogurike/`, which contains a small, approximate
-set of cited 巨椋池 snapshots for 1590, 1596, 1910, and 1942. Restricted source
-pages are represented by citation-only metadata; the browser does not receive
-private authoring records or copied source body text.
+Japanese public bundle at `/data/ogurike/` by default, which contains a small,
+approximate set of cited 巨椋池 snapshots for 1590, 1596, 1910, and 1942. The
+allow-listed `tonegawa` bundle adds a three-snapshot Tone River eastward-shift
+pilot. Restricted source pages are represented by citation-only metadata; the
+browser does not receive private authoring records or copied source body text.
 
 ## Setup and commands
 
@@ -67,9 +68,10 @@ the Web Mercator-safe latitude range and MapLibre's default zoom ceiling.
 ## Comparing snapshots
 
 When the public bundle contains two or more exact, single-year versions of the
-same entity, the sidebar exposes a comparison card. The pilot currently offers
-the Ujigawa 1590/1596 pair. Selecting either side updates the map, detail panel,
-and share URL together; the card remains usable when the basemap is unavailable.
+same entity, the sidebar exposes a comparison card. The pilots currently offer
+the Ujigawa 1590/1596 pair and the Tone River 1590/1654 pair. Selecting either
+side updates the map, detail panel, and share URL together; the card remains
+usable when the basemap is unavailable.
 
 ## Printable reports
 
@@ -91,14 +93,14 @@ view.
 
 ## Guided lesson
 
-The static `巨椋池と宇治川の変化をたどる` lesson turns the four public
-snapshots into a short guided route. Use `ガイド教材を始める` to move through
-1590, 1596, 1910, and 1942; the second step opens the existing Ujigawa
-comparison card, and the final step offers sharing and the printable report.
-Lesson state is encoded as `lesson=ogurike-intro&step=...` alongside the normal
+The static `巨椋池と宇治川の変化をたどる` and `利根川東遷を概略地図でたどる`
+lessons turn their public snapshots into short guided routes. The Ogurike route
+covers 1590, 1596, 1910, and 1942; the Tone River route covers 1590, 1594, and
+1654. Each final step offers sharing, a printable report, and the classroom
+pack. Lesson state is encoded as `lesson=...&step=...` alongside the normal
 year, feature, and camera parameters, so a copied URL and a reload restore the
-same step. The lesson JSON is optional static content: if it is missing or does
-not match the validated public bundle, the map still opens in normal mode.
+same step. Lesson JSON is optional static content: if it is missing or does not
+match the validated public bundle, the map still opens in normal mode.
 
 ## Classroom pack (beta)
 
@@ -132,3 +134,9 @@ cd .. && uv run chronomap-data build-public data/ogurike --output web/public/dat
 
 Only the public projection files are served to the browser. Authoring data,
 including private feature versions and source body text, is not copied here.
+
+The Tone River bundle is generated with the same command:
+
+```sh
+cd .. && uv run chronomap-data build-public data/tonegawa --output web/public/data/tonegawa
+```
