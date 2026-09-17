@@ -1,0 +1,42 @@
+{
+  "bbox": [
+    135.73,
+    34.87,
+    135.82,
+    34.94
+  ],
+  "defaultLanguage": "ja",
+  "description": {
+    "ja": "巨椋池周辺の1590年・1596年・1910年・1942年の資料スナップショットを、出典と不確実性付きで示す小規模な公開データです。面と線は概略復元です。"
+  },
+  "files": {
+    "entities": "entities.json",
+    "evidence": "evidence.json",
+    "featureVersions": "feature-versions.geojson",
+    "sources": "sources.json"
+  },
+  "id": "ogurike:dataset:pilot-2026",
+  "rights": {
+    "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+    "status": "open-license",
+    "terms": "個別Sourceの権利条件、出典表示、編集・加工表示を併せて適用します。"
+  },
+  "schemaVersion": "1.0.0",
+  "temporalExtent": {
+    "end": {
+      "earliestYear": 1942,
+      "latestYear": 1942,
+      "precision": "year",
+      "qualifier": "exact"
+    },
+    "start": {
+      "earliestYear": 1590,
+      "latestYear": 1590,
+      "precision": "year",
+      "qualifier": "exact"
+    }
+  },
+  "title": {
+    "ja": "巨椋池パイロットデータ"
+  }
+}

@@ -12,6 +12,7 @@ from chronomap_data.schema_validation import json_pointer
 
 ROOT = Path(__file__).parents[1]
 SYNTHETIC_PACKAGE = ROOT / "tests" / "fixtures" / "valid" / "synthetic-package"
+OGURIKE_PACKAGE = ROOT / "data" / "ogurike"
 
 
 def copy_package(tmp_path: Path) -> Path:
@@ -123,6 +124,15 @@ def test_validate_maps_io_and_usage_errors_to_exit_2_without_a_traceback(capsys,
 
 def test_installed_validate_command_succeeds_for_a_valid_package(tmp_path: Path):
     result = run_installed_cli("validate", str(copy_package(tmp_path)))
+
+    assert result.returncode == 0
+    assert result.stdout == ""
+    assert result.stderr == ""
+
+
+@pytest.mark.parametrize("profile", ["authoring", "public"])
+def test_installed_validate_command_accepts_ogurike_package(profile: str):
+    result = run_installed_cli("validate", str(OGURIKE_PACKAGE), "--profile", profile)
 
     assert result.returncode == 0
     assert result.stdout == ""

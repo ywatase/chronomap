@@ -1,0 +1,76 @@
+[
+  {
+    "accessedDate": "2026-09-17",
+    "citation": "京都市『巨椋池干拓碑』GA015",
+    "creators": [
+      "京都市"
+    ],
+    "id": "ogurike:source:kyoto-city-monument",
+    "publishedYear": 2014,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。ページ本文、画像、碑文全文は再現しない。"
+    },
+    "title": {
+      "ja": "巨椋池干拓碑"
+    },
+    "type": "official-web-page",
+    "url": "https://www2.city.kyoto.lg.jp/html/somu/rekishi/fm/ishibumi/html/ga015.html"
+  },
+  {
+    "accessedDate": "2026-09-17",
+    "citation": "京都府レッドデータブック2015『巨椋池』",
+    "creators": [
+      "京都府"
+    ],
+    "id": "ogurike:source:kyoto-prefecture-rdb",
+    "publishedYear": 2015,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。掲載された本文・地図画像・写真は再現しない。"
+    },
+    "title": {
+      "ja": "巨椋池（京都府レッドデータブック）"
+    },
+    "type": "official-web-page",
+    "url": "https://www.pref.kyoto.jp/kankyo/rdb/geo/db/sur0005.html"
+  },
+  {
+    "accessedDate": "2026-09-17",
+    "citation": "国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷",
+    "creators": [
+      "国土交通省近畿地方整備局"
+    ],
+    "id": "ogurike:source:mlit-ogurike-transition",
+    "publishedYear": 2012,
+    "rights": {
+      "attribution": "国土交通省近畿地方整備局",
+      "status": "open-license",
+      "terms": "PDL1.0。出典を記載し、編集・加工したことを別途表示する。"
+    },
+    "title": {
+      "ja": "巨椋池周辺の変遷（国土交通省近畿地方整備局）"
+    },
+    "type": "official-report",
+    "url": "https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf"
+  },
+  {
+    "accessedDate": "2026-09-17",
+    "citation": "Chronomap『巨椋池パイロット形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "ogurike:source:shape-notes",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。"
+    },
+    "title": {
+      "ja": "巨椋池パイロット形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/ogurike-shape-notes.md"
+  }
+]

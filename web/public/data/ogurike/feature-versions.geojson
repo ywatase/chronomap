@@ -1,0 +1,371 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          135.784,
+          34.904
+        ],
+        "type": "Point"
+      },
+      "id": "ogurike:version:reclamation-monument-1942",
+      "properties": {
+        "description": {
+          "ja": "巨椋池干拓工事の完成を記念して建立された碑。点は所在地をもとに小数第3位へ丸めた代表位置で、精密な施設座標ではありません。"
+        },
+        "entityId": "ogurike:entity:reclamation-monument",
+        "evidenceIds": [
+          "ogurike:evidence:monument-citation",
+          "ogurike:evidence:monument-geometry"
+        ],
+        "labels": {
+          "ja": "巨椋池干拓之碑（1942年）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "京都市（引用）、Chronomap（代表点加工）",
+          "status": "open-license",
+          "terms": "京都市Sourceは引用メタデータのみ。代表点はChronomapの概略復元です。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 1942,
+            "latestYear": 1942,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:monument-geometry"
+            ],
+            "note": "碑の形状ではなく所在地の代表点だけを表示しています。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:monument-citation"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:monument-citation",
+              "ogurike:evidence:monument-geometry"
+            ],
+            "note": "所在地をもとに小数第3位へ丸めた代表位置です。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:monument-citation"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            135.795,
+            34.885
+          ],
+          [
+            135.786,
+            34.898
+          ],
+          [
+            135.773,
+            34.91
+          ],
+          [
+            135.759,
+            34.92
+          ],
+          [
+            135.744,
+            34.934
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "ogurike:version:ujigawa-1590",
+      "properties": {
+        "description": {
+          "ja": "近畿地方整備局の1590年資料図をもとにした、秀吉による河川工事前の流路の概略復元です。正確な河道中心線ではありません。"
+        },
+        "entityId": "ogurike:entity:ujigawa",
+        "evidenceIds": [
+          "ogurike:evidence:ujigawa-1590-geometry",
+          "ogurike:evidence:ujigawa-1590-temporal"
+        ],
+        "labels": {
+          "ja": "宇治川（1590年・工事前）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1590,
+            "latestYear": 1590,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1590,
+            "latestYear": 1590,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1590-geometry"
+            ],
+            "note": "少数の折れ点による概略復元であり、精密な河道中心線ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1590-temporal"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1590-temporal"
+            ],
+            "note": "資料図の相対位置を概略線にしたものです。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1590-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            135.806,
+            34.924
+          ],
+          [
+            135.792,
+            34.917
+          ],
+          [
+            135.782,
+            34.906
+          ],
+          [
+            135.779,
+            34.894
+          ],
+          [
+            135.781,
+            34.881
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "ogurike:version:ujigawa-1596",
+      "properties": {
+        "description": {
+          "ja": "近畿地方整備局の1596年資料図をもとにした、秀吉による河川工事後の流路の概略復元です。太閤堤の精密な線形ではありません。"
+        },
+        "entityId": "ogurike:entity:ujigawa",
+        "evidenceIds": [
+          "ogurike:evidence:ujigawa-1596-geometry",
+          "ogurike:evidence:ujigawa-1596-temporal"
+        ],
+        "labels": {
+          "ja": "宇治川（1596年・工事後）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1596,
+            "latestYear": 1596,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1596,
+            "latestYear": 1596,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1596-geometry"
+            ],
+            "note": "少数の折れ点による概略復元であり、太閤堤の精密線形ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1596-temporal"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1596-temporal"
+            ],
+            "note": "資料図の相対位置を概略線にしたものです。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:ujigawa-1596-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.758,
+              34.92
+            ],
+            [
+              135.773,
+              34.928
+            ],
+            [
+              135.794,
+              34.923
+            ],
+            [
+              135.805,
+              34.91
+            ],
+            [
+              135.798,
+              34.895
+            ],
+            [
+              135.777,
+              34.889
+            ],
+            [
+              135.758,
+              34.896
+            ],
+            [
+              135.751,
+              34.909
+            ],
+            [
+              135.758,
+              34.92
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ogurike:version:waterbody-1910",
+      "properties": {
+        "description": {
+          "ja": "近畿地方整備局の1910年資料図をもとにした巨椋池の概略復元です。精密な水域境界や794haから逆算した面積を示しません。"
+        },
+        "entityId": "ogurike:entity:waterbody",
+        "evidenceIds": [
+          "ogurike:evidence:waterbody-geometry",
+          "ogurike:evidence:waterbody-region",
+          "ogurike:evidence:waterbody-temporal"
+        ],
+        "labels": {
+          "ja": "巨椋池（1910年・概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、京都府（引用）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "各Sourceの出典表示・引用条件・編集加工表示を適用します。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1910,
+            "latestYear": 1910,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1910,
+            "latestYear": 1910,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-geometry"
+            ],
+            "note": "資料図を少数頂点へ手動加工した概略面であり、精密な境界ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-region",
+              "ogurike:evidence:waterbody-temporal"
+            ],
+            "note": ""
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-region"
+            ],
+            "note": "京都府RDBの地域情報と資料図の相対位置をもとにした概略です。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-temporal"
+            ],
+            "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}
