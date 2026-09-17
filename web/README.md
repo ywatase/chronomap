@@ -100,6 +100,17 @@ year, feature, and camera parameters, so a copied URL and a reload restore the
 same step. The lesson JSON is optional static content: if it is missing or does
 not match the validated public bundle, the map still opens in normal mode.
 
+## Classroom pack (beta)
+
+After completing the guided lesson, `授業用教材パックを作成（β版無料）` opens a
+print preview with three sections: a student worksheet, a teacher reference
+sheet, and a sources/rights sheet. It includes one start URL and one share URL
+for each lesson step, observation prompts and writing space, feature
+descriptions, uncertainty notes, evidence locators, and deduplicated source
+metadata. Restricted sources remain citation-only; source body text, images, and
+inscriptions are not reproduced. The browser print dialog can save the pack as
+an A4 portrait PDF without a server or PDF library.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the

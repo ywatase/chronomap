@@ -74,6 +74,34 @@ export interface UiCopy {
   readonly lessonStepYear: (year: number) => string;
   readonly lessonCompletion: string;
   readonly lessonComparisonHint: string;
+  readonly lessonPackOpen: string;
+  readonly lessonPackTitle: (lessonTitle: string) => string;
+  readonly lessonPackLead: (minutes: number) => string;
+  readonly lessonPackBeta: string;
+  readonly lessonPackStudent: string;
+  readonly lessonPackTeacher: string;
+  readonly lessonPackSources: string;
+  readonly lessonPackDataset: string;
+  readonly lessonPackObjective: string;
+  readonly lessonPackObservation: string;
+  readonly lessonPackAnswer: string;
+  readonly lessonPackStepLink: string;
+  readonly lessonPackStartLink: string;
+  readonly lessonPackEntity: string;
+  readonly lessonPackDescription: string;
+  readonly lessonPackPeriod: string;
+  readonly lessonPackGeometry: string;
+  readonly lessonPackUncertainty: string;
+  readonly lessonPackComparison: string;
+  readonly lessonPackEvidence: string;
+  readonly lessonPackLocator: string;
+  readonly lessonPackRights: string;
+  readonly lessonPackAccessed: string;
+  readonly lessonPackApproximation: string;
+  readonly lessonPackCitationOnly: string;
+  readonly lessonPackNoSources: string;
+  readonly lessonPackPrint: string;
+  readonly lessonPackClose: string;
   readonly comparisonCta: (name: string) => string;
   readonly comparisonTitle: (name: string) => string;
   readonly comparisonYear: (year: number) => string;
@@ -191,6 +219,34 @@ const EN_COPY: UiCopy = {
   lessonStepYear: (year) => formatYear(year, "en"),
   lessonCompletion: "You reached the end of this guided lesson. Share the view or save a citation-ready report.",
   lessonComparisonHint: "The comparison card is open for this step.",
+  lessonPackOpen: "Create classroom pack (free beta)",
+  lessonPackTitle: (lessonTitle) => `${lessonTitle} — classroom pack`,
+  lessonPackLead: (minutes) => `A printable student worksheet and teacher reference pack for a ${minutes}-minute lesson.`,
+  lessonPackBeta: "Free during beta. Viewing and sharing are intended to remain free; regional packs and bulk teacher exports are future candidates.",
+  lessonPackStudent: "Student worksheet",
+  lessonPackTeacher: "Teacher reference",
+  lessonPackSources: "Sources and rights",
+  lessonPackDataset: "Dataset",
+  lessonPackObjective: "Observe each historical snapshot, compare the evidence, and write what the map supports.",
+  lessonPackObservation: "Observation prompt",
+  lessonPackAnswer: "Student notes",
+  lessonPackStepLink: "Open step",
+  lessonPackStartLink: "Lesson start URL",
+  lessonPackEntity: "Historical entity",
+  lessonPackDescription: "Description",
+  lessonPackPeriod: "Possible period",
+  lessonPackGeometry: "Geometry",
+  lessonPackUncertainty: "Uncertainty to discuss",
+  lessonPackComparison: "Reference comparison",
+  lessonPackEvidence: "Evidence locators",
+  lessonPackLocator: "Locator",
+  lessonPackRights: "Rights and attribution",
+  lessonPackAccessed: "accessed",
+  lessonPackApproximation: "Teaching note: reconstructed shapes may be approximate; do not treat them as precise boundaries.",
+  lessonPackCitationOnly: "Citation-only metadata; no source body, image, or inscription is reproduced.",
+  lessonPackNoSources: "No source metadata is available.",
+  lessonPackPrint: "Print / save classroom pack",
+  lessonPackClose: "Close classroom pack",
   comparisonCta: (name) => `Compare ${name} snapshots`,
   comparisonTitle: (name) => `${name} snapshots`,
   comparisonYear: (year) => formatYear(year, "en"),
@@ -300,6 +356,34 @@ const JA_COPY: UiCopy = {
   lessonStepYear: (year) => formatYear(year, "ja"),
   lessonCompletion: "ガイド教材は完了です。表示を共有するか、根拠付きレポートを保存できます。",
   lessonComparisonHint: "このステップでは比較カードを開いています。",
+  lessonPackOpen: "授業用教材パックを作成（β版無料）",
+  lessonPackTitle: (lessonTitle) => `${lessonTitle} — 授業用教材パック`,
+  lessonPackLead: (minutes) => `${minutes}分の授業で使える、生徒用ワークシート・教員用参照資料・出典一覧です。`,
+  lessonPackBeta: "β版では無料でお試しいただけます。閲覧・共有は無料機能として継続予定です。地域別教材・複数教材の一括出力は将来の教員向け機能候補です。",
+  lessonPackStudent: "生徒用ワークシート",
+  lessonPackTeacher: "教員用参照資料",
+  lessonPackSources: "出典・権利",
+  lessonPackDataset: "データセット",
+  lessonPackObjective: "各時点の歴史地物を観察し、比較し、地図と根拠から読み取れることを書きます。",
+  lessonPackObservation: "観察する問い",
+  lessonPackAnswer: "生徒の記入欄",
+  lessonPackStepLink: "ステップを開く",
+  lessonPackStartLink: "教材開始URL",
+  lessonPackEntity: "歴史対象",
+  lessonPackDescription: "説明",
+  lessonPackPeriod: "可能期間",
+  lessonPackGeometry: "形状",
+  lessonPackUncertainty: "授業で確認する不確実性",
+  lessonPackComparison: "参照する比較",
+  lessonPackEvidence: "根拠の参照位置",
+  lessonPackLocator: "参照位置",
+  lessonPackRights: "権利・表示",
+  lessonPackAccessed: "参照日",
+  lessonPackApproximation: "授業上の注意: 復元形状には概略が含まれます。精密な境界として扱わないでください。",
+  lessonPackCitationOnly: "引用メタデータのみを収録しています。原資料の本文・画像・碑文は転載していません。",
+  lessonPackNoSources: "出典メタデータはありません。",
+  lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
+  lessonPackClose: "教材パックを閉じる",
   comparisonCta: (name) => `${name}の変化を比較`,
   comparisonTitle: (name) => `${name}の変化を比較`,
   comparisonYear: (year) => formatYear(year, "ja"),

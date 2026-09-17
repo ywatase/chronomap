@@ -10,6 +10,7 @@ export interface LessonPanelActions {
   readonly onDetails: () => void;
   readonly onShare: () => void;
   readonly onReport: () => void;
+  readonly onPack: () => void;
 }
 
 /** Render the optional static guided lesson without owning map or application state. */
@@ -117,7 +118,11 @@ export function renderLessonPanel(
     const report = button(copy.lessonReport, "lesson-report");
     report.dataset.lessonReport = "";
     report.addEventListener("click", actions.onReport);
-    completionActions.append(share, report);
+    const pack = button(copy.lessonPackOpen, "lesson-pack-open");
+    pack.dataset.lessonPackOpen = "";
+    pack.setAttribute("aria-expanded", "false");
+    pack.addEventListener("click", actions.onPack);
+    completionActions.append(share, report, pack);
     section.append(completionActions);
   }
   section.append(close);

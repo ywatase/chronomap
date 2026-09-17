@@ -151,6 +151,39 @@ footer a { color: #155e8a; }
 .report-actions button[data-report-print]:hover, .report-actions button[data-report-print]:focus-visible { background: #0f4f75; }
 .report-print-hint { width: 100%; max-width: 58rem; margin: .55rem auto 0; color: #d9e6ef; font-size: .8rem; }
 
+.lesson-pack-dialog { position: fixed; z-index: 21; inset: 0; display: block; overflow: auto; padding: 1rem; background: rgb(16 42 67 / 58%); }
+.lesson-pack-dialog[hidden] { display: none; }
+.lesson-pack-sheet { width: 100%; max-width: 62rem; margin: 0 auto; padding: 1.35rem 1.5rem 1.5rem; border: 1px solid #9aadb9; border-radius: .8rem; background: #fff; box-shadow: 0 18px 50px rgb(16 42 67 / 25%); overflow-wrap: anywhere; }
+.lesson-pack-header { padding-bottom: .8rem; border-bottom: 2px solid #c4d0d9; }
+.lesson-pack-header h2 { margin: 0; color: #102a43; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.2; }
+.lesson-pack-lead { margin: .5rem 0 0; color: #40566a; line-height: 1.5; }
+.lesson-pack-beta { margin: .65rem 0 0; padding: .6rem .7rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; line-height: 1.45; }
+.lesson-pack-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .55rem; width: 100%; max-width: 62rem; margin: 0 auto .75rem; }
+.lesson-pack-actions button { min-height: 2.8rem; padding: .55rem .85rem; border: 1px solid #8297a8; border-radius: .5rem; background: #fff; color: #17324d; font-weight: 700; }
+.lesson-pack-actions button[data-lesson-pack-print] { border-color: #155e8a; background: #155e8a; color: #fff; }
+.lesson-pack-actions button:hover, .lesson-pack-actions button:focus-visible { background: #e8f2fb; }
+.lesson-pack-actions button[data-lesson-pack-print]:hover, .lesson-pack-actions button[data-lesson-pack-print]:focus-visible { background: #0f4f75; }
+.lesson-pack-page { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #d0dbe2; break-after: page; page-break-after: always; }
+.lesson-pack-page:last-child { break-after: auto; page-break-after: auto; }
+.lesson-pack-page > h2 { margin: 0 0 .55rem; color: #304b60; font-size: 1.15rem; }
+.lesson-pack-page > p { margin: .35rem 0; line-height: 1.45; }
+.lesson-pack-step { margin-top: .8rem; padding: .7rem .75rem; border: 1px solid #c4d0d9; border-radius: .5rem; background: #f9fbfc; break-inside: avoid; page-break-inside: avoid; }
+.lesson-pack-step h3, .lesson-pack-source h3 { margin: 0 0 .4rem; color: #17324d; font-size: 1rem; }
+.lesson-pack-step p, .lesson-pack-source p { margin: .3rem 0; line-height: 1.45; }
+.lesson-pack-prompt { color: #17324d; font-weight: 700; }
+.lesson-pack-link-label { font-size: .8rem; }
+.lesson-pack-url { color: #155e8a; overflow-wrap: anywhere; }
+.lesson-pack-answer-space { min-height: 5.2rem; margin-top: .6rem; padding: .35rem .2rem; }
+.lesson-pack-answer-space span { display: block; height: 1.35rem; border-bottom: 1px solid #8297a8; }
+.lesson-pack-reference h4 { margin: .55rem 0 .25rem; color: #304b60; font-size: .86rem; }
+.lesson-pack-reference ul { margin: .25rem 0; padding-left: 1.25rem; }
+.lesson-pack-reference li { margin: .25rem 0; line-height: 1.4; }
+.lesson-pack-notice { margin-top: .8rem !important; padding: .55rem .65rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; }
+.lesson-pack-source { margin-top: .7rem; padding: .65rem .7rem; border: 1px solid #c4d0d9; border-radius: .45rem; background: #f9fbfc; break-inside: avoid; page-break-inside: avoid; }
+.lesson-pack-source .lesson-pack-notice { margin-top: .5rem !important; }
+.lesson-pack-evidence { font-size: .84rem; }
+.lesson-pack-rights { margin-top: .8rem !important; font-weight: 700; }
+
 :focus-visible { outline: 3px solid #005fcc; outline-offset: 3px; }
 
 @media (max-width: 47.99rem) {
@@ -161,6 +194,10 @@ footer a { color: #155e8a; }
   .lesson-navigation { width: 100%; margin-left: 0; }
   .lesson-navigation button { flex: 1 1 8rem; }
   .lesson-completion-actions button { flex: 1 1 10rem; }
+  .lesson-pack-dialog { padding: .65rem; }
+  .lesson-pack-sheet { padding: 1rem; }
+  .lesson-pack-actions { justify-content: stretch; }
+  .lesson-pack-actions button { flex: 1 1 10rem; }
   .year-controls { gap: .45rem; }
   .year-controls > button { flex: 1 1 8rem; }
   .year-field, .recorded-field { flex: 1 1 8.5rem; }
@@ -201,6 +238,7 @@ footer a { color: #155e8a; }
 }
 
 @page { size: A4 landscape; margin: 10mm; }
+@page lesson-pack { size: A4 portrait; margin: 12mm; }
 
 @media print {
   body { background: #fff; }
@@ -229,4 +267,23 @@ footer a { color: #155e8a; }
   .report-share-url { padding: 1mm; }
   .report-source-url { overflow-wrap: anywhere; }
   .map-placeholder::after { background: #fff; color: #41586a; }
+  .lesson-pack-dialog, .lesson-pack-dialog * { visibility: visible !important; }
+  body[data-print-document="lesson-pack"] .map-placeholder,
+  body[data-print-document="lesson-pack"] .map-placeholder *,
+  body[data-print-document="lesson-pack"] .report-dialog,
+  body[data-print-document="lesson-pack"] .report-dialog * { visibility: hidden !important; }
+  body[data-print-document="lesson-pack"] .lesson-pack-dialog { position: absolute; z-index: 1; inset: 0; display: block; overflow: visible; padding: 0; background: #fff; page: lesson-pack; }
+  body[data-print-document="lesson-pack"] .lesson-pack-sheet { max-width: none; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+  body[data-print-document="lesson-pack"] .lesson-pack-actions { display: none !important; }
+  body[data-print-document="lesson-pack"] .lesson-pack-header h2 { font-size: 16pt; }
+  body[data-print-document="lesson-pack"] .lesson-pack-lead,
+  body[data-print-document="lesson-pack"] .lesson-pack-beta,
+  body[data-print-document="lesson-pack"] .lesson-pack-page > p,
+  body[data-print-document="lesson-pack"] .lesson-pack-step p,
+  body[data-print-document="lesson-pack"] .lesson-pack-source p,
+  body[data-print-document="lesson-pack"] .lesson-pack-source a { font-size: 9pt; }
+  body[data-print-document="lesson-pack"] .lesson-pack-page { margin-top: 3mm; padding-top: 2mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-step { margin-top: 3mm; padding: 2mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-answer-space { min-height: 20mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-source { margin-top: 2mm; padding: 2mm; }
 }

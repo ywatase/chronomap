@@ -13,7 +13,7 @@ const lesson: Lesson = {
 };
 
 function actions() {
-  return { onStart: vi.fn(), onPrevious: vi.fn(), onNext: vi.fn(), onClose: vi.fn(), onDetails: vi.fn(), onShare: vi.fn(), onReport: vi.fn() };
+  return { onStart: vi.fn(), onPrevious: vi.fn(), onNext: vi.fn(), onClose: vi.fn(), onDetails: vi.fn(), onShare: vi.fn(), onReport: vi.fn(), onPack: vi.fn() };
 }
 
 describe("lesson panel", () => {
@@ -33,7 +33,9 @@ describe("lesson panel", () => {
     expect(root.querySelector("[data-lesson-progress]")?.textContent).toBe("2/2 · 1596年");
     root.querySelector<HTMLButtonElement>("[data-lesson-share]")!.click();
     root.querySelector<HTMLButtonElement>("[data-lesson-report]")!.click();
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")!.click();
     expect(callbacks.onShare).toHaveBeenCalledTimes(1);
     expect(callbacks.onReport).toHaveBeenCalledTimes(1);
+    expect(callbacks.onPack).toHaveBeenCalledTimes(1);
   });
 });

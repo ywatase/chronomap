@@ -15,6 +15,8 @@ import { createMapSettings } from "./map-settings";
 import type { Lesson } from "../domain/lesson";
 import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
+import { buildLessonPackModel } from "../domain/lesson-pack-model";
+import { renderLessonPack } from "./lesson-pack";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
@@ -76,6 +78,16 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (event.target === reportDialog) closeReport();
   });
   shell.append(reportDialog);
+  const lessonPackDialog = document.createElement("section");
+  lessonPackDialog.hidden = true;
+  lessonPackDialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") { event.preventDefault(); closeLessonPack(); }
+    if (event.key === "Tab") cycleDialogFocus(lessonPackDialog, event);
+  });
+  lessonPackDialog.addEventListener("click", (event) => {
+    if (event.target === lessonPackDialog) closeLessonPack();
+  });
+  shell.append(lessonPackDialog);
 
   const content = document.createElement("main"); content.id = "chronomap-main"; content.tabIndex = -1; content.className = "shell-content"; shell.append(content);
   const live = document.createElement("p"); live.className = "live-status"; live.setAttribute("role", "status"); live.setAttribute("aria-live", "polite"); content.append(live);
@@ -120,6 +132,32 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     reportButton.setAttribute("aria-expanded", "true");
     reportDialog.querySelector<HTMLButtonElement>("[data-report-close]")?.focus();
   };
+  const closeLessonPack = () => {
+    lessonPackDialog.hidden = true;
+    const trigger = lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]");
+    trigger?.setAttribute("aria-expanded", "false");
+    trigger?.focus();
+  };
+  const printLessonPack = () => {
+    if (typeof window === "undefined" || typeof window.print !== "function") return;
+    document.body.dataset.printDocument = "lesson-pack";
+    const clearPrintMode = () => {
+      delete document.body.dataset.printDocument;
+      window.removeEventListener("afterprint", clearPrintMode);
+    };
+    window.addEventListener("afterprint", clearPrintMode, { once: true });
+    window.print();
+    window.setTimeout(clearPrintMode, 1500);
+  };
+  const openLessonPack = () => {
+    if (!lesson) return;
+    const model = buildLessonPackModel(lesson, bundle, typeof window === "undefined" ? "" : window.location.href);
+    if (!model) return;
+    renderLessonPack(lessonPackDialog, model, copy, { onClose: closeLessonPack, onPrint: printLessonPack });
+    lessonPackDialog.hidden = false;
+    lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")?.setAttribute("aria-expanded", "true");
+    lessonPackDialog.querySelector<HTMLButtonElement>("[data-lesson-pack-close]")?.focus();
+  };
   const shareCurrentView = async () => {
     syncUrl();
     const url = typeof window === "undefined" ? "" : window.location.href;
@@ -157,6 +195,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     onDetails: focusDetails,
     onShare: () => { void shareCurrentView(); },
     onReport: openReport,
+    onPack: openLessonPack,
   };
   const update = () => {
     input.value = String(state.selectedYear);
@@ -214,6 +253,14 @@ function datasetKey(id: string): string { return id.split(":", 1)[0] ?? id; }
 function yearWithinDataset(year: number, dataset: Dataset): boolean { const minimum = dataset.temporalExtent.start?.earliestYear; const maximum = dataset.temporalExtent.end?.latestYear; return (minimum === null || minimum === undefined || year >= minimum) && (maximum === null || maximum === undefined || year <= maximum); }
 function cameraFromSharedState(state: ReturnType<typeof parseSharedState>): MapCamera | null { return state.longitude !== undefined && state.latitude !== undefined && state.zoom !== undefined ? { longitude: state.longitude, latitude: state.latitude, zoom: state.zoom } : null; }
 function button(text: string): HTMLButtonElement { const element = document.createElement("button"); element.type = "button"; element.textContent = text; return element; }
+function cycleDialogFocus(dialog: HTMLElement, event: KeyboardEvent): void {
+  const focusable = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+  if (!focusable.length) { event.preventDefault(); return; }
+  const first = focusable[0]!;
+  const last = focusable.at(-1)!;
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
 function tab(name: "list" | "detail", text: string): HTMLButtonElement { const element = button(text); element.id = `tab-${name}`; element.setAttribute("role", "tab"); element.setAttribute("aria-controls", `panel-${name}`); return element; }
 function renderMapCandidates(container: HTMLElement, state: AppState, bundle: PublicBundle, copy: UiCopy, select: (id: string) => void): void { const features = (state.mapCandidateIds ?? []).map((id) => state.visibleFeatures.find((feature) => feature.id === id)).filter((feature): feature is NonNullable<typeof feature> => Boolean(feature)); container.hidden = features.length < 2; container.replaceChildren(); if (!features.length) return; const heading = document.createElement("h2"); heading.textContent = copy.mapCandidates; container.append(heading); for (const feature of features) { const candidate = button(localizedText(feature.properties.labels, bundle.dataset.defaultLanguage)); candidate.dataset.mapCandidateId = feature.id; candidate.addEventListener("click", () => select(feature.id)); container.append(candidate); } }
 function statusText(state: AppState, copy: UiCopy): string { switch (state.status) { case "loading": return copy.language === "ja" ? "公開データを読み込んでいます…" : "Loading dataset…"; case "ready": return copy.language === "ja" ? "公開データを利用できます。" : "Dataset available."; case "no-match": return copy.language === "ja" ? "この収録年に一致する公開地物はありません。" : "No features match the selected year."; case "selection-cleared": return copy.language === "ja" ? "選択中の地物はこの年には表示されないため、選択を解除しました。" : "The selected feature is not visible for this year; selection cleared."; case "failed": return copy.language === "ja" ? `公開データを読み込めませんでした。${state.error ?? "再試行してください。"}` : `Dataset failed to load. ${state.error ?? "Please retry."}`; case "retrying": return copy.language === "ja" ? "公開データを再読み込みしています…" : "Retrying dataset load…"; } }
