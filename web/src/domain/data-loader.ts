@@ -38,6 +38,17 @@ export async function loadPublicBundle(baseUrl: string): Promise<PublicBundle> {
   });
 }
 
+/** Lesson packs are optional static content; a missing pack must not block the map. */
+export async function loadLessonManifest(url: string): Promise<unknown | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
 async function loadResource(url: string, resource: string): Promise<unknown> {
   try {
     const response = await fetch(url);

@@ -12,25 +12,31 @@ import { uiCopy, type UiCopy } from "./copy";
 import { buildReportModel } from "../domain/report-model";
 import { renderPrintReport } from "./print-report";
 import { createMapSettings } from "./map-settings";
+import type { Lesson } from "../domain/lesson";
+import { lessonStepIndex } from "../domain/lesson";
+import { renderLessonPanel } from "./lesson-panel";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
 
-export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void): AppController {
+export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null): AppController {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
   const years = authoredYears(bundle, initialYear(bundle.dataset));
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
+  const requestedLessonIndex = lesson && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
+  const requestedLessonStep = requestedLessonIndex !== null && lesson ? lesson.steps[requestedLessonIndex] : null;
   const sharedYear = sharedMatchesDataset && shared.year !== undefined && yearWithinDataset(shared.year, bundle.dataset) ? shared.year : undefined;
   const requestedCamera = sharedMatchesDataset ? cameraFromSharedState(shared) : null;
-  let pendingFeatureId = sharedMatchesDataset ? shared.featureId ?? null : null;
+  let lessonIndex: number | null = requestedLessonIndex;
+  let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
-  let state: AppState = { status: "loading", selectedYear: sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
+  let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
   let adapter: MapAdapterLike | null = null;
   let lastFeatureId: string | null = null;
   const comparisons = comparisonCandidates(bundle.features);
-  let comparisonEntityId: string | null = null;
+  let comparisonEntityId: string | null = requestedLessonStep?.comparisonEntityId ?? null;
   root.replaceChildren();
 
   const shell = document.createElement("div"); shell.className = "app-shell"; root.append(shell);
@@ -59,6 +65,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const shareUrl = document.createElement("input"); shareUrl.type = "url"; shareUrl.readOnly = true; shareUrl.hidden = true; shareUrl.className = "share-url"; shareUrl.setAttribute("aria-label", copy.shareUrlLabel); shareUrl.dataset.shareUrl = "";
   const shareNotice = document.createElement("p"); shareNotice.className = "share-notice"; shareNotice.hidden = true; shareNotice.setAttribute("role", "status"); shareNotice.setAttribute("aria-live", "polite"); shareNotice.dataset.shareFeedback = "";
   controls.append(previous, yearField, recordedField, next, shareButton, reportButton, hint, shownYear, shareUrl, shareNotice); header.append(controls);
+  const lessonHost = document.createElement("section"); lessonHost.className = "lesson-host"; lessonHost.hidden = !lesson; lessonHost.setAttribute("aria-label", copy.language === "ja" ? "ガイド教材" : "Guided lesson"); header.append(lessonHost);
 
   const reportDialog = document.createElement("section");
   reportDialog.hidden = true;
@@ -92,7 +99,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const syncUrl = () => {
     if (typeof window === "undefined" || !window.history?.replaceState) return;
     const camera = adapter?.getCamera?.() ?? requestedCamera;
-    const query = sharedQuery({ dataset: datasetSlug, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
+    const activeLesson = lesson && lessonIndex !== null ? lesson : null;
+    const activeStep = activeLesson && lessonIndex !== null ? activeLesson.steps[lessonIndex] ?? null : null;
+    const query = sharedQuery({ dataset: datasetSlug, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
     window.history.replaceState(null, "", `${window.location.pathname}${query}${window.location.hash}`);
   };
   const setShareNotice = (message: string) => { shareNotice.hidden = false; shareNotice.textContent = message; };
@@ -126,6 +135,29 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     catch { /* Fall through to a selectable URL for locked-down browsers. */ }
     shareUrl.hidden = false; shareUrl.focus(); shareUrl.select(); setShareNotice(copy.shareUnavailable);
   };
+  const leaveLesson = () => { lessonIndex = null; };
+  const goToLessonStep = (index: number) => {
+    if (!lesson || index < 0 || index >= lesson.steps.length) return;
+    const step = lesson.steps[index];
+    lessonIndex = index;
+    comparisonEntityId = step.comparisonEntityId ?? null;
+    emit({ type: "yearChanged", year: step.year });
+    const feature = state.visibleFeatures.find((candidate) => candidate.id === step.featureId);
+    if (feature) {
+      lastFeatureId = feature.id;
+      emit({ type: "featureSelected", featureId: feature.id });
+    }
+    update();
+  };
+  const lessonActions = {
+    onStart: () => goToLessonStep(0),
+    onPrevious: () => { if (lessonIndex !== null) goToLessonStep(lessonIndex - 1); },
+    onNext: () => { if (lessonIndex !== null) goToLessonStep(lessonIndex + 1); },
+    onClose: () => { leaveLesson(); comparisonEntityId = null; syncUrl(); update(); },
+    onDetails: focusDetails,
+    onShare: () => { void shareCurrentView(); },
+    onReport: openReport,
+  };
   const update = () => {
     input.value = String(state.selectedYear);
     snapshotSelect.value = years.includes(state.selectedYear) ? String(state.selectedYear) : "";
@@ -136,10 +168,11 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     live.textContent = statusText(state, copy);
     basemapAlert.hidden = !state.basemapError; basemapAlert.textContent = state.basemapError ? copy.basemapFailure(state.basemapError) : ""; basemapRetry.hidden = !state.basemapError || !adapter?.retry; retry.hidden = state.status !== "failed";
     reportButton.hidden = state.status === "loading" || state.status === "retrying" || state.status === "failed" || state.selectedFeatureId === null;
+    renderLessonPanel(lessonHost, lesson, lessonIndex, copy, lessonActions);
     listPanel.hidden = state.activeMobileTab !== "list"; detailPanel.hidden = state.activeMobileTab !== "detail"; listPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "list")); detailPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "detail")); listTab.setAttribute("aria-selected", String(state.activeMobileTab === "list")); detailTab.setAttribute("aria-selected", String(state.activeMobileTab === "detail"));
-    renderMapCandidates(candidates, state, bundle, copy, (featureId) => { lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
+    renderMapCandidates(candidates, state, bundle, copy, (featureId) => { leaveLesson(); lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
     renderComparisonCards(comparison, comparisons, bundle, comparisonEntityId, state.selectedFeatureId, (entityId) => { comparisonEntityId = comparisonEntityId === entityId ? null : entityId; update(); }, (featureId) => selectComparisonVersion(featureId));
-    renderFeatureList(listPanel, state, bundle, (featureId) => { lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
+    renderFeatureList(listPanel, state, bundle, (featureId) => { leaveLesson(); lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
     renderMetadataPanel(detailPanel, state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId) ?? null, bundle, () => { emit({ type: "detailClosed" }); const returnControl = [...candidates.querySelectorAll<HTMLButtonElement>("[data-map-candidate-id]")].find((button) => button.dataset.mapCandidateId === lastFeatureId) ?? [...listPanel.querySelectorAll<HTMLButtonElement>("[data-feature-id]")].find((button) => button.dataset.featureId === lastFeatureId); returnControl?.focus(); });
   };
   const emit = (event: AppEvent) => {
@@ -156,20 +189,21 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (!feature) return;
     const year = feature.properties.temporal.start?.earliestYear;
     if (year === null || year === undefined) return;
+    leaveLesson();
     state = reduce(state, { type: "yearChanged", year }); dispatch({ type: "yearChanged", year });
     state = reduce(state, { type: "featureSelected", featureId }); dispatch({ type: "featureSelected", featureId });
     lastFeatureId = featureId; syncUrl(); adapter?.setFeatures(state.visibleFeatures); adapter?.setSelectedFeature(state.selectedFeatureId); update();
     focusDetails();
   };
-  const commitYear = () => { const value = Number(input.value); if (Number.isInteger(value)) emit({ type: "yearChanged", year: value }); };
-  previous.addEventListener("click", () => { const year = adjacentYear(years, state.selectedYear, -1); if (year !== null) emit({ type: "yearChanged", year }); });
-  next.addEventListener("click", () => { const year = adjacentYear(years, state.selectedYear, 1); if (year !== null) emit({ type: "yearChanged", year }); });
+  const commitYear = () => { const value = Number(input.value); if (Number.isInteger(value)) { leaveLesson(); emit({ type: "yearChanged", year: value }); } };
+  previous.addEventListener("click", () => { const year = adjacentYear(years, state.selectedYear, -1); if (year !== null) { leaveLesson(); emit({ type: "yearChanged", year }); } });
+  next.addEventListener("click", () => { const year = adjacentYear(years, state.selectedYear, 1); if (year !== null) { leaveLesson(); emit({ type: "yearChanged", year }); } });
   input.addEventListener("change", commitYear); input.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); commitYear(); } });
-  snapshotSelect.addEventListener("change", () => { const value = Number(snapshotSelect.value); if (Number.isInteger(value)) emit({ type: "yearChanged", year: value }); });
+  snapshotSelect.addEventListener("change", () => { const value = Number(snapshotSelect.value); if (Number.isInteger(value)) { leaveLesson(); emit({ type: "yearChanged", year: value }); } });
   shareButton.addEventListener("click", () => void shareCurrentView());
   reportButton.addEventListener("click", openReport);
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
-  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
+  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
   retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear }); return controller;
 }

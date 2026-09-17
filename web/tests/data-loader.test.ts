@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BundleLoadError, loadPublicBundle } from "../src/domain/data-loader";
+import { BundleLoadError, loadLessonManifest, loadPublicBundle } from "../src/domain/data-loader";
 
 const dataset = {
   id: "synthetic:dataset:sample",
@@ -127,5 +127,19 @@ describe("loadPublicBundle", () => {
     const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [malformedPublicFeature] }];
     vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
     await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "feature-versions.geojson" } satisfies Partial<BundleLoadError>);
+  });
+});
+
+describe("loadLessonManifest", () => {
+  it("loads optional JSON content without coupling it to bundle failures", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ id: "lesson" }), { status: 200 })));
+    await expect(loadLessonManifest("/lessons/lesson.json")).resolves.toEqual({ id: "lesson" });
+  });
+
+  it("returns null for missing or invalid optional content", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("missing", { status: 404 })));
+    await expect(loadLessonManifest("/lessons/missing.json")).resolves.toBeNull();
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("offline"); }));
+    await expect(loadLessonManifest("/lessons/offline.json")).resolves.toBeNull();
   });
 });

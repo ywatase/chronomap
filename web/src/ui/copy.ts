@@ -61,6 +61,19 @@ export interface UiCopy {
   readonly reportPrint: string;
   readonly reportClose: string;
   readonly reportSourceLink: string;
+  readonly lessonStart: string;
+  readonly lessonClose: string;
+  readonly lessonPrevious: string;
+  readonly lessonNext: string;
+  readonly lessonDetails: string;
+  readonly lessonShare: string;
+  readonly lessonReport: string;
+  readonly lessonDuration: (minutes: number) => string;
+  readonly lessonStepCount: (count: number) => string;
+  readonly lessonProgress: (current: number, total: number) => string;
+  readonly lessonStepYear: (year: number) => string;
+  readonly lessonCompletion: string;
+  readonly lessonComparisonHint: string;
   readonly comparisonCta: (name: string) => string;
   readonly comparisonTitle: (name: string) => string;
   readonly comparisonYear: (year: number) => string;
@@ -165,6 +178,19 @@ const EN_COPY: UiCopy = {
   reportPrint: "Print / save as PDF",
   reportClose: "Close report",
   reportSourceLink: "Open source",
+  lessonStart: "Start guided lesson",
+  lessonClose: "Close lesson",
+  lessonPrevious: "Previous step",
+  lessonNext: "Next step",
+  lessonDetails: "Open evidence and details",
+  lessonShare: "Share this step",
+  lessonReport: "Print / save report",
+  lessonDuration: (minutes) => `About ${minutes} minutes`,
+  lessonStepCount: (count) => `${count} steps`,
+  lessonProgress: (current, total) => `${current} of ${total}`,
+  lessonStepYear: (year) => formatYear(year, "en"),
+  lessonCompletion: "You reached the end of this guided lesson. Share the view or save a citation-ready report.",
+  lessonComparisonHint: "The comparison card is open for this step.",
   comparisonCta: (name) => `Compare ${name} snapshots`,
   comparisonTitle: (name) => `${name} snapshots`,
   comparisonYear: (year) => formatYear(year, "en"),
@@ -261,6 +287,19 @@ const JA_COPY: UiCopy = {
   reportPrint: "印刷 / PDF保存",
   reportClose: "レポートを閉じる",
   reportSourceLink: "出典を開く",
+  lessonStart: "ガイド教材を始める",
+  lessonClose: "教材を閉じる",
+  lessonPrevious: "前のステップ",
+  lessonNext: "次のステップ",
+  lessonDetails: "根拠と詳細を見る",
+  lessonShare: "このステップを共有",
+  lessonReport: "レポートを出力",
+  lessonDuration: (minutes) => `約${minutes}分`,
+  lessonStepCount: (count) => `${count}ステップ`,
+  lessonProgress: (current, total) => `${current}/${total}`,
+  lessonStepYear: (year) => formatYear(year, "ja"),
+  lessonCompletion: "ガイド教材は完了です。表示を共有するか、根拠付きレポートを保存できます。",
+  lessonComparisonHint: "このステップでは比較カードを開いています。",
   comparisonCta: (name) => `${name}の変化を比較`,
   comparisonTitle: (name) => `${name}の変化を比較`,
   comparisonYear: (year) => formatYear(year, "ja"),

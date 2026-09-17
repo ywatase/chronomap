@@ -1,5 +1,7 @@
 export interface SharedState {
   readonly dataset?: string;
+  readonly lessonId?: string;
+  readonly lessonStepId?: string;
   readonly year?: number;
   readonly featureId?: string;
   readonly longitude?: number;
@@ -18,11 +20,15 @@ export function parseSharedState(search: string): SharedState {
   const year = rawYear !== null && /^-?\d+$/.test(rawYear) ? Number(rawYear) : undefined;
   const featureId = params.get("feature")?.trim() || undefined;
   const dataset = params.get("dataset")?.trim() || undefined;
+  const lessonId = params.get("lesson")?.trim() || undefined;
+  const lessonStepId = params.get("step")?.trim() || undefined;
   const longitude = boundedNumber(params.get("lng"), -180, 180);
   const latitude = boundedNumber(params.get("lat"), -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE);
   const zoom = boundedNumber(params.get("z"), 0, MAX_MAP_ZOOM);
   return {
     ...(dataset && /^[a-z0-9-]+$/.test(dataset) ? { dataset } : {}),
+    ...(lessonId && /^[a-z0-9-]+$/.test(lessonId) ? { lessonId } : {}),
+    ...(lessonStepId && /^[a-z0-9-]+$/.test(lessonStepId) ? { lessonStepId } : {}),
     ...(typeof year === "number" && Number.isSafeInteger(year) ? { year } : {}),
     ...(featureId ? { featureId } : {}),
     ...(longitude !== undefined ? { longitude } : {}),
@@ -31,9 +37,11 @@ export function parseSharedState(search: string): SharedState {
   };
 }
 
-export function sharedQuery(state: { readonly dataset?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null }): string {
+export function sharedQuery(state: { readonly dataset?: string | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null }): string {
   const params = new URLSearchParams();
   if (state.dataset) params.set("dataset", state.dataset);
+  if (state.lessonId && /^[a-z0-9-]+$/.test(state.lessonId)) params.set("lesson", state.lessonId);
+  if (state.lessonStepId && /^[a-z0-9-]+$/.test(state.lessonStepId)) params.set("step", state.lessonStepId);
   if (state.year !== null && Number.isSafeInteger(state.year)) params.set("year", String(state.year));
   if (state.featureId) params.set("feature", state.featureId);
   if (state.longitude !== undefined && state.longitude !== null && boundedNumber(state.longitude, -180, 180) !== undefined) params.set("lng", fixed(state.longitude, 5));

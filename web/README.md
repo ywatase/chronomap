@@ -89,6 +89,17 @@ feature list, detail metadata, and share URL remain available even when the
 historical overlay is hidden. Settings survive a basemap retry for the current
 view.
 
+## Guided lesson
+
+The static `巨椋池と宇治川の変化をたどる` lesson turns the four public
+snapshots into a short guided route. Use `ガイド教材を始める` to move through
+1590, 1596, 1910, and 1942; the second step opens the existing Ujigawa
+comparison card, and the final step offers sharing and the printable report.
+Lesson state is encoded as `lesson=ogurike-intro&step=...` alongside the normal
+year, feature, and camera parameters, so a copied URL and a reload restore the
+same step. The lesson JSON is optional static content: if it is missing or does
+not match the validated public bundle, the map still opens in normal mode.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the

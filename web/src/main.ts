@@ -1,5 +1,6 @@
 import "./styles.css";
-import { loadPublicBundle } from "./domain/data-loader";
+import { loadLessonManifest, loadPublicBundle } from "./domain/data-loader";
+import { parseLesson } from "./domain/lesson";
 import { MapAdapter } from "./map/map-adapter";
 import { mountUiShell } from "./ui/ui-shell";
 
@@ -58,7 +59,10 @@ async function loadDataset(retrying = false): Promise<void> {
     return;
   }
   if (currentRequest !== requestId) return;
-  const nextController = mountUiShell(appRoot, bundle, () => undefined);
+  const lessonManifest = await loadLessonManifest("/lessons/ogurike-intro.json");
+  if (currentRequest !== requestId) return;
+  const lesson = lessonManifest ? parseLesson(lessonManifest, bundle) : null;
+  const nextController = mountUiShell(appRoot, bundle, () => undefined, lesson);
   controller = nextController;
   try {
     nextController.setMapAdapter(new MapAdapter());

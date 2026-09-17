@@ -1,0 +1,34 @@
+{
+  "id": "ogurike-intro",
+  "dataset": "ogurike",
+  "title": { "ja": "巨椋池と宇治川の変化をたどる", "en": "Trace change around Ogurike and the Ujigawa" },
+  "description": { "ja": "4つの時点を約15分で観察し、地図・根拠・不確実性を確認します。", "en": "Observe four snapshots in about 15 minutes, then check the evidence and uncertainty." },
+  "durationMinutes": 15,
+  "steps": [
+    {
+      "id": "uji-1590",
+      "year": 1590,
+      "featureId": "ogurike:version:ujigawa-1590",
+      "prompt": { "ja": "概略流路は巨椋池とどのような位置関係にありますか。", "en": "How is the approximate channel positioned in relation to Ogurike?" }
+    },
+    {
+      "id": "uji-1596",
+      "year": 1596,
+      "featureId": "ogurike:version:ujigawa-1596",
+      "prompt": { "ja": "1590年版と1596年版の概略流路は、どこが異なりますか。比較カードも開いて確認してください。", "en": "What differs between the 1590 and 1596 approximate channels? Open the comparison card to inspect both." },
+      "comparisonEntityId": "ogurike:entity:ujigawa"
+    },
+    {
+      "id": "waterbody-1910",
+      "year": 1910,
+      "featureId": "ogurike:version:waterbody-1910",
+      "prompt": { "ja": "現在の道路・市街地と、1910年の概略水域を重ねて確認してください。", "en": "Compare the approximate 1910 waterbody with today's roads and built-up areas." }
+    },
+    {
+      "id": "monument-1942",
+      "year": 1942,
+      "featureId": "ogurike:version:reclamation-monument-1942",
+      "prompt": { "ja": "干拓を記念する碑は、1910年の概略水域に対してどこにありますか。", "en": "Where is the reclamation monument in relation to the approximate 1910 waterbody?" }
+    }
+  ]
+}

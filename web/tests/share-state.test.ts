@@ -13,6 +13,15 @@ describe("shareable map state", () => {
     });
   });
 
+  it("restores a guided lesson step alongside the map state", () => {
+    expect(parseSharedState("?dataset=ogurike&lesson=ogurike-intro&step=uji-1596&year=1596")).toEqual({
+      dataset: "ogurike",
+      lessonId: "ogurike-intro",
+      lessonStepId: "uji-1596",
+      year: 1596,
+    });
+  });
+
   it("ignores malformed years and empty feature ids", () => {
     expect(parseSharedState("?year=not-a-year&feature=")).toEqual({});
     expect(parseSharedState("?year=1910.5&feature=feature")).toEqual({ featureId: "feature" });
@@ -26,5 +35,6 @@ describe("shareable map state", () => {
   it("serializes only the stable share parameters", () => {
     expect(sharedQuery({ dataset: "ogurike", year: 1596, featureId: "ogurike:version:ujigawa-1596", longitude: 135.750004, latitude: 34.890006, zoom: 11.504 })).toBe("?dataset=ogurike&year=1596&feature=ogurike%3Aversion%3Aujigawa-1596&lng=135.75&lat=34.89001&z=11.5");
     expect(sharedQuery({ year: null, featureId: null })).toBe("");
+    expect(sharedQuery({ dataset: "ogurike", lessonId: "ogurike-intro", lessonStepId: "uji-1596", year: 1596, featureId: "ogurike:version:ujigawa-1596" })).toBe("?dataset=ogurike&lesson=ogurike-intro&step=uji-1596&year=1596&feature=ogurike%3Aversion%3Aujigawa-1596");
   });
 });
