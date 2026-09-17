@@ -1,0 +1,28 @@
+import { expect, test } from "@playwright/test";
+
+test.describe("Ogurike data snapshots", () => {
+  test("moves between the four authored snapshot years without inventing a feature", async ({ page }) => {
+    await page.goto("/");
+    const year = page.getByLabel(/表示年|Year/);
+    const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);
+    const status = page.locator("main [role=status]");
+    await expect(status).toContainText(/available|利用できます/i);
+
+    await expect(snapshots.locator("option")).toHaveCount(4);
+    await expect(snapshots).toHaveValue("1590");
+    await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toBeVisible();
+    await page.getByRole("button", { name: /次の収録年|Next recorded year/ }).click();
+    await expect(year).toHaveValue("1596");
+    await expect(page.getByRole("button", { name: /宇治川（1596年・工事後）/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toHaveCount(0);
+
+    await snapshots.selectOption("1910");
+    await expect(year).toHaveValue("1910");
+    await expect(page.getByRole("button", { name: /巨椋池（1910年・概略）/ })).toBeVisible();
+    await page.getByRole("button", { name: /巨椋池（1910年・概略）/ }).click();
+    await expect(page.getByText("近畿地方整備局の1910年資料図をもとにした巨椋池の概略復元です。精密な水域境界や794haから逆算した面積を示しません。", { exact: true })).toBeVisible();
+
+    await snapshots.selectOption("1942");
+    await expect(page.getByRole("button", { name: /巨椋池干拓之碑/ })).toBeVisible();
+  });
+});

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayYear, initialYear, localizedText } from "../src/domain/labels";
+import { displayYear, initialYear, localizedText, recordedYears } from "../src/domain/labels";
 import { filterFeaturesByYear } from "../src/domain/temporal-filter";
 import type { Dataset, FeatureVersion } from "../src/domain/types";
 
@@ -84,5 +84,9 @@ describe("temporal labels", () => {
   it("uses the default language then a deterministic available translation", () => {
     expect(localizedText({ ja: "日本語", en: "English" }, "en")).toBe("English");
     expect(localizedText({ ja: "日本語", fr: "Français" }, "en")).toBe("Français");
+  });
+
+  it("collects public authored snapshot years without inventing empty years", () => {
+    expect(recordedYears(features)).toEqual([-4, -3, -2, 0, 1, 2, 3]);
   });
 });

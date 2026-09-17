@@ -1,10 +1,11 @@
-# Chronomap data contract tooling
+# Chronomap data contract tooling and a static historical-map pilot
 
 Chronomap packages are normalized, versioned historical-data records.  This
 repository contains their JSON Schemas, validator, and fail-closed public
 bundle builder. Installed wheels include the versioned schemas as internal
-package resources, so validation does not depend on a checkout. The included
-fixture is synthetic test data, not history.
+package resources, so validation does not depend on a checkout. The checked-in
+`data/ogurike/` package is a small, citation-linked pilot for the Ogurike area;
+the test fixture remains synthetic and is not history.
 
 ## Setup
 
@@ -28,6 +29,13 @@ Validate it as data eligible for publication:
 uv run chronomap-data validate tests/fixtures/valid/synthetic-package --profile public
 ```
 
+Validate the Ogurike pilot and build the browser-facing projection:
+
+```sh
+uv run chronomap-data validate data/ogurike --profile public
+uv run chronomap-data build-public data/ogurike --output web/public/data/ogurike
+```
+
 Build a deterministic public projection.  The target is replaced only after
 public-profile validation and staging both succeed:
 
@@ -41,5 +49,6 @@ contract.
 ## Web demo
 
 The static responsive UI, setup instructions, and browser acceptance tests are
-documented in [web/README.md](web/README.md). Its `/data/synthetic/` bundle is
-a generated non-historical public demo.
+documented in [web/README.md](web/README.md). The default `/data/ogurike/`
+bundle is generated from the pilot package and keeps restricted source material
+as citation-only metadata.
