@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mountUiShell, type MapAdapterLike } from "../src/ui/ui-shell";
 import type { PublicBundle } from "../src/domain/types";
 import type { Lesson } from "../src/domain/lesson";
@@ -159,6 +159,35 @@ describe("ui shell", () => {
     expect(new URLSearchParams(window.location.search).get("view")).toBe("builder");
     pack.querySelector<HTMLButtonElement>("[data-lesson-pack-back]")!.click();
     expect(builder.hidden).toBe(false);
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
+  it("keeps feedback hidden until print is invoked, then returns focus to the callout", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/?dataset=dataset&lesson=intro&view=builder");
+    const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
+    const controller = mountUiShell(root, bundle, () => undefined, lesson);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-preview]")!.click();
+    const pack = root.querySelector<HTMLElement>("[data-lesson-pack-dialog]")!;
+    const host = pack.querySelector<HTMLElement>("[data-lesson-pack-feedback-host]")!;
+    expect(host.hidden).toBe(true);
+    pack.querySelector<HTMLButtonElement>("[data-lesson-pack-print]")!.click();
+    expect(print).toHaveBeenCalledOnce();
+    expect(host.hidden).toBe(false);
+    expect(document.activeElement).toBe(host.querySelector("[data-lesson-pack-feedback-summary]"));
+    print.mockRestore();
     controller.destroy();
     window.history.replaceState(null, "", "/");
     root.remove();

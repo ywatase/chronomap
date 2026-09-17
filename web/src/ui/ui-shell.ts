@@ -18,6 +18,7 @@ import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { customizeLessonPackModel, type LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import { renderLessonPack } from "./lesson-pack";
+import { showLessonPackFeedback } from "./lesson-pack-feedback";
 import { renderLessonPackBuilder } from "./lesson-pack-builder";
 import type { LessonPackModel } from "../domain/lesson-pack-model";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
@@ -198,6 +199,8 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     trigger?.focus();
   };
   const printLessonPack = () => {
+    const feedbackHost = lessonPackDialog.querySelector<HTMLElement>("[data-lesson-pack-feedback-host]");
+    if (feedbackHost) showLessonPackFeedback(feedbackHost);
     if (typeof window === "undefined" || typeof window.print !== "function") return;
     document.body.dataset.printDocument = "lesson-pack";
     const clearPrintMode = () => {

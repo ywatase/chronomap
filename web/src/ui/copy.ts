@@ -1,4 +1,5 @@
 import { displayYearLocalized } from "../domain/labels";
+import type { LessonPackNextFeature, LessonPackUtilization } from "../domain/lesson-pack-feedback";
 import type { GeometryType, RightsStatus, UncertaintyAssessment } from "../domain/types";
 
 export interface UiCopy {
@@ -105,6 +106,21 @@ export interface UiCopy {
   readonly lessonWorkshopOpen: string;
   readonly lessonWorkshopBack: string;
   readonly lessonPackClassLabel: string;
+  readonly lessonPackFeedbackSummary: string;
+  readonly lessonPackFeedbackLead: string;
+  readonly lessonPackFeedbackNotice: string;
+  readonly lessonPackFeedbackUtilization: string;
+  readonly lessonPackFeedbackUtilizationOptions: Readonly<Record<LessonPackUtilization, string>>;
+  readonly lessonPackFeedbackNextFeature: string;
+  readonly lessonPackFeedbackNextFeatureOptions: Readonly<Record<LessonPackNextFeature, string>>;
+  readonly lessonPackFeedbackComment: string;
+  readonly lessonPackFeedbackCommentHint: string;
+  readonly lessonPackFeedbackGenerate: string;
+  readonly lessonPackFeedbackAnswer: string;
+  readonly lessonPackFeedbackCopy: string;
+  readonly lessonPackFeedbackCopied: string;
+  readonly lessonPackFeedbackCopyFailed: string;
+  readonly lessonPackFeedbackRequired: string;
   readonly datasetCatalogOpen: string;
   readonly datasetCatalogDialogLabel: string;
   readonly datasetCatalogHeading: string;
@@ -282,6 +298,30 @@ const EN_COPY: UiCopy = {
   lessonWorkshopOpen: "Customize for this class",
   lessonWorkshopBack: "Back to editor",
   lessonPackClassLabel: "Class / audience",
+  lessonPackFeedbackSummary: "One-minute feedback after printing",
+  lessonPackFeedbackLead: "Tell us how this classroom pack fits your next lesson.",
+  lessonPackFeedbackNotice: "Your answers are not sent or saved automatically. Copy them and send them to the contact provided. They disappear when you reload the page.",
+  lessonPackFeedbackUtilization: "How would you use this pack?",
+  lessonPackFeedbackUtilizationOptions: {
+    "近いうちに使いたい": "I want to use it soon",
+    "内容を直せば使いたい": "I would use it after revisions",
+    "今回は使わない": "I will not use it this time",
+  },
+  lessonPackFeedbackNextFeature: "What feature would help next?",
+  lessonPackFeedbackNextFeatureOptions: {
+    "教材を保存して後から再編集": "Save materials and edit them later",
+    "複数クラス・複数教材をまとめて出力": "Bulk export for multiple classes and materials",
+    "自分の地域・題材を追加": "Add my own region or topic",
+    "校内で共有": "Share within my school",
+  },
+  lessonPackFeedbackComment: "Optional comment",
+  lessonPackFeedbackCommentHint: "Up to 500 characters",
+  lessonPackFeedbackGenerate: "Generate answer text",
+  lessonPackFeedbackAnswer: "Answer text to copy",
+  lessonPackFeedbackCopy: "Copy answer text",
+  lessonPackFeedbackCopied: "Feedback answer copied.",
+  lessonPackFeedbackCopyFailed: "Could not copy. Select the answer text and copy it manually.",
+  lessonPackFeedbackRequired: "Please answer both required questions.",
   datasetCatalogOpen: "Choose a region or lesson",
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
@@ -451,6 +491,30 @@ const JA_COPY: UiCopy = {
   lessonWorkshopOpen: "この教材を授業用に整える",
   lessonWorkshopBack: "編集に戻る",
   lessonPackClassLabel: "対象・クラス",
+  lessonPackFeedbackSummary: "印刷画面を試した後の1分フィードバック",
+  lessonPackFeedbackLead: "この授業用教材を次の授業でどう使えそうか教えてください。",
+  lessonPackFeedbackNotice: "回答は自動送信・保存されません。コピーして、案内された連絡先へお送りください。再読み込みすると消えます。",
+  lessonPackFeedbackUtilization: "この教材をどう使えそうですか？",
+  lessonPackFeedbackUtilizationOptions: {
+    "近いうちに使いたい": "近いうちに使いたい",
+    "内容を直せば使いたい": "内容を直せば使いたい",
+    "今回は使わない": "今回は使わない",
+  },
+  lessonPackFeedbackNextFeature: "次にあると助かる機能は？",
+  lessonPackFeedbackNextFeatureOptions: {
+    "教材を保存して後から再編集": "教材を保存して後から再編集",
+    "複数クラス・複数教材をまとめて出力": "複数クラス・複数教材をまとめて出力",
+    "自分の地域・題材を追加": "自分の地域・題材を追加",
+    "校内で共有": "校内で共有",
+  },
+  lessonPackFeedbackComment: "任意コメント",
+  lessonPackFeedbackCommentHint: "500文字以内",
+  lessonPackFeedbackGenerate: "回答文を作成",
+  lessonPackFeedbackAnswer: "コピーする回答文",
+  lessonPackFeedbackCopy: "回答文をコピー",
+  lessonPackFeedbackCopied: "フィードバック回答文をコピーしました。",
+  lessonPackFeedbackCopyFailed: "コピーできませんでした。回答文を選択して手動でコピーしてください。",
+  lessonPackFeedbackRequired: "必須項目を選択してください。",
   datasetCatalogOpen: "地域・教材を選ぶ",
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",

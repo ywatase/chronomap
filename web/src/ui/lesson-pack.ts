@@ -1,5 +1,6 @@
 import type { LessonPackModel, LessonPackSource, LessonPackStep } from "../domain/lesson-pack-model";
 import type { UiCopy } from "./copy";
+import { renderLessonPackFeedback } from "./lesson-pack-feedback";
 
 export interface LessonPackActions {
   readonly onClose: () => void;
@@ -32,6 +33,17 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   close.addEventListener("click", actions.onClose);
   toolbar.append(print, close);
   container.append(toolbar);
+
+  const feedbackHost = document.createElement("section");
+  feedbackHost.dataset.lessonPackFeedbackHost = "";
+  renderLessonPackFeedback(feedbackHost, {
+    datasetSlug: model.datasetId.split(":", 1)[0] ?? model.datasetId,
+    lessonId: model.lessonId ?? "",
+    selectedStepCount: model.steps.length,
+    includeTeacher: model.includeTeacher !== false,
+    language: copy.language,
+  }, copy);
+  container.append(feedbackHost);
 
   const sheet = document.createElement("article");
   sheet.className = "lesson-pack-sheet";

@@ -57,6 +57,8 @@ export interface LessonPackSource {
 
 export interface LessonPackModel {
   readonly language: "ja" | "en";
+  /** Stable lesson identifier used in the copy-only feedback metadata. */
+  readonly lessonId?: string;
   readonly title: string;
   readonly description: string;
   readonly durationMinutes: number;
@@ -121,6 +123,7 @@ export function buildLessonPackModel(lesson: Lesson, bundle: PublicBundle, origi
   if (!startUrl) return null;
   return Object.freeze({
     language,
+    lessonId: lesson.id,
     title: localizedText(lesson.title, language),
     description: localizedText(lesson.description, language),
     durationMinutes: lesson.durationMinutes,
