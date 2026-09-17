@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ogurike:entity:reclamation-monument",
+    "type": "other",
+    "labels": { "ja": "巨椋池干拓之碑" },
+    "description": { "ja": "巨椋池干拓工事の完成を記念して建立された碑。" }
+  },
+  {
+    "id": "ogurike:entity:ujigawa",
+    "type": "watercourse",
+    "labels": { "ja": "宇治川" },
+    "description": { "ja": "巨椋池周辺の河川工事前後を資料スナップショットで示す水系。" }
+  },
+  {
+    "id": "ogurike:entity:waterbody",
+    "type": "waterbody",
+    "labels": { "ja": "巨椋池" },
+    "description": { "ja": "京都盆地南部にかつて存在した池沼。1910年資料図の概略を示す。" }
+  }
+]

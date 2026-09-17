@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ogurike:evidence:monument-citation",
+    "sourceId": "ogurike:source:kyoto-city-monument",
+    "locator": "『所在地』『位置座標』『建立年』欄",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "碑の同一性、所在地、建立年1942年を確認する引用メタデータ。ページ本文・画像・碑文全文は再現しない。"
+  },
+  {
+    "id": "ogurike:evidence:monument-geometry",
+    "sourceId": "ogurike:source:shape-notes",
+    "locator": "『作成方法』の1942年Pointに関する記録",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "所在地をもとに小数第3位へ丸めた代表点をChronomapが作成した。原座標や画像を転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "ogurike:evidence:ujigawa-1590-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry"],
+    "note": "図の相対的な流路関係を少数の折れ点へ手動加工した概略線であり、正確な河道中心線ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:ujigawa-1590-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-21末尾–p.2-22 図2.2-1①",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "資料図が河川工事前の1590年スナップショットとして示すことを確認する。"
+  },
+  {
+    "id": "ogurike:evidence:ujigawa-1596-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry"],
+    "note": "図の相対的な流路関係を少数の折れ点へ手動加工した概略線であり、太閤堤の精密線形ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:ujigawa-1596-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-21末尾–p.2-22 図2.2-1②",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "資料図が河川工事後の1596年スナップショットとして示すことを確認する。"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1④『淀川改良工事完成時（1910年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry"],
+    "note": "図の水域の相対的な位置・向きを少数頂点へ手動加工した概略面であり、精密な境界や面積逆算ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-region",
+    "sourceId": "ogurike:source:kyoto-prefecture-rdb",
+    "locator": "『概要』および『5万分の1 京都東南部・京都西南部（大正6年発行）』",
+    "usage": "citation",
+    "supports": ["location", "identity", "temporal"],
+    "note": "巨椋池の地域、面積、干拓時期、1917年発行図の所在を補強する引用メタデータ。掲載画像は再現しない。"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1④",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "資料図が淀川改良工事完成時の1910年スナップショットとして示すことを確認する。"
+  }
+]
