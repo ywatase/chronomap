@@ -16,6 +16,16 @@ export interface GsiStyleSpecification {
 
 const historicalSource = "historical-features";
 
+export const HISTORICAL_LAYER_IDS = [
+  "historical-polygons",
+  "historical-points",
+  "historical-lines",
+  "selected-polygon-outline",
+  "selected-point-halo",
+  "selected-line-halo",
+  "selected-lines",
+] as const;
+
 export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const source = historicalSource;
   const pointFilter = ["==", ["geometry-type"], "Point"] as const;

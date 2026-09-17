@@ -23,6 +23,16 @@ export interface UiCopy {
   readonly shareFallback: string;
   readonly shareCancelled: string;
   readonly shareUnavailable: string;
+  readonly mapSettings: string;
+  readonly basemapOpacityLabel: string;
+  readonly historicalOpacityLabel: string;
+  readonly historicalVisibilityLabel: string;
+  readonly mapOpacityValue: (value: number) => string;
+  readonly mapLegend: string;
+  readonly legendPoint: string;
+  readonly legendLine: string;
+  readonly legendPolygon: string;
+  readonly legendSelected: string;
   readonly reportView: string;
   readonly reportDialogLabel: string;
   readonly reportTitle: (dataset: string, year: string) => string;
@@ -117,6 +127,16 @@ const EN_COPY: UiCopy = {
   shareFallback: "Copy this URL:",
   shareCancelled: "Sharing canceled.",
   shareUnavailable: "The share URL is ready below.",
+  mapSettings: "Display",
+  basemapOpacityLabel: "Basemap opacity",
+  historicalOpacityLabel: "Historical features opacity",
+  historicalVisibilityLabel: "Show historical features",
+  mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
+  mapLegend: "Legend",
+  legendPoint: "Historical point",
+  legendLine: "Historical line",
+  legendPolygon: "Historical area",
+  legendSelected: "Selected feature",
   reportView: "Print / save report",
   reportDialogLabel: "Historical map report",
   reportTitle: (dataset, year) => `${dataset} — report for ${year}`,
@@ -203,6 +223,16 @@ const JA_COPY: UiCopy = {
   shareFallback: "このURLをコピーしてください:",
   shareCancelled: "共有をキャンセルしました。",
   shareUnavailable: "共有URLを下に表示しました。",
+  mapSettings: "表示設定",
+  basemapOpacityLabel: "背景地図の濃さ",
+  historicalOpacityLabel: "歴史地物の濃さ",
+  historicalVisibilityLabel: "歴史地物を表示",
+  mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
+  mapLegend: "凡例",
+  legendPoint: "歴史地物（点）",
+  legendLine: "歴史地物（線）",
+  legendPolygon: "歴史地物（面）",
+  legendSelected: "選択中の地物",
   reportView: "レポートを出力",
   reportDialogLabel: "歴史地図レポート",
   reportTitle: (dataset, year) => `${dataset} — ${year}の表示レポート`,

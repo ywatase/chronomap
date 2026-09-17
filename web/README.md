@@ -80,6 +80,15 @@ dialog can save the report as a PDF. The report is generated entirely in the
 browser; restricted source body text and images are never copied into it. If the
 GSI basemap is unavailable, the text evidence and share URL remain printable.
 
+## Map display settings
+
+Open `表示設定` on the map to adjust basemap and historical-feature opacity,
+toggle historical features, and read the point/line/area/selected-feature legend.
+These controls change only the MapLibre presentation layers; the selected
+feature list, detail metadata, and share URL remain available even when the
+historical overlay is hidden. Settings survive a basemap retry for the current
+view.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the

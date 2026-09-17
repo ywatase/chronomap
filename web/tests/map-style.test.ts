@@ -9,6 +9,9 @@ import { readFileSync } from "node:fs";
     readonly source = { setData: vi.fn() };
     sourceAvailable = true;
     queryRenderedFeatures = vi.fn(() => []);
+    getLayer = vi.fn((id: string) => ({ id }));
+    setPaintProperty = vi.fn();
+    setLayoutProperty = vi.fn();
     fitBounds = vi.fn();
     jumpTo = vi.fn((options: { center?: readonly [number, number]; zoom?: number }) => {
       if (options.center) this.center = { lng: options.center[0], lat: options.center[1] };
@@ -118,6 +121,25 @@ describe("MapAdapter", () => {
     const errors: string[] = []; adapter.onBasemapError((message) => errors.push(message));
     mocked.maps.at(-1).fire("error", { error: new Error("WebGL context lost") });
     expect(errors).toEqual(["WebGL context lost"]);
+  });
+
+  it("updates only display paint/layout properties and preserves them across retry", () => {
+    const adapter = new MapAdapter();
+    adapter.mount(document.createElement("div"));
+    const firstMap = mocked.maps.at(-1);
+    adapter.setBasemapOpacity(0.4);
+    adapter.setHistoricalOpacity(0.5);
+    adapter.setHistoricalVisibility(false);
+    expect(firstMap.setPaintProperty).toHaveBeenCalledWith("gsi-base", "raster-opacity", 0.4);
+    expect(firstMap.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.16);
+    expect(firstMap.setPaintProperty).toHaveBeenCalledWith("historical-lines", "line-opacity", 0.5);
+    expect(firstMap.setLayoutProperty).toHaveBeenCalledWith("historical-points", "visibility", "none");
+
+    adapter.retry();
+    const retriedMap = mocked.maps.at(-1);
+    expect(retriedMap.setPaintProperty).toHaveBeenCalledWith("gsi-base", "raster-opacity", 0.4);
+    expect(retriedMap.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.16);
+    expect(retriedMap.setLayoutProperty).toHaveBeenCalledWith("selected-lines", "visibility", "none");
   });
 
   it("recreates the map on retry and restores visible and selected features", () => {

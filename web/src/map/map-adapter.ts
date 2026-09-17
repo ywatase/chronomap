@@ -2,10 +2,10 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Dataset, FeatureVersion } from "../domain/types";
-import { createGsiStyle } from "./map-style";
+import { createGsiStyle, HISTORICAL_LAYER_IDS } from "./map-style";
 
 const sourceId = "historical-features";
-const interactiveLayerIds = ["historical-points", "historical-lines", "historical-polygons", "selected-point-halo", "selected-line-halo", "selected-lines", "selected-polygon-outline"];
+const interactiveLayerIds = [...HISTORICAL_LAYER_IDS];
 
 maplibregl.setWorkerUrl(workerUrl);
 
@@ -28,6 +28,9 @@ export class MapAdapter {
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
   private cameraChangeHandler: ((camera: MapCamera) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
+  private basemapOpacity = 1;
+  private historicalOpacity = 1;
+  private historicalVisible = true;
 
   mount(container: HTMLElement): void {
     this.container = container;
@@ -48,7 +51,7 @@ export class MapAdapter {
     this.sourceReady = false;
     this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => { this.updateSource(); this.applyRequestedCameraOrViewport(); });
-    this.map.on("styledata", () => this.updateSource());
+    this.map.on("styledata", () => { this.updateSource(); this.applyDisplaySettings(); });
     this.map.on("moveend", (event: maplibregl.MapMovementEvent) => {
       const camera = this.readCamera();
       if (!camera) return;
@@ -67,12 +70,16 @@ export class MapAdapter {
       if (ids.length) this.selectHandler?.(ids);
     });
     this.applyRequestedCameraOrViewport();
+    this.applyDisplaySettings();
   }
 
   setFeatures(features: readonly FeatureVersion[]): void { this.features = features; this.updateSource(true); }
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(true); }
   setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.map) this.applyRequestedCameraOrViewport(); }
   setCamera(camera: MapCamera): void { this.requestedCamera = camera; this.camera = camera; this.map?.jumpTo({ center: [camera.longitude, camera.latitude], zoom: camera.zoom }); }
+  setBasemapOpacity(value: number): void { this.basemapOpacity = clamp(value); this.applyDisplaySettings(); }
+  setHistoricalOpacity(value: number): void { this.historicalOpacity = clamp(value); this.applyDisplaySettings(); }
+  setHistoricalVisibility(visible: boolean): void { this.historicalVisible = visible; this.applyDisplaySettings(); }
   getCamera(): MapCamera | null { return this.map ? this.readCamera() : this.camera; }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onCameraChange(handler: (camera: MapCamera) => void): void { this.cameraChangeHandler = handler; }
@@ -108,6 +115,27 @@ export class MapAdapter {
     source.setData({ type: "FeatureCollection", features: this.features.map((feature) => ({ ...feature, properties: { ...feature.properties, id: feature.id, selected: feature.id === this.selectedFeatureId } })) } as Parameters<maplibregl.GeoJSONSource["setData"]>[0]);
     this.sourceReady = true;
   }
+
+  private applyDisplaySettings(): void {
+    if (!this.map) return;
+    try {
+      if (this.map.getLayer("gsi-base")) this.map.setPaintProperty("gsi-base", "raster-opacity", this.basemapOpacity);
+      const polygonOpacity = 0.32 * this.historicalOpacity;
+      if (this.map.getLayer("historical-polygons")) this.map.setPaintProperty("historical-polygons", "fill-opacity", polygonOpacity);
+      for (const layerId of ["historical-points", "selected-point-halo"]) {
+        if (this.map.getLayer(layerId)) {
+          this.map.setPaintProperty(layerId, "circle-opacity", this.historicalOpacity);
+          this.map.setPaintProperty(layerId, "circle-stroke-opacity", this.historicalOpacity);
+        }
+      }
+      for (const layerId of ["historical-lines", "selected-polygon-outline", "selected-line-halo", "selected-lines"]) {
+        if (this.map.getLayer(layerId)) this.map.setPaintProperty(layerId, "line-opacity", this.historicalOpacity);
+      }
+      for (const layerId of HISTORICAL_LAYER_IDS) if (this.map.getLayer(layerId)) this.map.setLayoutProperty(layerId, "visibility", this.historicalVisible ? "visible" : "none");
+    } catch {
+      // MapLibre can emit styledata before all layers exist; the next styledata retries.
+    }
+  }
 }
 
 function sameCamera(first: MapCamera, second: MapCamera): boolean {
@@ -116,3 +144,5 @@ function sameCamera(first: MapCamera, second: MapCamera): boolean {
     && Math.abs(first.latitude - second.latitude) < 1e-6
     && Math.abs(first.zoom - second.zoom) < 1e-6;
 }
+
+function clamp(value: number): number { return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0; }
