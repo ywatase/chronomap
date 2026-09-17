@@ -6,15 +6,24 @@ import { createGsiStyle } from "./map-style";
 const sourceId = "historical-features";
 const interactiveLayerIds = ["historical-points", "historical-lines", "historical-polygons", "selected-point-halo", "selected-line-halo", "selected-lines", "selected-polygon-outline"];
 
+export interface MapCamera {
+  readonly longitude: number;
+  readonly latitude: number;
+  readonly zoom: number;
+}
+
 export class MapAdapter {
   private map: maplibregl.Map | null = null;
   private container: HTMLElement | null = null;
   private features: readonly FeatureVersion[] = [];
   private selectedFeatureId: string | null = null;
   private viewport: Dataset["bbox"] | null = null;
+  private requestedCamera: MapCamera | null = null;
+  private camera: MapCamera | null = null;
   private mapLoaded = false;
   private viewportApplied = false;
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
+  private cameraChangeHandler: ((camera: MapCamera) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
 
   mount(container: HTMLElement): void {
@@ -33,7 +42,8 @@ export class MapAdapter {
     this.mapLoaded = false;
     this.viewportApplied = false;
     this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
-    this.map.on("load", () => { this.mapLoaded = true; this.updateSource(); this.applyViewport(); });
+    this.map.on("load", () => { this.mapLoaded = true; this.updateSource(); this.applyRequestedCameraOrViewport(); });
+    this.map.on("moveend", () => { this.camera = this.readCamera(); this.requestedCamera = this.camera; if (this.camera) this.cameraChangeHandler?.(this.camera); });
     this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
       const clicked = this.map?.queryRenderedFeatures(event.point, { layers: interactiveLayerIds }) ?? [];
@@ -45,8 +55,11 @@ export class MapAdapter {
 
   setFeatures(features: readonly FeatureVersion[]): void { this.features = features; this.updateSource(); }
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(); }
-  setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.mapLoaded) this.applyViewport(); }
+  setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.mapLoaded) this.applyRequestedCameraOrViewport(); }
+  setCamera(camera: MapCamera): void { this.requestedCamera = camera; this.camera = camera; if (this.mapLoaded) this.map?.jumpTo({ center: [camera.longitude, camera.latitude], zoom: camera.zoom }); }
+  getCamera(): MapCamera | null { return this.mapLoaded ? this.readCamera() : this.camera; }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
+  onCameraChange(handler: (camera: MapCamera) => void): void { this.cameraChangeHandler = handler; }
   onBasemapError(handler: (message: string) => void): void { this.basemapErrorHandler = handler; }
   destroy(): void { this.map?.remove(); this.map = null; this.container = null; }
 
@@ -55,6 +68,22 @@ export class MapAdapter {
     const [west, south, east, north] = this.viewport;
     this.map.fitBounds([[west, south], [east, north]], { padding: 48, maxZoom: 13, duration: 0 });
     this.viewportApplied = true;
+  }
+
+  private applyRequestedCameraOrViewport(): void {
+    if (this.requestedCamera && this.map) {
+      this.map.jumpTo({ center: [this.requestedCamera.longitude, this.requestedCamera.latitude], zoom: this.requestedCamera.zoom });
+      this.camera = this.requestedCamera;
+      this.viewportApplied = true;
+      return;
+    }
+    this.applyViewport();
+  }
+
+  private readCamera(): MapCamera | null {
+    if (!this.map) return this.camera;
+    const center = this.map.getCenter();
+    return { longitude: center.lng, latitude: center.lat, zoom: this.map.getZoom() };
   }
 
   private updateSource(): void {

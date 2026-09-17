@@ -52,3 +52,6 @@ The static responsive UI, setup instructions, and browser acceptance tests are
 documented in [web/README.md](web/README.md). The default `/data/ogurike/`
 bundle is generated from the pilot package and keeps restricted source material
 as citation-only metadata.
+
+GitHub Actions runs the Python contract/public-data checks and the Web
+unit/build/Chromium acceptance suite on pushes and pull requests.

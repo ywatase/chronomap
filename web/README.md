@@ -46,6 +46,19 @@ Install Playwright's Chromium browser if it is not already available with
 If `npm test` reports that `chronomap-data` is missing, confirm that the
 repository `.venv/bin` directory is still present on `PATH` in the same shell.
 
+## Shareable views
+
+Use the `この表示を共有` button to copy a permalink containing the dataset,
+year, selected feature, and map camera. A shared URL can also be opened
+directly, for example:
+
+```text
+/?dataset=ogurike&year=1910&feature=ogurike%3Aversion%3Awaterbody-1910&lng=135.75&lat=34.89&z=11.5
+```
+
+Only public bundle records are restored from URL parameters. Invalid or
+out-of-range parameters fall back to the safe default view.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the

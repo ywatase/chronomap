@@ -9,10 +9,15 @@ import { readFileSync } from "node:fs";
     readonly source = { setData: vi.fn() };
     queryRenderedFeatures = vi.fn(() => []);
     fitBounds = vi.fn();
+    jumpTo = vi.fn();
+    center = { lng: 135.75, lat: 34.89 };
+    zoom = 11;
     remove = vi.fn();
     constructor(_options: unknown) { maps.push(this); }
     on(event: string, handler: (event: any) => void): this { this.handlers.set(event, [...(this.handlers.get(event) ?? []), handler]); return this; }
     getSource(): typeof this.source { return this.source; }
+    getCenter(): typeof this.center { return this.center; }
+    getZoom(): number { return this.zoom; }
     fire(event: string, payload: unknown = {}): void { for (const handler of this.handlers.get(event) ?? []) handler(payload); }
   }
   return { maps, FakeMap };
@@ -51,6 +56,19 @@ describe("map style", () => {
 });
 
 describe("MapAdapter", () => {
+  it("restores a shared camera and reports later map movement", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+    const cameras: unknown[] = []; adapter.onCameraChange((camera) => cameras.push(camera));
+    adapter.setCamera({ longitude: 135.75, latitude: 34.89, zoom: 11.5 });
+    map.fire("load");
+    expect(map.jumpTo).toHaveBeenCalledWith({ center: [135.75, 34.89], zoom: 11.5 });
+    adapter.setViewport([135.73, 34.87, 135.82, 34.94]);
+    expect(map.fitBounds).not.toHaveBeenCalled();
+    map.center = { lng: 135.76, lat: 34.9 }; map.zoom = 12; map.fire("moveend");
+    expect(cameras).toEqual([{ longitude: 135.76, latitude: 34.9, zoom: 12 }]);
+  });
+
   it("fits the map to the requested dataset bbox after the map loads", () => {
     const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
     const map = mocked.maps.at(-1);

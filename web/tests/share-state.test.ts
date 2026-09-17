@@ -1,0 +1,29 @@
+import { describe, expect, it } from "vitest";
+import { parseSharedState, sharedQuery } from "../src/domain/share-state";
+
+describe("shareable map state", () => {
+  it("parses a year and feature id from a shared query", () => {
+    expect(parseSharedState("?dataset=ogurike&year=1910&feature=ogurike%3Aversion%3Awaterbody-1910&lng=135.75&lat=34.89&z=11.5")).toEqual({
+      dataset: "ogurike",
+      year: 1910,
+      featureId: "ogurike:version:waterbody-1910",
+      longitude: 135.75,
+      latitude: 34.89,
+      zoom: 11.5,
+    });
+  });
+
+  it("ignores malformed years and empty feature ids", () => {
+    expect(parseSharedState("?year=not-a-year&feature=")).toEqual({});
+    expect(parseSharedState("?year=1910.5&feature=feature")).toEqual({ featureId: "feature" });
+  });
+
+  it("rejects unsafe dataset slugs and out-of-range camera values", () => {
+    expect(parseSharedState("?dataset=../private&lng=181&lat=-91&z=25")).toEqual({});
+  });
+
+  it("serializes only the stable share parameters", () => {
+    expect(sharedQuery({ dataset: "ogurike", year: 1596, featureId: "ogurike:version:ujigawa-1596", longitude: 135.750004, latitude: 34.890006, zoom: 11.504 })).toBe("?dataset=ogurike&year=1596&feature=ogurike%3Aversion%3Aujigawa-1596&lng=135.75&lat=34.89001&z=11.5");
+    expect(sharedQuery({ year: null, featureId: null })).toBe("");
+  });
+});

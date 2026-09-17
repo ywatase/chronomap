@@ -17,6 +17,12 @@ export interface UiCopy {
   readonly details: string;
   readonly retryBasemap: string;
   readonly retryDataset: string;
+  readonly shareView: string;
+  readonly shareUrlLabel: string;
+  readonly shareCopied: string;
+  readonly shareFallback: string;
+  readonly shareCancelled: string;
+  readonly shareUnavailable: string;
   readonly basemapFailure: (message: string) => string;
   readonly footerBasemap: string;
   readonly mapCandidates: string;
@@ -73,6 +79,12 @@ const EN_COPY: UiCopy = {
   details: "Details",
   retryBasemap: "Retry basemap",
   retryDataset: "Retry loading dataset",
+  shareView: "Share this view",
+  shareUrlLabel: "Share URL",
+  shareCopied: "View link copied.",
+  shareFallback: "Copy this URL:",
+  shareCancelled: "Sharing canceled.",
+  shareUnavailable: "The share URL is ready below.",
   basemapFailure: (message) => `Basemap or map rendering is unavailable; GSI context may be affected. The historical list and details remain available. ${message}`,
   footerBasemap: "Basemap: GSI Maps attribution and terms",
   mapCandidates: "Map candidates at this location",
@@ -121,6 +133,12 @@ const JA_COPY: UiCopy = {
   details: "詳細",
   retryBasemap: "背景地図を再試行",
   retryDataset: "データを再読み込み",
+  shareView: "この表示を共有",
+  shareUrlLabel: "共有URL",
+  shareCopied: "表示URLをコピーしました。",
+  shareFallback: "このURLをコピーしてください:",
+  shareCancelled: "共有をキャンセルしました。",
+  shareUnavailable: "共有URLを下に表示しました。",
   basemapFailure: () => "背景地図を表示できません。GSIの地図情報が利用できない場合も、歴史地物の一覧と詳細は確認できます。再試行できます。",
   footerBasemap: "背景地図: 国土地理院（出典・利用条件）",
   mapCandidates: "この位置の候補",
