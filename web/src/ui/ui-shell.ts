@@ -5,6 +5,8 @@ import type { Dataset, PublicBundle } from "../domain/types";
 import { parseSharedState, sharedQuery } from "../domain/share-state";
 import type { MapCamera } from "../map/map-adapter";
 import { renderFeatureList } from "./feature-list";
+import { comparisonCandidates } from "../domain/comparison-candidates";
+import { renderComparisonCards } from "./comparison-card";
 import { renderMetadataPanel } from "./metadata-panel";
 import { uiCopy, type UiCopy } from "./copy";
 
@@ -24,6 +26,8 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let state: AppState = { status: "loading", selectedYear: sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
   let adapter: MapAdapterLike | null = null;
   let lastFeatureId: string | null = null;
+  const comparisons = comparisonCandidates(bundle.features);
+  let comparisonEntityId: string | null = null;
   root.replaceChildren();
 
   const shell = document.createElement("div"); shell.className = "app-shell"; root.append(shell);
@@ -59,6 +63,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const retry = button(copy.retryDataset); retry.hidden = true; content.append(retry);
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback; content.append(map);
   const sidebar = document.createElement("section"); sidebar.className = "sidebar";
+  const comparison = document.createElement("section"); comparison.className = "comparison"; sidebar.append(comparison);
   const tabs = document.createElement("div"); tabs.className = "mobile-tabs"; tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", copy.featureInformation);
   const listTab = tab("list", copy.featureList); const detailTab = tab("detail", copy.details); tabs.append(listTab, detailTab); sidebar.append(tabs);
   const candidates = document.createElement("section"); candidates.className = "map-candidates"; candidates.hidden = true; sidebar.append(candidates);
@@ -100,6 +105,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     basemapAlert.hidden = !state.basemapError; basemapAlert.textContent = state.basemapError ? copy.basemapFailure(state.basemapError) : ""; basemapRetry.hidden = !state.basemapError || !adapter?.retry; retry.hidden = state.status !== "failed";
     listPanel.hidden = state.activeMobileTab !== "list"; detailPanel.hidden = state.activeMobileTab !== "detail"; listPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "list")); detailPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "detail")); listTab.setAttribute("aria-selected", String(state.activeMobileTab === "list")); detailTab.setAttribute("aria-selected", String(state.activeMobileTab === "detail"));
     renderMapCandidates(candidates, state, bundle, copy, (featureId) => { lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
+    renderComparisonCards(comparison, comparisons, bundle, comparisonEntityId, state.selectedFeatureId, (entityId) => { comparisonEntityId = comparisonEntityId === entityId ? null : entityId; update(); }, (featureId) => selectComparisonVersion(featureId));
     renderFeatureList(listPanel, state, bundle, (featureId) => { lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
     renderMetadataPanel(detailPanel, state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId) ?? null, bundle, () => { emit({ type: "detailClosed" }); const returnControl = [...candidates.querySelectorAll<HTMLButtonElement>("[data-map-candidate-id]")].find((button) => button.dataset.mapCandidateId === lastFeatureId) ?? [...listPanel.querySelectorAll<HTMLButtonElement>("[data-feature-id]")].find((button) => button.dataset.featureId === lastFeatureId); returnControl?.focus(); });
   };
@@ -111,6 +117,16 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
       if (feature) { state = reduce(state, { type: "featureSelected", featureId: feature.id }); dispatch({ type: "featureSelected", featureId: feature.id }); }
     }
     syncUrl(); adapter?.setFeatures(state.visibleFeatures); adapter?.setSelectedFeature(state.selectedFeatureId); update();
+  };
+  const selectComparisonVersion = (featureId: string) => {
+    const feature = state.allFeatures.find((candidate) => candidate.id === featureId);
+    if (!feature) return;
+    const year = feature.properties.temporal.start?.earliestYear;
+    if (year === null || year === undefined) return;
+    state = reduce(state, { type: "yearChanged", year }); dispatch({ type: "yearChanged", year });
+    state = reduce(state, { type: "featureSelected", featureId }); dispatch({ type: "featureSelected", featureId });
+    lastFeatureId = featureId; syncUrl(); adapter?.setFeatures(state.visibleFeatures); adapter?.setSelectedFeature(state.selectedFeatureId); update();
+    focusDetails();
   };
   const commitYear = () => { const value = Number(input.value); if (Number.isInteger(value)) emit({ type: "yearChanged", year: value }); };
   previous.addEventListener("click", () => { const year = adjacentYear(years, state.selectedYear, -1); if (year !== null) emit({ type: "yearChanged", year }); });

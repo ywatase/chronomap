@@ -56,6 +56,16 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .mobile-tabs button { flex: 1; border: 1px solid transparent; border-radius: .45rem; background: transparent; color: #40566a; font-weight: 700; }
 .mobile-tabs button[aria-selected="true"] { border-color: #7192ab; background: #fff; color: #17324d; box-shadow: 0 1px 3px rgb(21 52 75 / 12%); }
 .map-candidates { margin: .65rem; padding: .65rem; border: 1px solid #8297a8; border-radius: .5rem; background: #fff; }
+.comparison { margin: .65rem .65rem 0; }
+.comparison-item + .comparison-item { margin-top: .6rem; }
+.comparison-item > button { width: 100%; min-height: 2.75rem; padding: .55rem; border: 1px solid #155e8a; border-radius: .5rem; background: #e1efff; color: #17324d; font-weight: 700; }
+.comparison-card { margin-top: .45rem; padding: .65rem; border: 1px solid #8297a8; border-radius: .5rem; background: #fff; }
+.comparison-card h2 { margin: 0 0 .5rem; font-size: 1rem; }
+.comparison-versions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+.comparison-versions article { min-width: 0; padding: .5rem; border: 1px solid #c4d0d9; border-radius: .4rem; overflow-wrap: anywhere; }
+.comparison-versions p { margin: .35rem 0; font-size: .84rem; line-height: 1.4; }
+.comparison-versions button { width: 100%; min-height: 2.75rem; border: 1px solid #155e8a; border-radius: .4rem; background: #fff; color: #17324d; font-weight: 700; }
+.comparison-versions button[aria-pressed="true"] { background: #e1efff; border-width: 2px; }
 .map-candidates h2 { margin: 0 0 .5rem; font-size: 1rem; }
 .map-candidates button { display: block; width: 100%; margin-top: .4rem; padding: .55rem; border: 1px solid #8297a8; border-radius: .4rem; background: #fff; text-align: left; }
 .list-panel, .detail-panel { min-height: 0; overflow: auto; padding: .85rem 1rem 1rem; }

@@ -61,6 +61,8 @@ describe("MapAdapter", () => {
     const map = mocked.maps.at(-1);
     const cameras: unknown[] = []; adapter.onCameraChange((camera) => cameras.push(camera));
     adapter.setCamera({ longitude: 135.75, latitude: 34.89, zoom: 11.5 });
+    map.fire("moveend");
+    expect(cameras).toEqual([]);
     map.fire("load");
     expect(map.jumpTo).toHaveBeenCalledWith({ center: [135.75, 34.89], zoom: 11.5 });
     adapter.setViewport([135.73, 34.87, 135.82, 34.94]);

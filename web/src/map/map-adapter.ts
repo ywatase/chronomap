@@ -43,7 +43,10 @@ export class MapAdapter {
     this.viewportApplied = false;
     this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => { this.mapLoaded = true; this.updateSource(); this.applyRequestedCameraOrViewport(); });
-    this.map.on("moveend", () => { this.camera = this.readCamera(); this.requestedCamera = this.camera; if (this.camera) this.cameraChangeHandler?.(this.camera); });
+    this.map.on("moveend", () => {
+      if (!this.mapLoaded) return;
+      this.camera = this.readCamera(); this.requestedCamera = this.camera; if (this.camera) this.cameraChangeHandler?.(this.camera);
+    });
     this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
       const clicked = this.map?.queryRenderedFeatures(event.point, { layers: interactiveLayerIds }) ?? [];

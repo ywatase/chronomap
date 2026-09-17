@@ -59,6 +59,13 @@ directly, for example:
 Only public bundle records are restored from URL parameters. Invalid or
 out-of-range parameters fall back to the safe default view.
 
+## Comparing snapshots
+
+When the public bundle contains two or more exact, single-year versions of the
+same entity, the sidebar exposes a comparison card. The pilot currently offers
+the Ujigawa 1590/1596 pair. Selecting either side updates the map, detail panel,
+and share URL together; the card remains usable when the basemap is unavailable.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the
