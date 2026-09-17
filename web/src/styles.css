@@ -113,6 +113,12 @@ footer a { color: #155e8a; }
   .mobile-tabs { display: none; }
 }
 
+@media (min-width: 48rem) and (max-height: 40rem) {
+  .app-shell { height: auto; max-height: none; overflow: visible; }
+  .shell-content { overflow: visible; }
+  .map-placeholder, .sidebar { min-height: 30rem; height: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
