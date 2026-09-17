@@ -28,6 +28,8 @@ jobs:
         run: uv run pytest -q
       - name: Validate the Ogurike public package
         run: uv run chronomap-data validate data/ogurike --profile public
+      - name: Validate the Tone River public package
+        run: uv run chronomap-data validate data/tonegawa --profile public
 
   web:
     name: Web unit, build, and browser
