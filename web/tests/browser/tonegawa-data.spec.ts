@@ -33,4 +33,19 @@ test.describe("Tone River eastward-shift dataset", () => {
     await expect(page.getByRole("heading", { name: "巨椋池パイロットデータ" })).toBeVisible();
     await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toBeVisible();
   });
+
+  test("creates the classroom pack from the Tone River lesson", async ({ page }) => {
+    await page.goto("/?dataset=tonegawa");
+    await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
+    await page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ }).click();
+    await page.locator("[data-lesson-next]").click();
+    await page.locator("[data-lesson-next]").click();
+    await expect(page.locator("[data-lesson-pack-open]")).toBeVisible();
+    await page.locator("[data-lesson-pack-open]").click();
+    const dialog = page.locator("[data-lesson-pack-dialog]");
+    await expect(dialog).toContainText(/利根川東遷を概略地図でたどる|Trace the Tone River eastward shift/);
+    await expect(dialog.locator("[data-lesson-pack-student]")).toBeVisible();
+    await expect(dialog.locator("[data-lesson-pack-teacher]")).toContainText(/会の川締切地点|川俣締切|Kawamata/);
+    await expect(dialog.locator("[data-lesson-pack-sources]")).toContainText(/国土交通省|Ministry of Land/);
+  });
 });
