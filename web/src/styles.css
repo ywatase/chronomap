@@ -166,6 +166,7 @@ footer a { color: #155e8a; }
 .lesson-pack-actions button[data-lesson-pack-print] { border-color: #155e8a; background: #155e8a; color: #fff; }
 .lesson-pack-actions button:hover, .lesson-pack-actions button:focus-visible { background: #e8f2fb; }
 .lesson-pack-actions button[data-lesson-pack-print]:hover, .lesson-pack-actions button[data-lesson-pack-print]:focus-visible { background: #0f4f75; }
+.lesson-pack-print-warning { flex: 1 1 100%; margin: 0; color: #40566a; font-size: .8rem; line-height: 1.4; }
 .lesson-pack-page { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #d0dbe2; break-after: page; page-break-after: always; }
 .lesson-pack-page:last-child { break-after: auto; page-break-after: auto; }
 .lesson-pack-page > h2 { margin: 0 0 .55rem; color: #304b60; font-size: 1.15rem; }
@@ -184,6 +185,7 @@ footer a { color: #155e8a; }
 .lesson-pack-reading-example { margin: .55rem 0 .65rem; padding: .55rem .65rem; border-left: 4px solid #155e8a; background: #edf6fb; color: #17324d; break-inside: avoid; page-break-inside: avoid; }
 .lesson-pack-reading-example strong { display: block; font-size: .86rem; }
 .lesson-pack-reading-example p { margin: .3rem 0 0; }
+.lesson-pack-student-rights { margin-top: .8rem; padding-top: .55rem; border-top: 1px solid #c4d0d9; color: #40566a; font-size: .82rem; line-height: 1.4; }
 .lesson-pack-notice { margin-top: .8rem !important; padding: .55rem .65rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; }
 .lesson-pack-source { margin-top: .7rem; padding: .65rem .7rem; border: 1px solid #c4d0d9; border-radius: .45rem; background: #f9fbfc; break-inside: avoid; page-break-inside: avoid; }
 .lesson-pack-source .lesson-pack-notice { margin-top: .5rem !important; }
@@ -455,6 +457,9 @@ footer a { color: #155e8a; }
   body[data-print-document="lesson-pack"] .lesson-pack-feedback-host { display: none !important; }
   body[data-print-document="lesson-pack"] .lesson-pack-sheet { max-width: none; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
   body[data-print-document="lesson-pack"] .lesson-pack-actions { display: none !important; }
+  body[data-print-document="lesson-pack"][data-lesson-pack-print-scope="student"] [data-lesson-pack-teacher],
+  body[data-print-document="lesson-pack"][data-lesson-pack-print-scope="student"] [data-lesson-pack-sources],
+  body[data-print-document="lesson-pack"][data-lesson-pack-print-scope="teacher"] [data-lesson-pack-student] { display: none !important; }
   body[data-print-document="lesson-pack"] .lesson-pack-header h2 { font-size: 16pt; }
   body[data-print-document="lesson-pack"] .lesson-pack-lead,
   body[data-print-document="lesson-pack"] .lesson-pack-beta,

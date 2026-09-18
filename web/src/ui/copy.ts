@@ -103,6 +103,10 @@ export interface UiCopy {
   readonly lessonPackCitationOnly: string;
   readonly lessonPackNoSources: string;
   readonly lessonPackPrint: string;
+  readonly lessonPackPrintStudent: string;
+  readonly lessonPackPrintTeacher: string;
+  readonly lessonPackPrintFull: string;
+  readonly lessonPackStudentPrintWarning: string;
   readonly lessonPackClose: string;
   readonly lessonPackStartQrHint: string;
   readonly lessonPackStartQrLabel: string;
@@ -330,6 +334,10 @@ const EN_COPY: UiCopy = {
   lessonPackCitationOnly: "Citation-only metadata; no source body, image, or inscription is reproduced.",
   lessonPackNoSources: "No source metadata is available.",
   lessonPackPrint: "Print / save classroom pack",
+  lessonPackPrintStudent: "Print student worksheet",
+  lessonPackPrintTeacher: "Print teacher reference + sources",
+  lessonPackPrintFull: "Print full classroom pack",
+  lessonPackStudentPrintWarning: "Student print excludes teacher reading examples.",
   lessonPackClose: "Close classroom pack",
   lessonPackStartQrHint: "Scan with a smartphone/tablet to open the guided lesson.",
   lessonPackStartQrLabel: "QR code to open the guided lesson",
@@ -558,6 +566,10 @@ const JA_COPY: UiCopy = {
   lessonPackCitationOnly: "引用メタデータのみを収録しています。原資料の本文・画像・碑文は転載していません。",
   lessonPackNoSources: "出典メタデータはありません。",
   lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
+  lessonPackPrintStudent: "生徒用ワークシートを印刷",
+  lessonPackPrintTeacher: "教員用資料・出典を印刷",
+  lessonPackPrintFull: "教材パック全体を印刷",
+  lessonPackStudentPrintWarning: "生徒用印刷では教員の読み取り例を含めません。",
   lessonPackClose: "教材パックを閉じる",
   lessonPackStartQrHint: "スマートフォン/タブレットで読み取って教材を開く",
   lessonPackStartQrLabel: "ガイド教材を開くQRコード",

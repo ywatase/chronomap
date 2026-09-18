@@ -17,7 +17,7 @@ import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { customizeLessonPackModel, type LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
-import { renderLessonPack } from "./lesson-pack";
+import { renderLessonPack, type LessonPackPrintScope } from "./lesson-pack";
 import { showLessonPackFeedback, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 import { applyLessonPackBuilderInput, renderLessonPackBuilder } from "./lesson-pack-builder";
 import type { LessonPackModel } from "../domain/lesson-pack-model";
@@ -213,18 +213,23 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     trigger?.setAttribute("aria-expanded", "false");
     trigger?.focus();
   };
-  const printLessonPack = () => {
+  const printLessonPack = (scope: LessonPackPrintScope = "full") => {
     const feedbackHost = lessonPackDialog.querySelector<HTMLElement>("[data-lesson-pack-feedback-host]");
     if (feedbackHost) showLessonPackFeedback(feedbackHost);
     if (typeof window === "undefined" || typeof window.print !== "function") return;
+    const printScope = isLessonPackPrintScope(scope) ? scope : "full";
     document.body.dataset.printDocument = "lesson-pack";
+    document.body.dataset.lessonPackPrintScope = printScope;
+    let timeoutId: number | undefined;
     const clearPrintMode = () => {
       delete document.body.dataset.printDocument;
+      delete document.body.dataset.lessonPackPrintScope;
       window.removeEventListener("afterprint", clearPrintMode);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
     window.addEventListener("afterprint", clearPrintMode, { once: true });
+    timeoutId = window.setTimeout(clearPrintMode, 1500);
     window.print();
-    window.setTimeout(clearPrintMode, 1500);
   };
   const setDraftStatus = (message: string, valid: boolean | null = null) => {
     const status = lessonPackBuilderDialog.querySelector<HTMLElement>("[data-lesson-pack-draft-status]");
@@ -487,6 +492,7 @@ function datasetKey(id: string): string { return id.split(":", 1)[0] ?? id; }
 function yearWithinDataset(year: number, dataset: Dataset): boolean { const minimum = dataset.temporalExtent.start?.earliestYear; const maximum = dataset.temporalExtent.end?.latestYear; return (minimum === null || minimum === undefined || year >= minimum) && (maximum === null || maximum === undefined || year <= maximum); }
 function cameraFromSharedState(state: ReturnType<typeof parseSharedState>): MapCamera | null { return state.longitude !== undefined && state.latitude !== undefined && state.zoom !== undefined ? { longitude: state.longitude, latitude: state.latitude, zoom: state.zoom } : null; }
 function button(text: string): HTMLButtonElement { const element = document.createElement("button"); element.type = "button"; element.textContent = text; return element; }
+function isLessonPackPrintScope(value: unknown): value is LessonPackPrintScope { return value === "student" || value === "teacher" || value === "full"; }
 function cycleDialogFocus(dialog: HTMLElement, event: KeyboardEvent): void {
   const focusable = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')];
   if (!focusable.length) { event.preventDefault(); return; }

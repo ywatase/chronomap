@@ -49,6 +49,28 @@ describe("lesson pack preview", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("offers strict student, teacher, and full print scopes while keeping teacher scope conditional", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    const onPrint = vi.fn();
+    renderLessonPack(root, model, uiCopy("ja"), { onClose: vi.fn(), onPrint });
+    expect(root.querySelector("[data-lesson-pack-print-student]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-print-teacher]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-print-full]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-print-warning]")?.textContent).toContain("教員の読み取り例を含めません");
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-print-student]")!.click();
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-print-teacher]")!.click();
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-print-full]")!.click();
+    expect(onPrint.mock.calls.map(([scope]) => scope)).toEqual(["student", "teacher", "full"]);
+
+    const withoutTeacher = document.createElement("div");
+    renderLessonPack(withoutTeacher, { ...model, includeTeacher: false }, uiCopy("en"), { onClose: vi.fn(), onPrint });
+    expect(withoutTeacher.querySelector("[data-lesson-pack-print-teacher]")).toBeNull();
+    expect(withoutTeacher.querySelector("[data-lesson-pack-print-student]")).toBeTruthy();
+    expect(withoutTeacher.querySelector("[data-lesson-pack-print-full]")).toBeTruthy();
+    expect(withoutTeacher.querySelector("[data-lesson-pack-print-warning]")?.textContent).toContain("excludes teacher reading examples");
+  });
+
   it("shows the edited class label and can omit teacher references", () => {
     const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
     const root = document.createElement("div");

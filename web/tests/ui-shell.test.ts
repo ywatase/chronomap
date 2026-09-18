@@ -309,4 +309,68 @@ describe("ui shell", () => {
     window.history.replaceState(null, "", "/");
     root.remove();
   });
+
+  it("sets and clears the strict print scope for each lesson-pack print action", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/?dataset=dataset&lesson=intro&view=builder");
+    const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
+    const controller = mountUiShell(root, bundle, () => undefined, lesson);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-preview]")!.click();
+    const pack = root.querySelector<HTMLElement>("[data-lesson-pack-dialog]")!;
+    for (const scope of ["student", "teacher", "full"] as const) {
+      pack.querySelector<HTMLButtonElement>(`[data-lesson-pack-print-${scope}]`)!.click();
+      expect(document.body.dataset.printDocument).toBe("lesson-pack");
+      expect(document.body.dataset.lessonPackPrintScope).toBe(scope);
+      window.dispatchEvent(new Event("afterprint"));
+      expect(document.body.dataset.printDocument).toBeUndefined();
+      expect(document.body.dataset.lessonPackPrintScope).toBeUndefined();
+    }
+    expect(print).toHaveBeenCalledTimes(3);
+    print.mockRestore();
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
+  it("clears print scope on the timeout fallback when afterprint is unavailable", async () => {
+    vi.useFakeTimers();
+    try {
+      const lesson: Lesson = {
+        id: "intro",
+        dataset: "dataset",
+        title: { en: "Demo lesson" },
+        description: { en: "A lesson" },
+        durationMinutes: 10,
+        steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+      };
+      const root = document.createElement("div");
+      document.body.append(root);
+      window.history.replaceState(null, "", "/?dataset=dataset&lesson=intro&view=builder");
+      const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
+      const controller = mountUiShell(root, bundle, () => undefined, lesson);
+      await Promise.resolve();
+      root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-preview]")!.click();
+      root.querySelector<HTMLButtonElement>("[data-lesson-pack-print-student]")!.click();
+      expect(document.body.dataset.lessonPackPrintScope).toBe("student");
+      vi.advanceTimersByTime(1500);
+      expect(document.body.dataset.printDocument).toBeUndefined();
+      expect(document.body.dataset.lessonPackPrintScope).toBeUndefined();
+      print.mockRestore();
+      controller.destroy();
+      window.history.replaceState(null, "", "/");
+      root.remove();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -4,9 +4,11 @@ import type { UiCopy } from "./copy";
 import { renderLessonPackFeedback, type LessonPackFeedbackActions, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 import { renderLessonPackQr } from "./lesson-pack-qr";
 
+export type LessonPackPrintScope = "student" | "teacher" | "full";
+
 export interface LessonPackActions {
   readonly onClose: () => void;
-  readonly onPrint: () => void;
+  readonly onPrint: (scope: LessonPackPrintScope) => void;
   readonly onBack?: () => void;
   readonly initialFeedbackState?: LessonPackFeedbackState | null;
   readonly onFeedbackChange?: LessonPackFeedbackActions["onChange"];
@@ -23,9 +25,22 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
 
   const toolbar = document.createElement("div");
   toolbar.className = "lesson-pack-actions";
-  const print = button(copy.lessonPackPrint, "lesson-pack-print");
-  print.dataset.lessonPackPrint = "";
-  print.addEventListener("click", actions.onPrint);
+  toolbar.dataset.lessonPackActions = "";
+  const warning = document.createElement("p");
+  warning.className = "lesson-pack-print-warning";
+  warning.dataset.lessonPackPrintWarning = "";
+  warning.textContent = copy.lessonPackStudentPrintWarning;
+  const printStudent = button(copy.lessonPackPrintStudent, "lesson-pack-print lesson-pack-print-student");
+  printStudent.dataset.lessonPackPrintStudent = "";
+  printStudent.addEventListener("click", () => actions.onPrint("student"));
+  const printTeacher = button(copy.lessonPackPrintTeacher, "lesson-pack-print lesson-pack-print-teacher");
+  printTeacher.dataset.lessonPackPrintTeacher = "";
+  printTeacher.addEventListener("click", () => actions.onPrint("teacher"));
+  const printFull = button(copy.lessonPackPrintFull, "lesson-pack-print lesson-pack-print-full");
+  printFull.dataset.lessonPackPrintFull = "";
+  // Keep the original selector as the full-pack compatibility path.
+  printFull.dataset.lessonPackPrint = "";
+  printFull.addEventListener("click", () => actions.onPrint("full"));
   if (actions.onBack) {
     const back = button(copy.lessonWorkshopBack, "lesson-pack-back");
     back.dataset.lessonPackBack = "";
@@ -35,7 +50,9 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   const close = button(copy.lessonPackClose, "lesson-pack-close");
   close.dataset.lessonPackClose = "";
   close.addEventListener("click", actions.onClose);
-  toolbar.append(print, close);
+  toolbar.append(warning, printStudent);
+  if (model.includeTeacher !== false) toolbar.append(printTeacher);
+  toolbar.append(printFull, close);
   container.append(toolbar);
 
   const feedbackHost = document.createElement("section");
@@ -88,6 +105,11 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
     student.append(renderStudentStep(step, index + 1, copy, access.steps[index]));
   }
   student.append(packNotice(copy.lessonPackApproximation));
+  const studentRights = document.createElement("footer");
+  studentRights.className = "lesson-pack-student-rights";
+  studentRights.dataset.lessonPackStudentRights = "";
+  studentRights.textContent = `${copy.lessonPackRights}: ${model.datasetRights}`;
+  student.append(studentRights);
   sheet.append(student);
 
   if (model.includeTeacher !== false) {
