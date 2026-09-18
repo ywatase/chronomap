@@ -37,7 +37,7 @@ const bundle = {
 const lesson: Lesson = {
   id: "intro", dataset: "ogurike", title: { ja: "教材" }, description: { ja: "説明" }, durationMinutes: 15,
   steps: [
-    { id: "first", year: 1590, featureId: first.id, prompt: { ja: "問い" } },
+    { id: "first", year: 1590, featureId: first.id, prompt: { ja: "問い" }, teacherNote: { ja: "形状の向きを確認します。" } },
     { id: "second", year: 1596, featureId: second.id, prompt: { ja: "問い2" }, comparisonEntityId: "ogurike:entity:river" },
   ],
 };
@@ -53,10 +53,18 @@ describe("lesson pack model", () => {
     expect(model?.sources[0]?.citationOnly).toBe(true);
     expect(model?.sources[0]?.evidence[0]?.locator).toBe("p.2");
     expect(model?.steps[0]?.description).not.toContain("secret");
+    expect(model?.steps[0]?.teacherNote).toEqual("形状の向きを確認します。");
+    expect(model?.steps[1]?.teacherNote).toBeUndefined();
   });
 
   it("fails closed when lesson evidence cannot be resolved", () => {
     const broken = { ...bundle, evidenceById: {} } as unknown as PublicBundle;
     expect(buildLessonPackModel(lesson, broken, "https://example.test/app/")).toBeNull();
+  });
+
+  it("falls back to the only localized teacher note when a directly supplied model lacks the bundle language", () => {
+    const englishBundle = { ...bundle, dataset: { ...bundle.dataset, defaultLanguage: "en" } } as unknown as PublicBundle;
+    const japaneseOnly = { ...lesson, steps: [{ ...lesson.steps[0], teacherNote: { ja: "日本語の読み取り例" } }] };
+    expect(buildLessonPackModel(japaneseOnly, englishBundle, "https://example.test/app/")?.steps[0]?.teacherNote).toBe("日本語の読み取り例");
   });
 });

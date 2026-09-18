@@ -7,6 +7,7 @@ export interface LessonStep {
   readonly year: number;
   readonly featureId: string;
   readonly prompt: LocalizedText;
+  readonly teacherNote?: LocalizedText;
   readonly comparisonEntityId?: string;
 }
 
@@ -27,11 +28,13 @@ export function parseLesson(value: unknown, bundle: PublicBundle): Lesson | null
   const candidates = comparisonCandidates(bundle.features);
   for (const rawStep of value.steps) {
     if (!isRecord(rawStep) || !isSlug(rawStep.id) || ids.has(rawStep.id) || !isInteger(rawStep.year) || typeof rawStep.featureId !== "string" || !isLocalizedText(rawStep.prompt)) return null;
+    const teacherNote = parseTeacherNote(rawStep.teacherNote, bundle.dataset.defaultLanguage);
+    if (teacherNote === null) return null;
     const feature = bundle.features.find((candidate) => candidate.id === rawStep.featureId);
     if (!feature || feature.properties.publicationStatus !== "public" || filterFeaturesByYear([feature], rawStep.year).length !== 1) return null;
     if (rawStep.comparisonEntityId !== undefined && (typeof rawStep.comparisonEntityId !== "string" || !candidates.some((candidate) => candidate.entityId === rawStep.comparisonEntityId && candidate.versions.some((version) => version.feature.id === feature.id)))) return null;
     ids.add(rawStep.id);
-    steps.push({ id: rawStep.id, year: rawStep.year, featureId: rawStep.featureId, prompt: rawStep.prompt, ...(rawStep.comparisonEntityId ? { comparisonEntityId: rawStep.comparisonEntityId } : {}) });
+    steps.push({ id: rawStep.id, year: rawStep.year, featureId: rawStep.featureId, prompt: rawStep.prompt, ...(teacherNote ? { teacherNote } : {}), ...(rawStep.comparisonEntityId ? { comparisonEntityId: rawStep.comparisonEntityId } : {}) });
   }
   return Object.freeze({ id: value.id, dataset: value.dataset, title: value.title, description: value.description, durationMinutes: value.durationMinutes, steps: Object.freeze(steps) });
 }
@@ -49,3 +52,16 @@ function isSlug(value: unknown): value is string { return typeof value === "stri
 function isInteger(value: unknown): value is number { return typeof value === "number" && Number.isSafeInteger(value); }
 function isPositiveInteger(value: unknown): value is number { return isInteger(value) && value > 0; }
 function isLocalizedText(value: unknown): value is LocalizedText { return isRecord(value) && Object.keys(value).length > 0 && Object.values(value).every((text) => typeof text === "string" && text.length > 0); }
+
+function parseTeacherNote(value: unknown, defaultLanguage: string): LocalizedText | null | undefined {
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || Object.keys(value).length === 0 || typeof value[defaultLanguage] !== "string") return null;
+  const normalized: Array<readonly [string, string]> = [];
+  for (const [language, text] of Object.entries(value)) {
+    if (typeof text !== "string") return null;
+    const trimmed = text.trim();
+    if (trimmed.length < 1 || trimmed.length > 500) return null;
+    normalized.push([language, trimmed]);
+  }
+  return Object.freeze(Object.fromEntries(normalized));
+}

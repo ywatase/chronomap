@@ -23,6 +23,7 @@ function step(id: string, year: number, prompt: string): LessonPackStep {
     period: `${year}年頃`,
     geometry: "点",
     prompt,
+    teacherNote: "教員だけの読み取り例",
     uncertainty: [],
     evidence: [{ id: `evidence-${id}`, sourceId: `source-${id}`, supports: ["location"], locator: "p.1", note: "note", citation: "citation", title: "source", url: "https://private.example/source", rights: "private", citationOnly: true }],
     comparison: [],
@@ -72,6 +73,7 @@ describe("lesson pack portable drafts", () => {
     expect(serialized).toBe(JSON.stringify(draft));
     expect(serialized).not.toContain("private.example");
     expect(serialized).not.toContain("source");
+    expect(serialized).not.toContain("教員だけの読み取り例");
     expect(parseLessonPackDraft(model, serialized!)).toEqual(draft?.customization);
     expect(draftFilename(model)).toBe("chronomap-ogurike-ogurike-intro-draft.json");
   });

@@ -23,7 +23,7 @@ const bundle = {
   evidenceById: { evidence: { id: "evidence", sourceId: "source", locator: "p.1", usage: "citation", supports: ["location"], note: "注記" } },
   features: [feature("first", 1590), feature("second", 1596)],
 } as unknown as PublicBundle;
-const lesson: Lesson = { id: "intro", dataset: "dataset", title: { ja: "教材" }, description: { ja: "教材の説明" }, durationMinutes: 10, steps: [{ id: "first", year: 1590, featureId: "first", prompt: { ja: "問い" } }, { id: "second", year: 1596, featureId: "second", prompt: { ja: "問い2" } }] };
+const lesson: Lesson = { id: "intro", dataset: "dataset", title: { ja: "教材" }, description: { ja: "教材の説明" }, durationMinutes: 10, steps: [{ id: "first", year: 1590, featureId: "first", prompt: { ja: "問い" }, teacherNote: { ja: "形状の向きを確認します。" } }, { id: "second", year: 1596, featureId: "second", prompt: { ja: "問い2" } }] };
 
 describe("lesson pack preview", () => {
   it("renders student, teacher, and sources pages without source body text", () => {
@@ -56,6 +56,24 @@ describe("lesson pack preview", () => {
     expect(root.querySelector("[data-lesson-pack-class-label]")?.textContent).toContain("中学2年A組");
     expect(root.textContent).toContain("地域の水辺を読む");
     expect(root.querySelector("[data-lesson-pack-teacher]")).toBeNull();
+    expect(root.textContent).not.toContain("形状の向きを確認します。");
+  });
+
+  it("renders each reading example after its prompt on the teacher page only", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, model, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    const teacher = root.querySelector<HTMLElement>("[data-lesson-pack-teacher]")!;
+    const firstStep = teacher.querySelector<HTMLElement>(".lesson-pack-step")!;
+    expect(firstStep.textContent).toContain("観察する問い: 問い");
+    expect(firstStep.querySelector("[data-lesson-pack-reading-example]")?.textContent).toContain("読み取り例（唯一の正答ではありません）");
+    expect(firstStep.querySelector("[data-lesson-pack-reading-example]")?.textContent).toContain("形状の向きを確認します。");
+    expect(firstStep.querySelector(".lesson-pack-prompt")?.compareDocumentPosition(firstStep.querySelector("[data-lesson-pack-reading-example]")!)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(root.querySelector("[data-lesson-pack-student]")?.textContent).not.toContain("形状の向きを確認します。");
+
+    const englishRoot = document.createElement("div");
+    renderLessonPack(englishRoot, model, uiCopy("en"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(englishRoot.querySelector("[data-lesson-pack-reading-example]")?.textContent).toContain("Reading example (not the only correct answer)");
   });
 
   it("does not invent a class label when the optional field is blank", () => {

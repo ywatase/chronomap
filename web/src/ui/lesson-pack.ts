@@ -181,6 +181,21 @@ function renderTeacherStep(step: LessonPackStep, number: number, copy: UiCopy): 
   const heading = document.createElement("h3");
   heading.textContent = `${number}. ${step.yearLabel} — ${step.label}`;
   article.append(heading);
+  const prompt = document.createElement("p");
+  prompt.className = "lesson-pack-prompt";
+  prompt.textContent = `${copy.lessonPackObservation}: ${step.prompt}`;
+  article.append(prompt);
+  if (step.teacherNote) {
+    const readingExample = document.createElement("aside");
+    readingExample.className = "lesson-pack-reading-example";
+    readingExample.dataset.lessonPackReadingExample = "";
+    const label = document.createElement("strong");
+    label.textContent = copy.lessonPackReadingExample;
+    const note = document.createElement("p");
+    note.textContent = step.teacherNote;
+    readingExample.append(label, note);
+    article.append(readingExample);
+  }
   article.append(detail(`${copy.lessonPackEntity}: ${step.entityLabel}`));
   if (step.entityDescription) article.append(detail(step.entityDescription));
   article.append(detail(`${copy.lessonPackDescription}: ${step.description}`));

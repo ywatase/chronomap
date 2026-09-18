@@ -7,7 +7,7 @@ import type { Lesson } from "../src/domain/lesson";
 const lesson: Lesson = {
   id: "intro", dataset: "ogurike", title: { ja: "巨椋池教材", en: "Ogurike lesson" }, description: { ja: "説明", en: "Description" }, durationMinutes: 15,
   steps: [
-    { id: "first", year: 1590, featureId: "first", prompt: { ja: "問い", en: "Prompt" } },
+    { id: "first", year: 1590, featureId: "first", prompt: { ja: "問い", en: "Prompt" }, teacherNote: { ja: "教員だけの読み取り例", en: "Teacher-only reading example" } },
     { id: "last", year: 1596, featureId: "last", prompt: { ja: "最後の問い", en: "Last prompt" } },
   ],
 };
@@ -41,5 +41,11 @@ describe("lesson panel", () => {
     expect(callbacks.onReport).toHaveBeenCalledTimes(1);
     expect(callbacks.onPack).toHaveBeenCalledTimes(1);
     expect(callbacks.onWorkshop).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps teacher notes out of the guided lesson panel", () => {
+    const root = document.createElement("div");
+    renderLessonPanel(root, lesson, 0, uiCopy("ja"), actions());
+    expect(root.textContent).not.toContain("教員だけの読み取り例");
   });
 });

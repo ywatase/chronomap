@@ -36,6 +36,7 @@ export interface LessonPackStep {
   readonly period: string;
   readonly geometry: string;
   readonly prompt: string;
+  readonly teacherNote?: string;
   readonly uncertainty: readonly string[];
   readonly evidence: readonly LessonPackEvidence[];
   readonly comparison: readonly LessonPackComparison[];
@@ -108,6 +109,7 @@ export function buildLessonPackModel(lesson: Lesson, bundle: PublicBundle, origi
       period: formatTemporal(feature.properties.temporal, language),
       geometry: formatGeometry(feature.geometry.type, language),
       prompt: localizedText(lessonStep.prompt, language),
+      ...(lessonStep.teacherNote ? { teacherNote: localizedText(lessonStep.teacherNote, language) } : {}),
       uncertainty: Object.entries(feature.properties.uncertainty).map(([dimension, assessment]) => `${dimensionLabel(dimension, language)}: ${assessmentLabel(assessment.assessment, language)}${assessment.note ? ` — ${assessment.note}` : ""}`),
       evidence,
       comparison: candidate?.versions.map(({ feature: version, year }) => projectComparison(version, year, bundle, language)) ?? [],

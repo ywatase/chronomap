@@ -181,6 +181,9 @@ footer a { color: #155e8a; }
 .lesson-pack-reference h4 { margin: .55rem 0 .25rem; color: #304b60; font-size: .86rem; }
 .lesson-pack-reference ul { margin: .25rem 0; padding-left: 1.25rem; }
 .lesson-pack-reference li { margin: .25rem 0; line-height: 1.4; }
+.lesson-pack-reading-example { margin: .55rem 0 .65rem; padding: .55rem .65rem; border-left: 4px solid #155e8a; background: #edf6fb; color: #17324d; break-inside: avoid; page-break-inside: avoid; }
+.lesson-pack-reading-example strong { display: block; font-size: .86rem; }
+.lesson-pack-reading-example p { margin: .3rem 0 0; }
 .lesson-pack-notice { margin-top: .8rem !important; padding: .55rem .65rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; }
 .lesson-pack-source { margin-top: .7rem; padding: .65rem .7rem; border: 1px solid #c4d0d9; border-radius: .45rem; background: #f9fbfc; break-inside: avoid; page-break-inside: avoid; }
 .lesson-pack-source .lesson-pack-notice { margin-top: .5rem !important; }
@@ -461,6 +464,7 @@ footer a { color: #155e8a; }
   body[data-print-document="lesson-pack"] .lesson-pack-source a { font-size: 9pt; }
   body[data-print-document="lesson-pack"] .lesson-pack-page { margin-top: 3mm; padding-top: 2mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-step { margin-top: 3mm; padding: 2mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-reading-example { margin: 1.5mm 0 2mm; padding: 1.5mm 2mm; break-inside: avoid; page-break-inside: avoid; }
   body[data-print-document="lesson-pack"] .lesson-pack-answer-space { min-height: 20mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-start-access { padding: 2mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-qr-host,

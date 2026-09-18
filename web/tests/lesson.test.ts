@@ -52,6 +52,23 @@ describe("guided lesson manifest", () => {
     expect(lesson && lessonStepIndex(lesson, "missing")).toBeNull();
   });
 
+  it("accepts and trims localized teacher notes when every default-language string is bounded", () => {
+    const parsed = parseLesson({
+      ...valid,
+      steps: [{ ...valid.steps[0], teacherNote: { ja: "  形状の向きを確認します。 ", en: "  Check the shape direction. " } }],
+    }, bundle);
+    expect(parsed?.steps[0]?.teacherNote).toEqual({ ja: "形状の向きを確認します。", en: "Check the shape direction." });
+    expect(parseLesson({ ...valid, steps: [{ ...valid.steps[0], teacherNote: { ja: "日本語だけの読み取り例" } }] }, bundle)?.steps[0]?.teacherNote).toEqual({ ja: "日本語だけの読み取り例" });
+  });
+
+  it("rejects malformed teacher notes and notes missing the dataset default language", () => {
+    const baseStep = valid.steps[0];
+    expect(parseLesson({ ...valid, steps: [{ ...baseStep, teacherNote: { en: "English only" } }] }, bundle)).toBeNull();
+    expect(parseLesson({ ...valid, steps: [{ ...baseStep, teacherNote: { ja: "   " } }] }, bundle)).toBeNull();
+    expect(parseLesson({ ...valid, steps: [{ ...baseStep, teacherNote: { ja: "x".repeat(501) } }] }, bundle)).toBeNull();
+    expect(parseLesson({ ...valid, steps: [{ ...baseStep, teacherNote: { ja: 123 } }] }, bundle)).toBeNull();
+  });
+
   it("rejects mismatched dataset, private features, and invalid comparison references", () => {
     expect(parseLesson({ ...valid, dataset: "other" }, bundle)).toBeNull();
     expect(parseLesson({ ...valid, steps: [{ ...valid.steps[0], featureId: "missing" }] }, bundle)).toBeNull();

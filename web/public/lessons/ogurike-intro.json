@@ -9,26 +9,30 @@
       "id": "uji-1590",
       "year": 1590,
       "featureId": "ogurike:version:ujigawa-1590",
-      "prompt": { "ja": "概略流路は巨椋池とどのような位置関係にありますか。", "en": "How is the approximate channel positioned in relation to Ogurike?" }
+      "prompt": { "ja": "概略流路は巨椋池とどのような位置関係にありますか。", "en": "How is the approximate channel positioned in relation to Ogurike?" },
+      "teacherNote": { "ja": "概略線は巨椋池の南東側から北西側へ向かう配置として見えます。少数の折れ点による復元なので、精密な河道中心線とは扱いません。", "en": "The approximate line runs from the southeast side of Ogurike toward the northwest. It is a reconstruction with a few bends, not a precise channel centerline." }
     },
     {
       "id": "uji-1596",
       "year": 1596,
       "featureId": "ogurike:version:ujigawa-1596",
       "prompt": { "ja": "1590年版と1596年版の概略流路は、どこが異なりますか。比較カードも開いて確認してください。", "en": "What differs between the 1590 and 1596 approximate channels? Open the comparison card to inspect both." },
-      "comparisonEntityId": "ogurike:entity:ujigawa"
+      "comparisonEntityId": "ogurike:entity:ujigawa",
+      "teacherNote": { "ja": "1590年版と1596年版は、巨椋池周辺で線の位置と折れ方が異なって見えます。両方とも概略復元で、間の全過程を示すものではありません。", "en": "The 1590 and 1596 lines appear in different positions and bend differently around Ogurike. Both are approximate reconstructions and do not show every stage between the snapshots." }
     },
     {
       "id": "waterbody-1910",
       "year": 1910,
       "featureId": "ogurike:version:waterbody-1910",
-      "prompt": { "ja": "現在の道路・市街地と、1910年の概略水域を重ねて確認してください。", "en": "Compare the approximate 1910 waterbody with today's roads and built-up areas." }
+      "prompt": { "ja": "現在の道路・市街地と、1910年の概略水域を重ねて確認してください。", "en": "Compare the approximate 1910 waterbody with today's roads and built-up areas." },
+      "teacherNote": { "ja": "概略面を現在地図の道路・市街地と重ね、重なる範囲を観察します。面の輪郭は精密な水域境界ではありません。", "en": "Overlay the approximate polygon with today's roads and built-up areas and observe where they overlap. The outline is not a precise waterbody boundary." }
     },
     {
       "id": "monument-1942",
       "year": 1942,
       "featureId": "ogurike:version:reclamation-monument-1942",
-      "prompt": { "ja": "干拓を記念する碑は、1910年の概略水域に対してどこにありますか。", "en": "Where is the reclamation monument in relation to the approximate 1910 waterbody?" }
+      "prompt": { "ja": "干拓を記念する碑は、1910年の概略水域に対してどこにありますか。", "en": "Where is the reclamation monument in relation to the approximate 1910 waterbody?" },
+      "teacherNote": { "ja": "代表点は1910年の概略面の内側付近に表示されます。点は所在地を丸めた代表位置で、碑の形状や精密座標ではありません。", "en": "The representative point appears near the interior of the approximate 1910 polygon. It is a rounded location marker, not the monument's shape or an exact coordinate." }
     }
   ]
 }

@@ -9,20 +9,23 @@
       "id": "river-1590",
       "year": 1590,
       "featureId": "tonegawa:version:river-1590",
-      "prompt": { "ja": "1590年頃の概略流路は、どの方向へ進み、どの海へ向かっていますか。", "en": "Which direction does the approximate pre-shift channel take, and which sea does it approach?" }
+      "prompt": { "ja": "1590年頃の概略流路は、どの方向へ進み、どの海へ向かっていますか。", "en": "Which direction does the approximate pre-shift channel take, and which sea does it approach?" },
+      "teacherNote": { "ja": "概略線は地図上で南東方向へ伸びています。周辺の海岸方向と照合する材料にしますが、線は精密な河道中心線ではありません。", "en": "The approximate line extends toward the southeast on the map. Use the surrounding coastline to check its direction, while remembering that the line is not a precise channel centerline." }
     },
     {
       "id": "closure-1594",
       "year": 1594,
       "featureId": "tonegawa:version:kawamata-closure-1594",
-      "prompt": { "ja": "川俣締切跡は、1590年頃の概略流路のどこにありますか。位置の近似にも注意してください。", "en": "Where is the Kawamata closure site in relation to the approximate 1590 channel? Notice the location uncertainty." }
+      "prompt": { "ja": "川俣締切跡は、1590年頃の概略流路のどこにありますか。位置の近似にも注意してください。", "en": "Where is the Kawamata closure site in relation to the approximate 1590 channel? Notice the location uncertainty." },
+      "teacherNote": { "ja": "代表点は1590年頃の概略線の北側寄りに近接して表示されます。小数第3位に丸めた代表位置なので、施設の正確な位置や形状とは読まないでください。", "en": "The representative point appears close to the north side of the approximate 1590 line. It is rounded to three decimal places, so it should not be read as the exact site or facility shape." }
     },
     {
       "id": "river-1654",
       "year": 1654,
       "featureId": "tonegawa:version:river-1654",
       "prompt": { "ja": "1590年頃と1654年の概略流路で、太平洋へ向かう方向はどう変わりますか。比較カードも確認してください。", "en": "How does the direction toward the Pacific differ between the approximate 1590 and 1654 channels? Open the comparison card." },
-      "comparisonEntityId": "tonegawa:entity:river"
+      "comparisonEntityId": "tonegawa:entity:river",
+      "teacherNote": { "ja": "1590年頃の線は南東へ、1654年の線は東寄りへ伸びる配置として比較できます。少数の折れ点による復元で、途中の流路を補間していません。", "en": "The lines can be compared as a southeastward layout around 1590 and a more eastward layout in 1654. They are reconstructions with a few bends and do not interpolate the route between snapshots." }
     }
   ]
 }

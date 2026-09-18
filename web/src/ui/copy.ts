@@ -92,6 +92,7 @@ export interface UiCopy {
   readonly lessonPackDescription: string;
   readonly lessonPackPeriod: string;
   readonly lessonPackGeometry: string;
+  readonly lessonPackReadingExample: string;
   readonly lessonPackUncertainty: string;
   readonly lessonPackComparison: string;
   readonly lessonPackEvidence: string;
@@ -318,6 +319,7 @@ const EN_COPY: UiCopy = {
   lessonPackDescription: "Description",
   lessonPackPeriod: "Possible period",
   lessonPackGeometry: "Geometry",
+  lessonPackReadingExample: "Reading example (not the only correct answer)",
   lessonPackUncertainty: "Uncertainty to discuss",
   lessonPackComparison: "Reference comparison",
   lessonPackEvidence: "Evidence locators",
@@ -545,6 +547,7 @@ const JA_COPY: UiCopy = {
   lessonPackDescription: "説明",
   lessonPackPeriod: "可能期間",
   lessonPackGeometry: "形状",
+  lessonPackReadingExample: "読み取り例（唯一の正答ではありません）",
   lessonPackUncertainty: "授業で確認する不確実性",
   lessonPackComparison: "参照する比較",
   lessonPackEvidence: "根拠の参照位置",
