@@ -21,7 +21,7 @@ import { renderLessonPack } from "./lesson-pack";
 import { showLessonPackFeedback, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 import { applyLessonPackBuilderInput, renderLessonPackBuilder } from "./lesson-pack-builder";
 import type { LessonPackModel } from "../domain/lesson-pack-model";
-import { draftFilename, parseLessonPackDraft, serializeLessonPackDraft } from "../domain/lesson-pack-draft";
+import { draftFilename, LESSON_PACK_DRAFT_MAX_BYTES, parseLessonPackDraft, serializeLessonPackDraft } from "../domain/lesson-pack-draft";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
 import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../domain/dataset-catalog-view-model";
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
@@ -250,6 +250,10 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     const baseModel = workshopBaseModel;
     if (!baseModel) return;
     try {
+      if (file.size > LESSON_PACK_DRAFT_MAX_BYTES) {
+        setDraftStatus(copy.lessonPackDraftInvalid, false);
+        return;
+      }
       const serialized = await file.text();
       const input = parseLessonPackDraft(baseModel, serialized);
       if (!input || !applyLessonPackBuilderInput(lessonPackBuilderDialog, baseModel, input)) {

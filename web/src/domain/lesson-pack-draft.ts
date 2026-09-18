@@ -76,7 +76,7 @@ export function parseLessonPackDraft(model: LessonPackModel, serialized: unknown
     selectedSet.add(id);
   }
   for (const key of Object.keys(rawCustomization.promptsByStepId)) {
-    if (key === "__proto__" || !knownStepIds.has(key) || typeof rawCustomization.promptsByStepId[key] !== "string") return null;
+    if (key === "__proto__" || !knownStepIds.has(key) || !selectedSet.has(key) || typeof rawCustomization.promptsByStepId[key] !== "string") return null;
     if (rawCustomization.promptsByStepId[key].length > LESSON_PACK_PROMPT_MAX_LENGTH) return null;
   }
   for (const id of selectedSet) {

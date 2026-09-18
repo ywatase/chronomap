@@ -118,6 +118,22 @@ describe("lesson pack builder", () => {
     expect(readLessonPackBuilderInput(root)).toEqual(extracted);
   });
 
+  it("keeps the existing form unchanged when a draft cannot be applied", () => {
+    const root = document.createElement("div");
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn() });
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-title]")!.value = "編集中の教材";
+    const before = readLessonPackBuilderInput(root);
+
+    expect(applyLessonPackBuilderInput(root, model, {
+      title: "壊れた下書き",
+      classLabel: "2年A組",
+      selectedStepIds: [],
+      promptsByStepId: {},
+      includeTeacher: false,
+    })).toBe(false);
+    expect(readLessonPackBuilderInput(root)).toEqual(before);
+  });
+
   it("renders labeled draft controls and sends current state to save", () => {
     const root = document.createElement("div");
     const onSaveDraft = vi.fn();

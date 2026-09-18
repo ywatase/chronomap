@@ -193,7 +193,7 @@ function builderLabels(copy: UiCopy): BuilderLabels {
     return {
       heading: copy.lessonWorkshopOpen,
       lead: "既存のガイド教材から、授業用のタイトル・問い・ステップを整えます。",
-      note: "入力内容はこのブラウザ内だけで扱われ、再読み込みすると破棄されます。",
+      note: "入力内容はこのブラウザ内だけで扱われます。保存しない編集は再読み込みで破棄されるため、必要なら下書きをファイル保存してください。",
       draftSave: copy.lessonPackDraftSave,
       draftFileLabel: copy.lessonPackDraftFileLabel,
       draftOpen: copy.lessonPackDraftOpen,
@@ -214,7 +214,7 @@ function builderLabels(copy: UiCopy): BuilderLabels {
   return {
     heading: copy.lessonWorkshopOpen,
     lead: "Shape a classroom pack from the guided lesson by choosing its title, prompts, and steps.",
-    note: "Draft input stays in this browser and is discarded when the page reloads.",
+    note: "Draft input stays in this browser. Unsaved edits are discarded on reload; save a draft file when you need to continue later.",
     draftSave: copy.lessonPackDraftSave,
     draftFileLabel: copy.lessonPackDraftFileLabel,
     draftOpen: copy.lessonPackDraftOpen,

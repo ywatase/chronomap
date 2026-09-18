@@ -101,6 +101,7 @@ describe("lesson pack portable drafts", () => {
     ["wrong dataset", '{"schemaVersion":1,"dataset":"tonegawa","lesson":"ogurike-intro","customization":{"title":"x","classLabel":"","selectedStepIds":["first"],"promptsByStepId":{"first":"x"},"includeTeacher":true}}'],
     ["wrong lesson", '{"schemaVersion":1,"dataset":"ogurike","lesson":"other","customization":{"title":"x","classLabel":"","selectedStepIds":["first"],"promptsByStepId":{"first":"x"},"includeTeacher":true}}'],
     ["unknown step", '{"schemaVersion":1,"dataset":"ogurike","lesson":"ogurike-intro","customization":{"title":"x","classLabel":"","selectedStepIds":["missing"],"promptsByStepId":{"missing":"x"},"includeTeacher":true}}'],
+    ["prompt for unselected step", '{"schemaVersion":1,"dataset":"ogurike","lesson":"ogurike-intro","customization":{"title":"x","classLabel":"","selectedStepIds":["first"],"promptsByStepId":{"first":"x","second":"extra"},"includeTeacher":true}}'],
     ["empty selection", '{"schemaVersion":1,"dataset":"ogurike","lesson":"ogurike-intro","customization":{"title":"x","classLabel":"","selectedStepIds":[],"promptsByStepId":{},"includeTeacher":true}}'],
     ["malformed JSON", "not json"],
   ] as const)("rejects %s without throwing or producing customization", (_label, serialized) => {

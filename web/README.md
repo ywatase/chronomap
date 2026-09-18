@@ -114,7 +114,16 @@ label, choose existing steps, rewrite observation prompts, and include or omit
 the teacher reference before opening the print preview. The same editor is the
 primary action for lesson cards in the catalog and can be opened directly with
 `/?dataset=tonegawa&lesson=tonegawa-eastward&view=builder`.
-Draft edits are intentionally not saved; reloading the page discards them.
+Unsaved edits stay in memory and are discarded when the page reloads.
+
+Use `下書きをファイル保存` when you need to continue later, then use
+`下書きファイルを開く` after reopening the same dataset and lesson. The browser
+downloads a UTF-8 JSON file named
+`chronomap-{dataset}-{lesson}-draft.json`. It contains only the current title,
+class label, selected steps, selected-step prompts, and teacher-reference flag.
+It does not contain source bodies, evidence, URLs, map positions, feedback, or
+account data, and it is never sent to Chronomap. Files are limited to 64 KiB and
+are rejected when they target another dataset/lesson or contain unknown fields.
 
 The existing `授業用教材パックを作成（β版無料）` action opens a print preview with
 three sections: a student worksheet, a teacher reference sheet, and a
