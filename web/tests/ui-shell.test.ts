@@ -303,7 +303,7 @@ describe("ui shell", () => {
     pack.querySelector<HTMLButtonElement>("[data-lesson-pack-print]")!.click();
     expect(print).toHaveBeenCalledOnce();
     expect(host.hidden).toBe(false);
-    expect(document.activeElement).toBe(host.querySelector("[data-lesson-pack-feedback-summary]"));
+    expect(document.activeElement).toBe(host.querySelector("[data-lesson-pack-completion]"));
     print.mockRestore();
     controller.destroy();
     window.history.replaceState(null, "", "/");

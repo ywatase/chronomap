@@ -215,7 +215,10 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   };
   const printLessonPack = (scope: LessonPackPrintScope = "full") => {
     const feedbackHost = lessonPackDialog.querySelector<HTMLElement>("[data-lesson-pack-feedback-host]");
-    if (feedbackHost) showLessonPackFeedback(feedbackHost);
+    if (feedbackHost) showLessonPackFeedback(feedbackHost, scope, copy);
+    // A new recipient scope changes the handoff metadata. Do not carry a
+    // previously reviewed consultation text into the next print attempt.
+    if (workshopFeedbackState?.pilotAnswer) workshopFeedbackState = { ...workshopFeedbackState, pilotAnswer: "" };
     if (typeof window === "undefined" || typeof window.print !== "function") return;
     const printScope = isLessonPackPrintScope(scope) ? scope : "full";
     document.body.dataset.printDocument = "lesson-pack";

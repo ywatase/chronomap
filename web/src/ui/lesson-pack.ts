@@ -57,6 +57,18 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   toolbar.append(printFull, close);
   container.append(toolbar);
 
+  const figureModel = projectLessonPackFigureFromSteps(
+    model.steps.map((step, index) => ({
+      featureId: step.featureId,
+      geometry: step.featureGeometry,
+      labels: { [copy.language]: step.label },
+      label: step.label,
+      yearLabel: step.yearLabel,
+      stepNumber: index + 1,
+    })),
+    model.datasetBbox,
+  );
+
   const feedbackHost = document.createElement("section");
   feedbackHost.dataset.lessonPackFeedbackHost = "";
   renderLessonPackFeedback(feedbackHost, {
@@ -64,6 +76,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
     lessonId: model.lessonId ?? "",
     selectedStepCount: model.steps.length,
     includeTeacher: model.includeTeacher !== false,
+    observationFigure: figureModel !== null,
     language: copy.language,
   }, copy, actions.initialFeedbackState ?? null, { onChange: actions.onFeedbackChange });
   container.append(feedbackHost);
@@ -116,17 +129,6 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
 
   const figurePage = page(copy.lessonPackFigureTitle);
   figurePage.dataset.lessonPackFigurePage = "";
-  const figureModel = projectLessonPackFigureFromSteps(
-    model.steps.map((step, index) => ({
-      featureId: step.featureId,
-      geometry: step.featureGeometry,
-      labels: { [copy.language]: step.label },
-      label: step.label,
-      yearLabel: step.yearLabel,
-      stepNumber: index + 1,
-    })),
-    model.datasetBbox,
-  );
   figurePage.append(renderLessonPackFigure(figureModel, {
     language: copy.language,
     title: copy.lessonPackFigureTitle,

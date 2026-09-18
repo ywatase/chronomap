@@ -18,7 +18,7 @@ describe("lesson pack feedback form", () => {
     expect(host.hidden).toBe(true);
     expect(host.querySelector("[data-lesson-pack-feedback-details]")).toBeTruthy();
     expect(host.querySelector("[data-lesson-pack-feedback-summary]")?.textContent).toContain("印刷画面を試していただきありがとうございます");
-    expect(host.textContent).toContain("回答は自動送信・保存されません。コピーして、案内された連絡先へお送りください。再読み込みすると消えます。");
+    expect(host.textContent).toContain("回答は自動送信・保存されません。文章を確認してから、ご自身でコピーまたは共有してください。再読み込みすると消えます。");
     expect(host.querySelectorAll<HTMLInputElement>("input[type=radio][required]")).toHaveLength(7);
     expect(host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-answer]")?.readOnly).toBe(true);
   });
@@ -99,5 +99,36 @@ describe("lesson pack feedback form", () => {
     const changedAnswer = changedPreview.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-answer]")!;
     expect(changedAnswer.value).toContain("選択ステップ数: 4");
     expect(changedAnswer.value).toContain("教員用資料: なし");
+  });
+
+  it("keeps the completion card feedback-only by default and requires budget intent for consultation", () => {
+    const host = document.createElement("section");
+    const saved = { value: null as LessonPackFeedbackState | null };
+    renderLessonPackFeedback(host, { ...context, observationFigure: true }, uiCopy("ja"), null, { onChange: (next) => { saved.value = next; } });
+    showLessonPackFeedback(host, "student", uiCopy("ja"));
+    expect(host.querySelector("[data-lesson-pack-completion-facts]")?.textContent).toContain("生徒用を印刷");
+    expect(host.querySelector("[data-lesson-pack-pilot-budget]")).toHaveProperty("hidden", true);
+
+    host.querySelector<HTMLInputElement>('input[name="utilization"][value="近いうちに使いたい"]')!.checked = true;
+    host.querySelector<HTMLInputElement>('input[name="nextFeature"][value="校内で共有"]')!.checked = true;
+    const consultRoute = host.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]')!;
+    consultRoute.checked = true;
+    consultRoute.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(host.querySelector("[data-lesson-pack-pilot-budget]")).toHaveProperty("hidden", false);
+    host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
+    expect(host.querySelector("[data-lesson-pack-pilot-error]")).toHaveProperty("hidden", false);
+    expect(host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]")!.value).toBe("");
+
+    host.querySelector<HTMLInputElement>('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]')!.click();
+    host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-region]")!.value = "奈良";
+    host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
+    const answer = host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]")!;
+    expect(answer.value).toContain("相談意向: 地域・内容・条件が合えば検討したい");
+    expect(answer.value).toContain("印刷範囲: 生徒用");
+    expect(answer.value).toContain("希望地域・題材: 奈良");
+    expect(host.querySelector("[data-lesson-pack-pilot-mail]")).toBeNull();
+    expect(saved.value?.pilotAnswer).toContain("印刷範囲: 生徒用");
+    host.querySelector<HTMLButtonElement>("[data-lesson-pack-pilot-back]")!.click();
+    expect(saved.value?.pilotAnswer).toBe("");
   });
 });

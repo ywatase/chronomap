@@ -5,11 +5,14 @@ import {
   type LessonPackFeedbackInput,
   type LessonPackFeedbackContext,
 } from "../domain/lesson-pack-feedback";
+import { LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface LessonPackFeedbackState {
   readonly input: LessonPackFeedbackInput;
   readonly answer: string;
+  readonly pilotInput?: LessonPackPilotInput;
+  readonly pilotAnswer?: string;
 }
 
 export interface LessonPackFeedbackActions {
@@ -130,19 +133,23 @@ export function renderLessonPackFeedback(
     : "";
   error.hidden = Boolean(answer.value);
 
+  let pilotInput: LessonPackPilotInput | undefined = initialState?.pilotInput;
+  let pilotAnswer = initialState?.pilotAnswer ?? "";
   const captureInput = (): LessonPackFeedbackInput => ({
     utilization: form.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
     nextFeature: form.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
     comment: comment.value,
   });
   const notify = (): void => {
-    feedbackActions.onChange?.({ input: captureInput(), answer: answer.value });
+    feedbackActions.onChange?.({ input: captureInput(), answer: answer.value, pilotInput, pilotAnswer });
   };
 
   const update = (): boolean => {
     const value = buildLessonPackFeedbackAnswer(captureInput(), context);
     answer.value = value ?? "";
     error.hidden = value !== null;
+    pilotAnswer = "";
+    clearPilotReview(content);
     notify();
     return value !== null;
   };
@@ -158,19 +165,296 @@ export function renderLessonPackFeedback(
   copyButton.addEventListener("click", () => { void copyAnswer(answer, status, copy, update); });
 
   content.append(form);
+  renderPilotHandoff(content, context, copy, initialState, {
+    onChange: (nextInput, nextAnswer) => {
+      pilotInput = nextInput;
+      pilotAnswer = nextAnswer;
+      notify();
+    },
+  });
+  const completion = content.querySelector<HTMLElement>("[data-lesson-pack-completion]");
+  if (completion) content.insertBefore(completion, form);
   details.append(content);
   container.append(details);
 }
 
-/** Reveal the callout after the print action and return keyboard focus to its summary. */
-export function showLessonPackFeedback(container: HTMLElement): void {
+/** Reveal the completion card after printing and focus the first control in it. */
+export function showLessonPackFeedback(container: HTMLElement, scope: "student" | "teacher" | "full" = "full", copy?: UiCopy): void {
   container.hidden = false;
-  container.querySelector<HTMLElement>("[data-lesson-pack-feedback-summary]")?.focus();
+  container.dataset.lessonPackLastPrintScope = scope;
+  const details = container.querySelector<HTMLDetailsElement>("[data-lesson-pack-feedback-details]");
+  if (details) details.open = true;
+  const facts = container.querySelector<HTMLElement>("[data-lesson-pack-completion-facts]");
+  if (facts && copy) {
+    facts.textContent = copy.lessonPackCompletionFacts(
+      Number(facts.dataset.steps ?? "0"),
+      scope,
+      facts.dataset.includeTeacher === "true",
+      facts.dataset.observationFigure !== "false",
+    );
+  }
+  clearPilotReview(container);
+  container.querySelector<HTMLElement>("[data-lesson-pack-completion]")?.focus();
+}
+
+interface PilotHandoffActions {
+  readonly onChange: (input: LessonPackPilotInput, answer: string) => void;
+}
+
+function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions): void {
+  const card = document.createElement("section");
+  card.className = "lesson-pack-completion";
+  card.dataset.lessonPackCompletion = "";
+  card.tabIndex = -1;
+  const heading = document.createElement("h3");
+  heading.textContent = copy.lessonPackCompletionSummary;
+  const summary = document.createElement("p");
+  summary.dataset.lessonPackCompletionFacts = "";
+  summary.dataset.steps = String(context.selectedStepCount);
+  summary.dataset.includeTeacher = String(context.includeTeacher);
+  summary.dataset.observationFigure = String(context.observationFigure !== false);
+  summary.textContent = copy.lessonPackCompletionFacts(context.selectedStepCount, "full", context.includeTeacher, context.observationFigure !== false);
+  const privacy = document.createElement("p");
+  privacy.className = "lesson-pack-pilot-privacy";
+  privacy.textContent = copy.lessonPackPilotPrivacy;
+  card.append(heading, summary, privacy);
+
+  const form = document.createElement("form");
+  form.dataset.lessonPackPilotForm = "";
+  form.noValidate = true;
+  const route = document.createElement("fieldset");
+  route.className = "lesson-pack-pilot-route";
+  const routeLegend = document.createElement("legend");
+  routeLegend.textContent = copy.lessonPackFeedbackSummary;
+  route.append(routeLegend);
+  for (const [value, label] of [["feedback", copy.lessonPackPilotFeedbackRoute], ["consult", copy.lessonPackPilotConsultRoute]] as const) {
+    const option = document.createElement("label");
+    option.className = "lesson-pack-completion-option";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "pilot-route";
+    input.value = value;
+    input.checked = (state?.pilotInput?.route ?? "feedback") === value;
+    option.append(input, document.createTextNode(label));
+    route.append(option);
+  }
+
+  const budget = document.createElement("fieldset");
+  budget.className = "lesson-pack-pilot-budget";
+  budget.dataset.lessonPackPilotBudget = "";
+  budget.tabIndex = -1;
+  const budgetLegend = document.createElement("legend");
+  budgetLegend.textContent = copy.lessonPackPilotBudget;
+  budget.append(budgetLegend);
+  for (const value of LESSON_PACK_BUDGET_INTENTS) {
+    const option = document.createElement("label");
+    option.className = "lesson-pack-completion-option";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "pilot-budget";
+    input.value = value;
+    input.checked = state?.pilotInput?.budgetIntent === value;
+    option.append(input, document.createTextNode(copy.lessonPackPilotBudgetOptions[value] ?? value));
+    budget.append(option);
+  }
+
+  const regionLabel = document.createElement("label");
+  regionLabel.className = "lesson-pack-pilot-region";
+  regionLabel.textContent = copy.lessonPackPilotRegionTopic;
+  const region = document.createElement("textarea");
+  region.rows = 2;
+  region.maxLength = 200;
+  region.dataset.lessonPackPilotRegion = "";
+  region.value = typeof state?.pilotInput?.regionTopic === "string" ? state.pilotInput.regionTopic : "";
+  const regionHint = document.createElement("span");
+  regionHint.className = "lesson-pack-feedback-hint";
+  regionHint.textContent = copy.lessonPackPilotRegionHint;
+  regionLabel.append(region, regionHint);
+
+  const review = document.createElement("button");
+  review.type = "submit";
+  review.textContent = copy.lessonPackPilotReview;
+  review.dataset.lessonPackPilotReview = "";
+  const error = document.createElement("p");
+  error.className = "lesson-pack-feedback-error";
+  error.dataset.lessonPackPilotError = "";
+  error.setAttribute("role", "alert");
+  error.hidden = true;
+  error.textContent = copy.lessonPackFeedbackRequired;
+  const answerLabel = document.createElement("label");
+  answerLabel.className = "lesson-pack-feedback-answer-label";
+  answerLabel.textContent = copy.lessonPackFeedbackAnswer;
+  const answer = document.createElement("textarea");
+  answer.readOnly = true;
+  answer.rows = 10;
+  answer.spellcheck = false;
+  answer.dataset.lessonPackPilotAnswer = "";
+  answerLabel.append(answer);
+  const actionsRow = document.createElement("div");
+  actionsRow.className = "lesson-pack-feedback-actions";
+  const back = document.createElement("button");
+  back.type = "button";
+  back.textContent = copy.lessonPackPilotBackToEdit;
+  back.dataset.lessonPackPilotBack = "";
+  const copyButton = document.createElement("button");
+  copyButton.type = "button";
+  copyButton.textContent = copy.lessonPackPilotCopy;
+  copyButton.dataset.lessonPackPilotCopy = "";
+  const shareButton = document.createElement("button");
+  shareButton.type = "button";
+  shareButton.textContent = copy.lessonPackPilotShare;
+  shareButton.dataset.lessonPackPilotShare = "";
+  const mail = LESSON_PACK_PILOT_CONTACT ? document.createElement("a") : null;
+  if (mail) {
+    mail.textContent = copy.lessonPackPilotMail;
+    mail.dataset.lessonPackPilotMail = "";
+    mail.className = "lesson-pack-pilot-mail";
+  }
+  const status = document.createElement("p");
+  status.className = "lesson-pack-feedback-status";
+  status.dataset.lessonPackPilotStatus = "";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  actionsRow.append(back, copyButton, shareButton);
+  if (mail) actionsRow.append(mail);
+  form.append(route, budget, regionLabel, review, error, answerLabel, actionsRow, status);
+  card.append(form);
+  content.append(card);
+
+  const routeValue = (): "feedback" | "consult" => form.querySelector<HTMLInputElement>('input[name="pilot-route"]:checked')?.value === "consult" ? "consult" : "feedback";
+  const pilotInput = (): LessonPackPilotInput => ({
+    route: routeValue(),
+    utilization: content.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
+    nextFeature: content.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
+    budgetIntent: form.querySelector<HTMLInputElement>('input[name="pilot-budget"]:checked')?.value,
+    regionTopic: region.value,
+    comment: content.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-comment]")?.value,
+  });
+  const setRouteVisibility = (): void => {
+    const consultation = routeValue() === "consult";
+    budget.hidden = !consultation;
+    regionLabel.hidden = !consultation;
+    review.textContent = consultation ? copy.lessonPackPilotReviewConsult : copy.lessonPackPilotReviewFeedback;
+    budget.setAttribute("aria-hidden", String(!consultation));
+    regionLabel.setAttribute("aria-hidden", String(!consultation));
+  };
+  const setReview = (visible: boolean): void => {
+    if (!visible) {
+      answer.value = "";
+      status.textContent = "";
+      mail?.removeAttribute("href");
+    }
+    answer.hidden = !visible;
+    answerLabel.hidden = !visible;
+    back.hidden = !visible;
+    copyButton.hidden = !visible;
+    shareButton.hidden = !visible || typeof navigator === "undefined" || typeof navigator.share !== "function";
+    if (mail) mail.hidden = !visible || !Boolean(mail.href);
+  };
+  const scope = (): LessonPackPilotContext["lastPrintScope"] => {
+    const value = content.closest<HTMLElement>("[data-lesson-pack-feedback-host]")?.dataset.lessonPackLastPrintScope;
+    return value === "student" || value === "teacher" || value === "full" ? value : "full";
+  };
+  const notify = (): void => actions.onChange(pilotInput(), answer.value);
+  const reviewText = (): string | null => buildLessonPackPilotText(pilotInput(), {
+    datasetSlug: context.datasetSlug,
+    lessonId: context.lessonId,
+    selectedStepCount: context.selectedStepCount,
+    includeTeacher: context.includeTeacher,
+    observationFigure: context.observationFigure !== false,
+    lastPrintScope: scope(),
+    language: context.language,
+  });
+  setRouteVisibility();
+  setReview(Boolean(state?.pilotAnswer));
+  if (state?.pilotAnswer) answer.value = buildLessonPackPilotText(state.pilotInput ?? {}, {
+    datasetSlug: context.datasetSlug,
+    lessonId: context.lessonId,
+    selectedStepCount: context.selectedStepCount,
+    includeTeacher: context.includeTeacher,
+    observationFigure: context.observationFigure !== false,
+    lastPrintScope: scope(),
+    language: context.language,
+  }) ?? "";
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[name="pilot-route"], input[name="pilot-budget"]')) {
+    input.addEventListener("change", () => { setRouteVisibility(); setReview(false); error.hidden = true; notify(); });
+  }
+  for (const input of [region, ...Array.from(content.querySelectorAll<HTMLInputElement>('input[name="utilization"], input[name="nextFeature"]'))]) {
+    input.addEventListener("input", () => { if (answer.value) setReview(false); notify(); });
+    input.addEventListener("change", () => { if (answer.value) setReview(false); notify(); });
+  }
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = reviewText();
+    if (!text) {
+      error.hidden = false;
+      const utilizationChoice = content.querySelector<HTMLInputElement>('input[name="utilization"]:checked');
+      const nextFeatureChoice = content.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked');
+      const budgetChoice = form.querySelector<HTMLInputElement>('input[name="pilot-budget"]:checked');
+      if (!utilizationChoice) content.querySelector<HTMLElement>('input[name="utilization"]')?.focus();
+      else if (!nextFeatureChoice) content.querySelector<HTMLElement>('input[name="nextFeature"]')?.focus();
+      else if (routeValue() === "consult" && !budgetChoice) budget.focus();
+      else review.focus();
+      notify();
+      return;
+    }
+    error.hidden = true;
+    answer.value = text;
+    const subject = copy.lessonPackPilotSubject;
+    const href = buildSafeLessonPackPilotMailto(LESSON_PACK_PILOT_CONTACT, subject, text);
+    if (mail) {
+      if (href) { mail.href = href; mail.hidden = false; } else { mail.removeAttribute("href"); mail.hidden = true; }
+    }
+    setReview(true);
+    notify();
+    answer.focus();
+  });
+  back.addEventListener("click", () => { setReview(false); error.hidden = true; notify(); review.focus(); });
+  copyButton.addEventListener("click", () => { void copyPilotAnswer(answer.value, status, copy); });
+  shareButton.addEventListener("click", () => {
+    if (!answer.value || typeof navigator === "undefined" || typeof navigator.share !== "function") return;
+    try {
+      void navigator.share({ title: copy.lessonPackPilotSubject, text: answer.value }).then(() => {
+        status.textContent = copy.lessonPackPilotCopied;
+      }).catch(() => {
+        status.textContent = copy.lessonPackPilotShareFailed;
+      });
+    } catch {
+      status.textContent = copy.lessonPackPilotShareFailed;
+    }
+  });
+  mail?.addEventListener("click", () => { status.textContent = copy.lessonPackPilotMailOpened; });
+}
+
+function clearPilotReview(container: HTMLElement): void {
+  const answer = container.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]");
+  if (answer) { answer.value = ""; answer.hidden = true; answer.closest("label")?.setAttribute("hidden", ""); }
+  const error = container.querySelector<HTMLElement>("[data-lesson-pack-pilot-error]");
+  if (error) error.hidden = true;
+  const status = container.querySelector<HTMLElement>("[data-lesson-pack-pilot-status]");
+  if (status) status.textContent = "";
+  for (const selector of ["[data-lesson-pack-pilot-copy]", "[data-lesson-pack-pilot-share]", "[data-lesson-pack-pilot-mail]", "[data-lesson-pack-pilot-back]"]) {
+    const element = container.querySelector<HTMLElement>(selector);
+    if (element) element.hidden = true;
+  }
+}
+
+async function copyPilotAnswer(value: string, status: HTMLElement, copy: UiCopy): Promise<void> {
+  if (!value) { status.textContent = copy.lessonPackFeedbackRequired; return; }
+  try {
+    let copied = false;
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      try { await navigator.clipboard.writeText(value); copied = true; } catch { copied = false; }
+    }
+    if (!copied) copied = fallbackCopy(value);
+    status.textContent = copied ? copy.lessonPackPilotCopied : copy.lessonPackPilotCopyFailed;
+  } catch { status.textContent = copy.lessonPackPilotCopyFailed; }
 }
 
 function fieldset<T extends readonly string[]>(legendText: string, name: string, values: T, labels: Readonly<Record<T[number], string>>): HTMLFieldSetElement {
   const fieldset = document.createElement("fieldset");
   fieldset.className = "lesson-pack-feedback-fieldset";
+  fieldset.tabIndex = -1;
   const legend = document.createElement("legend");
   legend.textContent = legendText;
   fieldset.append(legend);

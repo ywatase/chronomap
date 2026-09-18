@@ -1,4 +1,5 @@
 import { displayYearLocalized } from "../domain/labels";
+import type { LessonPackBudgetIntent } from "../domain/lesson-pack-pilot";
 import type { LessonPackNextFeature, LessonPackUtilization } from "../domain/lesson-pack-feedback";
 import type { GeometryType, RightsStatus, UncertaintyAssessment } from "../domain/types";
 
@@ -158,6 +159,27 @@ export interface UiCopy {
   readonly lessonPackFeedbackCopied: string;
   readonly lessonPackFeedbackCopyFailed: string;
   readonly lessonPackFeedbackRequired: string;
+  readonly lessonPackCompletionSummary: string;
+  readonly lessonPackCompletionFacts: (steps: number, scope: "student" | "teacher" | "full", includeTeacher: boolean, observationFigure: boolean) => string;
+  readonly lessonPackPilotPrivacy: string;
+  readonly lessonPackPilotFeedbackRoute: string;
+  readonly lessonPackPilotConsultRoute: string;
+  readonly lessonPackPilotBudget: string;
+  readonly lessonPackPilotBudgetOptions: Readonly<Record<LessonPackBudgetIntent, string>>;
+  readonly lessonPackPilotRegionTopic: string;
+  readonly lessonPackPilotRegionHint: string;
+  readonly lessonPackPilotReviewFeedback: string;
+  readonly lessonPackPilotReviewConsult: string;
+  readonly lessonPackPilotReview: string;
+  readonly lessonPackPilotBackToEdit: string;
+  readonly lessonPackPilotCopy: string;
+  readonly lessonPackPilotShare: string;
+  readonly lessonPackPilotMail: string;
+  readonly lessonPackPilotCopied: string;
+  readonly lessonPackPilotCopyFailed: string;
+  readonly lessonPackPilotShareFailed: string;
+  readonly lessonPackPilotMailOpened: string;
+  readonly lessonPackPilotSubject: string;
   readonly datasetCatalogOpen: string;
   readonly datasetCatalogDialogLabel: string;
   readonly datasetCatalogHeading: string;
@@ -396,7 +418,7 @@ const EN_COPY: UiCopy = {
   lessonPackDraftInvalid: "Could not load this draft. Check its dataset, lesson, steps, and file size.",
   lessonPackFeedbackSummary: "Thanks for trying the print dialog — one-minute feedback",
   lessonPackFeedbackLead: "Tell us how this classroom pack fits your next lesson.",
-  lessonPackFeedbackNotice: "Your answers are not sent or saved automatically. Copy them and send them to the contact provided. They disappear when you reload the page.",
+  lessonPackFeedbackNotice: "Your answers are not sent or saved automatically. Review the text, then copy or share it yourself. They disappear when you reload the page.",
   lessonPackFeedbackUtilization: "How would you use this pack?",
   lessonPackFeedbackUtilizationOptions: {
     "近いうちに使いたい": "I want to use it soon",
@@ -418,6 +440,32 @@ const EN_COPY: UiCopy = {
   lessonPackFeedbackCopied: "Feedback answer copied.",
   lessonPackFeedbackCopyFailed: "Could not copy. Select the answer text and copy it manually.",
   lessonPackFeedbackRequired: "Please answer both required questions.",
+  lessonPackCompletionSummary: "Printed pack summary",
+  lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps} step${steps === 1 ? "" : "s"} · ${observationFigure ? "observation figure" : "figure unavailable"} · student material${includeTeacher ? " · teacher material" : ""} · QR · sources/rights · ${scope} print`,
+  lessonPackPilotPrivacy: "Chronomap does not send or save this text. Do not enter a school name, student name, contact details, or other personal information. Review it before copying or sharing; sending is always your action.",
+  lessonPackPilotFeedbackRoute: "Feedback only",
+  lessonPackPilotConsultRoute: "Consult about a regional lesson pack",
+  lessonPackPilotBudget: "Consultation intention (required for consultation)",
+  lessonPackPilotBudgetOptions: {
+    "校費・組織予算で相談したい": "I want to discuss an institutional budget",
+    "地域・内容・条件が合えば検討したい": "I would consider it if the region, content, and conditions fit",
+    "まず無料試用を続けたい": "I want to continue the free trial first",
+    "今回は検討しない": "I will not consider it this time",
+  },
+  lessonPackPilotRegionTopic: "Preferred region or topic (optional, up to 200 characters)",
+  lessonPackPilotRegionHint: "Do not include a school, student, or contact name.",
+  lessonPackPilotReviewFeedback: "Review feedback text",
+  lessonPackPilotReviewConsult: "Review consultation text",
+  lessonPackPilotReview: "Review consultation text",
+  lessonPackPilotBackToEdit: "Back to editing",
+  lessonPackPilotCopy: "Copy handoff text",
+  lessonPackPilotShare: "Share handoff text",
+  lessonPackPilotMail: "Open email draft",
+  lessonPackPilotCopied: "Handoff text copied.",
+  lessonPackPilotCopyFailed: "Could not copy. Select the review text and copy it manually.",
+  lessonPackPilotShareFailed: "Sharing was canceled or unavailable. The review text is still here.",
+  lessonPackPilotMailOpened: "Email app opened. The message has not been sent.",
+  lessonPackPilotSubject: "Chronomap regional lesson-pack consultation",
   datasetCatalogOpen: "Choose a region or lesson",
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
@@ -648,7 +696,7 @@ const JA_COPY: UiCopy = {
   lessonPackDraftInvalid: "下書きを読み込めませんでした。データセット・教材・ステップ・ファイルサイズを確認してください。",
   lessonPackFeedbackSummary: "印刷画面を試していただきありがとうございます（1分フィードバック）",
   lessonPackFeedbackLead: "この授業用教材を次の授業でどう使えそうか教えてください。",
-  lessonPackFeedbackNotice: "回答は自動送信・保存されません。コピーして、案内された連絡先へお送りください。再読み込みすると消えます。",
+  lessonPackFeedbackNotice: "回答は自動送信・保存されません。文章を確認してから、ご自身でコピーまたは共有してください。再読み込みすると消えます。",
   lessonPackFeedbackUtilization: "この教材をどう使えそうですか？",
   lessonPackFeedbackUtilizationOptions: {
     "近いうちに使いたい": "近いうちに使いたい",
@@ -670,6 +718,32 @@ const JA_COPY: UiCopy = {
   lessonPackFeedbackCopied: "フィードバック回答文をコピーしました。",
   lessonPackFeedbackCopyFailed: "コピーできませんでした。回答文を選択して手動でコピーしてください。",
   lessonPackFeedbackRequired: "必須項目を選択してください。",
+  lessonPackCompletionSummary: "印刷した教材パックの概要",
+  lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps}ステップ · ${observationFigure ? "観察用概略図" : "概略図なし"} · 生徒用資料${includeTeacher ? " · 教員用資料" : ""} · QR・出典／権利 · ${scope === "student" ? "生徒用" : scope === "teacher" ? "教員用" : "全体"}を印刷`,
+  lessonPackPilotPrivacy: "この文章はChronomapから自動送信・保存されません。学校名、児童生徒名、連絡先などの個人情報は入力しないでください。コピー・共有前に全文を確認し、送信はご自身で行ってください。",
+  lessonPackPilotFeedbackRoute: "フィードバックのみ送る",
+  lessonPackPilotConsultRoute: "地域教材パックを相談する",
+  lessonPackPilotBudget: "相談意向（相談する場合は必須）",
+  lessonPackPilotBudgetOptions: {
+    "校費・組織予算で相談したい": "校費・組織予算で相談したい",
+    "地域・内容・条件が合えば検討したい": "地域・内容・条件が合えば検討したい",
+    "まず無料試用を続けたい": "まず無料試用を続けたい",
+    "今回は検討しない": "今回は検討しない",
+  },
+  lessonPackPilotRegionTopic: "希望地域・題材（任意、200字まで）",
+  lessonPackPilotRegionHint: "学校名、児童生徒名、連絡先は書かないでください。",
+  lessonPackPilotReviewFeedback: "フィードバック文を確認する",
+  lessonPackPilotReviewConsult: "相談文を確認する",
+  lessonPackPilotReview: "相談文を確認する",
+  lessonPackPilotBackToEdit: "編集に戻る",
+  lessonPackPilotCopy: "相談文をコピー",
+  lessonPackPilotShare: "相談文を共有",
+  lessonPackPilotMail: "メール下書きを開く",
+  lessonPackPilotCopied: "相談文をコピーしました。",
+  lessonPackPilotCopyFailed: "コピーできませんでした。表示された相談文を選択して手動でコピーしてください。",
+  lessonPackPilotShareFailed: "共有をキャンセルしたか利用できません。相談文はこの画面に残っています。",
+  lessonPackPilotMailOpened: "メールアプリを開きました（送信は完了していません）。",
+  lessonPackPilotSubject: "Chronomap 地域教材パックの相談",
   datasetCatalogOpen: "地域・教材を選ぶ",
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",

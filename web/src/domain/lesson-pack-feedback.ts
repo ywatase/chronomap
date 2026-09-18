@@ -36,6 +36,8 @@ export interface LessonPackFeedbackContext {
   readonly lessonId: string;
   readonly selectedStepCount: number;
   readonly includeTeacher: boolean;
+  /** Whether the rendered preview contains a valid printable observation figure. */
+  readonly observationFigure?: boolean;
   readonly language?: "ja" | "en";
   readonly [key: string]: unknown;
 }

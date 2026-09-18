@@ -203,6 +203,23 @@ available and falls back to a selectable answer textarea. Nothing is sent to a
 server or stored in browser storage, and the in-memory answers disappear on
 reload.
 
+The same completion card also offers `地域教材パックを相談する` / `Consult
+about a regional lesson pack`. This route keeps the two feedback answers and
+requires one of four allow-listed paid-interest choices, with an optional
+200-character region/topic hint. `相談文を確認する` / `Review consultation
+text` shows the entire handoff before any copy or share action. It includes only
+the allow-listed answers, length-limited free text, public lesson metadata, and
+the latest print scope; edited titles, class labels, prompts, map positions,
+drafts, source bodies, contact details, and device data are excluded. CR/LF is
+normalized before text or URL generation.
+
+The handoff is never sent or saved by Chronomap. With no build-time contact
+configured, the completion card exposes copy and (when supported) the device
+share menu only; it does not render a placeholder email CTA. A real public
+`mailto:` recipient can be configured later, at which point the CTA opens a
+reviewable email draft and still does not send automatically. Scope changes and
+reloads discard the review text, and print CSS hides the entire completion card.
+
 ## Dataset catalog
 
 Use `地域・教材を選ぶ` in the header to open the allow-listed region and lesson

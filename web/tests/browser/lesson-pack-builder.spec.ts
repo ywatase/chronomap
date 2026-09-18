@@ -136,8 +136,6 @@ test("collects copy-only feedback after a classroom-pack print attempt", async (
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
   await page.emulateMedia({ media: "screen" });
   expect(qrRequests).toHaveLength(0);
-  await feedback.locator("[data-lesson-pack-feedback-summary]").click();
-
   await feedback.locator("[data-lesson-pack-feedback-generate]").click();
   await expect(feedback.locator("[data-lesson-pack-feedback-error]")).toContainText(/必須項目|required/i);
   await expect(feedback.locator("[data-lesson-pack-feedback-answer]")).toHaveValue("");
@@ -177,4 +175,43 @@ test("collects copy-only feedback after a classroom-pack print attempt", async (
   await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
   await expect(page.locator("[data-lesson-pack-title]")).not.toHaveValue("秘密タイトル");
   await expect(page.locator("[data-lesson-pack-feedback-host]")).toHaveCount(0);
+});
+
+test("offers a privacy-bounded paid-interest consultation handoff after printing", async ({ page }, testInfo) => {
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(request.url()));
+  await page.addInitScript(() => {
+    window.print = () => { document.body.dataset.printCalled = "true"; };
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => undefined } });
+  });
+  await page.goto("/?dataset=heijokyo&lesson=heijokyo-intro&view=builder");
+  const builder = page.locator("[data-lesson-pack-builder]");
+  await builder.locator("[data-lesson-pack-title]").fill("秘密タイトル");
+  await builder.locator("[data-lesson-pack-class-label]").fill("秘密クラス");
+  await builder.locator("[data-lesson-pack-prompt]").first().fill("秘密の問い");
+  await builder.locator("[data-lesson-pack-builder-preview]").click();
+  const pack = page.locator("[data-lesson-pack-dialog]");
+  const feedback = pack.locator("[data-lesson-pack-feedback-host]");
+  await pack.locator("[data-lesson-pack-print-student]").click();
+  await expect(feedback.locator("[data-lesson-pack-completion]")).toBeFocused();
+  await expect(feedback.locator("[data-lesson-pack-completion-facts]")).toContainText("生徒用を印刷");
+
+  await feedback.locator('input[name="utilization"][value="近いうちに使いたい"]').check();
+  await feedback.locator('input[name="nextFeature"][value="校内で共有"]').check();
+  await feedback.locator('input[name="pilot-route"][value="consult"]').check();
+  await feedback.locator('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]').check();
+  await feedback.locator("[data-lesson-pack-pilot-region]").fill("奈良の水路");
+  await feedback.locator("[data-lesson-pack-pilot-form]").locator("button[type=submit]").click();
+  const answer = feedback.locator("[data-lesson-pack-pilot-answer]");
+  await expect(answer).toBeVisible();
+  await expect(answer).toHaveValue(/地域・内容・条件が合えば検討したい/);
+  await expect(answer).toHaveValue(/印刷範囲: 生徒用/);
+  await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
+  await expect(answer).not.toHaveValue(/秘密/);
+  await expect(feedback.locator("[data-lesson-pack-pilot-mail]")).toHaveCount(0);
+  await feedback.locator("[data-lesson-pack-pilot-copy]").click();
+  await expect(feedback.locator("[data-lesson-pack-pilot-status]")).toContainText(/コピーしました|copied/i);
+  expect(requests.some((url) => url.startsWith("mailto:"))).toBeFalsy();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  await page.screenshot({ path: testInfo.outputPath("consultation-handoff.png"), fullPage: true });
 });
