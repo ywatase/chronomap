@@ -124,7 +124,7 @@ function renderPurposeHub(model: DatasetCatalogViewModel, copy: UiCopy, actions:
   hub.append(heading);
 
   const availableCards = model.cards.filter((card) => card.status === "available");
-  const lessonCount = availableCards.filter((card) => card.lesson !== null).length;
+  const lessonCount = availableCards.reduce((count, card) => count + (card.lessons ?? (card.lesson ? [card.lesson] : [])).filter((lesson) => lesson.status !== "unavailable").length, 0);
   const valueStrip = document.createElement("div");
   valueStrip.className = "dataset-catalog-purpose-strip";
   const coverage = document.createElement("p");
@@ -265,16 +265,18 @@ function renderCard(card: DatasetCatalogCardModel, copy: UiCopy, isRoot: boolean
   if (card.lesson) badges.append(badge(copy.datasetCatalogPackBeta));
   article.append(badges);
 
+  const lessonRows = card.lessons ?? (card.lesson ? [{ ...card.lesson, lessonUrl: card.lessonUrl ?? card.lesson.lessonUrl, builderUrl: card.builderUrl ?? card.lesson.builderUrl }] : []);
   if (card.status === "unavailable") {
     const unavailable = document.createElement("p");
     unavailable.className = "dataset-catalog-unavailable";
     unavailable.setAttribute("role", "status");
     unavailable.textContent = card.availabilityMessage || copy.datasetCatalogUnavailable;
     article.append(unavailable);
+    if (lessonRows.length) article.append(renderLessonRows(lessonRows, copy));
   } else {
     article.append(renderStats(card, copy));
-    article.append(renderCapabilities(copy, Boolean(card.lesson)));
-    if (card.lesson) article.append(renderLessonMeta(card, copy));
+    article.append(renderCapabilities(copy, lessonRows.some((lesson) => lesson.status !== "unavailable")));
+    if (lessonRows.length) article.append(renderLessonRows(lessonRows, copy));
     else {
       const lessonUnavailable = document.createElement("p");
       lessonUnavailable.className = "dataset-catalog-lesson-unavailable";
@@ -286,8 +288,6 @@ function renderCard(card: DatasetCatalogCardModel, copy: UiCopy, isRoot: boolean
   const actions = document.createElement("div");
   actions.className = "dataset-catalog-actions";
   if (card.status === "available") {
-    if (card.builderUrl) actions.append(link(card.builderUrl, copy.datasetCatalogCustomize, "dataset-catalog-builder", true));
-    if (card.lessonUrl) actions.append(link(card.lessonUrl, copy.datasetCatalogStartLesson, "dataset-catalog-lesson", false));
     actions.append(link(card.mapUrl, copy.datasetCatalogViewMap, "dataset-catalog-map", false));
     article.append(actions);
   }
@@ -304,12 +304,36 @@ function renderStats(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {
   return stats;
 }
 
-function renderLessonMeta(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {
-  const lesson = card.lesson!;
-  const meta = document.createElement("p");
-  meta.className = "dataset-catalog-lesson";
-  meta.append(label(copy.datasetCatalogLesson), document.createTextNode(`${lesson.title} · ${lesson.durationMinutes}${copy.language === "ja" ? "分" : " min"} · ${lesson.stepCount}${copy.language === "ja" ? "ステップ" : " steps"}`));
-  return meta;
+function renderLessonRows(lessons: readonly NonNullable<DatasetCatalogCardModel["lessons"]>[number][], copy: UiCopy): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "dataset-catalog-lessons";
+  section.setAttribute("aria-label", copy.datasetCatalogLesson);
+  for (const lesson of lessons) {
+    const row = document.createElement("article");
+    row.className = `dataset-catalog-lesson-row dataset-catalog-lesson-row-${lesson.status ?? "available"}`;
+    row.dataset.datasetCatalogLessonRow = lesson.id;
+    const heading = document.createElement("h4");
+    heading.textContent = lesson.title;
+    row.append(heading);
+    const meta = document.createElement("p");
+    meta.className = "dataset-catalog-lesson";
+    meta.append(label(copy.datasetCatalogLesson), document.createTextNode(`${lesson.durationMinutes}${copy.language === "ja" ? "分" : " min"} · ${lesson.stepCount}${copy.language === "ja" ? "ステップ" : " steps"}`));
+    row.append(meta);
+    if (lesson.status === "unavailable") {
+      const unavailable = document.createElement("p");
+      unavailable.className = "dataset-catalog-lesson-unavailable";
+      unavailable.textContent = copy.datasetCatalogLessonUnavailable;
+      row.append(unavailable);
+    } else {
+      const actions = document.createElement("div");
+      actions.className = "dataset-catalog-lesson-actions";
+      if (lesson.builderUrl) actions.append(link(lesson.builderUrl, copy.datasetCatalogCustomize, "dataset-catalog-builder", true));
+      if (lesson.lessonUrl) actions.append(link(lesson.lessonUrl, copy.datasetCatalogStartLesson, "dataset-catalog-lesson", false));
+      row.append(actions);
+    }
+    section.append(row);
+  }
+  return section;
 }
 
 function renderCapabilities(copy: UiCopy, hasLesson: boolean): HTMLElement {

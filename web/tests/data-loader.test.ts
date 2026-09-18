@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BundleLoadError, loadLessonManifest, loadPublicBundle } from "../src/domain/data-loader";
+import { BundleLoadError, loadLessonManifest, loadLessonManifests, loadPublicBundle } from "../src/domain/data-loader";
 
 const dataset = {
   id: "synthetic:dataset:sample",
@@ -141,5 +141,36 @@ describe("loadLessonManifest", () => {
     await expect(loadLessonManifest("/lessons/missing.json")).resolves.toBeNull();
     vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("offline"); }));
     await expect(loadLessonManifest("/lessons/offline.json")).resolves.toBeNull();
+  });
+});
+
+describe("loadLessonManifests", () => {
+  it("loads allow-listed lesson paths in parallel and isolates a failed lesson", async () => {
+    const payloads: Record<string, unknown> = {
+      "/lessons/good.json": {
+        id: "good", dataset: "synthetic", title: { en: "Good" }, description: { en: "Good" }, durationMinutes: 8,
+        steps: [{ id: "step", year: 0, featureId: "synthetic:version:public", prompt: { en: "Observe" } }],
+      },
+      "/lessons/bad.json": { id: "bad", dataset: "synthetic", title: { en: "Bad" }, description: { en: "Bad" }, durationMinutes: 8, steps: [] },
+    };
+    vi.stubGlobal("fetch", vi.fn(async (input: string) => {
+      const payload = payloads[input];
+      return payload ? new Response(JSON.stringify(payload), { status: 200 }) : new Response("missing", { status: 404 });
+    }));
+
+    const lessons = await loadLessonManifests([
+      { id: "good", path: "/lessons/good.json" },
+      { id: "bad", path: "/lessons/bad.json" },
+      { id: "missing", path: "/lessons/missing.json" },
+    ], {
+      dataset: { ...dataset, id: "synthetic:dataset:sample" },
+      entitiesById: { "synthetic:entity:one": entities[0] },
+      sourcesById: {}, evidenceById: {}, features: [publicFeature],
+    } as unknown as import("../src/domain/types").PublicBundle);
+
+    expect(lessons.good?.id).toBe("good");
+    expect(lessons.bad).toBeNull();
+    expect(lessons.missing).toBeNull();
+    expect(vi.mocked(fetch).mock.calls.map(([url]) => url).sort()).toEqual(["/lessons/bad.json", "/lessons/good.json", "/lessons/missing.json"]);
   });
 });

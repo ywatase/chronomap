@@ -1,4 +1,6 @@
 import type { Dataset, Entity, Evidence, FeatureVersion, Geometry, PublicBundle, Source, TemporalBoundary, TemporalExtent } from "./types";
+import { parseLesson, type Lesson } from "./lesson";
+import type { DatasetCatalogLessonEntry } from "./dataset-catalog";
 
 const resources = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"] as const;
 
@@ -47,6 +49,19 @@ export async function loadLessonManifest(url: string): Promise<unknown | null> {
   } catch {
     return null;
   }
+}
+
+/** Load only the static lesson paths supplied by the dataset catalog. */
+export async function loadLessonManifests(entries: readonly DatasetCatalogLessonEntry[], bundle: PublicBundle): Promise<Readonly<Record<string, Lesson | null>>> {
+  const loaded = await Promise.all(entries.map(async (entry): Promise<readonly [string, Lesson | null]> => {
+    try {
+      const manifest = await loadLessonManifest(entry.path);
+      return [entry.id, manifest === null ? null : parseLesson(manifest, bundle)];
+    } catch {
+      return [entry.id, null];
+    }
+  }));
+  return Object.freeze(Object.fromEntries(loaded)) as Readonly<Record<string, Lesson | null>>;
 }
 
 async function loadResource(url: string, resource: string): Promise<unknown> {

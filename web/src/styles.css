@@ -321,6 +321,14 @@ footer a { color: #155e8a; }
 .dataset-catalog-capabilities ul { display: flex; flex-wrap: wrap; gap: .2rem .8rem; margin: 0; padding-left: 1.1rem; color: #40566a; font-size: .8rem; }
 .dataset-catalog-capabilities li { margin: .15rem 0; }
 .dataset-catalog-lesson { color: #17324d; font-size: .84rem; font-weight: 700; }
+.dataset-catalog-lessons { display: grid; gap: .55rem; margin-top: .7rem; }
+.dataset-catalog-lesson-row { min-width: 0; padding: .65rem; border: 1px solid #c4d0d9; border-radius: .5rem; background: #fff; }
+.dataset-catalog-lesson-row + .dataset-catalog-lesson-row { border-top-color: #9bb3c2; }
+.dataset-catalog-lesson-row h4 { margin: 0; color: #17324d; font-size: .92rem; line-height: 1.3; overflow-wrap: anywhere; }
+.dataset-catalog-lesson-row .dataset-catalog-lesson { margin: .25rem 0 0; }
+.dataset-catalog-lesson-actions { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .55rem; }
+.dataset-catalog-lesson-actions .dataset-catalog-cta { flex: 1 1 10rem; }
+.dataset-catalog-lesson-row-unavailable { background: #f0f6f9; }
 .dataset-catalog-unavailable { margin-top: .7rem; padding: .6rem .7rem; border-left: 4px solid #b45309; background: #fff4e5; color: #713f12; font-size: .86rem; }
 .dataset-catalog-lesson-unavailable { padding: .55rem .65rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; font-size: .82rem; }
 .dataset-catalog-actions { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .8rem; }
@@ -370,6 +378,7 @@ footer a { color: #155e8a; }
   .dataset-catalog-purpose-file-label input[type="file"] { min-height: 100%; }
   .dataset-catalog-steps { grid-template-columns: minmax(0, 1fr); }
   .dataset-catalog-actions { align-items: stretch; }
+  .dataset-catalog-lesson-actions { align-items: stretch; }
   .dataset-catalog-cta { flex-basis: 10rem; }
   .year-controls { gap: .45rem; }
   .year-controls > button { flex: 1 1 8rem; }

@@ -354,7 +354,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     loading.textContent = copy.datasetCatalogLoading;
     datasetCatalogDialog.append(loading);
   };
-  const fallbackCatalogSnapshots = (): DatasetCatalogSnapshots => Object.freeze(Object.fromEntries(DATASET_CATALOG.map((entry) => [entry.slug, entry.slug === datasetSlug ? { bundle, lesson } : { bundle: null, lesson: null }]))) as DatasetCatalogSnapshots;
+  const fallbackCatalogSnapshots = (): DatasetCatalogSnapshots => Object.freeze(Object.fromEntries(DATASET_CATALOG.map((entry) => [entry.slug, entry.slug === datasetSlug ? { bundle, lesson, lessons: lesson ? { [lesson.id]: lesson } : {} } : { bundle: null, lesson: null, lessons: {} }]))) as DatasetCatalogSnapshots;
   const openDatasetCatalog = async () => {
     catalogOpen = true;
     lessonPackOpen = false;

@@ -1,11 +1,14 @@
 import { displayYearLocalized, localizedText, recordedYears } from "./labels";
 import type { Lesson } from "./lesson";
-import type { DatasetCatalogEntry } from "./dataset-catalog";
+import type { DatasetCatalogEntry, DatasetCatalogLessonEntry } from "./dataset-catalog";
 import type { PublicBundle } from "./types";
 
 export interface DatasetCatalogSnapshot {
   readonly bundle: PublicBundle | null;
-  readonly lesson: Lesson | null;
+  /** Backward-compatible featured/active lesson projection. */
+  readonly lesson?: Lesson | null;
+  /** Lesson manifests keyed by the catalog allow-list ID. */
+  readonly lessons?: Readonly<Record<string, Lesson | null>>;
 }
 
 export type DatasetCatalogSnapshots = Readonly<Record<string, DatasetCatalogSnapshot>>;
@@ -16,6 +19,13 @@ export interface DatasetCatalogLessonModel {
   readonly durationMinutes: number;
   readonly stepCount: number;
   readonly firstStepId: string;
+  readonly path?: string;
+  readonly featured?: boolean;
+  readonly status?: "available" | "unavailable";
+  readonly availabilityMessage?: string;
+  readonly lessonUrl?: string;
+  readonly builderUrl?: string;
+  readonly packUrl?: string;
 }
 
 export interface DatasetCatalogCardModel {
@@ -29,6 +39,7 @@ export interface DatasetCatalogCardModel {
   readonly entityCount: number;
   readonly sourceCount: number;
   readonly lesson: DatasetCatalogLessonModel | null;
+  readonly lessons?: readonly DatasetCatalogLessonModel[];
   readonly status: "available" | "unavailable";
   readonly availabilityMessage: string;
   readonly mapUrl: string;
@@ -60,9 +71,12 @@ export function buildDatasetCatalogViewModel(
   const cards = entries.map((entry) => {
     const snapshot = snapshots[entry.slug];
     const bundle = snapshot?.bundle ?? null;
-    const lesson = snapshot?.lesson ?? null;
     const years = bundle ? recordedYears(bundle.features) : [];
-    const lessonModel = lesson ? lessonViewModel(lesson, language) : null;
+    const lessonModels = entry.lessons.map((catalogLesson) => {
+      const lesson = lessonForEntry(snapshot, catalogLesson.id);
+      return lessonViewModel(catalogLesson, lesson, language, baseUrl, entry.slug, bundle ? datasetUrl(baseUrl, entry.slug, catalogLesson.id, lesson?.steps[0]?.id) : undefined);
+    });
+    const lessonModel = featuredLessonModel(entry, lessonModels);
     const mapUrl = datasetUrl(baseUrl, entry.slug);
     return Object.freeze({
       slug: entry.slug,
@@ -75,11 +89,12 @@ export function buildDatasetCatalogViewModel(
       entityCount: bundle ? Object.keys(bundle.entitiesById).length : 0,
       sourceCount: bundle ? Object.keys(bundle.sourcesById).length : 0,
       lesson: lessonModel,
+      lessons: Object.freeze(lessonModels),
       status: bundle ? "available" as const : "unavailable" as const,
       availabilityMessage: bundle ? "" : entry.failureMessage[language],
       mapUrl,
-      lessonUrl: lessonModel ? datasetUrl(baseUrl, entry.slug, lessonModel.id, lessonModel.firstStepId) : null,
-      builderUrl: lessonModel ? datasetUrl(baseUrl, entry.slug, lessonModel.id, undefined, "builder") : null,
+      lessonUrl: lessonModel?.lessonUrl ?? null,
+      builderUrl: lessonModel?.builderUrl ?? null,
     });
   });
   const featuredCard = cards.find((card) => card.slug === "ogurike" && card.status === "available" && card.lesson)
@@ -97,14 +112,39 @@ export function buildDatasetCatalogViewModel(
   return Object.freeze({ language, featured, cards: Object.freeze(cards) });
 }
 
-function lessonViewModel(lesson: Lesson, language: "ja" | "en"): DatasetCatalogLessonModel {
+function lessonForEntry(snapshot: DatasetCatalogSnapshot | undefined, lessonId: string): Lesson | null {
+  if (!snapshot) return null;
+  if (snapshot.lessons && Object.prototype.hasOwnProperty.call(snapshot.lessons, lessonId)) return snapshot.lessons[lessonId] ?? null;
+  return snapshot.lesson?.id === lessonId ? snapshot.lesson : null;
+}
+
+function lessonViewModel(catalogLesson: DatasetCatalogLessonEntry, lesson: Lesson | null, language: "ja" | "en", baseUrl: string, slug: string, lessonUrl: string | undefined): DatasetCatalogLessonModel {
+  const base = {
+    id: catalogLesson.id,
+    title: lesson ? localizedText(lesson.title, language) : catalogLesson.id,
+    durationMinutes: lesson?.durationMinutes ?? 0,
+    stepCount: lesson?.steps.length ?? 0,
+    firstStepId: lesson?.steps[0]?.id ?? "",
+    path: catalogLesson.path,
+    featured: catalogLesson.featured === true,
+    status: lesson ? "available" as const : "unavailable" as const,
+    availabilityMessage: "",
+  };
   return Object.freeze({
-    id: lesson.id,
-    title: localizedText(lesson.title, language),
-    durationMinutes: lesson.durationMinutes,
-    stepCount: lesson.steps.length,
-    firstStepId: lesson.steps[0]!.id,
+    ...base,
+    ...(lesson ? {
+      lessonUrl,
+      builderUrl: datasetUrl(baseUrl, slug, lesson.id, undefined, "builder"),
+      packUrl: datasetUrl(baseUrl, slug, lesson.id, undefined, "pack"),
+    } : {}),
   });
+}
+
+function featuredLessonModel(entry: DatasetCatalogEntry, lessons: readonly DatasetCatalogLessonModel[]): DatasetCatalogLessonModel | null {
+  const featuredIndex = entry.lessons.findIndex((lesson) => lesson.featured === true);
+  const featured = featuredIndex >= 0 ? lessons[featuredIndex] : undefined;
+  if (featured?.status === "available") return featured;
+  return lessons.find((lesson) => lesson.status === "available") ?? null;
 }
 
 function datasetUrl(baseUrl: string, slug: string, lessonId?: string, stepId?: string, view?: "pack" | "builder"): string {

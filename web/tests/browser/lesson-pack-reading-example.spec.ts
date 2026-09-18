@@ -2,12 +2,13 @@ import { expect, test } from "@playwright/test";
 
 const lessons = [
   { slug: "ogurike", lesson: "ogurike-intro", steps: 4 },
+  { slug: "ogurike", lesson: "ogurike-river-compare", steps: 2 },
   { slug: "tonegawa", lesson: "tonegawa-eastward", steps: 3 },
   { slug: "heijokyo", lesson: "heijokyo-intro", steps: 3 },
 ] as const;
 
 for (const lesson of lessons) {
-  test(`shows ${lesson.slug} reading examples only in the teacher page`, async ({ page }) => {
+  test(`shows ${lesson.slug} ${lesson.lesson} reading examples only in the teacher page`, async ({ page }) => {
     await page.goto(`/?dataset=${lesson.slug}&lesson=${lesson.lesson}&view=pack`);
     const dialog = page.locator("[data-lesson-pack-dialog]");
     await expect(dialog).toBeVisible();

@@ -1,6 +1,14 @@
+export interface DatasetCatalogLessonEntry {
+  readonly id: string;
+  readonly path: string;
+  readonly featured?: boolean;
+}
+
 export interface DatasetCatalogEntry {
   readonly slug: string;
   readonly bundlePath: string;
+  readonly lessons: readonly DatasetCatalogLessonEntry[];
+  /** @deprecated Use the explicit lessons allow-list. */
   readonly lessonPath: string;
   readonly label: Readonly<{ ja: string; en: string }>;
   readonly region: Readonly<{ ja: string; en: string }>;
@@ -16,6 +24,10 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
   {
     slug: "ogurike",
     bundlePath: "/data/ogurike/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "ogurike-intro", path: "/lessons/ogurike-intro.json", featured: true }),
+      Object.freeze({ id: "ogurike-river-compare", path: "/lessons/ogurike-river-compare.json", featured: false }),
+    ]),
     lessonPath: "/lessons/ogurike-intro.json",
     label: { ja: "巨椋池", en: "Ogurike" },
     region: { ja: "京都南部", en: "Southern Kyoto" },
@@ -24,6 +36,9 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
   {
     slug: "tonegawa",
     bundlePath: "/data/tonegawa/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "tonegawa-eastward", path: "/lessons/tonegawa-eastward.json", featured: true }),
+    ]),
     lessonPath: "/lessons/tonegawa-eastward.json",
     label: { ja: "利根川東遷", en: "Tone River eastward shift" },
     region: { ja: "関東東部", en: "Eastern Kanto" },
@@ -32,6 +47,9 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
   {
     slug: "heijokyo",
     bundlePath: "/data/heijokyo/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "heijokyo-intro", path: "/lessons/heijokyo-intro.json", featured: true }),
+    ]),
     lessonPath: "/lessons/heijokyo-intro.json",
     label: { ja: "平城京", en: "Heijokyo" },
     region: { ja: "奈良盆地北部", en: "Northern Nara Basin" },
@@ -47,4 +65,13 @@ export function datasetCatalogEntry(slug: string | null | undefined): DatasetCat
 
 export function datasetFromSearch(search: string): DatasetCatalogEntry {
   return datasetCatalogEntry(new URLSearchParams(search).get("dataset"));
+}
+
+export function lessonCatalogEntry(entry: DatasetCatalogEntry, lessonId: string | null | undefined): DatasetCatalogLessonEntry | null {
+  if (!lessonId) return null;
+  return entry.lessons.find((lesson) => lesson.id === lessonId) ?? null;
+}
+
+export function featuredLessonCatalogEntry(entry: DatasetCatalogEntry): DatasetCatalogLessonEntry | null {
+  return entry.lessons.find((lesson) => lesson.featured === true) ?? entry.lessons[0] ?? null;
 }

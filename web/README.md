@@ -187,10 +187,13 @@ reload.
 
 Use `地域・教材を選ぶ` in the header to open the allow-listed region and lesson
 catalog. Each card derives its recorded years and public feature/entity/source
-counts from the bundle, and its lesson duration/step count from the validated
-manifest. Available cards link to a free map view and, when published, a guided
-lesson plus the classroom editor; a failed card shows the failure without hiding the other dataset. The
-catalog itself can be opened directly and restored with `?view=catalog`, for
+counts from the bundle, and renders one purpose-specific row per registered
+lesson with its title, duration, step count, editor, and preview/start links.
+Ogurike currently offers the featured introduction and a two-step river-change
+comparison; the card keeps one map-only route. Available cards link to a free
+map view and, when published, a guided lesson plus the classroom editor; a
+failed lesson row is isolated without hiding the bundle, map, or other lessons.
+The catalog itself can be opened directly and restored with `?view=catalog`, for
 example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
 pilot functions from future teacher-workflow candidates and does not assert a
 price, contract, or billing state. The Tone River and Heijokyo geometries are

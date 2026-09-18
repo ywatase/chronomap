@@ -1,10 +1,11 @@
 import "./styles.css";
-import { loadLessonManifest, loadPublicBundle } from "./domain/data-loader";
-import { DATASET_CATALOG, datasetFromSearch, type DatasetCatalogEntry } from "./domain/dataset-catalog";
-import { parseLesson } from "./domain/lesson";
+import { loadLessonManifests, loadPublicBundle } from "./domain/data-loader";
+import { DATASET_CATALOG, datasetFromSearch, featuredLessonCatalogEntry, lessonCatalogEntry, type DatasetCatalogEntry } from "./domain/dataset-catalog";
+import { selectAllowedLesson } from "./domain/lesson-selection";
 import { buildLessonPackModel } from "./domain/lesson-pack-model";
 import { LESSON_PACK_DRAFT_MAX_BYTES, parseLessonPackDraft, parseLessonPackDraftIdentity } from "./domain/lesson-pack-draft";
 import type { DatasetCatalogSnapshots } from "./domain/dataset-catalog-view-model";
+import type { Lesson } from "./domain/lesson";
 import type { PublicBundle } from "./domain/types";
 import { MapAdapter } from "./map/map-adapter";
 import { mountUiShell, type UiShellOptions } from "./ui/ui-shell";
@@ -58,36 +59,39 @@ async function loadDataset(retrying = false): Promise<void> {
   const currentRequest = ++requestId;
   const entry = datasetFromSearch(typeof window === "undefined" ? "" : window.location.search);
   activeDataset = entry;
-  canonicalizeDatasetUrl(entry.slug);
   controller?.destroy();
   controller = null;
   renderLoading(retrying);
   const loaded = await loadDatasetSnapshot(entry);
   if (currentRequest !== requestId) return;
   if (!loaded) { renderFailure(); return; }
-  mountLoadedDataset(entry, loaded.bundle, loaded.lesson, currentRequest);
+  const requestedLessonId = parseRequestedLessonId();
+  const defaultLessonId = requestedLessonId ?? featuredLessonCatalogEntry(entry)?.id;
+  const lesson = selectAllowedLesson(entry, loaded.lessons, defaultLessonId);
+  canonicalizeDatasetUrl(entry.slug, requestedLessonId ? Boolean(lesson) : false, requestedLessonId);
+  mountLoadedDataset(entry, loaded.bundle, loaded.lessons, lesson, currentRequest);
 }
 
-interface LoadedDataset {
+export interface LoadedDataset {
   readonly bundle: PublicBundle;
-  readonly lesson: ReturnType<typeof parseLesson>;
+  readonly lessons: Readonly<Record<string, Lesson | null>>;
 }
 
-async function loadDatasetSnapshot(entry: DatasetCatalogEntry): Promise<LoadedDataset | null> {
+export async function loadDatasetSnapshot(entry: DatasetCatalogEntry): Promise<LoadedDataset | null> {
   try {
     const bundle = await loadPublicBundle(entry.bundlePath);
-    const lessonManifest = await loadLessonManifest(entry.lessonPath);
-    return { bundle, lesson: lessonManifest ? parseLesson(lessonManifest, bundle) : null };
+    const lessons = await loadLessonManifests(entry.lessons, bundle);
+    return { bundle, lessons };
   } catch {
     return null;
   }
 }
 
-function mountLoadedDataset(entry: DatasetCatalogEntry, bundle: PublicBundle, lesson: ReturnType<typeof parseLesson>, currentRequest: number, options: UiShellOptions = {}): void {
+function mountLoadedDataset(entry: DatasetCatalogEntry, bundle: PublicBundle, lessons: Readonly<Record<string, Lesson | null>>, lesson: Lesson | null, currentRequest: number, options: UiShellOptions = {}): void {
   if (currentRequest !== requestId) return;
   activeDataset = entry;
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
-  const catalogLoader = () => catalogPromise ??= loadCatalogSnapshots(bundle, lesson, entry.slug);
+  const catalogLoader = () => catalogPromise ??= loadCatalogSnapshots(bundle, lessons, entry.slug);
   const nextController = mountUiShell(appRoot, bundle, () => undefined, lesson, catalogLoader, { onResumeDraft: resumeDraft, ...options });
   controller = nextController;
   try {
@@ -106,49 +110,66 @@ async function resumeDraft(file: File): Promise<boolean> {
   if (currentResumeRequest !== resumeRequestId) return false;
   const identity = parseLessonPackDraftIdentity(serialized);
   if (!identity) return false;
-  const entry = DATASET_CATALOG.find((candidate) => candidate.slug === identity.dataset && lessonIdFromPath(candidate.lessonPath) === identity.lesson);
+  const entry = DATASET_CATALOG.find((candidate) => candidate.slug === identity.dataset && lessonCatalogEntry(candidate, identity.lesson) !== null);
   if (!entry) return false;
   const loaded = await loadDatasetSnapshot(entry);
   if (!loaded) return false;
-  if (currentResumeRequest !== resumeRequestId || !loaded.lesson) return false;
-  const model = buildLessonPackModel(loaded.lesson, loaded.bundle, typeof window === "undefined" ? "/" : window.location.href);
+  const lesson = selectAllowedLesson(entry, loaded.lessons, identity.lesson);
+  if (currentResumeRequest !== resumeRequestId || !lesson) return false;
+  const model = buildLessonPackModel(lesson, loaded.bundle, typeof window === "undefined" ? "/" : window.location.href);
   if (!model) return false;
   const customization = parseLessonPackDraft(model, serialized);
   if (!customization || currentResumeRequest !== resumeRequestId) return false;
   const currentRequest = ++requestId;
   controller?.destroy();
   controller = null;
-  mountLoadedDataset(entry, loaded.bundle, loaded.lesson, currentRequest, { initialBuilderOpen: true, initialBuilderInput: customization });
+  mountLoadedDataset(entry, loaded.bundle, loaded.lessons, lesson, currentRequest, { initialBuilderOpen: true, initialBuilderInput: customization });
   return true;
 }
 
-function lessonIdFromPath(path: string): string | null {
-  const file = path.split("/").at(-1) ?? "";
-  return file.endsWith(".json") ? file.slice(0, -5) : null;
+function parseRequestedLessonId(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  return new URLSearchParams(window.location.search).get("lesson")?.trim() || undefined;
 }
 
-async function loadCatalogSnapshots(activeBundle: PublicBundle, activeLesson: ReturnType<typeof parseLesson>, activeSlug: string): Promise<DatasetCatalogSnapshots> {
+async function loadCatalogSnapshots(activeBundle: PublicBundle, activeLessons: Readonly<Record<string, Lesson | null>>, activeSlug: string): Promise<DatasetCatalogSnapshots> {
   const entries = await Promise.all(DATASET_CATALOG.map(async (entry): Promise<readonly [string, DatasetCatalogSnapshots[string]]> => {
-    if (entry.slug === activeSlug) return [entry.slug, { bundle: activeBundle, lesson: activeLesson }];
+    if (entry.slug === activeSlug) return [entry.slug, { bundle: activeBundle, lessons: activeLessons, lesson: featuredLesson(entry, activeLessons) }];
     try {
       const bundle = await loadPublicBundle(entry.bundlePath);
-      const manifest = await loadLessonManifest(entry.lessonPath);
-      return [entry.slug, { bundle, lesson: manifest ? parseLesson(manifest, bundle) : null }];
+      const lessons = await loadLessonManifests(entry.lessons, bundle);
+      return [entry.slug, { bundle, lessons, lesson: featuredLesson(entry, lessons) }];
     } catch {
-      return [entry.slug, { bundle: null, lesson: null }];
+      return [entry.slug, { bundle: null, lessons: {}, lesson: null }];
     }
   }));
   return Object.freeze(Object.fromEntries(entries)) as DatasetCatalogSnapshots;
 }
 
-function canonicalizeDatasetUrl(slug: string): void {
+function featuredLesson(entry: DatasetCatalogEntry, lessons: Readonly<Record<string, Lesson | null>>): Lesson | null {
+  const featured = featuredLessonCatalogEntry(entry);
+  return featured ? lessons[featured.id] ?? null : null;
+}
+
+function canonicalizeDatasetUrl(slug: string, hasValidLesson: boolean, requestedLessonId: string | undefined): void {
   if (typeof window === "undefined" || !window.history?.replaceState) return;
   const params = new URLSearchParams(window.location.search);
   const requested = params.get("dataset");
-  if (!requested || requested === slug) return;
-  params.set("dataset", slug);
+  let changed = false;
+  if (requested && requested !== slug) { params.set("dataset", slug); changed = true; }
+  if (requestedLessonId && !hasValidLesson) {
+    params.delete("lesson");
+    params.delete("step");
+    if (params.get("view") === "builder" || params.get("view") === "pack") params.delete("view");
+    changed = true;
+  } else if (!hasValidLesson && (params.get("view") === "builder" || params.get("view") === "pack")) {
+    params.delete("view");
+    params.delete("step");
+    changed = true;
+  }
+  if (!changed) return;
   const query = params.toString();
-  window.history.replaceState(null, "", `${window.location.pathname}?${query}${window.location.hash}`);
+  window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
 }
 
 void loadDataset();

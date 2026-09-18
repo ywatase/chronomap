@@ -1,0 +1,24 @@
+{
+  "id": "ogurike-river-compare",
+  "dataset": "ogurike",
+  "title": { "ja": "宇治川の流路変化を比べる", "en": "Compare Ujigawa channel changes" },
+  "description": { "ja": "1590年と1596年の概略流路を2ステップ・約8分で比べ、見える差を言葉にします。", "en": "Compare the approximate channel snapshots from 1590 and 1596 in two steps over about 8 minutes, then describe the visible differences." },
+  "durationMinutes": 8,
+  "steps": [
+    {
+      "id": "river-1590",
+      "year": 1590,
+      "featureId": "ogurike:version:ujigawa-1590",
+      "prompt": { "ja": "1590年の概略流路は、巨椋池のどちら側からどちらへ向かって見えますか。", "en": "From which side of Ogurike toward which direction does the approximate 1590 channel appear to run?" },
+      "teacherNote": { "ja": "まず線の向きと巨椋池との位置関係を言葉にします。少数の折れ点による概略線で、精密な河道中心線や流れの因果を断定しません。", "en": "First describe the line's direction and position relative to Ogurike. It is an approximate line with a few bends, not a precise channel centerline or proof of causation." }
+    },
+    {
+      "id": "river-1596",
+      "year": 1596,
+      "featureId": "ogurike:version:ujigawa-1596",
+      "comparisonEntityId": "ogurike:entity:ujigawa",
+      "prompt": { "ja": "1590年と1596年の概略流路を比べ、線の位置や折れ方の違いを説明できますか。", "en": "Compare the approximate 1590 and 1596 channels. How do their positions or bends appear different?" },
+      "teacherNote": { "ja": "見える位置と折れ方の差を比較カードで確認します。どちらも概略復元で、6年間の全過程や変化の原因を示すものではありません。", "en": "Use the comparison card to check visible differences in position and bends. Both are approximate reconstructions and do not show every stage or explain the cause of change." }
+    }
+  ]
+}

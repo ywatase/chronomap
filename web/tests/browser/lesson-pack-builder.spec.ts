@@ -20,7 +20,7 @@ for (const dataset of lessons) {
       await page.goto(`/?dataset=${dataset.slug}`);
       await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
       await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
-      await page.locator(`[data-dataset-catalog-card="${dataset.slug}"] [data-dataset-catalog-builder]`).click();
+      await page.locator(`[data-dataset-catalog-card="${dataset.slug}"] [data-dataset-catalog-lesson-row="${dataset.lesson}"] [data-dataset-catalog-builder]`).click();
       await expect.poll(() => {
         const url = new URL(page.url());
         return [url.searchParams.get("dataset"), url.searchParams.get("lesson"), url.searchParams.get("view")].join("|");

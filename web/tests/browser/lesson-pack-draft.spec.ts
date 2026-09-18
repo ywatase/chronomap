@@ -2,12 +2,13 @@ import { expect, test } from "@playwright/test";
 
 const lessons = [
   { slug: "ogurike", lesson: "ogurike-intro" },
+  { slug: "ogurike", lesson: "ogurike-river-compare" },
   { slug: "tonegawa", lesson: "tonegawa-eastward" },
   { slug: "heijokyo", lesson: "heijokyo-intro" },
 ] as const;
 
 for (const dataset of lessons) {
-  test(`round-trips a portable ${dataset.slug} draft`, async ({ page }, testInfo) => {
+  test(`round-trips a portable ${dataset.slug} ${dataset.lesson} draft`, async ({ page }, testInfo) => {
     test.setTimeout(45_000);
     await page.addInitScript(() => {
       window.print = () => { document.body.dataset.printCalled = "true"; };
