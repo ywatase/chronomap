@@ -132,6 +132,17 @@ primary action for lesson cards in the catalog and can be opened directly with
 `/?dataset=tonegawa&lesson=tonegawa-eastward&view=builder`.
 Unsaved edits stay in memory and are discarded when the page reloads.
 
+The builder is outcome-first: its summary shows what the current selection can
+produce before the editing fields, including the selected-step count, estimated
+duration, student worksheet, teacher reference, sources/rights, QR start link,
+A4/PDF, and recipient-specific print outputs. Use `この内容で完成見本を見る`
+to take the current valid selection straight to the existing preview. Use
+`内容を調整する` only when you need to edit the title, class label, or prompts.
+The summary updates as fields change; on desktop it stays visible beside the
+editor, while mobile keeps the primary action in a safe-area-aware bottom bar.
+When no steps are selected, the builder explains why preview is unavailable and
+focuses the step selector so the same action can be recovered after correction.
+
 Use `下書きをファイル保存` when you need to continue later, then use
 `下書きファイルを開く` after reopening the same dataset and lesson. The browser
 downloads a UTF-8 JSON file named
