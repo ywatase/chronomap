@@ -125,6 +125,16 @@ metadata. Restricted sources remain citation-only; source body text, images, and
 inscriptions are not reproduced. The browser print dialog can save the pack as
 an A4 portrait PDF without a server or PDF library.
 
+After a print/PDF attempt, the preview reveals a collapsed one-minute feedback
+form. It asks whether the pack is usable in class, which next teacher workflow
+would help most, and optionally accepts a 500-character comment. `回答文を作成`
+generates copy-only text containing the dataset slug, lesson ID, selected-step
+count, and teacher-material flag; it never includes the edited title, class
+label, prompts, or map position. `回答文をコピー` uses the Clipboard API when
+available and falls back to a selectable answer textarea. Nothing is sent to a
+server or stored in browser storage, and the in-memory answers disappear on
+reload.
+
 ## Dataset catalog
 
 Use `地域・教材を選ぶ` in the header to open the allow-listed region and lesson

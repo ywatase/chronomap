@@ -8,10 +8,19 @@ const lessons = [
 
 for (const dataset of lessons) {
   test(`customizes ${dataset.slug} into a classroom pack`, async ({ page }, testInfo) => {
+    test.setTimeout(45_000);
     await page.addInitScript(() => {
       window.print = () => { document.body.dataset.printCalled = "true"; };
     });
-    await page.goto(`/?dataset=${dataset.slug}&lesson=${dataset.lesson}&view=builder`);
+    if (dataset.slug === "ogurike") {
+      await page.goto(`/?dataset=${dataset.slug}`);
+      await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
+      await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+      await page.locator(`[data-dataset-catalog-card="${dataset.slug}"] [data-dataset-catalog-builder]`).click();
+      await expect(page).toHaveURL(/dataset=ogurike&lesson=ogurike-intro&view=builder/);
+    } else {
+      await page.goto(`/?dataset=${dataset.slug}&lesson=${dataset.lesson}&view=builder`);
+    }
     await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
 
     const builder = page.locator("[data-lesson-pack-builder]");
@@ -51,5 +60,77 @@ for (const dataset of lessons) {
     await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
     await expect(page.locator("[data-lesson-pack-title]")).not.toHaveValue(`${dataset.slug} 授業用教材`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("[data-lesson-pack-builder]")).toBeHidden();
+    await expect(page.locator("[data-lesson-workshop-open]")).toBeFocused();
+    await expect(page).not.toHaveURL(/view=builder/);
   });
 }
+
+test("collects copy-only feedback after a classroom-pack print attempt", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.print = () => { document.body.dataset.printCalled = "true"; };
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => undefined },
+    });
+  });
+  await page.goto("/?dataset=heijokyo&lesson=heijokyo-intro&view=builder");
+  await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
+
+  const builder = page.locator("[data-lesson-pack-builder]");
+  await expect(builder).toBeVisible();
+  await builder.locator("[data-lesson-pack-title]").fill("秘密タイトル");
+  await builder.locator("[data-lesson-pack-class-label]").fill("秘密クラス");
+  await builder.locator("[data-lesson-pack-prompt]").first().fill("秘密の問い");
+  await builder.locator("[data-lesson-pack-include-teacher]").uncheck();
+  await builder.locator("[data-lesson-pack-builder-preview]").click();
+
+  const pack = page.locator("[data-lesson-pack-dialog]");
+  const feedback = pack.locator("[data-lesson-pack-feedback-host]");
+  await expect(feedback).toBeHidden();
+  await pack.locator("[data-lesson-pack-print]").click();
+  await expect(page.locator("body")).toHaveAttribute("data-print-called", "true");
+  await expect(feedback).toBeVisible();
+  await feedback.locator("[data-lesson-pack-feedback-summary]").click();
+
+  await feedback.locator("[data-lesson-pack-feedback-generate]").click();
+  await expect(feedback.locator("[data-lesson-pack-feedback-error]")).toContainText(/必須項目|required/i);
+  await expect(feedback.locator("[data-lesson-pack-feedback-answer]")).toHaveValue("");
+
+  await feedback.locator('input[name="utilization"][value="近いうちに使いたい"]').check();
+  await feedback.locator('input[name="nextFeature"][value="校内で共有"]').check();
+  await feedback.locator("[data-lesson-pack-feedback-comment]").fill("a".repeat(600));
+  await feedback.locator("[data-lesson-pack-feedback-generate]").click();
+  await expect(feedback.locator("[data-lesson-pack-feedback-comment]")).toHaveValue("a".repeat(500));
+
+  const answer = feedback.locator("[data-lesson-pack-feedback-answer]");
+  await expect(answer).toHaveValue(/heijokyo/);
+  await expect(answer).toHaveValue(/heijokyo-intro|intro/);
+  await expect(answer).toHaveValue(/選択ステップ数: \d+|Selected step count: \d+/);
+  await expect(answer).toHaveValue(/教員用資料: なし|Teacher material: no/);
+  const answerText = await answer.inputValue();
+  expect(answerText).not.toContain("秘密タイトル");
+  expect(answerText).not.toContain("秘密クラス");
+  expect(answerText).not.toContain("秘密の問い");
+
+  await feedback.locator("[data-lesson-pack-feedback-copy]").click();
+  await expect(feedback.locator("[data-lesson-pack-feedback-status]")).toContainText(/コピーしました|copied/i);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+
+  const savedAnswer = await answer.inputValue();
+  await pack.locator("[data-lesson-pack-back]").click();
+  await expect(builder).toBeVisible();
+  await builder.locator("[data-lesson-pack-builder-preview]").click();
+  const reopenedPack = page.locator("[data-lesson-pack-dialog]");
+  const reopenedFeedback = reopenedPack.locator("[data-lesson-pack-feedback-host]");
+  await expect(reopenedFeedback.locator("[data-lesson-pack-feedback-answer]")).toHaveValue(savedAnswer);
+  await expect(reopenedFeedback.locator('input[name="utilization"][value="近いうちに使いたい"]')).toBeChecked();
+  await expect(reopenedFeedback.locator('input[name="nextFeature"][value="校内で共有"]')).toBeChecked();
+  await expect(reopenedFeedback.locator("[data-lesson-pack-feedback-comment]")).toHaveValue("a".repeat(500));
+
+  await page.reload();
+  await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
+  await expect(page.locator("[data-lesson-pack-title]")).not.toHaveValue("秘密タイトル");
+  await expect(page.locator("[data-lesson-pack-feedback-host]")).toHaveCount(0);
+});

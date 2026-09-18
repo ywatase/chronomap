@@ -17,6 +17,7 @@ describe("lesson pack feedback form", () => {
     renderLessonPackFeedback(host, context, uiCopy("ja"));
     expect(host.hidden).toBe(true);
     expect(host.querySelector("[data-lesson-pack-feedback-details]")).toBeTruthy();
+    expect(host.querySelector("[data-lesson-pack-feedback-summary]")?.textContent).toContain("印刷画面を試していただきありがとうございます");
     expect(host.textContent).toContain("回答は自動送信・保存されません。コピーして、案内された連絡先へお送りください。再読み込みすると消えます。");
     expect(host.querySelectorAll<HTMLInputElement>("input[type=radio][required]")).toHaveLength(7);
     expect(host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-answer]")?.readOnly).toBe(true);
