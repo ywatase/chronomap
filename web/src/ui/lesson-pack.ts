@@ -144,6 +144,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   if (model.includeTeacher !== false) {
     const teacher = page(copy.lessonPackTeacher);
     teacher.dataset.lessonPackTeacher = "";
+    if (model.teachingGuide) teacher.append(renderTeachingGuide(model.teachingGuide, copy));
     teacher.append(detail(model.datasetDescription));
     for (const [index, step] of model.steps.entries()) teacher.append(renderTeacherStep(step, index + 1, copy));
     sheet.append(teacher);
@@ -160,6 +161,42 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   sources.append(packNotice(copy.lessonPackCitationOnly));
   sheet.append(sources);
   container.append(sheet);
+}
+
+function renderTeachingGuide(guideModel: NonNullable<LessonPackModel["teachingGuide"]>, copy: UiCopy): HTMLElement {
+  const guide = document.createElement("section");
+  guide.className = "lesson-pack-teaching-guide";
+  guide.dataset.lessonPackTeachingGuide = "";
+  const heading = document.createElement("h3");
+  heading.textContent = copy.language === "ja" ? "授業設計メモ" : "Teaching guide";
+  const fit = document.createElement("p");
+  fit.dataset.lessonPackTeachingGuideFit = "";
+  fit.append(label(copy.language === "ja" ? "利用の目安" : "Teaching fit"), document.createTextNode(guideModel.recommendedFor));
+  const goal = document.createElement("p");
+  goal.dataset.lessonPackTeachingGuideGoal = "";
+  goal.append(label(copy.language === "ja" ? "学習のねらい" : "Learning goal"), document.createTextNode(guideModel.learningGoal));
+  const preparation = document.createElement("div");
+  preparation.dataset.lessonPackTeachingGuidePreparation = "";
+  const preparationHeading = document.createElement("h4");
+  preparationHeading.textContent = copy.language === "ja" ? "準備" : "Preparation";
+  const list = document.createElement("ul");
+  for (const item of guideModel.preparation) {
+    const line = document.createElement("li");
+    line.textContent = item;
+    list.append(line);
+  }
+  preparation.append(preparationHeading, list);
+  const assessment = document.createElement("p");
+  assessment.dataset.lessonPackTeachingGuideAssessment = "";
+  assessment.append(label(copy.language === "ja" ? "見取りの例" : "Assessment example"), document.createTextNode(guideModel.assessment));
+  guide.append(heading, fit, goal, preparation, assessment);
+  if (guideModel.usageNote) {
+    const note = document.createElement("p");
+    note.dataset.lessonPackTeachingGuideNote = "";
+    note.append(label(copy.language === "ja" ? "調整メモ" : "Adaptation note"), document.createTextNode(guideModel.usageNote));
+    guide.append(note);
+  }
+  return guide;
 }
 
 function renderStudentStep(step: LessonPackStep, number: number, copy: UiCopy, access: LessonPackAccessUrlModel | undefined): HTMLElement {
@@ -339,6 +376,12 @@ function detail(text: string): HTMLParagraphElement {
   const paragraph = document.createElement("p");
   paragraph.textContent = text;
   return paragraph;
+}
+
+function label(text: string): HTMLElement {
+  const element = document.createElement("strong");
+  element.textContent = `${text}: `;
+  return element;
 }
 
 function button(label: string, className: string): HTMLButtonElement {

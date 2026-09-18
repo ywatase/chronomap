@@ -84,6 +84,31 @@ describe("lesson pack preview", () => {
     expect(root.textContent).not.toContain("形状の向きを確認します。");
   });
 
+  it("keeps the teaching design memo on teacher/full output and out of student output", () => {
+    const base = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const modelWithGuide = {
+      ...base,
+      teachingGuide: {
+        recommendedFor: "地域史の導入に",
+        learningGoal: "変化を説明する。",
+        preparation: ["ワークシート", "筆記具"],
+        assessment: "根拠を示せるか。",
+        usageNote: "問いを調整する。",
+      },
+    };
+    const root = document.createElement("div");
+    renderLessonPack(root, modelWithGuide, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.querySelectorAll("[data-lesson-pack-teaching-guide]")).toHaveLength(1);
+    expect(root.querySelector("[data-lesson-pack-teacher] [data-lesson-pack-teaching-guide]")?.textContent).toContain("授業設計メモ");
+    expect(root.querySelector("[data-lesson-pack-teacher]")?.textContent).toContain("見取りの例: 根拠を示せるか。");
+    expect(root.querySelector("[data-lesson-pack-student]")?.textContent).not.toContain("授業設計メモ");
+
+    const studentOnly = document.createElement("div");
+    renderLessonPack(studentOnly, { ...modelWithGuide, includeTeacher: false }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(studentOnly.querySelector("[data-lesson-pack-teaching-guide]")).toBeNull();
+    expect(studentOnly.textContent).not.toContain("授業設計メモ");
+  });
+
   it("keeps the observation figure synchronized with selected steps and fails closed without geometry", () => {
     const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
     const root = document.createElement("div");

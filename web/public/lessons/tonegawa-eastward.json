@@ -4,6 +4,7 @@
   "title": { "ja": "利根川東遷を概略地図でたどる", "en": "Trace the Tone River eastward shift" },
   "description": { "ja": "1590年・1594年・1654年の根拠付きスナップショットを約10分で観察します。線形は概略復元です。", "en": "Observe evidence-linked snapshots from 1590, 1594, and 1654 in about 10 minutes. Lines are approximate reconstructions." },
   "durationMinutes": 10,
+  "teachingGuide": { "recommendedFor": { "ja": "河川改変と地域の変化を考える導入に", "en": "An introduction to considering river modification and regional change" }, "learningGoal": { "ja": "流路の概略変化を時系列で説明する。", "en": "Explain approximate channel change in chronological order." }, "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }], "assessment": { "ja": "図の時期と位置を結び付けて説明できるか。", "en": "Can learners connect dates and locations in an explanation?" }, "usageNote": { "ja": "学年や地域の資料に合わせて問いを調整します。", "en": "Adapt the prompt to the grade and local context." } },
   "steps": [
     {
       "id": "river-1590",

@@ -24,6 +24,8 @@ for (const lesson of lessons) {
     const student = pack.locator("[data-lesson-pack-student]");
     const teacher = pack.locator("[data-lesson-pack-teacher]");
     const sources = pack.locator("[data-lesson-pack-sources]");
+    const teachingGuide = pack.locator("[data-lesson-pack-teaching-guide]");
+    await expect(teachingGuide).toHaveCount(1);
     const figurePage = pack.locator("[data-lesson-pack-figure-page]");
     await expect(figurePage).toHaveCount(1);
     for (const scope of ["student", "teacher", "full"] as const) {
@@ -38,6 +40,7 @@ for (const lesson of lessons) {
         await expect(student).toBeVisible();
         await expect(teacher).toBeHidden();
         await expect(sources).toBeHidden();
+        await expect(teachingGuide).toBeHidden();
         await expect(student.locator("[data-lesson-pack-student-rights]")).toBeVisible();
         await expect(student).not.toContainText(/読み取り例|Reading example/);
         await page.screenshot({ path: testInfo.outputPath(`${lesson.slug}-student-print.png`), fullPage: true });
@@ -45,6 +48,7 @@ for (const lesson of lessons) {
         await expect(student).toBeHidden();
         await expect(teacher).toBeVisible();
         await expect(sources).toBeVisible();
+        await expect(teachingGuide).toBeVisible();
         await expect(teacher.locator("[data-lesson-pack-reading-example]").first()).toBeVisible();
         await expect(student.locator("[data-lesson-pack-qr]")).toBeHidden();
         await page.screenshot({ path: testInfo.outputPath(`${lesson.slug}-teacher-print.png`), fullPage: true });
@@ -52,6 +56,7 @@ for (const lesson of lessons) {
         await expect(student).toBeVisible();
         await expect(teacher).toBeVisible();
         await expect(sources).toBeVisible();
+        await expect(teachingGuide).toBeVisible();
       }
       await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
       await expect.poll(() => page.evaluate(() => [document.body.dataset.printDocument, document.body.dataset.lessonPackPrintScope])).toEqual([undefined, undefined]);

@@ -4,6 +4,7 @@
   "title": { "ja": "平城京の都市軸をたどる", "en": "Trace Heijokyo's planned axis" },
   "description": { "ja": "平城京・平城宮・朱雀大路の位置関係を、710年の3ステップで約10分かけて観察します。形状は概略復元です。", "en": "Observe the relationship between Heijokyo, the palace, and Suzaku Avenue in three steps from 710, in about 10 minutes. Shapes are approximate reconstructions." },
   "durationMinutes": 10,
+  "teachingGuide": { "recommendedFor": { "ja": "中学校の歴史学習で、都市の位置関係を読む導入に", "en": "A middle-school history introduction to reading urban relationships" }, "learningGoal": { "ja": "面・点・線の概略表現から、都市計画の軸を説明する。", "en": "Explain a planned urban axis from approximate area, point, and line representations." }, "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }], "assessment": { "ja": "根拠となる図の位置関係を一文で説明できるか。", "en": "Can learners explain a positional relationship with figure-based evidence?" }, "usageNote": { "ja": "学年や地域の資料に合わせて問いを調整します。", "en": "Adapt the prompt to the grade and local context." } },
   "steps": [
     {
       "id": "capital-710",

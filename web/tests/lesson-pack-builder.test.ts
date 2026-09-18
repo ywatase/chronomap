@@ -34,6 +34,13 @@ const model: LessonPackModel = {
   datasetTitle: "デモ",
   datasetDescription: "デモの説明",
   datasetRights: "open-license",
+  teachingGuide: {
+    recommendedFor: "地域史の導入に",
+    learningGoal: "変化を説明する。",
+    preparation: ["ワークシート", "筆記具"],
+    assessment: "根拠を示せるか。",
+    usageNote: "問いを調整する。",
+  },
   steps: [step("first", 1590, "問い1"), step("second", 1596, "問い2")],
   sources: [],
   startUrl: "https://example.test/?step=first",
@@ -131,6 +138,17 @@ describe("lesson pack builder", () => {
         .toContain(language === "ja" ? "完成見本" : "finished example");
       expect(root.querySelector("[data-lesson-pack-summary-status]")?.textContent).not.toContain("問い1");
     }
+  });
+
+  it("keeps teaching-fit guidance compact and expandable in the outcome summary", () => {
+    const root = document.createElement("div");
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn() });
+    const guide = root.querySelector<HTMLElement>("[data-lesson-pack-builder-teaching-guide]");
+    expect(guide?.textContent).toContain("利用の目安: 地域史の導入に");
+    expect(guide?.textContent).toContain("学習のねらい: 変化を説明する。");
+    expect(guide?.querySelector("details")?.open).toBe(false);
+    expect(guide?.textContent).toContain("授業での使い方を見る");
+    expect(guide?.textContent).toContain("見取りの例: 根拠を示せるか。");
   });
 
   it("renders editable labels, steps, prompts, and teacher visibility, then previews the draft", () => {

@@ -4,6 +4,7 @@
   "title": { "ja": "巨椋池と宇治川の変化をたどる", "en": "Trace change around Ogurike and the Ujigawa" },
   "description": { "ja": "4つの時点を約15分で観察し、地図・根拠・不確実性を確認します。", "en": "Observe four snapshots in about 15 minutes, then check the evidence and uncertainty." },
   "durationMinutes": 15,
+  "teachingGuide": { "recommendedFor": { "ja": "中学校の地域史・水辺の変化を扱う導入に", "en": "An introduction to local history and changing waterscapes" }, "learningGoal": { "ja": "時期ごとの水辺の位置の違いを読み取る。", "en": "Read differences in waterside locations across periods." }, "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }], "assessment": { "ja": "変化を図の根拠とともに説明できるか。", "en": "Can learners explain change with evidence from the figure?" }, "usageNote": { "ja": "学年や地域の資料に合わせて問いを調整します。", "en": "Adapt the prompt to the grade and local context." } },
   "steps": [
     {
       "id": "uji-1590",

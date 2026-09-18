@@ -25,7 +25,7 @@ const model: DatasetCatalogViewModel = {
       featureCount: 4,
       entityCount: 3,
       sourceCount: 2,
-      lesson: { id: "ogurike-intro", title: "巨椋池をたどる", durationMinutes: 15, stepCount: 4, firstStepId: "uji-1590" },
+      lesson: { id: "ogurike-intro", title: "巨椋池をたどる", durationMinutes: 15, stepCount: 4, recommendedFor: "地域史の導入に", learningGoal: "変化を説明する。", firstStepId: "uji-1590" },
       status: "available",
       availabilityMessage: "",
       mapUrl: "/?dataset=ogurike",
@@ -86,6 +86,8 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("無料デモ");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("教材パックはβ版無料");
+    expect(root.querySelector('[data-dataset-catalog-lesson-row="ogurike-intro"] [data-dataset-catalog-lesson-guide]')?.textContent).toContain("利用の目安: 地域史の導入に");
+    expect(root.querySelector('[data-dataset-catalog-lesson-row="ogurike-intro"] [data-dataset-catalog-lesson-goal]')?.textContent).toContain("学習のねらい: 変化を説明する。");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-lesson]")?.href).toContain("lesson=ogurike-intro");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-builder]")?.href).toContain("view=builder");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("授業用に編集");

@@ -56,6 +56,12 @@ const lesson: Lesson = {
   steps: [
     { id: "first", year: 1590, featureId: "first", prompt: { ja: "問い", en: "Question" } },
   ],
+  teachingGuide: {
+    recommendedFor: { ja: "地域史の導入に", en: "For a local-history introduction" },
+    learningGoal: { ja: "変化を説明する。", en: "Explain change." },
+    preparation: [{ ja: "ワークシート", en: "Worksheet" }],
+    assessment: { ja: "根拠を示せるか。", en: "Can learners show evidence?" },
+  },
 };
 const comparisonLesson: Lesson = {
   ...lesson,
@@ -82,6 +88,7 @@ describe("dataset catalog view model", () => {
     expect(ogurike.entityCount).toBe(2);
     expect(ogurike.sourceCount).toBe(1);
     expect(ogurike.lesson).toMatchObject({ id: "ogurike-intro", durationMinutes: 15, stepCount: 1, firstStepId: "first", title: "巨椋池をたどる" });
+    expect(ogurike.lesson).toMatchObject({ recommendedFor: "地域史の導入に", learningGoal: "変化を説明する。" });
     expect(ogurike.lessons!.map((entry) => entry.id)).toEqual(["ogurike-intro", "ogurike-river-compare"]);
     expect(ogurike.lessons![1]).toMatchObject({ durationMinutes: 8, stepCount: 2, title: "宇治川を比べる" });
     expect(ogurike.mapUrl).toBe("/map?dataset=ogurike");
@@ -102,6 +109,7 @@ describe("dataset catalog view model", () => {
     const model = buildDatasetCatalogViewModel(DATASET_CATALOG.slice(0, 1), { ogurike: { bundle, lesson, lessons: { "ogurike-intro": lesson, "ogurike-river-compare": comparisonLesson } } }, "en", "/");
     expect(model.cards[0]).toMatchObject({ title: "Ogurike", description: "Ogurike description", region: "Southern Kyoto" });
     expect(model.cards[0]!.lesson?.title).toBe("Trace Ogurike");
+    expect(model.cards[0]!.lesson).toMatchObject({ recommendedFor: "For a local-history introduction", learningGoal: "Explain change." });
   });
 
   it("falls back to the first available lesson when the featured dataset is unavailable", () => {

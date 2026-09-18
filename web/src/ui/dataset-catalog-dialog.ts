@@ -319,6 +319,17 @@ function renderLessonRows(lessons: readonly NonNullable<DatasetCatalogCardModel[
     meta.className = "dataset-catalog-lesson";
     meta.append(label(copy.datasetCatalogLesson), document.createTextNode(`${lesson.durationMinutes}${copy.language === "ja" ? "分" : " min"} · ${lesson.stepCount}${copy.language === "ja" ? "ステップ" : " steps"}`));
     row.append(meta);
+    if (lesson.recommendedFor && lesson.learningGoal) {
+      const fit = document.createElement("p");
+      fit.className = "dataset-catalog-lesson-guide";
+      fit.dataset.datasetCatalogLessonGuide = "";
+      fit.append(strong(copy.language === "ja" ? "利用の目安" : "Teaching fit"), document.createTextNode(lesson.recommendedFor));
+      const goal = document.createElement("p");
+      goal.className = "dataset-catalog-lesson-guide";
+      goal.dataset.datasetCatalogLessonGoal = "";
+      goal.append(strong(copy.language === "ja" ? "学習のねらい" : "Learning goal"), document.createTextNode(lesson.learningGoal));
+      row.append(fit, goal);
+    }
     if (lesson.status === "unavailable") {
       const unavailable = document.createElement("p");
       unavailable.className = "dataset-catalog-lesson-unavailable";
@@ -363,6 +374,12 @@ function note(headingText: string, text: string, dataName: "dataset-catalog-free
   body.textContent = text;
   section.append(heading, body);
   return section;
+}
+
+function strong(text: string): HTMLElement {
+  const element = document.createElement("strong");
+  element.textContent = `${text}: `;
+  return element;
 }
 
 function badge(text: string): HTMLSpanElement {

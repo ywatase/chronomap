@@ -4,6 +4,7 @@
   "title": { "ja": "宇治川の流路変化を比べる", "en": "Compare Ujigawa channel changes" },
   "description": { "ja": "1590年と1596年の概略流路を2ステップ・約8分で比べ、見える差を言葉にします。", "en": "Compare the approximate channel snapshots from 1590 and 1596 in two steps over about 8 minutes, then describe the visible differences." },
   "durationMinutes": 8,
+  "teachingGuide": { "recommendedFor": { "ja": "河川と土地利用の変化を比べる活動に", "en": "An activity comparing river and land-use change" }, "learningGoal": { "ja": "複数時期の流路の違いを比較する。", "en": "Compare channel differences across multiple periods." }, "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }], "assessment": { "ja": "比較した時期と位置を示して説明できるか。", "en": "Can learners explain using compared periods and locations?" }, "usageNote": { "ja": "学年や地域の資料に合わせて問いを調整します。", "en": "Adapt the prompt to the grade and local context." } },
   "steps": [
     {
       "id": "river-1590",

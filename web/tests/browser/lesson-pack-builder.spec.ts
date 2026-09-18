@@ -33,6 +33,8 @@ for (const dataset of lessons) {
 
     const builder = page.locator("[data-lesson-pack-builder]");
     await expect(builder).toBeVisible();
+    await expect(builder.locator("[data-lesson-pack-builder-teaching-guide]")).toContainText(/利用の目安|Teaching fit/);
+    await expect(builder.locator("[data-lesson-pack-builder-teaching-guide]")).toContainText(/学習のねらい|Learning goal/);
     await expect(builder.locator("[data-lesson-pack-builder-note]")).toContainText(/再読み込み|reload/i);
     await builder.locator("[data-lesson-pack-title]").fill(`${dataset.slug} 授業用教材`);
     await builder.locator("[data-lesson-pack-class-label]").fill("中学2年A組");
@@ -52,6 +54,7 @@ for (const dataset of lessons) {
     await expect(pack.locator("[data-lesson-pack-figure] svg")).toBeVisible();
     expect(await pack.locator("[data-lesson-pack-figure-legend-step]").count()).toBe(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count());
     await expect(pack.locator("[data-lesson-pack-teacher]")).toHaveCount(0);
+    await expect(pack.locator("[data-lesson-pack-teaching-guide]")).toHaveCount(0);
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveCount(1);
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("role", "img");
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("aria-label", "ガイド教材を開くQRコード");
@@ -208,6 +211,7 @@ test("offers a privacy-bounded paid-interest consultation handoff after printing
   await expect(answer).toHaveValue(/印刷範囲: 生徒用/);
   await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
   await expect(answer).not.toHaveValue(/秘密/);
+  await expect(answer).not.toHaveValue(/授業設計メモ|Teaching guide|学習のねらい/);
   await expect(feedback.locator("[data-lesson-pack-pilot-mail]")).toHaveCount(0);
   await feedback.locator("[data-lesson-pack-pilot-copy]").click();
   await expect(feedback.locator("[data-lesson-pack-pilot-status]")).toContainText(/コピーしました|copied/i);

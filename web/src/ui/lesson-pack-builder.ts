@@ -116,6 +116,38 @@ export function renderLessonPackBuilder(
   const layout = document.createElement("div");
   layout.className = "lesson-pack-builder-layout";
   const summaryElements = renderSummaryShell(labels);
+  if (model.teachingGuide) {
+    const guide = document.createElement("section");
+    guide.className = "lesson-pack-builder-guide";
+    guide.dataset.lessonPackBuilderTeachingGuide = "";
+    const heading = document.createElement("h4");
+    heading.textContent = copy.language === "ja" ? "授業設計" : "Teaching fit";
+    const fit = document.createElement("p");
+    fit.append(label(copy.language === "ja" ? "利用の目安" : "Teaching fit"), document.createTextNode(model.teachingGuide.recommendedFor));
+    const goal = document.createElement("p");
+    goal.append(label(copy.language === "ja" ? "学習のねらい" : "Learning goal"), document.createTextNode(model.teachingGuide.learningGoal));
+    const details = document.createElement("details");
+    const summary = document.createElement("summary");
+    summary.textContent = copy.language === "ja" ? "授業での使い方を見る" : "See classroom use";
+    const preparation = document.createElement("h5");
+    preparation.textContent = copy.language === "ja" ? "準備" : "Preparation";
+    const list = document.createElement("ul");
+    for (const item of model.teachingGuide.preparation) {
+      const line = document.createElement("li");
+      line.textContent = item;
+      list.append(line);
+    }
+    const assessment = document.createElement("p");
+    assessment.append(label(copy.language === "ja" ? "見取りの例" : "Assessment example"), document.createTextNode(model.teachingGuide.assessment));
+    details.append(summary, preparation, list, assessment);
+    if (model.teachingGuide.usageNote) {
+      const note = document.createElement("p");
+      note.append(label(copy.language === "ja" ? "調整メモ" : "Adaptation note"), document.createTextNode(model.teachingGuide.usageNote));
+      details.append(note);
+    }
+    guide.append(heading, fit, goal, details);
+    summaryElements.container.append(guide);
+  }
   const main = document.createElement("div");
   main.className = "lesson-pack-builder-main";
   layout.append(summaryElements.container, main);
@@ -658,5 +690,11 @@ function button(label: string, className: string): HTMLButtonElement {
   element.type = "button";
   element.className = className;
   element.textContent = label;
+  return element;
+}
+
+function label(text: string): HTMLElement {
+  const element = document.createElement("strong");
+  element.textContent = `${text}: `;
   return element;
 }

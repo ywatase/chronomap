@@ -71,6 +71,7 @@ export interface LessonPackModel {
   /** Public dataset extent used to keep observation figures comparable across steps. */
   readonly datasetBbox?: readonly [number, number, number, number];
   readonly datasetRights: string;
+  readonly teachingGuide?: { readonly recommendedFor: string; readonly learningGoal: string; readonly preparation: readonly string[]; readonly assessment: string; readonly usageNote?: string };
   readonly steps: readonly LessonPackStep[];
   readonly sources: readonly LessonPackSource[];
   readonly startUrl: string;
@@ -139,6 +140,7 @@ export function buildLessonPackModel(lesson: Lesson, bundle: PublicBundle, origi
     datasetDescription: localizedText(bundle.dataset.description, bundle.dataset.defaultLanguage),
     datasetBbox: Object.freeze([...bundle.dataset.bbox]) as [number, number, number, number],
     datasetRights: formatRights(bundle.dataset.rights, language),
+    ...(lesson.teachingGuide ? { teachingGuide: Object.freeze({ recommendedFor: localizedText(lesson.teachingGuide.recommendedFor, language), learningGoal: localizedText(lesson.teachingGuide.learningGoal, language), preparation: Object.freeze(lesson.teachingGuide.preparation.map((item) => localizedText(item, language))), assessment: localizedText(lesson.teachingGuide.assessment, language), ...(lesson.teachingGuide.usageNote ? { usageNote: localizedText(lesson.teachingGuide.usageNote, language) } : {}) }) } : {}),
     steps: Object.freeze(steps),
     sources: Object.freeze(sources),
     startUrl,

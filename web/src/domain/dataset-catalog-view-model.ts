@@ -18,6 +18,8 @@ export interface DatasetCatalogLessonModel {
   readonly title: string;
   readonly durationMinutes: number;
   readonly stepCount: number;
+  readonly recommendedFor?: string;
+  readonly learningGoal?: string;
   readonly firstStepId: string;
   readonly path?: string;
   readonly featured?: boolean;
@@ -124,6 +126,7 @@ function lessonViewModel(catalogLesson: DatasetCatalogLessonEntry, lesson: Lesso
     title: lesson ? localizedText(lesson.title, language) : catalogLesson.id,
     durationMinutes: lesson?.durationMinutes ?? 0,
     stepCount: lesson?.steps.length ?? 0,
+    ...(lesson?.teachingGuide ? { recommendedFor: localizedText(lesson.teachingGuide.recommendedFor, language), learningGoal: localizedText(lesson.teachingGuide.learningGoal, language) } : {}),
     firstStepId: lesson?.steps[0]?.id ?? "",
     path: catalogLesson.path,
     featured: catalogLesson.featured === true,

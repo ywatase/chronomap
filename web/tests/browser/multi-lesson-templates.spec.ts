@@ -8,6 +8,8 @@ test("shows purpose-specific lesson rows while keeping one map route", async ({ 
   await expect(card.locator("[data-dataset-catalog-lesson-row]")).toHaveCount(2);
   await expect(card.locator('[data-dataset-catalog-lesson-row="ogurike-intro"]')).toContainText(/15分|15 min/);
   await expect(card.locator('[data-dataset-catalog-lesson-row="ogurike-river-compare"]')).toContainText(/8分|8 min/);
+  await expect(card.locator('[data-dataset-catalog-lesson-row="ogurike-intro"] [data-dataset-catalog-lesson-guide]')).toContainText(/利用の目安|Teaching fit/);
+  await expect(card.locator('[data-dataset-catalog-lesson-row="ogurike-river-compare"] [data-dataset-catalog-lesson-goal]')).toContainText(/学習のねらい|Learning goal/);
   await expect(card.locator("[data-dataset-catalog-map]")).toHaveCount(1);
   await page.screenshot({ path: testInfo.outputPath("multi-lesson-catalog.png"), fullPage: true });
 });
@@ -20,6 +22,8 @@ test("opens the registered Ogurike comparison lesson through pack and QR links",
   await expect(pack.locator("[data-lesson-pack-student] .lesson-pack-step")).toHaveCount(2);
   await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("aria-label", /QR|教材|lesson/i);
   await expect(pack.locator("[data-lesson-pack-start-url]")).toHaveAttribute("href", /lesson=ogurike-river-compare/);
+  await expect(pack.locator("[data-lesson-pack-teaching-guide]")).toHaveCount(1);
+  await expect(pack.locator("[data-lesson-pack-teacher] [data-lesson-pack-teaching-guide]")).toContainText(/授業設計メモ|Teaching guide/);
   await page.screenshot({ path: testInfo.outputPath("ogurike-river-compare-pack.png"), fullPage: true });
 });
 

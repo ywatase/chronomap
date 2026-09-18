@@ -44,6 +44,14 @@ const valid = {
   ],
 };
 
+const teachingGuide = {
+  recommendedFor: { ja: "  地域の変化を読む導入に ", en: "An introduction to reading regional change" },
+  learningGoal: { ja: "図の根拠を使って変化を一文で説明する。", en: "Explain change in one sentence using figure evidence." },
+  preparation: [{ ja: "印刷したワークシート", en: "Printed worksheet" }, { ja: "筆記具", en: "Writing utensil" }],
+  assessment: { ja: "図の位置関係を根拠とともに説明できるか。", en: "Can learners explain the positional relationship with evidence?" },
+  usageNote: { ja: "学年や地域の文脈に合わせて問いを調整します。", en: "Adapt the prompt to the grade and local context." },
+};
+
 describe("guided lesson manifest", () => {
   it("validates public features and comparison entities against the bundle", () => {
     const lesson = parseLesson(valid, bundle);
@@ -76,5 +84,27 @@ describe("guided lesson manifest", () => {
     expect(parseLesson({ ...valid, steps: [{ ...valid.steps[0], featureId: first.id, comparisonEntityId: "missing" }] }, bundle)).toBeNull();
     const privateBundle = { ...bundle, features: [feature(first.id, first.properties.entityId, 1590, "private")] } as unknown as PublicBundle;
     expect(parseLesson({ ...valid, steps: [{ ...valid.steps[0], featureId: first.id }] }, privateBundle)).toBeNull();
+  });
+
+  it("parses and freezes the bounded bilingual teaching guide while keeping older manifests compatible", () => {
+    const parsed = parseLesson({ ...valid, teachingGuide }, bundle);
+    expect(parsed?.teachingGuide).toMatchObject({ recommendedFor: { ja: "地域の変化を読む導入に", en: "An introduction to reading regional change" } });
+    expect(parsed?.teachingGuide?.preparation[0]).toEqual({ ja: "印刷したワークシート", en: "Printed worksheet" });
+    expect(Object.isFrozen(parsed?.teachingGuide)).toBe(true);
+    expect(Object.isFrozen(parsed?.teachingGuide?.preparation)).toBe(true);
+    expect(parseLesson(valid, bundle)?.teachingGuide).toBeUndefined();
+  });
+
+  it("rejects teaching guides that are incomplete, unknown, out of bounds, or use invalid locale keys", () => {
+    const invalid = (guide: Record<string, unknown>) => parseLesson({ ...valid, teachingGuide: { ...teachingGuide, ...guide } }, bundle);
+    expect(invalid({ recommendedFor: { en: "English only" } })).toBeNull();
+    expect(invalid({ learningGoal: { ja: "   " } })).toBeNull();
+    expect(invalid({ preparation: [] })).toBeNull();
+    expect(invalid({ preparation: [...teachingGuide.preparation, ...teachingGuide.preparation, ...teachingGuide.preparation] })).toBeNull();
+    expect(invalid({ assessment: { ja: "x".repeat(301) } })).toBeNull();
+    expect(invalid({ usageNote: { ja: "x".repeat(301) } })).toBeNull();
+    expect(invalid({ extra: "not allowed" })).toBeNull();
+    expect(invalid({ recommendedFor: { ja_JP: "invalid locale" } })).toBeNull();
+    expect(invalid({ preparation: [{ ja: "x".repeat(161) }] })).toBeNull();
   });
 });

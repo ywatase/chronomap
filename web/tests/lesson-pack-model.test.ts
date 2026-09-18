@@ -69,4 +69,22 @@ describe("lesson pack model", () => {
     const japaneseOnly = { ...lesson, steps: [{ ...lesson.steps[0], teacherNote: { ja: "日本語の読み取り例" } }] };
     expect(buildLessonPackModel(japaneseOnly, englishBundle, "https://example.test/app/")?.steps[0]?.teacherNote).toBe("日本語の読み取り例");
   });
+
+  it("projects teaching-guide copy in the selected language without mutating the lesson", () => {
+    const lessonWithGuide: Lesson = {
+      ...lesson,
+      teachingGuide: {
+        recommendedFor: { ja: "地域史の導入に", en: "For a local-history introduction" },
+        learningGoal: { ja: "変化を説明する。", en: "Explain change." },
+        preparation: [{ ja: "ワークシート", en: "Worksheet" }],
+        assessment: { ja: "根拠を示せるか。", en: "Can learners show evidence?" },
+        usageNote: { ja: "問いを調整する。", en: "Adapt the prompt." },
+      },
+    };
+    const model = buildLessonPackModel(lessonWithGuide, bundle, "https://example.test/")!;
+    expect(model.teachingGuide).toEqual({ recommendedFor: "地域史の導入に", learningGoal: "変化を説明する。", preparation: ["ワークシート"], assessment: "根拠を示せるか。", usageNote: "問いを調整する。" });
+    expect(lessonWithGuide.teachingGuide?.preparation[0]?.ja).toBe("ワークシート");
+    const englishBundle = { ...bundle, dataset: { ...bundle.dataset, defaultLanguage: "en" } } as unknown as PublicBundle;
+    expect(buildLessonPackModel(lessonWithGuide, englishBundle, "https://example.test/")?.teachingGuide).toMatchObject({ recommendedFor: "For a local-history introduction", preparation: ["Worksheet"] });
+  });
 });

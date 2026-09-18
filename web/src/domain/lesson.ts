@@ -10,6 +10,13 @@ export interface LessonStep {
   readonly teacherNote?: LocalizedText;
   readonly comparisonEntityId?: string;
 }
+export interface TeachingGuide {
+  readonly recommendedFor: LocalizedText;
+  readonly learningGoal: LocalizedText;
+  readonly preparation: readonly LocalizedText[];
+  readonly assessment: LocalizedText;
+  readonly usageNote?: LocalizedText;
+}
 
 export interface Lesson {
   readonly id: string;
@@ -18,6 +25,7 @@ export interface Lesson {
   readonly description: LocalizedText;
   readonly durationMinutes: number;
   readonly steps: readonly LessonStep[];
+  readonly teachingGuide?: TeachingGuide;
 }
 
 /** Validates a static lesson against the already validated public bundle. */
@@ -36,7 +44,9 @@ export function parseLesson(value: unknown, bundle: PublicBundle): Lesson | null
     ids.add(rawStep.id);
     steps.push({ id: rawStep.id, year: rawStep.year, featureId: rawStep.featureId, prompt: rawStep.prompt, ...(teacherNote ? { teacherNote } : {}), ...(rawStep.comparisonEntityId ? { comparisonEntityId: rawStep.comparisonEntityId } : {}) });
   }
-  return Object.freeze({ id: value.id, dataset: value.dataset, title: value.title, description: value.description, durationMinutes: value.durationMinutes, steps: Object.freeze(steps) });
+  const teachingGuide = parseTeachingGuide(value.teachingGuide, bundle.dataset.defaultLanguage);
+  if (teachingGuide === null) return null;
+  return Object.freeze({ id: value.id, dataset: value.dataset, title: value.title, description: value.description, durationMinutes: value.durationMinutes, steps: Object.freeze(steps), ...(teachingGuide ? { teachingGuide } : {}) });
 }
 
 export function datasetSlug(datasetId: string): string { return datasetId.split(":", 1)[0] ?? datasetId; }
@@ -64,4 +74,34 @@ function parseTeacherNote(value: unknown, defaultLanguage: string): LocalizedTex
     normalized.push([language, trimmed]);
   }
   return Object.freeze(Object.fromEntries(normalized));
+}
+
+function parseTeachingGuide(value: unknown, locale: string): TeachingGuide | null | undefined {
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || Object.keys(value).some((key) => !["recommendedFor", "learningGoal", "preparation", "assessment", "usageNote"].includes(key))) return null;
+  const recommendedFor = parseBoundedLocalizedText(value.recommendedFor, locale, 120);
+  const learningGoal = parseBoundedLocalizedText(value.learningGoal, locale, 300);
+  const assessment = parseBoundedLocalizedText(value.assessment, locale, 300);
+  if (!recommendedFor || !learningGoal || !assessment || !Array.isArray(value.preparation) || value.preparation.length < 1 || value.preparation.length > 5) return null;
+  const preparation = value.preparation.map((item) => parseBoundedLocalizedText(item, locale, 160));
+  if (preparation.some((item) => !item)) return null;
+  const usageNote = value.usageNote === undefined ? undefined : parseBoundedLocalizedText(value.usageNote, locale, 300);
+  if (usageNote === null) return null;
+  return Object.freeze({ recommendedFor, learningGoal, preparation: Object.freeze(preparation as LocalizedText[]), assessment, ...(usageNote ? { usageNote } : {}) });
+}
+
+function parseBoundedLocalizedText(value: unknown, defaultLanguage: string, maximum: number): LocalizedText | null {
+  if (!isRecord(value) || Object.keys(value).length === 0 || typeof value[defaultLanguage] !== "string") return null;
+  const normalized: Array<readonly [string, string]> = [];
+  for (const [language, text] of Object.entries(value)) {
+    if (!isLocaleKey(language) || typeof text !== "string") return null;
+    const trimmed = text.trim();
+    if (trimmed.length < 1 || trimmed.length > maximum) return null;
+    normalized.push([language, trimmed]);
+  }
+  return Object.freeze(Object.fromEntries(normalized));
+}
+
+function isLocaleKey(value: string): boolean {
+  return /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/.test(value);
 }
