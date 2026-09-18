@@ -67,6 +67,22 @@ Only public bundle records are restored from URL parameters. Invalid or
 out-of-range parameters fall back to the safe default view. Camera links use
 the Web Mercator-safe latitude range and MapLibre's default zoom ceiling.
 
+## Start hub
+
+The root page (`/`) starts with three work-oriented choices: explore a region's
+historical map, make a classroom pack from the featured lesson, or resume a
+draft file saved on the current device. The root also states the current pilot
+coverage and the teacher workflows being validated. Existing `dataset=...`
+direct links continue to open the requested map or lesson view without the
+root hub.
+
+To resume a draft from the root, choose the UTF-8 JSON file created by
+`下書きをファイル保存`. Chronomap validates its dataset, lesson, steps, and
+size before loading the matching allow-listed public bundle. Draft contents are
+held in memory only during the handoff; they are not put in the URL or browser
+storage. An invalid file or unavailable dataset leaves the hub in place and
+shows an error.
+
 ## Comparing snapshots
 
 When the public bundle contains two or more exact, single-year versions of the

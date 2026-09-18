@@ -26,6 +26,12 @@
 
 初期viewport内のCTA、390×844／1440×900の横overflowなし、44px操作領域、pack URLのreload復元、root welcomeの非モーダルsemantics、デスクトップ／スマートフォンのPlaywright E2Eを確認済みである。rootの完成見本は現在の無料パイロットの価値（生徒用ワークシート、教員用参照資料、QRコード、出典一覧、PDF）を明示し、保存・認証・課金を機能として断定しない。
 
+## 実装済み導線改善: 用途別スタートハブ
+
+rootの初期画面を、機能一覧ではなく作業単位で選べるハブに整理した。「調べる」は既存の地域カードへスクロールして歴史地図を開き、「教材を作る」は完成見本から問い・ステップを整える導線へ進み、「下書きを再開」は端末上のJSONファイルから対象のデータセット・教材を安全に判定して該当builderを復元する。rootでは現在の収録範囲（利用可能な地域／教材数）と教員向け価値検証中であることも明示する。
+
+下書きの内容はURL、Cookie、localStorage、sessionStorageへ入れず、64KB以下のstrict envelopeを検証してからallow-list済みの公開bundleだけを読み込む。不正JSON、別教材、未知のdataset／lesson／step、公開bundleの失敗ではrootハブを維持してエラーを表示する。既存のdataset付き直リンク、catalog、pack、builder、preview、print導線は変更しない。desktop／mobileの3入口、フォーカス移動、横overflowなしをPlaywrightで確認した。
+
 ## 続く工程
 
 - 実データセットと出典・不確実性の追加
