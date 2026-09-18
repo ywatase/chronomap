@@ -4,6 +4,7 @@ import {
   LESSON_PACK_DRAFT_MAX_BYTES,
   buildLessonPackDraft,
   draftFilename,
+  parseLessonPackDraftIdentity,
   parseLessonPackDraft,
   serializeLessonPackDraft,
 } from "../src/domain/lesson-pack-draft";
@@ -118,5 +119,12 @@ describe("lesson pack portable drafts", () => {
     });
     expect(new TextEncoder().encode(oversized).byteLength).toBeGreaterThan(LESSON_PACK_DRAFT_MAX_BYTES);
     expect(parseLessonPackDraft(model, oversized)).toBeNull();
+  });
+
+  it("extracts only an allow-listed envelope identity before a dataset model is available", () => {
+    const serialized = serializeLessonPackDraft(model, customization)!;
+    expect(parseLessonPackDraftIdentity(serialized)).toEqual({ dataset: "ogurike", lesson: "ogurike-intro" });
+    expect(parseLessonPackDraftIdentity('{"schemaVersion":1,"dataset":"ogurike","lesson":"ogurike-intro","customization":[]}')).toBeNull();
+    expect(parseLessonPackDraftIdentity('{"schemaVersion":1,"dataset":"other","lesson":"ogurike-intro","customization":{"title":"x","classLabel":"","selectedStepIds":["first"],"promptsByStepId":{"first":"x"},"includeTeacher":true}}')).toEqual({ dataset: "other", lesson: "ogurike-intro" });
   });
 });

@@ -19,6 +19,11 @@ export interface LessonPackDraft {
   readonly customization: LessonPackCustomization;
 }
 
+export interface LessonPackDraftIdentity {
+  readonly dataset: string;
+  readonly lesson: string;
+}
+
 const DRAFT_KEYS = ["schemaVersion", "dataset", "lesson", "customization"] as const;
 const CUSTOMIZATION_KEYS = ["title", "classLabel", "selectedStepIds", "promptsByStepId", "includeTeacher"] as const;
 
@@ -50,14 +55,16 @@ export function serializeLessonPackDraft(model: LessonPackModel, input: LessonPa
   return utf8ByteLength(serialized) <= LESSON_PACK_DRAFT_MAX_BYTES ? serialized : null;
 }
 
+/** Read only the strict envelope identity before a matching lesson model is available. */
+export function parseLessonPackDraftIdentity(serialized: unknown): LessonPackDraftIdentity | null {
+  const value = parseDraftEnvelope(serialized);
+  return value ? { dataset: value.dataset, lesson: value.lesson } : null;
+}
+
 /** Parse and strictly validate a portable draft against this exact dataset, lesson, and step set. */
 export function parseLessonPackDraft(model: LessonPackModel, serialized: unknown): LessonPackCustomization | null {
-  if (typeof serialized !== "string" || utf8ByteLength(serialized) > LESSON_PACK_DRAFT_MAX_BYTES) return null;
-  let value: unknown;
-  try { value = JSON.parse(serialized); }
-  catch { return null; }
-  if (!isPlainObject(value) || !hasExactKeys(value, DRAFT_KEYS)) return null;
-  if (value.schemaVersion !== LESSON_PACK_DRAFT_SCHEMA_VERSION) return null;
+  const value = parseDraftEnvelope(serialized);
+  if (!value) return null;
   if (value.dataset !== datasetSlug(model.datasetId) || value.lesson !== model.lessonId) return null;
   if (!isPlainObject(value.customization) || !hasExactKeys(value.customization, CUSTOMIZATION_KEYS)) return null;
 
@@ -94,6 +101,17 @@ export function draftFilename(model: LessonPackModel): string {
 
 export const exportLessonPackDraft = serializeLessonPackDraft;
 export const importLessonPackDraft = parseLessonPackDraft;
+
+function parseDraftEnvelope(serialized: unknown): (Record<string, any> & { dataset: string; lesson: string }) | null {
+  if (typeof serialized !== "string" || utf8ByteLength(serialized) > LESSON_PACK_DRAFT_MAX_BYTES) return null;
+  let value: unknown;
+  try { value = JSON.parse(serialized); }
+  catch { return null; }
+  if (!isPlainObject(value) || !hasExactKeys(value, DRAFT_KEYS)) return null;
+  if (value.schemaVersion !== LESSON_PACK_DRAFT_SCHEMA_VERSION || typeof value.dataset !== "string" || value.dataset.length === 0 || typeof value.lesson !== "string" || value.lesson.length === 0) return null;
+  if (!isPlainObject(value.customization) || !hasExactKeys(value.customization, CUSTOMIZATION_KEYS)) return null;
+  return value as Record<string, any> & { dataset: string; lesson: string };
+}
 
 function utf8ByteLength(value: string): number {
   return new TextEncoder().encode(value).byteLength;

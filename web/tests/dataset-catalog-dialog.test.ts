@@ -124,4 +124,26 @@ describe("dataset catalog dialog", () => {
     expect(card.textContent).toContain("ガイド教材はまだ公開されていません");
     expect(card.querySelector("[data-dataset-catalog-map]")).toBeTruthy();
   });
+
+  it("renders a root purpose hub with explore, build, and local draft resume paths", () => {
+    const root = document.createElement("section");
+    const onResumeDraft = vi.fn();
+    renderDatasetCatalog(root, model, uiCopy("ja"), { onClose: vi.fn(), onResumeDraft, isRoot: true });
+
+    const hub = root.querySelector("[data-dataset-catalog-purpose-hub]");
+    expect(hub).toBeTruthy();
+    expect(hub?.textContent).toContain("調べる");
+    expect(hub?.textContent).toContain("教材を作る");
+    expect(hub?.textContent).toContain("下書きを再開");
+    expect(hub?.textContent).toContain("現在の収録範囲: 2地域／2教材");
+    expect(hub?.textContent).toContain("教員向け価値検証中");
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-purpose-explore]")?.getAttribute("href")).toBe("#dataset-catalog-cards");
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-purpose-build]")?.getAttribute("href")).toContain("view=builder");
+    const input = root.querySelector<HTMLInputElement>("[data-dataset-catalog-purpose-draft-file]");
+    expect(input?.accept).toContain(".json");
+    const file = new File(["draft"], "draft.json", { type: "application/json" });
+    Object.defineProperty(input, "files", { configurable: true, value: [file] });
+    input!.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(onResumeDraft).toHaveBeenCalledWith(file);
+  });
 });

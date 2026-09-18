@@ -2,10 +2,12 @@ import "./styles.css";
 import { loadLessonManifest, loadPublicBundle } from "./domain/data-loader";
 import { DATASET_CATALOG, datasetFromSearch, type DatasetCatalogEntry } from "./domain/dataset-catalog";
 import { parseLesson } from "./domain/lesson";
+import { buildLessonPackModel } from "./domain/lesson-pack-model";
+import { LESSON_PACK_DRAFT_MAX_BYTES, parseLessonPackDraft, parseLessonPackDraftIdentity } from "./domain/lesson-pack-draft";
 import type { DatasetCatalogSnapshots } from "./domain/dataset-catalog-view-model";
 import type { PublicBundle } from "./domain/types";
 import { MapAdapter } from "./map/map-adapter";
-import { mountUiShell } from "./ui/ui-shell";
+import { mountUiShell, type UiShellOptions } from "./ui/ui-shell";
 
 const app = document.querySelector<HTMLElement>("#app");
 
@@ -15,6 +17,7 @@ if (!app) {
 const appRoot = app;
 let controller: ReturnType<typeof mountUiShell> | null = null;
 let requestId = 0;
+let resumeRequestId = 0;
 let activeDataset: DatasetCatalogEntry = datasetFromSearch(typeof window === "undefined" ? "" : window.location.search);
 
 function renderLoading(retrying: boolean): void {
@@ -53,31 +56,75 @@ function renderFailure(): void {
 
 async function loadDataset(retrying = false): Promise<void> {
   const currentRequest = ++requestId;
-  activeDataset = datasetFromSearch(typeof window === "undefined" ? "" : window.location.search);
-  canonicalizeDatasetUrl(activeDataset.slug);
+  const entry = datasetFromSearch(typeof window === "undefined" ? "" : window.location.search);
+  activeDataset = entry;
+  canonicalizeDatasetUrl(entry.slug);
   controller?.destroy();
   controller = null;
   renderLoading(retrying);
-  let bundle;
+  const loaded = await loadDatasetSnapshot(entry);
+  if (currentRequest !== requestId) return;
+  if (!loaded) { renderFailure(); return; }
+  mountLoadedDataset(entry, loaded.bundle, loaded.lesson, currentRequest);
+}
+
+interface LoadedDataset {
+  readonly bundle: PublicBundle;
+  readonly lesson: ReturnType<typeof parseLesson>;
+}
+
+async function loadDatasetSnapshot(entry: DatasetCatalogEntry): Promise<LoadedDataset | null> {
   try {
-    bundle = await loadPublicBundle(activeDataset.bundlePath);
+    const bundle = await loadPublicBundle(entry.bundlePath);
+    const lessonManifest = await loadLessonManifest(entry.lessonPath);
+    return { bundle, lesson: lessonManifest ? parseLesson(lessonManifest, bundle) : null };
   } catch {
-    if (currentRequest === requestId) renderFailure();
-    return;
+    return null;
   }
+}
+
+function mountLoadedDataset(entry: DatasetCatalogEntry, bundle: PublicBundle, lesson: ReturnType<typeof parseLesson>, currentRequest: number, options: UiShellOptions = {}): void {
   if (currentRequest !== requestId) return;
-  const lessonManifest = await loadLessonManifest(activeDataset.lessonPath);
-  if (currentRequest !== requestId) return;
-  const lesson = lessonManifest ? parseLesson(lessonManifest, bundle) : null;
+  activeDataset = entry;
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
-  const catalogLoader = () => catalogPromise ??= loadCatalogSnapshots(bundle, lesson, activeDataset.slug);
-  const nextController = mountUiShell(appRoot, bundle, () => undefined, lesson, catalogLoader);
+  const catalogLoader = () => catalogPromise ??= loadCatalogSnapshots(bundle, lesson, entry.slug);
+  const nextController = mountUiShell(appRoot, bundle, () => undefined, lesson, catalogLoader, { onResumeDraft: resumeDraft, ...options });
   controller = nextController;
   try {
     nextController.setMapAdapter(new MapAdapter());
   } catch {
     nextController.reportBasemapFailure("地図の初期化に失敗しました。");
   }
+}
+
+async function resumeDraft(file: File): Promise<boolean> {
+  const currentResumeRequest = ++resumeRequestId;
+  if (file.size > LESSON_PACK_DRAFT_MAX_BYTES) return false;
+  let serialized: string;
+  try { serialized = await file.text(); }
+  catch { return false; }
+  if (currentResumeRequest !== resumeRequestId) return false;
+  const identity = parseLessonPackDraftIdentity(serialized);
+  if (!identity) return false;
+  const entry = DATASET_CATALOG.find((candidate) => candidate.slug === identity.dataset && lessonIdFromPath(candidate.lessonPath) === identity.lesson);
+  if (!entry) return false;
+  const loaded = await loadDatasetSnapshot(entry);
+  if (!loaded) return false;
+  if (currentResumeRequest !== resumeRequestId || !loaded.lesson) return false;
+  const model = buildLessonPackModel(loaded.lesson, loaded.bundle, typeof window === "undefined" ? "/" : window.location.href);
+  if (!model) return false;
+  const customization = parseLessonPackDraft(model, serialized);
+  if (!customization || currentResumeRequest !== resumeRequestId) return false;
+  const currentRequest = ++requestId;
+  controller?.destroy();
+  controller = null;
+  mountLoadedDataset(entry, loaded.bundle, loaded.lesson, currentRequest, { initialBuilderOpen: true, initialBuilderInput: customization });
+  return true;
+}
+
+function lessonIdFromPath(path: string): string | null {
+  const file = path.split("/").at(-1) ?? "";
+  return file.endsWith(".json") ? file.slice(0, -5) : null;
 }
 
 async function loadCatalogSnapshots(activeBundle: PublicBundle, activeLesson: ReturnType<typeof parseLesson>, activeSlug: string): Promise<DatasetCatalogSnapshots> {

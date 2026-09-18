@@ -139,6 +139,19 @@ export interface UiCopy {
   readonly datasetCatalogLead: string;
   readonly datasetCatalogWelcomeTitle: string;
   readonly datasetCatalogWelcomeLead: string;
+  readonly datasetCatalogPurposeHeading: string;
+  readonly datasetCatalogPurposeExplore: string;
+  readonly datasetCatalogPurposeExploreLead: string;
+  readonly datasetCatalogPurposeBuild: string;
+  readonly datasetCatalogPurposeBuildLead: string;
+  readonly datasetCatalogPurposeResume: string;
+  readonly datasetCatalogPurposeResumeLead: string;
+  readonly datasetCatalogPurposeResumeFile: string;
+  readonly datasetCatalogPurposeResumeOpen: string;
+  readonly datasetCatalogPurposeResumeLoading: string;
+  readonly datasetCatalogPurposeResumeInvalid: string;
+  readonly datasetCatalogPurposeCoverage: (regions: number, lessons: number) => string;
+  readonly datasetCatalogPurposeValue: string;
   readonly datasetCatalogStepObserve: string;
   readonly datasetCatalogStepWrite: string;
   readonly datasetCatalogStepShare: string;
@@ -361,6 +374,19 @@ const EN_COPY: UiCopy = {
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
   datasetCatalogWelcomeTitle: "Evidence-backed worksheet in 3 minutes",
   datasetCatalogWelcomeLead: "Choose a region and shape the observation prompt. Export a student worksheet, teacher reference, QR code, and source list as a PDF.",
+  datasetCatalogPurposeHeading: "Choose what you want to do",
+  datasetCatalogPurposeExplore: "Explore the map",
+  datasetCatalogPurposeExploreLead: "Open a region card to inspect historical geography and evidence.",
+  datasetCatalogPurposeBuild: "Make a classroom pack",
+  datasetCatalogPurposeBuildLead: "Start from the featured lesson and shape prompts for your class.",
+  datasetCatalogPurposeResume: "Resume a draft",
+  datasetCatalogPurposeResumeLead: "Open a draft file from this device and continue editing locally.",
+  datasetCatalogPurposeResumeFile: "Draft file",
+  datasetCatalogPurposeResumeOpen: "Choose a draft file",
+  datasetCatalogPurposeResumeLoading: "Checking the draft…",
+  datasetCatalogPurposeResumeInvalid: "Could not load this draft. Check its dataset, lesson, steps, and file size.",
+  datasetCatalogPurposeCoverage: (regions, lessons) => `Coverage: ${regions} regions / ${lessons} guided lessons (pilot)`,
+  datasetCatalogPurposeValue: "Teacher value validation in progress",
   datasetCatalogStepObserve: "1. Choose a topic and evidence",
   datasetCatalogStepWrite: "2. Shape the observation prompt",
   datasetCatalogStepShare: "3. Print and share the PDF",
@@ -575,6 +601,19 @@ const JA_COPY: UiCopy = {
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
   datasetCatalogWelcomeTitle: "根拠付きワークシートを3分で",
   datasetCatalogWelcomeLead: "地域を選び、観察する問いを整えるだけ。生徒用ワークシート、教員用参照資料、QRコード、出典一覧をPDFにできます。",
+  datasetCatalogPurposeHeading: "目的から選ぶ",
+  datasetCatalogPurposeExplore: "調べる",
+  datasetCatalogPurposeExploreLead: "地域カードから歴史地図を開き、地物と出典を確認します。",
+  datasetCatalogPurposeBuild: "教材を作る",
+  datasetCatalogPurposeBuildLead: "完成見本を見て、授業用の問いとステップを整えます。",
+  datasetCatalogPurposeResume: "下書きを再開",
+  datasetCatalogPurposeResumeLead: "この端末の下書きファイルを読み込み、編集を続けます。",
+  datasetCatalogPurposeResumeFile: "下書きファイル",
+  datasetCatalogPurposeResumeOpen: "下書きファイルを選ぶ",
+  datasetCatalogPurposeResumeLoading: "下書きを確認しています…",
+  datasetCatalogPurposeResumeInvalid: "下書きを読み込めませんでした。データセット・教材・ステップ・ファイルサイズを確認してください。",
+  datasetCatalogPurposeCoverage: (regions, lessons) => `現在の収録範囲: ${regions}地域／${lessons}教材（試験公開）`,
+  datasetCatalogPurposeValue: "教員向け価値検証中",
   datasetCatalogStepObserve: "1. 題材と根拠を選ぶ",
   datasetCatalogStepWrite: "2. 観察する問いを整える",
   datasetCatalogStepShare: "3. PDFで配る",

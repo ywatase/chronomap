@@ -29,14 +29,19 @@ import { renderDatasetCatalog } from "./dataset-catalog-dialog";
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
 export type DatasetCatalogLoader = () => Promise<DatasetCatalogSnapshots>;
+export interface UiShellOptions {
+  readonly initialBuilderOpen?: boolean;
+  readonly initialBuilderInput?: LessonPackCustomizationInput | null;
+  readonly onResumeDraft?: (file: File) => Promise<boolean> | boolean;
+}
 
-export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null, catalogLoader: DatasetCatalogLoader | null = null): AppController {
+export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null, catalogLoader: DatasetCatalogLoader | null = null, options: UiShellOptions = {}): AppController {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
   const years = authoredYears(bundle, initialYear(bundle.dataset));
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
-  let rootWelcomeOpen = typeof window !== "undefined" && window.location.pathname === "/" && window.location.search === "";
+  let rootWelcomeOpen = typeof window !== "undefined" && window.location.pathname === "/" && window.location.search === "" && options.initialBuilderOpen !== true;
   const requestedLessonIndex = lesson && shared.view !== "builder" && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
   const requestedLessonStep = requestedLessonIndex !== null && lesson ? lesson.steps[requestedLessonIndex] : null;
   const sharedYear = sharedMatchesDataset && shared.year !== undefined && yearWithinDataset(shared.year, bundle.dataset) ? shared.year : undefined;
@@ -44,7 +49,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let lessonIndex: number | null = requestedLessonIndex;
   let catalogOpen = shared.view === "catalog" || rootWelcomeOpen;
   let lessonPackOpen = shared.view === "pack" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id);
-  let builderOpen = shared.view === "builder" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id);
+  let builderOpen = (shared.view === "builder" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id)) || (options.initialBuilderOpen === true && Boolean(lesson));
   let catalogSnapshots: DatasetCatalogSnapshots | null = null;
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
   let workshopBaseModel: LessonPackModel | null = null;
@@ -359,7 +364,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     }
     if (!catalogOpen || !catalogSnapshots) return;
     const model = buildDatasetCatalogViewModel(DATASET_CATALOG, catalogSnapshots, copy.language, typeof window === "undefined" ? "/" : window.location.href);
-    renderDatasetCatalog(datasetCatalogDialog, model, copy, { onClose: closeDatasetCatalog, isRoot: rootWelcomeOpen });
+    renderDatasetCatalog(datasetCatalogDialog, model, copy, { onClose: closeDatasetCatalog, isRoot: rootWelcomeOpen, onResumeDraft: rootWelcomeOpen ? options.onResumeDraft : undefined });
     if (rootWelcomeOpen) datasetCatalogDialog.dataset.datasetCatalogRoot = "";
     else delete datasetCatalogDialog.dataset.datasetCatalogRoot;
     datasetCatalogDialog.hidden = false;
@@ -471,7 +476,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
   retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear });
   if (catalogOpen) queueMicrotask(() => { void openDatasetCatalog(); });
-  if (builderOpen) queueMicrotask(() => openLessonWorkshop());
+  if (builderOpen) queueMicrotask(() => openLessonWorkshop(options.initialBuilderInput ?? null));
   if (lessonPackOpen) queueMicrotask(() => openLessonPack());
   return controller;
 }

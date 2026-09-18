@@ -219,6 +219,68 @@ describe("ui shell", () => {
     root.remove();
   });
 
+  it("keeps the root hub visible and reports an invalid local draft without URL state", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/");
+    const onResumeDraft = vi.fn(async () => false);
+    const controller = mountUiShell(root, bundle, () => undefined, lesson, async () => ({
+      ogurike: { bundle, lesson: null },
+      tonegawa: { bundle: null, lesson: null },
+      heijokyo: { bundle: null, lesson: null },
+    }), { onResumeDraft });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const catalog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
+    const input = catalog.querySelector<HTMLInputElement>("[data-dataset-catalog-purpose-draft-file]")!;
+    const file = new File(["invalid"], "invalid.json", { type: "application/json" });
+    Object.defineProperty(input, "files", { configurable: true, value: [file] });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(onResumeDraft).toHaveBeenCalledWith(file);
+    expect(catalog.hidden).toBe(false);
+    expect(catalog.querySelector("[data-dataset-catalog-purpose-status]")?.textContent).toContain("Could not load this draft");
+    expect(window.location.search).not.toContain("invalid");
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
+  it("opens the builder from an in-memory resume input without rendering the root hub", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/");
+    const controller = mountUiShell(root, bundle, () => undefined, lesson, null, {
+      initialBuilderOpen: true,
+      initialBuilderInput: { title: "Resumed lesson", selectedStepIds: ["first"], promptsByStepId: { first: "Resumed prompt" }, includeTeacher: false },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")).toBeNull();
+    expect(root.querySelector<HTMLElement>("[data-lesson-pack-builder]")?.hidden).toBe(false);
+    expect(root.querySelector<HTMLInputElement>("[data-lesson-pack-title]")?.value).toBe("Resumed lesson");
+    expect(root.querySelector<HTMLTextAreaElement>("[data-lesson-pack-prompt]")?.value).toBe("Resumed prompt");
+    expect(root.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]")?.checked).toBe(false);
+    expect(window.location.search).not.toContain("Resumed");
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
   it("keeps feedback hidden until print is invoked, then returns focus to the callout", async () => {
     const lesson: Lesson = {
       id: "intro",
