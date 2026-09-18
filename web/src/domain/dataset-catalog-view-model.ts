@@ -36,8 +36,18 @@ export interface DatasetCatalogCardModel {
   readonly builderUrl: string | null;
 }
 
+export interface DatasetCatalogFeaturedModel {
+  readonly slug: string;
+  readonly title: string;
+  readonly lessonTitle: string;
+  readonly lessonDurationMinutes: number;
+  readonly packUrl: string;
+  readonly builderUrl: string;
+}
+
 export interface DatasetCatalogViewModel {
   readonly language: "ja" | "en";
+  readonly featured?: DatasetCatalogFeaturedModel | null;
   readonly cards: readonly DatasetCatalogCardModel[];
 }
 
@@ -72,7 +82,19 @@ export function buildDatasetCatalogViewModel(
       builderUrl: lessonModel ? datasetUrl(baseUrl, entry.slug, lessonModel.id, undefined, "builder") : null,
     });
   });
-  return Object.freeze({ language, cards: Object.freeze(cards) });
+  const featuredCard = cards.find((card) => card.slug === "ogurike" && card.status === "available" && card.lesson)
+    ?? cards.find((card) => card.status === "available" && card.lesson);
+  const featured = featuredCard?.lesson
+    ? Object.freeze({
+      slug: featuredCard.slug,
+      title: featuredCard.title,
+      lessonTitle: featuredCard.lesson.title,
+      lessonDurationMinutes: featuredCard.lesson.durationMinutes,
+      packUrl: datasetUrl(baseUrl, featuredCard.slug, featuredCard.lesson.id, undefined, "pack"),
+      builderUrl: featuredCard.builderUrl!,
+    })
+    : null;
+  return Object.freeze({ language, featured, cards: Object.freeze(cards) });
 }
 
 function lessonViewModel(lesson: Lesson, language: "ja" | "en"): DatasetCatalogLessonModel {
@@ -85,7 +107,7 @@ function lessonViewModel(lesson: Lesson, language: "ja" | "en"): DatasetCatalogL
   });
 }
 
-function datasetUrl(baseUrl: string, slug: string, lessonId?: string, stepId?: string, view?: "builder"): string {
+function datasetUrl(baseUrl: string, slug: string, lessonId?: string, stepId?: string, view?: "pack" | "builder"): string {
   const url = new URL(baseUrl || "/", "https://chronomap.invalid");
   url.search = "";
   url.hash = "";

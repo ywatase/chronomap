@@ -130,6 +130,14 @@ export interface UiCopy {
   readonly datasetCatalogDialogLabel: string;
   readonly datasetCatalogHeading: string;
   readonly datasetCatalogLead: string;
+  readonly datasetCatalogWelcomeTitle: string;
+  readonly datasetCatalogWelcomeLead: string;
+  readonly datasetCatalogStepObserve: string;
+  readonly datasetCatalogStepWrite: string;
+  readonly datasetCatalogStepShare: string;
+  readonly datasetCatalogFeaturedHeading: string;
+  readonly datasetCatalogFeaturedLead: (title: string, minutes: number) => string;
+  readonly datasetCatalogFeaturedPack: string;
   readonly datasetCatalogRegion: string;
   readonly datasetCatalogYears: string;
   readonly datasetCatalogFeatures: string;
@@ -336,6 +344,14 @@ const EN_COPY: UiCopy = {
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
+  datasetCatalogWelcomeTitle: "Evidence-backed worksheet in 3 minutes",
+  datasetCatalogWelcomeLead: "A teacher-friendly starting point: preview a finished worksheet, edit it for your class, and print a copy with the evidence trail intact.",
+  datasetCatalogStepObserve: "1. Inspect the map and evidence",
+  datasetCatalogStepWrite: "2. Write what the map supports",
+  datasetCatalogStepShare: "3. Share a printable worksheet",
+  datasetCatalogFeaturedHeading: "Recommended finished example",
+  datasetCatalogFeaturedLead: (title, minutes) => `${title} · about ${minutes} minutes`,
+  datasetCatalogFeaturedPack: "See the finished example",
   datasetCatalogRegion: "Region",
   datasetCatalogYears: "Recorded years",
   datasetCatalogFeatures: "Public features",
@@ -534,6 +550,14 @@ const JA_COPY: UiCopy = {
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
+  datasetCatalogWelcomeTitle: "根拠付きワークシートを3分で",
+  datasetCatalogWelcomeLead: "先生向けの入口です。完成見本を見て、クラス用に編集し、根拠の道筋を残したワークシートを印刷できます。",
+  datasetCatalogStepObserve: "1. 地図と根拠を見る",
+  datasetCatalogStepWrite: "2. 地図から読み取れることを書く",
+  datasetCatalogStepShare: "3. 印刷したワークシートを共有する",
+  datasetCatalogFeaturedHeading: "おすすめの完成見本",
+  datasetCatalogFeaturedLead: (title, minutes) => `${title} · 約${minutes}分`,
+  datasetCatalogFeaturedPack: "完成見本を見る",
   datasetCatalogRegion: "地域",
   datasetCatalogYears: "収録年",
   datasetCatalogFeatures: "公開地物",

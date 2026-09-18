@@ -78,6 +78,7 @@ describe("dataset catalog view model", () => {
     expect(ogurike.mapUrl).toBe("/map?dataset=ogurike");
     expect(ogurike.lessonUrl).toBe("/map?dataset=ogurike&lesson=ogurike-intro&step=first");
     expect(ogurike.builderUrl).toBe("/map?dataset=ogurike&lesson=ogurike-intro&view=builder");
+    expect(model.featured).toMatchObject({ slug: "ogurike", packUrl: "/map?dataset=ogurike&lesson=ogurike-intro&view=pack" });
 
     expect(tonegawa.status).toBe("unavailable");
     expect(tonegawa.title).toBe("利根川東遷");
@@ -92,5 +93,13 @@ describe("dataset catalog view model", () => {
     const model = buildDatasetCatalogViewModel(DATASET_CATALOG.slice(0, 1), { ogurike: { bundle, lesson } }, "en", "/");
     expect(model.cards[0]).toMatchObject({ title: "Ogurike", description: "Ogurike description", region: "Southern Kyoto" });
     expect(model.cards[0]!.lesson?.title).toBe("Trace Ogurike");
+  });
+
+  it("falls back to the first available lesson when the featured dataset is unavailable", () => {
+    const model = buildDatasetCatalogViewModel(DATASET_CATALOG, {
+      ogurike: { bundle: null, lesson: null },
+      tonegawa: { bundle, lesson: { ...lesson, id: "tonegawa-eastward", dataset: "tonegawa" } },
+    }, "ja", "/");
+    expect(model.featured).toMatchObject({ slug: "tonegawa", packUrl: "/?dataset=tonegawa&lesson=tonegawa-eastward&view=pack" });
   });
 });

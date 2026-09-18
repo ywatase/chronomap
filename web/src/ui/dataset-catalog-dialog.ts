@@ -38,6 +38,8 @@ export function renderDatasetCatalog(container: HTMLElement, model: DatasetCatal
   header.append(eyebrow, heading, lead);
   sheet.append(header);
 
+  sheet.append(renderWelcome(model, copy));
+
   const grid = document.createElement("div");
   grid.className = "dataset-catalog-grid";
   grid.dataset.datasetCatalogCards = "";
@@ -51,6 +53,47 @@ export function renderDatasetCatalog(container: HTMLElement, model: DatasetCatal
   notes.append(free, future);
   sheet.append(notes);
   container.append(sheet);
+}
+
+function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
+  const welcome = document.createElement("section");
+  welcome.className = "dataset-catalog-welcome";
+  welcome.dataset.datasetCatalogWelcome = "";
+  const heading = document.createElement("h3");
+  heading.textContent = copy.datasetCatalogWelcomeTitle;
+  const lead = document.createElement("p");
+  lead.className = "dataset-catalog-welcome-lead";
+  lead.textContent = copy.datasetCatalogWelcomeLead;
+  welcome.append(heading, lead);
+
+  const steps = document.createElement("ol");
+  steps.className = "dataset-catalog-steps";
+  for (const text of [copy.datasetCatalogStepObserve, copy.datasetCatalogStepWrite, copy.datasetCatalogStepShare]) {
+    const step = document.createElement("li");
+    step.dataset.datasetCatalogStep = "";
+    step.textContent = text;
+    steps.append(step);
+  }
+  welcome.append(steps);
+
+  if (model.featured) {
+    const featured = document.createElement("section");
+    featured.className = "dataset-catalog-featured";
+    featured.dataset.datasetCatalogFeatured = "";
+    const featuredHeading = document.createElement("h4");
+    featuredHeading.textContent = `${copy.datasetCatalogFeaturedHeading}: ${model.featured.title}`;
+    const featuredLead = document.createElement("p");
+    featuredLead.textContent = copy.datasetCatalogFeaturedLead(model.featured.lessonTitle, model.featured.lessonDurationMinutes);
+    const actions = document.createElement("div");
+    actions.className = "dataset-catalog-featured-actions";
+    actions.append(
+      link(model.featured.packUrl, copy.datasetCatalogFeaturedPack, "dataset-catalog-featured-pack", true),
+      link(model.featured.builderUrl, copy.datasetCatalogCustomize, "dataset-catalog-featured-builder", false),
+    );
+    featured.append(featuredHeading, featuredLead, actions);
+    welcome.append(featured);
+  }
+  return welcome;
 }
 
 function renderCard(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {
@@ -175,7 +218,7 @@ function label(text: string): HTMLSpanElement {
   return element;
 }
 
-function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map", primary: boolean): HTMLAnchorElement {
+function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map" | "dataset-catalog-featured-pack" | "dataset-catalog-featured-builder", primary: boolean): HTMLAnchorElement {
   const element = document.createElement("a");
   element.href = href;
   element.textContent = text;

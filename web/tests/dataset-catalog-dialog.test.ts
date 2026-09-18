@@ -6,6 +6,14 @@ import { uiCopy } from "../src/ui/copy";
 
 const model: DatasetCatalogViewModel = {
   language: "ja",
+  featured: {
+    slug: "ogurike",
+    title: "巨椋池",
+    lessonTitle: "巨椋池をたどる",
+    lessonDurationMinutes: 15,
+    packUrl: "/?dataset=ogurike&lesson=ogurike-intro&view=pack",
+    builderUrl: "/?dataset=ogurike&lesson=ogurike-intro&view=builder",
+  },
   cards: [
     {
       slug: "ogurike",
@@ -68,6 +76,9 @@ describe("dataset catalog dialog", () => {
 
     expect(root.getAttribute("role")).toBe("dialog");
     expect(root.querySelector("[data-dataset-catalog-heading]")?.textContent).toContain("地域・教材");
+    expect(root.querySelector("[data-dataset-catalog-welcome]")?.textContent).toContain("完成見本を見る");
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-featured-pack]")?.href).toContain("view=pack");
+    expect(root.querySelectorAll("[data-dataset-catalog-step]")).toHaveLength(3);
     expect(root.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("無料デモ");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("教材パックはβ版無料");
