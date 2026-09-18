@@ -200,6 +200,17 @@ footer a { color: #155e8a; }
 .lesson-pack-builder-sheet > h2 { margin: 0; color: #102a43; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.2; }
 .lesson-pack-builder-lead { margin: .5rem 0 0; color: #40566a; line-height: 1.5; }
 .lesson-pack-builder-note { margin: .7rem 0 0; padding: .6rem .7rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; line-height: 1.45; }
+.lesson-pack-builder-draft { min-width: 0; margin-top: .8rem; padding: .7rem; border: 1px solid #c4d0d9; border-radius: .55rem; background: #f7fafc; overflow-wrap: anywhere; }
+.lesson-pack-builder-draft-note { margin: 0; color: #304b60; font-size: .84rem; line-height: 1.45; }
+.lesson-pack-builder-draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; min-width: 0; margin-top: .6rem; }
+.lesson-pack-builder-draft-actions button, .lesson-pack-builder-draft-file-label { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; max-width: 100%; padding: .5rem .75rem; border: 1px solid #8297a8; border-radius: .45rem; background: #fff; color: #17324d; font-size: .82rem; font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.lesson-pack-builder-draft-actions button:hover, .lesson-pack-builder-draft-actions button:focus-visible, .lesson-pack-builder-draft-file-label:hover, .lesson-pack-builder-draft-file-label:focus-within { background: #e8f2fb; }
+.lesson-pack-builder-draft-save { border-color: #155e8a !important; background: #155e8a !important; color: #fff !important; }
+.lesson-pack-builder-draft-save:hover, .lesson-pack-builder-draft-save:focus-visible { background: #0f4f75 !important; }
+.lesson-pack-builder-draft-file-label { cursor: pointer; }
+.lesson-pack-builder-draft-actions input[type="file"] { min-width: 0; max-width: 100%; min-height: 2.75rem; padding: .35rem; border: 1px dashed #8297a8; border-radius: .45rem; background: #fff; color: #304b60; }
+.lesson-pack-builder-draft-status { min-height: 1.35rem; margin: .4rem 0 0; color: #155e8a; font-size: .82rem; font-weight: 700; line-height: 1.4; }
+.lesson-pack-builder-draft-status[data-valid="false"] { padding: .35rem .5rem; border-left: 4px solid #b45309; background: #fff4e5; color: #713f12; }
 .lesson-pack-builder form { display: grid; gap: .9rem; margin-top: 1rem; }
 .lesson-pack-builder fieldset { min-width: 0; margin: 0; padding: .8rem; border: 1px solid #c4d0d9; border-radius: .55rem; }
 .lesson-pack-builder legend { padding-inline: .25rem; color: #304b60; font-size: .9rem; font-weight: 700; }
@@ -325,6 +336,8 @@ footer a { color: #155e8a; }
   .lesson-pack-builder-details { grid-template-columns: minmax(0, 1fr); }
   .lesson-pack-builder-actions { justify-content: stretch; }
   .lesson-pack-builder-actions button { flex: 1 1 10rem; }
+  .lesson-pack-builder-draft-actions { align-items: stretch; }
+  .lesson-pack-builder-draft-actions button, .lesson-pack-builder-draft-file-label, .lesson-pack-builder-draft-actions input[type="file"] { flex: 1 1 100%; width: 100%; }
   .dataset-catalog-dialog { padding: .65rem; }
   .dataset-catalog-dialog[data-dataset-catalog-root] { padding: .65rem .75rem; }
   .dataset-catalog-toolbar { margin-bottom: .45rem; }

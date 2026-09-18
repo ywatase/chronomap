@@ -111,6 +111,13 @@ export interface UiCopy {
   readonly lessonWorkshopOpen: string;
   readonly lessonWorkshopBack: string;
   readonly lessonPackClassLabel: string;
+  readonly lessonPackDraftSave: string;
+  readonly lessonPackDraftFileLabel: string;
+  readonly lessonPackDraftOpen: string;
+  readonly lessonPackDraftNote: string;
+  readonly lessonPackDraftSaved: string;
+  readonly lessonPackDraftLoaded: string;
+  readonly lessonPackDraftInvalid: string;
   readonly lessonPackFeedbackSummary: string;
   readonly lessonPackFeedbackLead: string;
   readonly lessonPackFeedbackNotice: string;
@@ -317,6 +324,13 @@ const EN_COPY: UiCopy = {
   lessonWorkshopOpen: "Customize for this class",
   lessonWorkshopBack: "Back to editor",
   lessonPackClassLabel: "Class / audience",
+  lessonPackDraftSave: "Save draft to file",
+  lessonPackDraftFileLabel: "Draft file",
+  lessonPackDraftOpen: "Open draft file",
+  lessonPackDraftNote: "Drafts are saved as a file on this device. They include class names and edited prompts; handle them with care. Nothing is sent to Chronomap.",
+  lessonPackDraftSaved: "Draft saved to this device.",
+  lessonPackDraftLoaded: "Draft loaded. Review the contents before opening the preview.",
+  lessonPackDraftInvalid: "Could not load this draft. Check its dataset, lesson, steps, and file size.",
   lessonPackFeedbackSummary: "Thanks for trying the print dialog — one-minute feedback",
   lessonPackFeedbackLead: "Tell us how this classroom pack fits your next lesson.",
   lessonPackFeedbackNotice: "Your answers are not sent or saved automatically. Copy them and send them to the contact provided. They disappear when you reload the page.",
@@ -524,6 +538,13 @@ const JA_COPY: UiCopy = {
   lessonWorkshopOpen: "この教材を授業用に整える",
   lessonWorkshopBack: "編集に戻る",
   lessonPackClassLabel: "対象・クラス",
+  lessonPackDraftSave: "下書きをファイル保存",
+  lessonPackDraftFileLabel: "下書きファイル",
+  lessonPackDraftOpen: "下書きファイルを開く",
+  lessonPackDraftNote: "下書きはこの端末にファイルとして保存されます。クラス名や編集した問いを含むため、取り扱いにご注意ください。Chronomapには送信されません。",
+  lessonPackDraftSaved: "下書きを保存しました。",
+  lessonPackDraftLoaded: "下書きを読み込みました。内容を確認してプレビューしてください。",
+  lessonPackDraftInvalid: "下書きを読み込めませんでした。データセット・教材・ステップ・ファイルサイズを確認してください。",
   lessonPackFeedbackSummary: "印刷画面を試していただきありがとうございます（1分フィードバック）",
   lessonPackFeedbackLead: "この授業用教材を次の授業でどう使えそうか教えてください。",
   lessonPackFeedbackNotice: "回答は自動送信・保存されません。コピーして、案内された連絡先へお送りください。再読み込みすると消えます。",

@@ -19,8 +19,9 @@ import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { customizeLessonPackModel, type LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import { renderLessonPack } from "./lesson-pack";
 import { showLessonPackFeedback, type LessonPackFeedbackState } from "./lesson-pack-feedback";
-import { renderLessonPackBuilder } from "./lesson-pack-builder";
+import { applyLessonPackBuilderInput, renderLessonPackBuilder } from "./lesson-pack-builder";
 import type { LessonPackModel } from "../domain/lesson-pack-model";
+import { draftFilename, parseLessonPackDraft, serializeLessonPackDraft } from "../domain/lesson-pack-draft";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
 import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../domain/dataset-catalog-view-model";
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
@@ -220,6 +221,46 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     window.print();
     window.setTimeout(clearPrintMode, 1500);
   };
+  const setDraftStatus = (message: string, valid: boolean | null = null) => {
+    const status = lessonPackBuilderDialog.querySelector<HTMLElement>("[data-lesson-pack-draft-status]");
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.valid = valid === null ? "" : String(valid);
+    status.setAttribute("role", valid === false ? "alert" : "status");
+  };
+  const saveLessonPackDraft = (input: LessonPackCustomizationInput) => {
+    if (!workshopBaseModel || typeof Blob === "undefined" || typeof URL === "undefined" || typeof URL.createObjectURL !== "function") return;
+    const serialized = serializeLessonPackDraft(workshopBaseModel, input);
+    if (!serialized) {
+      setDraftStatus(copy.lessonPackDraftInvalid, false);
+      return;
+    }
+    const url = URL.createObjectURL(new Blob([serialized], { type: "application/json;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = draftFilename(workshopBaseModel);
+    anchor.hidden = true;
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    setDraftStatus(copy.lessonPackDraftSaved, true);
+  };
+  const loadLessonPackDraft = async (file: File) => {
+    const baseModel = workshopBaseModel;
+    if (!baseModel) return;
+    try {
+      const serialized = await file.text();
+      const input = parseLessonPackDraft(baseModel, serialized);
+      if (!input || !applyLessonPackBuilderInput(lessonPackBuilderDialog, baseModel, input)) {
+        setDraftStatus(copy.lessonPackDraftInvalid, false);
+        return;
+      }
+      setDraftStatus(copy.lessonPackDraftLoaded, true);
+    } catch {
+      setDraftStatus(copy.lessonPackDraftInvalid, false);
+    }
+  };
   const openLessonPack = () => {
     if (!lesson) return;
     const model = buildLessonPackModel(lesson, bundle, typeof window === "undefined" ? "" : window.location.href);
@@ -254,6 +295,8 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     renderLessonPackBuilder(lessonPackBuilderDialog, model, copy, {
       onClose: closeLessonWorkshop,
       onReset: () => { workshopInput = null; workshopFeedbackState = null; },
+      onSaveDraft: saveLessonPackDraft,
+      onDraftFile: (file) => { void loadLessonPackDraft(file); },
       onPreview: (input) => {
         const customized = workshopBaseModel ? customizeLessonPackModel(workshopBaseModel, input) : null;
         if (!customized) return;

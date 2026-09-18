@@ -7,6 +7,8 @@ export interface LessonPackBuilderActions {
   readonly onPreview: (input: LessonPackCustomizationInput) => void;
   readonly onClose: () => void;
   readonly onReset?: () => void;
+  readonly onSaveDraft?: (input: LessonPackCustomizationInput) => void;
+  readonly onDraftFile?: (file: File) => void;
 }
 
 /** Render the browser-only classroom-pack editor. */
@@ -44,6 +46,37 @@ export function renderLessonPackBuilder(
   note.dataset.lessonPackBuilderNote = "";
   note.textContent = labels.note;
   sheet.append(note);
+
+  const draftSection = document.createElement("section");
+  draftSection.className = "lesson-pack-builder-draft";
+  draftSection.dataset.lessonPackDraftSection = "";
+  const draftNote = document.createElement("p");
+  draftNote.className = "lesson-pack-builder-draft-note";
+  draftNote.textContent = labels.draftNote;
+  const draftActions = document.createElement("div");
+  draftActions.className = "lesson-pack-builder-draft-actions";
+  const saveDraft = button(labels.draftSave, "lesson-pack-builder-draft-save");
+  saveDraft.dataset.lessonPackDraftSave = "";
+  const fileLabel = document.createElement("label");
+  fileLabel.className = "lesson-pack-builder-draft-file-label";
+  fileLabel.dataset.lessonPackDraftFileLabel = "";
+  fileLabel.htmlFor = "lesson-pack-draft-file";
+  fileLabel.textContent = labels.draftFileLabel;
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.id = "lesson-pack-draft-file";
+  fileInput.accept = ".json,application/json";
+  fileInput.dataset.lessonPackDraftFile = "";
+  const openDraft = button(labels.draftOpen, "lesson-pack-builder-draft-open");
+  openDraft.dataset.lessonPackDraftOpen = "";
+  draftActions.append(saveDraft, fileLabel, fileInput, openDraft);
+  const draftStatus = document.createElement("p");
+  draftStatus.className = "lesson-pack-builder-draft-status";
+  draftStatus.dataset.lessonPackDraftStatus = "";
+  draftStatus.setAttribute("role", "status");
+  draftStatus.setAttribute("aria-live", "polite");
+  draftSection.append(draftNote, draftActions, draftStatus);
+  sheet.append(draftSection);
 
   const initial = initialValues(model, initialInput);
   const form = document.createElement("form");
@@ -116,6 +149,14 @@ export function renderLessonPackBuilder(
     actions.onPreview(input);
   });
 
+  saveDraft.addEventListener("click", () => actions.onSaveDraft?.(readInput(form)));
+  openDraft.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files?.[0];
+    if (file) actions.onDraftFile?.(file);
+    fileInput.value = "";
+  });
+
   reset.addEventListener("click", () => {
     resetInput(form, model);
     status.textContent = "";
@@ -130,6 +171,10 @@ interface BuilderLabels {
   readonly heading: string;
   readonly lead: string;
   readonly note: string;
+  readonly draftSave: string;
+  readonly draftFileLabel: string;
+  readonly draftOpen: string;
+  readonly draftNote: string;
   readonly details: string;
   readonly title: string;
   readonly classLabel: string;
@@ -149,6 +194,10 @@ function builderLabels(copy: UiCopy): BuilderLabels {
       heading: copy.lessonWorkshopOpen,
       lead: "既存のガイド教材から、授業用のタイトル・問い・ステップを整えます。",
       note: "入力内容はこのブラウザ内だけで扱われ、再読み込みすると破棄されます。",
+      draftSave: copy.lessonPackDraftSave,
+      draftFileLabel: copy.lessonPackDraftFileLabel,
+      draftOpen: copy.lessonPackDraftOpen,
+      draftNote: copy.lessonPackDraftNote,
       details: "教材の基本情報",
       title: "教材タイトル",
       classLabel: copy.lessonPackClassLabel,
@@ -166,6 +215,10 @@ function builderLabels(copy: UiCopy): BuilderLabels {
     heading: copy.lessonWorkshopOpen,
     lead: "Shape a classroom pack from the guided lesson by choosing its title, prompts, and steps.",
     note: "Draft input stays in this browser and is discarded when the page reloads.",
+    draftSave: copy.lessonPackDraftSave,
+    draftFileLabel: copy.lessonPackDraftFileLabel,
+    draftOpen: copy.lessonPackDraftOpen,
+    draftNote: copy.lessonPackDraftNote,
     details: "Pack details",
     title: "Pack title",
     classLabel: copy.lessonPackClassLabel,
@@ -264,6 +317,40 @@ function readInput(form: HTMLFormElement): LessonPackCustomizationInput {
   );
   const includeTeacher = form.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]")?.checked ?? true;
   return { title, classLabel, selectedStepIds, promptsByStepId, includeTeacher };
+}
+
+/** Read the current editor fields for portable draft export. */
+export function readLessonPackBuilderInput(container: ParentNode): LessonPackCustomizationInput {
+  const form = container.querySelector<HTMLFormElement>("[data-lesson-pack-builder-form]");
+  return form ? readInput(form) : { title: "", classLabel: "", selectedStepIds: [], promptsByStepId: {}, includeTeacher: true };
+}
+
+/** Apply a validated draft to the rendered editor without changing unrelated page state. */
+export function applyLessonPackBuilderInput(
+  container: ParentNode,
+  model: LessonPackModel,
+  input: LessonPackCustomizationInput,
+): boolean {
+  const form = container.querySelector<HTMLFormElement>("[data-lesson-pack-builder-form]");
+  if (!form) return false;
+  const normalized = normalizeLessonPackCustomization(model, input);
+  if (!normalized) return false;
+  const title = form.querySelector<HTMLInputElement>("[data-lesson-pack-title]");
+  if (title) title.value = normalized.title;
+  const classLabel = form.querySelector<HTMLInputElement>("[data-lesson-pack-class-label]");
+  if (classLabel) classLabel.value = normalized.classLabel;
+  const selectedIds = new Set(normalized.selectedStepIds);
+  for (const checkbox of form.querySelectorAll<HTMLInputElement>("[data-lesson-pack-step-select]")) {
+    checkbox.checked = selectedIds.has(checkbox.dataset.stepId ?? "");
+  }
+  for (const textarea of form.querySelectorAll<HTMLTextAreaElement>("[data-lesson-pack-prompt]")) {
+    const stepId = textarea.dataset.stepId ?? "";
+    const step = model.steps.find((candidate) => candidate.id === stepId);
+    textarea.value = normalized.promptsByStepId[stepId] ?? step?.prompt ?? "";
+  }
+  const includeTeacher = form.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]");
+  if (includeTeacher) includeTeacher.checked = normalized.includeTeacher;
+  return true;
 }
 
 function resetInput(form: HTMLFormElement, model: LessonPackModel): void {

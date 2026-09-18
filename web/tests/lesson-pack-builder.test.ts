@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import type { LessonPackModel, LessonPackStep } from "../src/domain/lesson-pack-model";
-import { renderLessonPackBuilder } from "../src/ui/lesson-pack-builder";
+import { applyLessonPackBuilderInput, readLessonPackBuilderInput, renderLessonPackBuilder } from "../src/ui/lesson-pack-builder";
 import { uiCopy } from "../src/ui/copy";
 
 function step(id: string, year: number, prompt: string): LessonPackStep {
@@ -100,5 +100,32 @@ describe("lesson pack builder", () => {
     expect(root.querySelectorAll<HTMLInputElement>("[data-lesson-pack-step-select]:checked")).toHaveLength(2);
     root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-close]")!.click();
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("extracts and reapplies all portable draft fields", () => {
+    const root = document.createElement("div");
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn() });
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-title]")!.value = "授業用教材";
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-class-label]")!.value = "2年A組";
+    root.querySelector<HTMLInputElement>('[data-lesson-pack-step-select][data-step-id="first"]')!.checked = false;
+    root.querySelector<HTMLTextAreaElement>('[data-lesson-pack-prompt][data-step-id="second"]')!.value = "比較しよう";
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]")!.checked = false;
+    const extracted = readLessonPackBuilderInput(root);
+    expect(extracted).toEqual({ title: "授業用教材", classLabel: "2年A組", selectedStepIds: ["second"], promptsByStepId: { first: "問い1", second: "比較しよう" }, includeTeacher: false });
+
+    root.querySelector<HTMLInputElement>("[data-lesson-pack-title]")!.value = "別の教材";
+    expect(applyLessonPackBuilderInput(root, model, extracted)).toBe(true);
+    expect(readLessonPackBuilderInput(root)).toEqual(extracted);
+  });
+
+  it("renders labeled draft controls and sends current state to save", () => {
+    const root = document.createElement("div");
+    const onSaveDraft = vi.fn();
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn(), onSaveDraft });
+    expect(root.querySelector("[data-lesson-pack-draft-section]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-draft-file-label]")?.textContent).toContain("下書きファイル");
+    expect(root.querySelector<HTMLInputElement>("[data-lesson-pack-draft-file]")?.accept).toContain(".json");
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-draft-save]")!.click();
+    expect(onSaveDraft).toHaveBeenCalledWith(expect.objectContaining({ selectedStepIds: ["first", "second"] }));
   });
 });
