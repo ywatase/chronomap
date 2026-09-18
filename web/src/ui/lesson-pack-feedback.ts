@@ -161,11 +161,17 @@ async function copyAnswer(answer: HTMLTextAreaElement, status: HTMLElement, copy
   }
   const value = answer.value;
   try {
+    let copied = false;
     if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(value);
-    } else if (!fallbackCopy(value)) {
-      throw new Error("clipboard unavailable");
+      try {
+        await navigator.clipboard.writeText(value);
+        copied = true;
+      } catch {
+        copied = false;
+      }
     }
+    if (!copied) copied = fallbackCopy(value);
+    if (!copied) throw new Error("clipboard unavailable");
     status.textContent = copy.lessonPackFeedbackCopied;
   } catch {
     status.textContent = copy.lessonPackFeedbackCopyFailed;

@@ -60,7 +60,15 @@ describe("lesson pack feedback form", () => {
     expect(writeText).toHaveBeenCalledOnce();
     expect(host.querySelector("[data-lesson-pack-feedback-status]")?.textContent).toContain("copied");
 
+    const execCommand = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, "execCommand", { configurable: true, value: execCommand });
     writeText.mockRejectedValueOnce(new Error("denied"));
+    await host.querySelector<HTMLButtonElement>("[data-lesson-pack-feedback-copy]")!.click();
+    expect(execCommand).toHaveBeenCalledWith("copy");
+    expect(host.querySelector("[data-lesson-pack-feedback-status]")?.textContent).toContain("copied");
+
+    execCommand.mockReturnValue(false);
+    writeText.mockRejectedValueOnce(new Error("denied again"));
     await host.querySelector<HTMLButtonElement>("[data-lesson-pack-feedback-copy]")!.click();
     expect(host.querySelector("[data-lesson-pack-feedback-status]")?.textContent).toContain("Could not");
   });
