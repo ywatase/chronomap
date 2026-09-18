@@ -163,6 +163,16 @@ feedback text. Lesson manifests validate the default language and trim every
 localized note to 1–500 characters; omitting the teacher section removes the
 notes from the DOM, and print CSS keeps a callout together on A4.
 
+The print toolbar offers recipient-specific output: `Print student worksheet`,
+`Print teacher reference + sources`, and `Print full classroom pack`. Student
+output keeps the QR/start links, answer space, and a compact rights/attribution
+footer but hides teacher notes and source detail. Teacher output keeps the
+reading examples, uncertainty, and sources/rights but hides the student QR and
+answer space. The full action preserves the original three-section output; if
+the teacher section is disabled, its action is omitted. Scope state is cleared
+after `afterprint` or a short fallback timeout, and all three actions are
+covered on desktop/mobile for the three pilot datasets.
+
 After a print/PDF attempt, the preview reveals a collapsed one-minute feedback
 form. It asks whether the pack is usable in class, which next teacher workflow
 would help most, and optionally accepts a 500-character comment. `回答文を作成`
