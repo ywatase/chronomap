@@ -182,9 +182,38 @@ describe("ui shell", () => {
     expect(pack.hidden).toBe(false);
     expect(pack.querySelector("[data-lesson-pack-qr]")).toBeTruthy();
     expect(new URLSearchParams(window.location.search).get("view")).toBe("pack");
+    expect(new URLSearchParams(window.location.search).get("lesson")).toBe("intro");
     pack.querySelector<HTMLButtonElement>("[data-lesson-pack-close]")!.click();
     expect(pack.hidden).toBe(true);
     expect(new URLSearchParams(window.location.search).get("view")).toBeNull();
+    controller.destroy();
+    window.history.replaceState(null, "", "/");
+    root.remove();
+  });
+
+  it("renders the root welcome as a flow region rather than a modal dialog", async () => {
+    const lesson: Lesson = {
+      id: "intro",
+      dataset: "dataset",
+      title: { en: "Demo lesson" },
+      description: { en: "A lesson" },
+      durationMinutes: 10,
+      steps: [{ id: "first", year: 0, featureId: "feature", prompt: { en: "Observe this" } }],
+    };
+    const root = document.createElement("div");
+    document.body.append(root);
+    window.history.replaceState(null, "", "/");
+    const controller = mountUiShell(root, bundle, () => undefined, lesson, async () => ({
+      ogurike: { bundle, lesson },
+      tonegawa: { bundle: null, lesson: null },
+      heijokyo: { bundle: null, lesson: null },
+    }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const catalog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
+    expect(catalog.getAttribute("role")).toBe("region");
+    expect(catalog.hasAttribute("aria-modal")).toBe(false);
+    expect(catalog.querySelector("[data-dataset-catalog-welcome] h3")?.getAttribute("aria-hidden")).toBe("true");
+    expect(catalog.querySelector("[data-dataset-catalog-card] h3")?.getAttribute("aria-hidden")).toBe("true");
     controller.destroy();
     window.history.replaceState(null, "", "/");
     root.remove();

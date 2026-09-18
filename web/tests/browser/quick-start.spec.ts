@@ -8,9 +8,15 @@ test("turns the root welcome into a pack preview and classroom editor path", asy
 
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog).toBeVisible();
-  await expect(catalog.locator("[data-dataset-catalog-welcome]")).toContainText(/根拠付きワークシート|evidence-backed worksheet/i);
+  const welcome = catalog.locator("[data-dataset-catalog-welcome]");
+  await expect(welcome).toContainText(/根拠付きワークシート|evidence-backed worksheet/i);
   await expect(catalog.locator("[data-dataset-catalog-step]")).toHaveCount(3);
-  await expect(catalog.locator("[data-dataset-catalog-featured-pack]")).toContainText(/完成見本を見る|See the finished example/i);
+  const featuredPack = catalog.locator("[data-dataset-catalog-featured-pack]");
+  await expect(featuredPack).toContainText(/完成見本を見る|See the finished example/i);
+  expect(await featuredPack.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= window.innerHeight;
+  })).toBeTruthy();
   await expect(page).toHaveURL(/view=catalog/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 
@@ -25,7 +31,11 @@ test("turns the root welcome into a pack preview and classroom editor path", asy
   await expect(pack.locator("[data-lesson-pack-print]")).toBeVisible();
   await expect(pack.locator("[data-lesson-pack-back]")).toBeVisible();
 
-  await pack.locator("[data-lesson-pack-back]").click();
+  await page.reload();
+  await expect(page.locator("[data-lesson-pack-dialog]")).toBeVisible();
+  await expect(page.locator("[data-lesson-pack-qr]")).toHaveCount(1);
+
+  await page.locator("[data-lesson-pack-back]").click();
   const builder = page.locator("[data-lesson-pack-builder]");
   await expect(builder).toBeVisible();
   await expect.poll(() => new URL(page.url()).searchParams.get("view")).toBe("builder");

@@ -60,6 +60,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   root.replaceChildren();
 
   const shell = document.createElement("div"); shell.className = "app-shell"; root.append(shell);
+  if (rootWelcomeOpen) shell.dataset.rootWelcome = "";
   const header = document.createElement("header"); header.className = "app-header";
   const eyebrow = document.createElement("p"); eyebrow.className = "eyebrow"; eyebrow.textContent = copy.language === "ja" ? "歴史地図パイロット" : "Historical map pilot";
   const title = document.createElement("h1"); title.textContent = localizedText(bundle.dataset.title, bundle.dataset.defaultLanguage);
@@ -129,7 +130,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   datasetCatalogDialog.hidden = true;
   datasetCatalogDialog.addEventListener("keydown", (event) => {
     if (event.key === "Escape") { event.preventDefault(); closeDatasetCatalog(); }
-    if (event.key === "Tab") cycleDialogFocus(datasetCatalogDialog, event);
+    if (event.key === "Tab" && !rootWelcomeOpen) cycleDialogFocus(datasetCatalogDialog, event);
   });
   datasetCatalogDialog.addEventListener("click", (event) => {
     if (event.target === datasetCatalogDialog) closeDatasetCatalog();
@@ -158,7 +159,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const syncUrl = () => {
     if (typeof window === "undefined" || !window.history?.replaceState) return;
     const camera = adapter?.getCamera?.() ?? requestedCamera;
-    const activeLesson = lesson && (lessonIndex !== null || builderOpen) ? lesson : null;
+    const activeLesson = lesson && (lessonIndex !== null || builderOpen || lessonPackOpen) ? lesson : null;
     const activeStep = activeLesson && lessonIndex !== null ? activeLesson.steps[lessonIndex] ?? null : null;
     const view = builderOpen ? "builder" : lessonPackOpen ? "pack" : catalogOpen ? "catalog" : null;
     const query = sharedQuery({ dataset: datasetSlug, view, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
@@ -286,8 +287,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     datasetCatalogDialog.dataset.datasetCatalogDialog = "";
     if (rootWelcomeOpen) datasetCatalogDialog.dataset.datasetCatalogRoot = "";
     else delete datasetCatalogDialog.dataset.datasetCatalogRoot;
-    datasetCatalogDialog.setAttribute("role", "dialog");
-    datasetCatalogDialog.setAttribute("aria-modal", "true");
+    datasetCatalogDialog.setAttribute("role", rootWelcomeOpen ? "region" : "dialog");
+    if (rootWelcomeOpen) datasetCatalogDialog.removeAttribute("aria-modal");
+    else datasetCatalogDialog.setAttribute("aria-modal", "true");
     datasetCatalogDialog.setAttribute("aria-label", copy.datasetCatalogDialogLabel);
     const loading = document.createElement("p");
     loading.className = "dataset-catalog-loading";
@@ -310,7 +312,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     }
     if (!catalogOpen || !catalogSnapshots) return;
     const model = buildDatasetCatalogViewModel(DATASET_CATALOG, catalogSnapshots, copy.language, typeof window === "undefined" ? "/" : window.location.href);
-    renderDatasetCatalog(datasetCatalogDialog, model, copy, { onClose: closeDatasetCatalog });
+    renderDatasetCatalog(datasetCatalogDialog, model, copy, { onClose: closeDatasetCatalog, isRoot: rootWelcomeOpen });
     if (rootWelcomeOpen) datasetCatalogDialog.dataset.datasetCatalogRoot = "";
     else delete datasetCatalogDialog.dataset.datasetCatalogRoot;
     datasetCatalogDialog.hidden = false;
@@ -319,6 +321,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const closeDatasetCatalog = () => {
     catalogOpen = false;
     rootWelcomeOpen = false;
+    delete shell.dataset.rootWelcome;
     datasetCatalogDialog.hidden = true;
     catalogButton.setAttribute("aria-expanded", "false");
     syncUrl();
@@ -344,6 +347,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (!lesson || index < 0 || index >= lesson.steps.length) return;
     if (rootWelcomeOpen) {
       rootWelcomeOpen = false;
+      delete shell.dataset.rootWelcome;
       catalogOpen = false;
       datasetCatalogDialog.hidden = true;
       catalogButton.setAttribute("aria-expanded", "false");

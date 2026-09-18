@@ -138,6 +138,7 @@ export interface UiCopy {
   readonly datasetCatalogFeaturedHeading: string;
   readonly datasetCatalogFeaturedLead: (title: string, minutes: number) => string;
   readonly datasetCatalogFeaturedPack: string;
+  readonly datasetCatalogCardPrefix: string;
   readonly datasetCatalogRegion: string;
   readonly datasetCatalogYears: string;
   readonly datasetCatalogFeatures: string;
@@ -345,13 +346,14 @@ const EN_COPY: UiCopy = {
   datasetCatalogHeading: "Choose a region or lesson",
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
   datasetCatalogWelcomeTitle: "Evidence-backed worksheet in 3 minutes",
-  datasetCatalogWelcomeLead: "A teacher-friendly starting point: preview a finished worksheet, edit it for your class, and print a copy with the evidence trail intact.",
-  datasetCatalogStepObserve: "1. Inspect the map and evidence",
-  datasetCatalogStepWrite: "2. Write what the map supports",
-  datasetCatalogStepShare: "3. Share a printable worksheet",
+  datasetCatalogWelcomeLead: "Choose a region and shape the observation prompt. Export a student worksheet, teacher reference, QR code, and source list as a PDF.",
+  datasetCatalogStepObserve: "1. Choose a topic and evidence",
+  datasetCatalogStepWrite: "2. Shape the observation prompt",
+  datasetCatalogStepShare: "3. Print and share the PDF",
   datasetCatalogFeaturedHeading: "Recommended finished example",
   datasetCatalogFeaturedLead: (title, minutes) => `${title} · about ${minutes} minutes`,
   datasetCatalogFeaturedPack: "See the finished example",
+  datasetCatalogCardPrefix: "Dataset card",
   datasetCatalogRegion: "Region",
   datasetCatalogYears: "Recorded years",
   datasetCatalogFeatures: "Public features",
@@ -551,13 +553,14 @@ const JA_COPY: UiCopy = {
   datasetCatalogHeading: "地域・教材を選ぶ",
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
   datasetCatalogWelcomeTitle: "根拠付きワークシートを3分で",
-  datasetCatalogWelcomeLead: "先生向けの入口です。完成見本を見て、クラス用に編集し、根拠の道筋を残したワークシートを印刷できます。",
-  datasetCatalogStepObserve: "1. 地図と根拠を見る",
-  datasetCatalogStepWrite: "2. 地図から読み取れることを書く",
-  datasetCatalogStepShare: "3. 印刷したワークシートを共有する",
+  datasetCatalogWelcomeLead: "地域を選び、観察する問いを整えるだけ。生徒用ワークシート、教員用参照資料、QRコード、出典一覧をPDFにできます。",
+  datasetCatalogStepObserve: "1. 題材と根拠を選ぶ",
+  datasetCatalogStepWrite: "2. 観察する問いを整える",
+  datasetCatalogStepShare: "3. PDFで配る",
   datasetCatalogFeaturedHeading: "おすすめの完成見本",
   datasetCatalogFeaturedLead: (title, minutes) => `${title} · 約${minutes}分`,
   datasetCatalogFeaturedPack: "完成見本を見る",
+  datasetCatalogCardPrefix: "教材カード",
   datasetCatalogRegion: "地域",
   datasetCatalogYears: "収録年",
   datasetCatalogFeatures: "公開地物",

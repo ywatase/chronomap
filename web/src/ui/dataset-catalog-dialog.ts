@@ -3,6 +3,7 @@ import type { UiCopy } from "./copy";
 
 export interface DatasetCatalogDialogActions {
   readonly onClose: () => void;
+  readonly isRoot?: boolean;
 }
 
 /** Render the allow-listed region and lesson catalog without fetching or mutating application state. */
@@ -10,8 +11,9 @@ export function renderDatasetCatalog(container: HTMLElement, model: DatasetCatal
   container.replaceChildren();
   container.className = "dataset-catalog-dialog";
   container.dataset.datasetCatalogDialog = "";
-  container.setAttribute("role", "dialog");
-  container.setAttribute("aria-modal", "true");
+  container.setAttribute("role", actions.isRoot ? "region" : "dialog");
+  if (actions.isRoot) container.removeAttribute("aria-modal");
+  else container.setAttribute("aria-modal", "true");
   container.setAttribute("aria-label", copy.datasetCatalogDialogLabel);
 
   const toolbar = document.createElement("div");
@@ -38,12 +40,12 @@ export function renderDatasetCatalog(container: HTMLElement, model: DatasetCatal
   header.append(eyebrow, heading, lead);
   sheet.append(header);
 
-  sheet.append(renderWelcome(model, copy));
+  sheet.append(renderWelcome(model, copy, Boolean(actions.isRoot)));
 
   const grid = document.createElement("div");
   grid.className = "dataset-catalog-grid";
   grid.dataset.datasetCatalogCards = "";
-  for (const card of model.cards) grid.append(renderCard(card, copy));
+  for (const card of model.cards) grid.append(renderCard(card, copy, Boolean(actions.isRoot)));
   sheet.append(grid);
 
   const notes = document.createElement("div");
@@ -55,12 +57,17 @@ export function renderDatasetCatalog(container: HTMLElement, model: DatasetCatal
   container.append(sheet);
 }
 
-function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
+function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boolean): HTMLElement {
   const welcome = document.createElement("section");
   welcome.className = "dataset-catalog-welcome";
   welcome.dataset.datasetCatalogWelcome = "";
+  if (isRoot) {
+    welcome.setAttribute("role", "region");
+    welcome.setAttribute("aria-label", copy.datasetCatalogWelcomeTitle);
+  }
   const heading = document.createElement("h3");
   heading.textContent = copy.datasetCatalogWelcomeTitle;
+  if (isRoot) heading.setAttribute("aria-hidden", "true");
   const lead = document.createElement("p");
   lead.className = "dataset-catalog-welcome-lead";
   lead.textContent = copy.datasetCatalogWelcomeLead;
@@ -81,7 +88,7 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElemen
     featured.className = "dataset-catalog-featured";
     featured.dataset.datasetCatalogFeatured = "";
     const featuredHeading = document.createElement("h4");
-    featuredHeading.textContent = `${copy.datasetCatalogFeaturedHeading}: ${model.featured.title}`;
+    featuredHeading.textContent = copy.datasetCatalogFeaturedHeading;
     const featuredLead = document.createElement("p");
     featuredLead.textContent = copy.datasetCatalogFeaturedLead(model.featured.lessonTitle, model.featured.lessonDurationMinutes);
     const actions = document.createElement("div");
@@ -96,12 +103,14 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElemen
   return welcome;
 }
 
-function renderCard(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {
+function renderCard(card: DatasetCatalogCardModel, copy: UiCopy, isRoot: boolean): HTMLElement {
   const article = document.createElement("article");
   article.className = `dataset-catalog-card dataset-catalog-card-${card.status}`;
   article.dataset.datasetCatalogCard = card.slug;
+  if (isRoot) article.setAttribute("aria-label", `${copy.datasetCatalogCardPrefix}: ${card.title}`);
   const heading = document.createElement("h3");
   heading.textContent = card.title;
+  if (isRoot) heading.setAttribute("aria-hidden", "true");
   article.append(heading);
   const region = document.createElement("p");
   region.className = "dataset-catalog-region";

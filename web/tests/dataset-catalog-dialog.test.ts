@@ -76,7 +76,11 @@ describe("dataset catalog dialog", () => {
 
     expect(root.getAttribute("role")).toBe("dialog");
     expect(root.querySelector("[data-dataset-catalog-heading]")?.textContent).toContain("地域・教材");
+    expect(root.querySelector("[data-dataset-catalog-welcome]")?.textContent).toContain("QRコード");
+    expect(root.querySelector("[data-dataset-catalog-welcome]")?.textContent).toContain("PDF");
     expect(root.querySelector("[data-dataset-catalog-welcome]")?.textContent).toContain("完成見本を見る");
+    expect(root.querySelector("[data-dataset-catalog-welcome] h3")?.hasAttribute("aria-hidden")).toBe(false);
+    expect(root.querySelector("[data-dataset-catalog-card] h3")?.hasAttribute("aria-hidden")).toBe(false);
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-featured-pack]")?.href).toContain("view=pack");
     expect(root.querySelectorAll("[data-dataset-catalog-step]")).toHaveLength(3);
     expect(root.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(3);

@@ -152,6 +152,24 @@ price, contract, or billing state. The Tone River and Heijokyo geometries are
 explicitly approximate reconstructions; external source text and images remain
 citation-only.
 
+## Teacher quick start
+
+Opening `/` shows a lightweight welcome flow before the map header. It explains
+the three-step path—choose evidence, shape an observation prompt, and share a
+PDF—and links directly to the Ogurike finished example. The root welcome is a
+normal page region, so the map and existing dataset controls remain available
+after scrolling. The finished example uses an allow-listed deep link:
+
+```text
+/?dataset=ogurike&lesson=ogurike-intro&view=pack
+```
+
+The pack preview can return to the browser-only editor, then to print/PDF and
+the copy-only feedback form. Reloading the pack URL restores the same preview;
+invalid dataset or lesson combinations do not open a pack. The welcome copy
+describes the current pilot output—student worksheet, teacher reference, QR
+code, source list, and PDF—without implying saving, accounts, or billing.
+
 ## Pilot data
 
 The checked-in public files under `public/data/ogurike/` are generated with the
