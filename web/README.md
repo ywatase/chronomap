@@ -118,7 +118,10 @@ Draft edits are intentionally not saved; reloading the page discards them.
 
 The existing `授業用教材パックを作成（β版無料）` action opens a print preview with
 three sections: a student worksheet, a teacher reference sheet, and a
-sources/rights sheet. It includes one start URL and one share URL
+sources/rights sheet. The student worksheet includes one locally generated
+black-and-white SVG QR code for the exact start URL, plus the original
+clickable URL as a fallback. Each lesson step keeps its exact href while showing
+a short online-link label. It includes one start URL and one share URL
 for each lesson step, observation prompts and writing space, feature
 descriptions, uncertainty notes, evidence locators, and deduplicated source
 metadata. Restricted sources remain citation-only; source body text, images, and
