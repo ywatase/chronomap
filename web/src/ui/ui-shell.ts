@@ -337,6 +337,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     syncUrl();
     lessonHost.querySelector<HTMLButtonElement>("[data-lesson-workshop-open]")?.setAttribute("aria-expanded", "true");
     lessonPackBuilderDialog.querySelector<HTMLInputElement>("[data-lesson-pack-title]")?.focus();
+    // Keep the outcome summary and primary CTA in the initial viewport while
+    // returning keyboard focus to the first editable field.
+    lessonPackBuilderDialog.scrollTop = 0;
   };
   const renderCatalogLoading = () => {
     datasetCatalogDialog.replaceChildren();

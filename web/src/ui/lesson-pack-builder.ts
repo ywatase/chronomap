@@ -11,6 +11,56 @@ export interface LessonPackBuilderActions {
   readonly onDraftFile?: (file: File) => void;
 }
 
+export type LessonPackBuilderSummaryState = "ready" | "editing" | "invalid";
+
+/**
+ * Privacy-safe, renderable facts about the classroom pack outcome.
+ *
+ * This view model intentionally contains counts and output capabilities only;
+ * it never copies a title, class label, or observation prompt into the
+ * summary surface.
+ */
+export interface LessonPackBuilderSummary {
+  readonly state: LessonPackBuilderSummaryState;
+  readonly selectedStepCount: number;
+  readonly totalStepCount: number;
+  readonly durationMinutes: number;
+  readonly studentWorksheet: boolean;
+  readonly teacherReference: boolean;
+  readonly sources: boolean;
+  readonly qrLinks: boolean;
+  readonly a4Pdf: boolean;
+  readonly recipientPrint: boolean;
+  readonly sourceCount: number;
+  readonly canPreview: boolean;
+}
+
+/** Derive the outcome summary from the model and the current editor values. */
+export function deriveLessonPackBuilderSummary(
+  model: LessonPackModel,
+  input: LessonPackCustomizationInput | null | undefined = undefined,
+): LessonPackBuilderSummary {
+  const defaults = initialValues(model, undefined);
+  const values = summaryValues(model, input, defaults);
+  const selectedStepCount = values.selectedStepIds.length;
+  const valid = selectedStepCount > 0;
+  const sameAsDefaults = valid && builderValuesEqual(values, defaults);
+  return Object.freeze({
+    state: valid ? (sameAsDefaults ? "ready" : "editing") : "invalid",
+    selectedStepCount,
+    totalStepCount: model.steps.length,
+    durationMinutes: model.durationMinutes,
+    studentWorksheet: valid,
+    teacherReference: valid && values.includeTeacher,
+    sources: valid && values.includeTeacher,
+    qrLinks: valid && Boolean(model.startUrl || model.steps.some((step) => step.shareUrl)),
+    a4Pdf: valid,
+    recipientPrint: valid,
+    sourceCount: model.sources.length,
+    canPreview: valid,
+  });
+}
+
 /** Render the browser-only classroom-pack editor. */
 export function renderLessonPackBuilder(
   container: HTMLElement,
@@ -47,6 +97,14 @@ export function renderLessonPackBuilder(
   note.textContent = labels.note;
   sheet.append(note);
 
+  const layout = document.createElement("div");
+  layout.className = "lesson-pack-builder-layout";
+  const summaryElements = renderSummaryShell(labels);
+  const main = document.createElement("div");
+  main.className = "lesson-pack-builder-main";
+  layout.append(summaryElements.container, main);
+  sheet.append(layout, summaryElements.mobileAction);
+
   const draftSection = document.createElement("section");
   draftSection.className = "lesson-pack-builder-draft";
   draftSection.dataset.lessonPackDraftSection = "";
@@ -76,10 +134,10 @@ export function renderLessonPackBuilder(
   draftStatus.setAttribute("role", "status");
   draftStatus.setAttribute("aria-live", "polite");
   draftSection.append(draftNote, draftActions, draftStatus);
-  sheet.append(draftSection);
 
   const initial = initialValues(model, initialInput);
   const form = document.createElement("form");
+  form.id = "lesson-pack-builder-form";
   form.dataset.lessonPackBuilderForm = "";
   form.noValidate = true;
 
@@ -94,6 +152,8 @@ export function renderLessonPackBuilder(
 
   const stepsFieldset = document.createElement("fieldset");
   stepsFieldset.className = "lesson-pack-builder-steps";
+  stepsFieldset.dataset.lessonPackBuilderSteps = "";
+  stepsFieldset.tabIndex = -1;
   const stepsLegend = document.createElement("legend");
   stepsLegend.textContent = labels.steps;
   stepsFieldset.append(stepsLegend);
@@ -122,7 +182,7 @@ export function renderLessonPackBuilder(
 
   const actionsBar = document.createElement("div");
   actionsBar.className = "lesson-pack-builder-actions";
-  const preview = button(labels.preview, "lesson-pack-builder-preview");
+  const preview = button(labels.summaryPreview, "lesson-pack-builder-preview");
   preview.type = "submit";
   preview.dataset.lessonPackBuilderPreview = "";
   const reset = button(labels.reset, "lesson-pack-builder-reset");
@@ -131,22 +191,58 @@ export function renderLessonPackBuilder(
   close.dataset.lessonPackBuilderClose = "";
   actionsBar.append(preview, reset, close);
   form.append(actionsBar);
-  sheet.append(form);
+  main.append(form, draftSection);
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  const refreshSummary = () => {
+    renderSummary(summaryElements, deriveLessonPackBuilderSummary(model, readInput(form)), labels);
+  };
+  const focusInvalidSteps = () => {
+    try { stepsFieldset.focus({ preventScroll: true }); } catch { stepsFieldset.focus(); }
+    scrollBuilderElement(stepsFieldset, { block: "center", behavior: "smooth" });
+  };
+  const submitPreview = () => {
     const input = readInput(form);
     const normalized = normalizeLessonPackCustomization(model, input);
     if (!normalized) {
       status.textContent = labels.invalidSelection;
       status.setAttribute("role", "alert");
       status.dataset.valid = "false";
+      refreshSummary();
+      focusInvalidSteps();
       return;
     }
     status.textContent = labels.previewReady;
     status.setAttribute("role", "status");
     status.dataset.valid = "true";
     actions.onPreview(input);
+  };
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    submitPreview();
+  });
+  form.addEventListener("input", () => {
+    refreshSummary();
+    if (status.dataset.valid === "false" && deriveLessonPackBuilderSummary(model, readInput(form)).canPreview) {
+      status.textContent = "";
+      status.setAttribute("role", "status");
+      status.dataset.valid = "";
+    }
+  });
+  form.addEventListener("change", () => {
+    refreshSummary();
+    if (status.dataset.valid === "false" && deriveLessonPackBuilderSummary(model, readInput(form)).canPreview) {
+      status.textContent = "";
+      status.setAttribute("role", "status");
+      status.dataset.valid = "";
+    }
+  });
+
+  summaryElements.preview.addEventListener("click", submitPreview);
+  summaryElements.mobilePreview.addEventListener("click", submitPreview);
+  summaryElements.edit.addEventListener("click", () => {
+    scrollBuilderElement(form, { block: "start", behavior: "smooth" });
+    form.querySelector<HTMLInputElement>("[data-lesson-pack-title]")?.focus();
   });
 
   saveDraft.addEventListener("click", () => actions.onSaveDraft?.(readInput(form)));
@@ -162,9 +258,11 @@ export function renderLessonPackBuilder(
     status.textContent = "";
     status.setAttribute("role", "status");
     status.dataset.valid = "";
+    refreshSummary();
     actions.onReset?.();
   });
   close.addEventListener("click", actions.onClose);
+  refreshSummary();
 }
 
 interface BuilderLabels {
@@ -181,6 +279,19 @@ interface BuilderLabels {
   readonly steps: string;
   readonly prompt: string;
   readonly includeTeacher: string;
+  readonly summaryHeading: string;
+  readonly summaryLead: string;
+  readonly summarySteps: (selected: number, total: number) => string;
+  readonly summaryDurationLabel: string;
+  readonly summaryDuration: (minutes: number) => string;
+  readonly summaryStudent: string;
+  readonly summaryTeacher: string;
+  readonly summarySources: string;
+  readonly summaryLinks: string;
+  readonly summaryPrint: string;
+  readonly summaryPreview: string;
+  readonly summaryEdit: string;
+  readonly summaryInvalid: string;
   readonly preview: string;
   readonly reset: string;
   readonly close: string;
@@ -204,7 +315,20 @@ function builderLabels(copy: UiCopy): BuilderLabels {
       steps: "使うステップと観察する問い",
       prompt: copy.lessonPackObservation,
       includeTeacher: "教員用参照資料を含める",
-      preview: "プレビューを開く",
+      summaryHeading: copy.lessonPackBuilderSummary,
+      summaryLead: copy.lessonPackBuilderSummaryLead,
+      summarySteps: copy.lessonPackBuilderSummarySteps,
+      summaryDurationLabel: copy.language === "ja" ? "所要時間" : "Duration",
+      summaryDuration: copy.lessonPackBuilderSummaryDuration,
+      summaryStudent: copy.lessonPackBuilderSummaryStudent,
+      summaryTeacher: copy.lessonPackBuilderSummaryTeacher,
+      summarySources: copy.lessonPackBuilderSummarySources,
+      summaryLinks: copy.lessonPackBuilderSummaryLinks,
+      summaryPrint: copy.lessonPackBuilderSummaryPrint,
+      summaryPreview: copy.lessonPackBuilderSummaryPreview,
+      summaryEdit: copy.lessonPackBuilderSummaryEdit,
+      summaryInvalid: copy.lessonPackBuilderSummaryInvalid,
+      preview: copy.lessonPackBuilderSummaryPreview,
       reset: "初期値に戻す",
       close: "編集を閉じる",
       invalidSelection: "少なくとも1つのステップを選択してください。",
@@ -225,12 +349,117 @@ function builderLabels(copy: UiCopy): BuilderLabels {
     steps: "Steps and observation prompts",
     prompt: copy.lessonPackObservation,
     includeTeacher: "Include teacher reference",
-    preview: "Open preview",
+    summaryHeading: copy.lessonPackBuilderSummary,
+    summaryLead: copy.lessonPackBuilderSummaryLead,
+    summarySteps: copy.lessonPackBuilderSummarySteps,
+    summaryDurationLabel: "Duration",
+    summaryDuration: copy.lessonPackBuilderSummaryDuration,
+    summaryStudent: copy.lessonPackBuilderSummaryStudent,
+    summaryTeacher: copy.lessonPackBuilderSummaryTeacher,
+    summarySources: copy.lessonPackBuilderSummarySources,
+    summaryLinks: copy.lessonPackBuilderSummaryLinks,
+    summaryPrint: copy.lessonPackBuilderSummaryPrint,
+    summaryPreview: copy.lessonPackBuilderSummaryPreview,
+    summaryEdit: copy.lessonPackBuilderSummaryEdit,
+    summaryInvalid: copy.lessonPackBuilderSummaryInvalid,
+    preview: copy.lessonPackBuilderSummaryPreview,
     reset: "Reset",
     close: "Close editor",
     invalidSelection: "Select at least one step.",
     previewReady: "Preview updated.",
   };
+}
+
+interface BuilderSummaryElements {
+  readonly container: HTMLElement;
+  readonly status: HTMLElement;
+  readonly count: HTMLElement;
+  readonly duration: HTMLElement;
+  readonly outputs: HTMLElement;
+  readonly preview: HTMLButtonElement;
+  readonly mobilePreview: HTMLButtonElement;
+  readonly mobileAction: HTMLElement;
+  readonly edit: HTMLButtonElement;
+}
+
+function renderSummaryShell(labels: BuilderLabels): BuilderSummaryElements {
+  const container = document.createElement("aside");
+  container.className = "lesson-pack-builder-summary";
+  container.dataset.lessonPackBuilderSummary = "";
+  container.setAttribute("aria-labelledby", "lesson-pack-builder-summary-heading");
+
+  const heading = document.createElement("h3");
+  heading.id = "lesson-pack-builder-summary-heading";
+  heading.textContent = labels.summaryHeading;
+  const lead = document.createElement("p");
+  lead.className = "lesson-pack-builder-summary-lead";
+  lead.textContent = labels.summaryLead;
+  const status = document.createElement("p");
+  status.className = "lesson-pack-builder-summary-status";
+  status.id = "lesson-pack-builder-summary-status";
+  status.dataset.lessonPackSummaryStatus = "";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  const facts = document.createElement("dl");
+  facts.className = "lesson-pack-builder-summary-facts";
+  const countTerm = document.createElement("dt");
+  countTerm.textContent = labels.steps;
+  const count = document.createElement("dd");
+  count.dataset.lessonPackSummaryCount = "";
+  const durationTerm = document.createElement("dt");
+  durationTerm.textContent = labels.summaryDurationLabel;
+  const duration = document.createElement("dd");
+  duration.dataset.lessonPackSummaryDuration = "";
+  facts.append(countTerm, count, durationTerm, duration);
+  const outputs = document.createElement("ul");
+  outputs.className = "lesson-pack-builder-summary-outputs";
+  outputs.dataset.lessonPackSummaryOutputs = "";
+  const actions = document.createElement("div");
+  actions.className = "lesson-pack-builder-summary-actions";
+  const preview = button(labels.summaryPreview, "lesson-pack-builder-summary-preview");
+  preview.dataset.lessonPackBuilderSummaryCta = "";
+  preview.setAttribute("aria-describedby", "lesson-pack-builder-summary-status");
+  const edit = button(labels.summaryEdit, "lesson-pack-builder-summary-edit");
+  edit.dataset.lessonPackBuilderEdit = "";
+  edit.setAttribute("aria-controls", "lesson-pack-builder-form");
+  actions.append(preview, edit);
+  const mobileAction = document.createElement("div");
+  mobileAction.className = "lesson-pack-builder-mobile-action";
+  const mobilePreview = button(labels.summaryPreview, "lesson-pack-builder-mobile-preview");
+  mobilePreview.dataset.lessonPackBuilderSummaryCta = "";
+  mobilePreview.dataset.lessonPackBuilderMobilePreview = "";
+  mobilePreview.setAttribute("aria-describedby", "lesson-pack-builder-summary-status");
+  mobileAction.append(mobilePreview);
+  container.append(heading, lead, status, facts, outputs, actions);
+  return { container, status, count, duration, outputs, preview, mobilePreview, mobileAction, edit };
+}
+
+function renderSummary(elements: BuilderSummaryElements, summary: LessonPackBuilderSummary, labels: BuilderLabels): void {
+  elements.container.dataset.state = summary.state;
+  elements.container.dataset.canPreview = String(summary.canPreview);
+  elements.status.textContent = summary.state === "invalid" ? labels.summaryInvalid : labels.summarySteps(summary.selectedStepCount, summary.totalStepCount);
+  elements.count.textContent = labels.summarySteps(summary.selectedStepCount, summary.totalStepCount);
+  elements.duration.textContent = labels.summaryDuration(summary.durationMinutes);
+  elements.outputs.replaceChildren();
+  if (summary.studentWorksheet) appendSummaryOutput(elements.outputs, "student", labels.summaryStudent);
+  if (summary.teacherReference) appendSummaryOutput(elements.outputs, "teacher", labels.summaryTeacher);
+  if (summary.sources) appendSummaryOutput(elements.outputs, "sources", labels.summarySources);
+  if (summary.qrLinks) appendSummaryOutput(elements.outputs, "links", labels.summaryLinks);
+  if (summary.a4Pdf && summary.recipientPrint) appendSummaryOutput(elements.outputs, "print", labels.summaryPrint);
+}
+
+function appendSummaryOutput(container: HTMLElement, output: string, text: string): void {
+  const item = document.createElement("li");
+  item.dataset.lessonPackSummaryOutput = output;
+  item.textContent = text;
+  if (output === "teacher") item.dataset.lessonPackSummaryTeacher = "";
+  if (output === "sources") item.dataset.lessonPackSummarySources = "";
+  container.append(item);
+}
+
+function scrollBuilderElement(element: HTMLElement, options: ScrollIntoViewOptions): void {
+  if (typeof element.scrollIntoView !== "function") return;
+  try { element.scrollIntoView(options); } catch { element.scrollIntoView(); }
 }
 
 interface BuilderValues {
@@ -239,6 +468,38 @@ interface BuilderValues {
   readonly selectedStepIds: readonly string[];
   readonly promptsByStepId: Readonly<Record<string, string>>;
   readonly includeTeacher: boolean;
+}
+
+function summaryValues(model: LessonPackModel, input: LessonPackCustomizationInput | null | undefined, defaults: BuilderValues): BuilderValues {
+  if (input === undefined || input === null) return defaults;
+  const normalized = normalizeLessonPackCustomization(model, input);
+  const raw = isRecord(input) ? input : {};
+  const selectedStepIds = knownSelection(model, raw.selectedStepIds);
+  if (!normalized) return { ...defaults, selectedStepIds };
+  return {
+    title: normalized.title,
+    classLabel: normalized.classLabel,
+    selectedStepIds,
+    promptsByStepId: normalized.promptsByStepId,
+    includeTeacher: typeof raw.includeTeacher === "boolean" ? raw.includeTeacher : normalized.includeTeacher,
+  };
+}
+
+function knownSelection(model: LessonPackModel, raw: unknown): readonly string[] {
+  if (raw === undefined || raw === null) return model.steps.map((step) => step.id);
+  if (!Array.isArray(raw)) return [];
+  const requested = new Set(raw.filter((value): value is string => typeof value === "string"));
+  return model.steps.filter((step) => requested.has(step.id)).map((step) => step.id);
+}
+
+function builderValuesEqual(left: BuilderValues, right: BuilderValues): boolean {
+  if (left.title !== right.title || left.classLabel !== right.classLabel || left.includeTeacher !== right.includeTeacher) return false;
+  if (left.selectedStepIds.length !== right.selectedStepIds.length || left.selectedStepIds.some((id, index) => id !== right.selectedStepIds[index])) return false;
+  return left.selectedStepIds.every((id) => left.promptsByStepId[id] === right.promptsByStepId[id]);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function initialValues(model: LessonPackModel, input: LessonPackCustomizationInput | null | undefined): BuilderValues {
@@ -350,6 +611,8 @@ export function applyLessonPackBuilderInput(
   }
   const includeTeacher = form.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]");
   if (includeTeacher) includeTeacher.checked = normalized.includeTeacher;
+  form.dispatchEvent(new Event("input", { bubbles: true }));
+  form.dispatchEvent(new Event("change", { bubbles: true }));
   return true;
 }
 
@@ -366,6 +629,8 @@ function resetInput(form: HTMLFormElement, model: LessonPackModel): void {
   }
   const includeTeacher = form.querySelector<HTMLInputElement>("[data-lesson-pack-include-teacher]");
   if (includeTeacher) includeTeacher.checked = model.includeTeacher !== false;
+  form.dispatchEvent(new Event("input", { bubbles: true }));
+  form.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 function button(label: string, className: string): HTMLButtonElement {

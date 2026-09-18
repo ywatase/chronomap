@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import type { LessonPackModel, LessonPackStep } from "../src/domain/lesson-pack-model";
-import { applyLessonPackBuilderInput, readLessonPackBuilderInput, renderLessonPackBuilder } from "../src/ui/lesson-pack-builder";
+import { applyLessonPackBuilderInput, deriveLessonPackBuilderSummary, readLessonPackBuilderInput, renderLessonPackBuilder } from "../src/ui/lesson-pack-builder";
 import { uiCopy } from "../src/ui/copy";
 
 function step(id: string, year: number, prompt: string): LessonPackStep {
@@ -43,6 +43,91 @@ function submit(root: HTMLElement): void {
 }
 
 describe("lesson pack builder", () => {
+  it("derives a ready outcome summary without copying editable text", () => {
+    const summary = deriveLessonPackBuilderSummary(model);
+
+    expect(summary).toMatchObject({
+      state: "ready",
+      selectedStepCount: 2,
+      totalStepCount: 2,
+      durationMinutes: 20,
+      studentWorksheet: true,
+      teacherReference: true,
+      sources: true,
+      qrLinks: true,
+      a4Pdf: true,
+      recipientPrint: true,
+      canPreview: true,
+    });
+    expect(JSON.stringify(summary)).not.toContain("問い1");
+    expect(JSON.stringify(summary)).not.toContain("元の教材");
+  });
+
+  it("derives editing and invalid states from current selections and teacher output", () => {
+    expect(deriveLessonPackBuilderSummary(model, {
+      title: "編集後",
+      classLabel: "2年A組",
+      selectedStepIds: ["first"],
+      promptsByStepId: { first: "別の問い" },
+      includeTeacher: false,
+    })).toMatchObject({
+      state: "editing",
+      selectedStepCount: 1,
+      totalStepCount: 2,
+      teacherReference: false,
+      sources: false,
+      canPreview: true,
+    });
+
+    expect(deriveLessonPackBuilderSummary(model, { selectedStepIds: [] })).toMatchObject({
+      state: "invalid",
+      selectedStepCount: 0,
+      totalStepCount: 2,
+      canPreview: false,
+    });
+  });
+
+  it("routes the summary CTA through the same preview submission as the form", () => {
+    const root = document.createElement("div");
+    const onPreview = vi.fn();
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview, onClose: vi.fn() });
+    root.querySelector<HTMLInputElement>('[data-lesson-pack-step-select][data-step-id="first"]')!.checked = false;
+    root.querySelector<HTMLButtonElement>("[data-lesson-pack-builder-summary-cta]")!.click();
+
+    expect(onPreview).toHaveBeenCalledTimes(1);
+    expect(onPreview.mock.calls[0]?.[0]).toEqual(expect.objectContaining({ selectedStepIds: ["second"] }));
+  });
+
+  it("keeps the outcome summary synchronized after an atomic draft apply", () => {
+    const root = document.createElement("div");
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn() });
+    expect(root.querySelector("[data-lesson-pack-summary-count]")?.textContent).toContain("2");
+
+    const input = {
+      title: "下書き教材",
+      classLabel: "2年A組",
+      selectedStepIds: ["second"],
+      promptsByStepId: { first: "問い1", second: "下書きの問い" },
+      includeTeacher: false,
+    };
+    expect(applyLessonPackBuilderInput(root, model, input)).toBe(true);
+    expect(root.querySelector("[data-lesson-pack-summary-count]")?.textContent).toContain("1");
+    expect(root.querySelector("[data-lesson-pack-summary-teacher]")).toBeNull();
+    expect(root.querySelector("[data-lesson-pack-summary-sources]")).toBeNull();
+  });
+
+  it("keeps Japanese and English summary labels accessible", () => {
+    for (const language of ["ja", "en"] as const) {
+      const root = document.createElement("div");
+      renderLessonPackBuilder(root, model, uiCopy(language), { onPreview: vi.fn(), onClose: vi.fn() });
+      expect(root.querySelector("[data-lesson-pack-builder-summary]")?.getAttribute("aria-labelledby")).toBe("lesson-pack-builder-summary-heading");
+      expect(root.querySelector("[data-lesson-pack-summary-status]")?.getAttribute("aria-live")).toBe("polite");
+      expect(root.querySelector("[data-lesson-pack-builder-summary-cta]")?.textContent?.toLowerCase())
+        .toContain(language === "ja" ? "完成見本" : "finished example");
+      expect(root.querySelector("[data-lesson-pack-summary-status]")?.textContent).not.toContain("問い1");
+    }
+  });
+
   it("renders editable labels, steps, prompts, and teacher visibility, then previews the draft", () => {
     const root = document.createElement("div");
     const onPreview = vi.fn();

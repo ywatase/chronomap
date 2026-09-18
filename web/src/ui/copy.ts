@@ -115,6 +115,18 @@ export interface UiCopy {
   readonly lessonPackStepOnlineLink: string;
   readonly lessonWorkshopOpen: string;
   readonly lessonWorkshopBack: string;
+  readonly lessonPackBuilderSummary: string;
+  readonly lessonPackBuilderSummaryLead: string;
+  readonly lessonPackBuilderSummarySteps: (selected: number, total: number) => string;
+  readonly lessonPackBuilderSummaryDuration: (minutes: number) => string;
+  readonly lessonPackBuilderSummaryStudent: string;
+  readonly lessonPackBuilderSummaryTeacher: string;
+  readonly lessonPackBuilderSummarySources: string;
+  readonly lessonPackBuilderSummaryLinks: string;
+  readonly lessonPackBuilderSummaryPrint: string;
+  readonly lessonPackBuilderSummaryPreview: string;
+  readonly lessonPackBuilderSummaryEdit: string;
+  readonly lessonPackBuilderSummaryInvalid: string;
   readonly lessonPackClassLabel: string;
   readonly lessonPackDraftSave: string;
   readonly lessonPackDraftFileLabel: string;
@@ -346,6 +358,18 @@ const EN_COPY: UiCopy = {
   lessonPackStepOnlineLink: "Open this step online",
   lessonWorkshopOpen: "Customize for this class",
   lessonWorkshopBack: "Back to editor",
+  lessonPackBuilderSummary: "What you can make",
+  lessonPackBuilderSummaryLead: "A finished classroom pack is ready from this lesson.",
+  lessonPackBuilderSummarySteps: (selected, total) => `${selected} of ${total} steps selected`,
+  lessonPackBuilderSummaryDuration: (minutes) => `About ${minutes} minutes`,
+  lessonPackBuilderSummaryStudent: "Student worksheet",
+  lessonPackBuilderSummaryTeacher: "Teacher reference",
+  lessonPackBuilderSummarySources: "Sources and rights",
+  lessonPackBuilderSummaryLinks: "QR code and online links",
+  lessonPackBuilderSummaryPrint: "A4 / PDF and recipient print views",
+  lessonPackBuilderSummaryPreview: "See the finished example",
+  lessonPackBuilderSummaryEdit: "Adjust the contents",
+  lessonPackBuilderSummaryInvalid: "Select at least one step to see the finished example.",
   lessonPackClassLabel: "Class / audience",
   lessonPackDraftSave: "Save draft to file",
   lessonPackDraftFileLabel: "Draft file",
@@ -578,6 +602,18 @@ const JA_COPY: UiCopy = {
   lessonPackStepOnlineLink: "このステップをオンラインで開く",
   lessonWorkshopOpen: "この教材を授業用に整える",
   lessonWorkshopBack: "編集に戻る",
+  lessonPackBuilderSummary: "作成できる教材",
+  lessonPackBuilderSummaryLead: "この教材から、完成した授業用パックをすぐに確認できます。",
+  lessonPackBuilderSummarySteps: (selected, total) => `${selected}/${total}ステップを選択中`,
+  lessonPackBuilderSummaryDuration: (minutes) => `所要時間 約${minutes}分`,
+  lessonPackBuilderSummaryStudent: "生徒用ワークシート",
+  lessonPackBuilderSummaryTeacher: "教員用参照資料",
+  lessonPackBuilderSummarySources: "出典・権利一覧",
+  lessonPackBuilderSummaryLinks: "QRコード・オンラインリンク",
+  lessonPackBuilderSummaryPrint: "A4 / PDF・受け手別の印刷",
+  lessonPackBuilderSummaryPreview: "この内容で完成見本を見る",
+  lessonPackBuilderSummaryEdit: "内容を調整する",
+  lessonPackBuilderSummaryInvalid: "完成見本を見るには、少なくとも1つのステップを選択してください。",
   lessonPackClassLabel: "対象・クラス",
   lessonPackDraftSave: "下書きをファイル保存",
   lessonPackDraftFileLabel: "下書きファイル",
