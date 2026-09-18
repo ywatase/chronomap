@@ -103,6 +103,11 @@ export interface UiCopy {
   readonly lessonPackNoSources: string;
   readonly lessonPackPrint: string;
   readonly lessonPackClose: string;
+  readonly lessonPackStartQrHint: string;
+  readonly lessonPackStartQrLabel: string;
+  readonly lessonPackQrUnavailable: string;
+  readonly lessonPackUrlUnavailable: string;
+  readonly lessonPackStepOnlineLink: string;
   readonly lessonWorkshopOpen: string;
   readonly lessonWorkshopBack: string;
   readonly lessonPackClassLabel: string;
@@ -295,6 +300,11 @@ const EN_COPY: UiCopy = {
   lessonPackNoSources: "No source metadata is available.",
   lessonPackPrint: "Print / save classroom pack",
   lessonPackClose: "Close classroom pack",
+  lessonPackStartQrHint: "Scan with a smartphone/tablet to open the guided lesson.",
+  lessonPackStartQrLabel: "QR code to open the guided lesson",
+  lessonPackQrUnavailable: "QR code unavailable. Open the URL below.",
+  lessonPackUrlUnavailable: "URL unavailable.",
+  lessonPackStepOnlineLink: "Open this step online",
   lessonWorkshopOpen: "Customize for this class",
   lessonWorkshopBack: "Back to editor",
   lessonPackClassLabel: "Class / audience",
@@ -488,6 +498,11 @@ const JA_COPY: UiCopy = {
   lessonPackNoSources: "出典メタデータはありません。",
   lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
   lessonPackClose: "教材パックを閉じる",
+  lessonPackStartQrHint: "スマートフォン/タブレットで読み取って教材を開く",
+  lessonPackStartQrLabel: "ガイド教材を開くQRコード",
+  lessonPackQrUnavailable: "QRコードを生成できません。下のURLを開いてください。",
+  lessonPackUrlUnavailable: "URLを利用できません",
+  lessonPackStepOnlineLink: "このステップをオンラインで開く",
   lessonWorkshopOpen: "この教材を授業用に整える",
   lessonWorkshopBack: "編集に戻る",
   lessonPackClassLabel: "対象・クラス",

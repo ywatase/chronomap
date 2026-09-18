@@ -186,6 +186,13 @@ footer a { color: #155e8a; }
 .lesson-pack-source .lesson-pack-notice { margin-top: .5rem !important; }
 .lesson-pack-evidence { font-size: .84rem; }
 .lesson-pack-rights { margin-top: .8rem !important; font-weight: 700; }
+.lesson-pack-start-access { display: grid; justify-items: start; gap: .5rem; margin-top: .8rem; padding: .7rem; border: 1px solid #c4d0d9; border-radius: .5rem; background: #fff; break-inside: avoid; page-break-inside: avoid; }
+.lesson-pack-start-qr-hint { margin: 0 !important; color: #304b60; font-weight: 700; }
+.lesson-pack-qr-host { display: flex; justify-content: flex-start; width: 12rem; height: 12rem; }
+.lesson-pack-qr-host svg { display: block; width: 12rem; height: 12rem; border: 1px solid #172331; background: #fff; }
+.lesson-pack-qr-unavailable { margin: 0 !important; padding: .5rem .6rem; border-left: 4px solid #b45309; background: #fff4e5; color: #713f12; }
+.lesson-pack-start-url-fallback { max-width: 100%; margin: 0 !important; }
+.lesson-pack-start-url-fallback a { overflow-wrap: anywhere; }
 
 .lesson-pack-builder { position: fixed; z-index: 23; inset: 0; display: block; overflow: auto; padding: 1rem; background: rgb(16 42 67 / 58%); }
 .lesson-pack-builder[hidden] { display: none; }
@@ -405,5 +412,8 @@ footer a { color: #155e8a; }
   body[data-print-document="lesson-pack"] .lesson-pack-page { margin-top: 3mm; padding-top: 2mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-step { margin-top: 3mm; padding: 2mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-answer-space { min-height: 20mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-start-access { padding: 2mm; }
+  body[data-print-document="lesson-pack"] .lesson-pack-qr-host,
+  body[data-print-document="lesson-pack"] .lesson-pack-qr-host svg { width: 30mm; height: 30mm; }
   body[data-print-document="lesson-pack"] .lesson-pack-source { margin-top: 2mm; padding: 2mm; }
 }

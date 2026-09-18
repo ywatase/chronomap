@@ -64,4 +64,51 @@ describe("lesson pack preview", () => {
     renderLessonPack(root, { ...model, classLabel: "" }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
     expect(root.querySelector("[data-lesson-pack-class-label]")).toBeNull();
   });
+
+  it("renders one start QR, keeps the exact URL fallback, and shortens step link labels", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, model, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    const student = root.querySelector<HTMLElement>("[data-lesson-pack-student]")!;
+    expect(root.querySelectorAll("[data-lesson-pack-qr]")).toHaveLength(1);
+    expect(root.querySelector<SVGSVGElement>("[data-lesson-pack-qr]")?.getAttribute("aria-label")).toBe("ガイド教材を開くQRコード");
+    expect(student.querySelector<HTMLAnchorElement>("[data-lesson-pack-start-url]")?.href).toBe(model.startUrl);
+    expect(student.querySelector<HTMLAnchorElement>("[data-lesson-pack-start-url]")?.textContent).toBe(model.startUrl);
+    expect(student.querySelectorAll<HTMLAnchorElement>("[data-lesson-pack-step-link]")).toHaveLength(model.steps.length);
+    for (const [index, link] of [...student.querySelectorAll<HTMLAnchorElement>("[data-lesson-pack-step-link]")].entries()) {
+      expect(link.textContent).toBe("このステップをオンラインで開く");
+      expect(link.href).toBe(model.steps[index]?.shareUrl);
+    }
+  });
+
+  it("fails closed for an unsafe start URL with a localized plain-text fallback", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, { ...model, startUrl: "javascript:alert(1)" }, uiCopy("en"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.querySelectorAll("[data-lesson-pack-qr]")).toHaveLength(0);
+    expect(root.textContent).toContain("QR code unavailable");
+    expect(root.textContent).toContain("URL unavailable.");
+    expect(root.textContent).not.toContain("javascript:alert(1)");
+  });
+
+  it("fails closed for an unsafe step URL without putting it in an href or text node", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    const steps = model.steps.map((step, index) => index === 0 ? { ...step, shareUrl: "javascript:alert(1)" } : step);
+    renderLessonPack(root, { ...model, steps }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    const links = root.querySelectorAll<HTMLAnchorElement>("[data-lesson-pack-step-link]");
+    expect(links).toHaveLength(model.steps.length - 1);
+    expect(root.textContent).not.toContain("javascript:alert(1)");
+    expect(root.textContent).toContain("URLを利用できません");
+  });
+
+  it("uses the English fallback copy for an unsafe step URL", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    const steps = model.steps.map((step, index) => index === 0 ? { ...step, shareUrl: "javascript:alert(1)" } : step);
+    renderLessonPack(root, { ...model, steps }, uiCopy("en"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.textContent).toContain("Open this step online: URL unavailable.");
+    expect(root.textContent).not.toContain("javascript:alert(1)");
+    expect(root.textContent).not.toContain("URLを利用できません");
+  });
 });

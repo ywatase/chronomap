@@ -1,6 +1,8 @@
+import { buildLessonPackAccessModel, type LessonPackAccessUrlModel } from "../domain/lesson-pack-access";
 import type { LessonPackModel, LessonPackSource, LessonPackStep } from "../domain/lesson-pack-model";
 import type { UiCopy } from "./copy";
 import { renderLessonPackFeedback, type LessonPackFeedbackActions, type LessonPackFeedbackState } from "./lesson-pack-feedback";
+import { renderLessonPackQr } from "./lesson-pack-qr";
 
 export interface LessonPackActions {
   readonly onClose: () => void;
@@ -78,15 +80,13 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   student.append(detail(`${copy.lessonPackDataset}: ${model.datasetTitle} (${model.datasetId})`));
   student.append(detail(model.description));
   student.append(detail(copy.lessonPackObjective));
-  const startLink = document.createElement("a");
-  startLink.href = model.startUrl;
-  startLink.textContent = model.startUrl;
-  startLink.className = "lesson-pack-url";
-  const startLinkLabel = document.createElement("p");
-  startLinkLabel.className = "lesson-pack-link-label";
-  startLinkLabel.append(document.createTextNode(`${copy.lessonPackStartLink}: `), startLink);
-  student.append(startLinkLabel);
-  for (const [index, step] of model.steps.entries()) student.append(renderStudentStep(step, index + 1, copy));
+  const access = buildLessonPackAccessModel(model.startUrl, model.steps.map((step) => step.shareUrl), copy.lessonPackUrlUnavailable);
+  student.append(renderStartAccess(access.start, copy));
+  for (const [index, step] of model.steps.entries()) {
+    // Keep the original model URL available to the access projector, but only
+    // render a link when the fail-closed URL model marks it as safe.
+    student.append(renderStudentStep(step, index + 1, copy, access.steps[index]));
+  }
   student.append(packNotice(copy.lessonPackApproximation));
   sheet.append(student);
 
@@ -111,7 +111,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   container.append(sheet);
 }
 
-function renderStudentStep(step: LessonPackStep, number: number, copy: UiCopy): HTMLElement {
+function renderStudentStep(step: LessonPackStep, number: number, copy: UiCopy, access: LessonPackAccessUrlModel | undefined): HTMLElement {
   const article = document.createElement("article");
   article.className = "lesson-pack-step";
   const heading = document.createElement("h3");
@@ -119,19 +119,60 @@ function renderStudentStep(step: LessonPackStep, number: number, copy: UiCopy): 
   const prompt = document.createElement("p");
   prompt.className = "lesson-pack-prompt";
   prompt.textContent = `${copy.lessonPackObservation}: ${step.prompt}`;
-  const link = document.createElement("a");
-  link.href = step.shareUrl;
-  link.textContent = step.shareUrl;
-  link.className = "lesson-pack-url";
   const linkLabel = document.createElement("p");
   linkLabel.className = "lesson-pack-link-label";
-  linkLabel.append(document.createTextNode(`${copy.lessonPackStepLink}: `), link);
+  if (access?.href) {
+    const link = document.createElement("a");
+    link.href = access.href;
+    link.textContent = copy.lessonPackStepOnlineLink;
+    link.dataset.lessonPackStepLink = "";
+    link.className = "lesson-pack-url";
+    linkLabel.append(link);
+  } else {
+    linkLabel.textContent = `${copy.lessonPackStepOnlineLink}: ${access?.displayText ?? copy.lessonPackUrlUnavailable}`;
+  }
   const answer = document.createElement("div");
   answer.className = "lesson-pack-answer-space";
   answer.setAttribute("aria-label", copy.lessonPackAnswer);
   for (let index = 0; index < 3; index += 1) answer.append(document.createElement("span"));
   article.append(heading, prompt, linkLabel, answer);
   return article;
+}
+
+function renderStartAccess(start: LessonPackAccessUrlModel, copy: UiCopy): HTMLElement {
+  const access = document.createElement("section");
+  access.className = "lesson-pack-start-access";
+  access.dataset.lessonPackStartAccess = "";
+  const hint = document.createElement("p");
+  hint.className = "lesson-pack-start-qr-hint";
+  hint.textContent = copy.lessonPackStartQrHint;
+  access.append(hint);
+
+  const qrHost = document.createElement("div");
+  qrHost.className = "lesson-pack-qr-host";
+  if (start.qrPayload && renderLessonPackQr(qrHost, start.qrPayload, { ariaLabel: copy.lessonPackStartQrLabel })) {
+    access.append(qrHost);
+  } else {
+    const unavailable = document.createElement("p");
+    unavailable.className = "lesson-pack-qr-unavailable";
+    unavailable.textContent = copy.lessonPackQrUnavailable;
+    access.append(unavailable);
+  }
+
+  const fallback = document.createElement("p");
+  fallback.className = "lesson-pack-link-label lesson-pack-start-url-fallback";
+  if (start.href) {
+    const link = document.createElement("a");
+    link.href = start.href;
+    link.textContent = start.displayText;
+    link.className = "lesson-pack-url";
+    link.dataset.lessonPackStartUrl = "";
+    fallback.append(document.createTextNode(`${copy.lessonPackStartLink}: `), link);
+  } else {
+    fallback.textContent = `${copy.lessonPackStartLink}: ${copy.lessonPackUrlUnavailable}`;
+  }
+  access.append(fallback);
+  return access;
 }
 
 function renderTeacherStep(step: LessonPackStep, number: number, copy: UiCopy): HTMLElement {

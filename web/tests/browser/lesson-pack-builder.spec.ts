@@ -9,6 +9,10 @@ const lessons = [
 for (const dataset of lessons) {
   test(`customizes ${dataset.slug} into a classroom pack`, async ({ page }, testInfo) => {
     test.setTimeout(45_000);
+    const qrRequests: string[] = [];
+    page.on("request", (request) => {
+      if (/qrserver|quickchart|goqr|api\.qr/i.test(request.url())) qrRequests.push(request.url());
+    });
     await page.addInitScript(() => {
       window.print = () => { document.body.dataset.printCalled = "true"; };
     });
@@ -45,12 +49,25 @@ for (const dataset of lessons) {
     await expect(pack).toContainText("この時点の地図から、変化を一文で説明しよう。");
     expect(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count()).toBe(await builder.locator("[data-lesson-pack-step-select]").count() - 1);
     await expect(pack.locator("[data-lesson-pack-teacher]")).toHaveCount(0);
+    await expect(pack.locator("[data-lesson-pack-qr]")).toHaveCount(1);
+    await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("role", "img");
+    await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("aria-label", "ガイド教材を開くQRコード");
+    await expect(pack.locator("[data-lesson-pack-start-url]")).toHaveAttribute("href", /https?:\/\//);
+    await expect(pack.locator("[data-lesson-pack-start-url]")).toContainText(/https?:\/\//);
+    const stepLinks = pack.locator("[data-lesson-pack-step-link]");
+    await expect(stepLinks).toHaveCount(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count());
+    for (let index = 0; index < await stepLinks.count(); index += 1) {
+      await expect(stepLinks.nth(index)).toHaveText("このステップをオンラインで開く");
+      await expect(stepLinks.nth(index)).toHaveAttribute("href", /https?:\/\//);
+    }
+    expect(qrRequests).toHaveLength(0);
     await page.screenshot({ path: testInfo.outputPath(`${dataset.slug}-preview.png`), fullPage: true });
 
     await pack.locator("[data-lesson-pack-print]").click();
     await expect(page.locator("body")).toHaveAttribute("data-print-called", "true");
     await expect(page.locator("body")).toHaveAttribute("data-print-document", "lesson-pack");
     await page.emulateMedia({ media: "print" });
+    await expect(pack.locator("[data-lesson-pack-qr]")).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
     await page.screenshot({ path: testInfo.outputPath(`${dataset.slug}-print.png`), fullPage: true });
     await page.emulateMedia({ media: "screen" });
@@ -71,6 +88,10 @@ for (const dataset of lessons) {
 }
 
 test("collects copy-only feedback after a classroom-pack print attempt", async ({ page }) => {
+  const qrRequests: string[] = [];
+  page.on("request", (request) => {
+    if (/qrserver|quickchart|goqr|api\.qr/i.test(request.url())) qrRequests.push(request.url());
+  });
   await page.addInitScript(() => {
     window.print = () => { document.body.dataset.printCalled = "true"; };
     Object.defineProperty(navigator, "clipboard", {
@@ -90,11 +111,27 @@ test("collects copy-only feedback after a classroom-pack print attempt", async (
   await builder.locator("[data-lesson-pack-builder-preview]").click();
 
   const pack = page.locator("[data-lesson-pack-dialog]");
+  await expect(pack.locator("[data-lesson-pack-qr]")).toHaveCount(1);
+  await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("role", "img");
+  await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("aria-label", "ガイド教材を開くQRコード");
+  await expect(pack.locator("[data-lesson-pack-start-url]")).toHaveAttribute("href", /https?:\/\//);
+  await expect(pack.locator("[data-lesson-pack-start-url]")).toContainText(/https?:\/\//);
+  const stepLinks = pack.locator("[data-lesson-pack-step-link]");
+  await expect(stepLinks).toHaveCount(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count());
+  for (let index = 0; index < await stepLinks.count(); index += 1) {
+    await expect(stepLinks.nth(index)).toHaveText("このステップをオンラインで開く");
+    await expect(stepLinks.nth(index)).toHaveAttribute("href", /https?:\/\//);
+  }
   const feedback = pack.locator("[data-lesson-pack-feedback-host]");
   await expect(feedback).toBeHidden();
   await pack.locator("[data-lesson-pack-print]").click();
   await expect(page.locator("body")).toHaveAttribute("data-print-called", "true");
   await expect(feedback).toBeVisible();
+  await page.emulateMedia({ media: "print" });
+  await expect(pack.locator("[data-lesson-pack-qr]")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  await page.emulateMedia({ media: "screen" });
+  expect(qrRequests).toHaveLength(0);
   await feedback.locator("[data-lesson-pack-feedback-summary]").click();
 
   await feedback.locator("[data-lesson-pack-feedback-generate]").click();
