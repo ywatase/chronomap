@@ -2,12 +2,13 @@ import { expect, test } from "@playwright/test";
 
 const lessons = [
   { slug: "ogurike", lesson: "ogurike-intro" },
+  { slug: "ogurike", lesson: "ogurike-river-compare" },
   { slug: "tonegawa", lesson: "tonegawa-eastward" },
   { slug: "heijokyo", lesson: "heijokyo-intro" },
 ] as const;
 
 for (const dataset of lessons) {
-  test(`customizes ${dataset.slug} into a classroom pack`, async ({ page }, testInfo) => {
+  test(`customizes ${dataset.slug}/${dataset.lesson} into a classroom pack`, async ({ page }, testInfo) => {
     test.setTimeout(45_000);
     const qrRequests: string[] = [];
     page.on("request", (request) => {
@@ -24,7 +25,7 @@ for (const dataset of lessons) {
       await expect.poll(() => {
         const url = new URL(page.url());
         return [url.searchParams.get("dataset"), url.searchParams.get("lesson"), url.searchParams.get("view")].join("|");
-      }).toBe("ogurike|ogurike-intro|builder");
+      }).toBe(`${dataset.slug}|${dataset.lesson}|builder`);
     } else {
       await page.goto(`/?dataset=${dataset.slug}&lesson=${dataset.lesson}&view=builder`);
     }
@@ -48,6 +49,8 @@ for (const dataset of lessons) {
     await expect(pack.locator("[data-lesson-pack-class-label]")).toContainText("中学2年A組");
     await expect(pack).toContainText("この時点の地図から、変化を一文で説明しよう。");
     expect(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count()).toBe(await builder.locator("[data-lesson-pack-step-select]").count() - 1);
+    await expect(pack.locator("[data-lesson-pack-figure] svg")).toBeVisible();
+    expect(await pack.locator("[data-lesson-pack-figure-legend-step]").count()).toBe(await pack.locator("[data-lesson-pack-student] .lesson-pack-step").count());
     await expect(pack.locator("[data-lesson-pack-teacher]")).toHaveCount(0);
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveCount(1);
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveAttribute("role", "img");
@@ -62,6 +65,7 @@ for (const dataset of lessons) {
     }
     expect(qrRequests).toHaveLength(0);
     await page.screenshot({ path: testInfo.outputPath(`${dataset.slug}-preview.png`), fullPage: true });
+    await pack.locator("[data-lesson-pack-figure-page]").screenshot({ path: testInfo.outputPath(`${dataset.slug}-pack-with-figure.png`) });
 
     await pack.locator("[data-lesson-pack-print]").click();
     await expect(page.locator("body")).toHaveAttribute("data-print-called", "true");

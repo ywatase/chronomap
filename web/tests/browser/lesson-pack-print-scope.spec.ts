@@ -2,12 +2,13 @@ import { expect, test } from "@playwright/test";
 
 const lessons = [
   { slug: "ogurike", lesson: "ogurike-intro" },
+  { slug: "ogurike", lesson: "ogurike-river-compare" },
   { slug: "tonegawa", lesson: "tonegawa-eastward" },
   { slug: "heijokyo", lesson: "heijokyo-intro" },
 ] as const;
 
 for (const lesson of lessons) {
-  test(`prints ${lesson.slug} by recipient scope without leaking sections`, async ({ page }, testInfo) => {
+  test(`prints ${lesson.slug}/${lesson.lesson} by recipient scope without leaking sections`, async ({ page }, testInfo) => {
     test.setTimeout(45_000);
     await page.addInitScript(() => { window.print = () => { document.body.dataset.printCalled = "true"; }; });
     await page.goto(`/?dataset=${lesson.slug}&lesson=${lesson.lesson}&view=pack`);
@@ -23,12 +24,16 @@ for (const lesson of lessons) {
     const student = pack.locator("[data-lesson-pack-student]");
     const teacher = pack.locator("[data-lesson-pack-teacher]");
     const sources = pack.locator("[data-lesson-pack-sources]");
+    const figurePage = pack.locator("[data-lesson-pack-figure-page]");
+    await expect(figurePage).toHaveCount(1);
     for (const scope of ["student", "teacher", "full"] as const) {
       await page.emulateMedia({ media: "screen" });
       await pack.locator(`[data-lesson-pack-print-${scope}]`).click();
       await expect(page.locator("body")).toHaveAttribute("data-print-document", "lesson-pack");
       await expect(page.locator("body")).toHaveAttribute("data-lesson-pack-print-scope", scope);
       await page.emulateMedia({ media: "print" });
+      await expect(figurePage).toBeVisible();
+      await expect(figurePage.locator("[data-lesson-pack-figure-legend-step]")).not.toHaveCount(0);
       if (scope === "student") {
         await expect(student).toBeVisible();
         await expect(teacher).toBeHidden();

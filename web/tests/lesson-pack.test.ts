@@ -33,6 +33,9 @@ describe("lesson pack preview", () => {
     expect(root.querySelector("[data-lesson-pack-student]")).toBeTruthy();
     expect(root.querySelector("[data-lesson-pack-teacher]")).toBeTruthy();
     expect(root.querySelector("[data-lesson-pack-sources]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-figure-page]")).toBeTruthy();
+    expect(root.querySelector("[data-lesson-pack-figure] svg")).toBeTruthy();
+    expect(root.querySelectorAll("[data-lesson-pack-figure-legend-step]")).toHaveLength(2);
     expect(root.textContent).toContain("β版では無料");
     expect(root.textContent).toContain("p.1");
     expect(root.textContent).not.toContain("source body");
@@ -79,6 +82,21 @@ describe("lesson pack preview", () => {
     expect(root.textContent).toContain("地域の水辺を読む");
     expect(root.querySelector("[data-lesson-pack-teacher]")).toBeNull();
     expect(root.textContent).not.toContain("形状の向きを確認します。");
+  });
+
+  it("keeps the observation figure synchronized with selected steps and fails closed without geometry", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const root = document.createElement("div");
+    renderLessonPack(root, { ...model, steps: [model.steps[1]!], startUrl: model.steps[1]!.shareUrl }, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(root.querySelectorAll("[data-lesson-pack-figure-legend-step]")).toHaveLength(1);
+    expect(root.querySelector("[data-lesson-pack-figure-legend-step]")?.textContent).toContain("1596");
+    expect(root.querySelector("[data-lesson-pack-figure-legend-step]")?.textContent).not.toContain("1590");
+
+    const fallbackRoot = document.createElement("div");
+    renderLessonPack(fallbackRoot, { ...model, steps: model.steps.map((step) => ({ ...step, featureGeometry: undefined })) }, uiCopy("en"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(fallbackRoot.querySelector("[data-lesson-pack-figure-fallback]")).toBeTruthy();
+    expect(fallbackRoot.querySelector("[data-lesson-pack-figure] svg")).toBeNull();
+    expect(fallbackRoot.querySelector("[data-lesson-pack-student]")).toBeTruthy();
   });
 
   it("renders each reading example after its prompt on the teacher page only", () => {

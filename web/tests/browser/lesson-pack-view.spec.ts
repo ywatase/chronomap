@@ -19,11 +19,15 @@ test.describe("classroom lesson pack", () => {
     await expect(dialog.locator("[data-lesson-pack-student]")).toContainText(/生徒用ワークシート|Student worksheet/);
     await expect(dialog.locator("[data-lesson-pack-teacher]")).toContainText(/教員用参照資料|Teacher reference/);
     await expect(dialog.locator("[data-lesson-pack-sources]")).toContainText(/出典・権利|Sources and rights/);
+    await expect(dialog.locator("[data-lesson-pack-figure] svg")).toBeVisible();
+    await expect(dialog.locator("[data-lesson-pack-figure-legend-step]")).toHaveCount(4);
+    await expect(dialog.locator("[data-lesson-pack-figure-page] > h2")).toContainText(/観察用概略図|Observation figure/);
     await expect(dialog).toContainText(/β版では無料|Free during beta/);
     await expect(dialog.locator("a.lesson-pack-url")).toHaveCount(9);
     await expect(dialog).not.toContainText(/PRIVATE_SOURCE_BODY|秘密の原資料本文/);
     await expect(dialog).toContainText(/原資料の本文・画像・碑文は転載していません|no source body, image, or inscription is reproduced/i);
     await page.screenshot({ path: testInfo.outputPath("lesson-pack-preview.png"), fullPage: true });
+    await dialog.locator("[data-lesson-pack-figure-page]").screenshot({ path: testInfo.outputPath("lesson-pack-with-map-figure.png") });
 
     await dialog.locator("[data-lesson-pack-print]").click();
     await expect(page.locator("body")).toHaveAttribute("data-print-called", "true");

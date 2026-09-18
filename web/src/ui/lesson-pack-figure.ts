@@ -6,6 +6,7 @@ let figureSequence = 0;
 export interface LessonPackFigureLabels {
   readonly language: "ja" | "en";
   readonly title: string;
+  readonly caption?: string;
   readonly description: string;
   readonly fallback: string;
   readonly legendPoint: string;
@@ -21,6 +22,7 @@ export function renderLessonPackFigure(model: LessonPackFigureModel | null, labe
   figure.setAttribute("role", "figure");
   if (!isRenderableFigureModel(model)) {
     const fallback = document.createElement("p");
+    fallback.className = "lesson-pack-figure-fallback";
     fallback.dataset.lessonPackFigureFallback = "";
     fallback.setAttribute("role", "status");
     fallback.textContent = labels.fallback;
@@ -33,7 +35,7 @@ export function renderLessonPackFigure(model: LessonPackFigureModel | null, labe
   const descriptionId = `lesson-pack-figure-description-${sequence}`;
   const caption = document.createElement("figcaption");
   caption.dataset.lessonPackFigureCaption = "";
-  caption.textContent = labels.title;
+  caption.textContent = labels.caption ?? labels.title;
   const svg = svgElement("svg");
   svg.setAttribute("role", "img");
   svg.setAttribute("viewBox", model.viewBox.join(" "));

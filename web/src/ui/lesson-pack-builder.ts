@@ -1,4 +1,5 @@
 import { LESSON_PACK_CLASS_LABEL_MAX_LENGTH, LESSON_PACK_PROMPT_MAX_LENGTH, LESSON_PACK_TITLE_MAX_LENGTH, normalizeLessonPackCustomization } from "../domain/lesson-pack-customization";
+import { projectLessonPackFigureFromSteps } from "../domain/lesson-pack-figure";
 import type { LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import type { LessonPackModel, LessonPackStep } from "../domain/lesson-pack-model";
 import type { UiCopy } from "./copy";
@@ -29,6 +30,7 @@ export interface LessonPackBuilderSummary {
   readonly teacherReference: boolean;
   readonly sources: boolean;
   readonly qrLinks: boolean;
+  readonly observationFigure: boolean;
   readonly a4Pdf: boolean;
   readonly recipientPrint: boolean;
   readonly sourceCount: number;
@@ -45,6 +47,19 @@ export function deriveLessonPackBuilderSummary(
   const selectedStepCount = values.selectedStepIds.length;
   const valid = selectedStepCount > 0;
   const sameAsDefaults = valid && builderValuesEqual(values, defaults);
+  const selectedIds = new Set(values.selectedStepIds);
+  const observationFigure = valid && projectLessonPackFigureFromSteps(
+    model.steps
+      .filter((step) => selectedIds.has(step.id))
+      .map((step, index) => ({
+        featureId: step.featureId,
+        geometry: step.featureGeometry,
+        label: step.label,
+        yearLabel: step.yearLabel,
+        stepNumber: index + 1,
+      })),
+    model.datasetBbox,
+  ) !== null;
   return Object.freeze({
     state: valid ? (sameAsDefaults ? "ready" : "editing") : "invalid",
     selectedStepCount,
@@ -54,6 +69,7 @@ export function deriveLessonPackBuilderSummary(
     teacherReference: valid && values.includeTeacher,
     sources: valid && values.includeTeacher,
     qrLinks: valid && Boolean(model.startUrl || model.steps.some((step) => step.shareUrl)),
+    observationFigure,
     a4Pdf: valid,
     recipientPrint: valid,
     sourceCount: model.sources.length,
@@ -289,6 +305,7 @@ interface BuilderLabels {
   readonly summarySources: string;
   readonly summaryLinks: string;
   readonly summaryPrint: string;
+  readonly summaryFigure: string;
   readonly summaryPreview: string;
   readonly summaryEdit: string;
   readonly summaryInvalid: string;
@@ -325,6 +342,7 @@ function builderLabels(copy: UiCopy): BuilderLabels {
       summarySources: copy.lessonPackBuilderSummarySources,
       summaryLinks: copy.lessonPackBuilderSummaryLinks,
       summaryPrint: copy.lessonPackBuilderSummaryPrint,
+      summaryFigure: copy.lessonPackBuilderSummaryFigure,
       summaryPreview: copy.lessonPackBuilderSummaryPreview,
       summaryEdit: copy.lessonPackBuilderSummaryEdit,
       summaryInvalid: copy.lessonPackBuilderSummaryInvalid,
@@ -359,6 +377,7 @@ function builderLabels(copy: UiCopy): BuilderLabels {
     summarySources: copy.lessonPackBuilderSummarySources,
     summaryLinks: copy.lessonPackBuilderSummaryLinks,
     summaryPrint: copy.lessonPackBuilderSummaryPrint,
+    summaryFigure: copy.lessonPackBuilderSummaryFigure,
     summaryPreview: copy.lessonPackBuilderSummaryPreview,
     summaryEdit: copy.lessonPackBuilderSummaryEdit,
     summaryInvalid: copy.lessonPackBuilderSummaryInvalid,
@@ -445,6 +464,7 @@ function renderSummary(elements: BuilderSummaryElements, summary: LessonPackBuil
   if (summary.teacherReference) appendSummaryOutput(elements.outputs, "teacher", labels.summaryTeacher);
   if (summary.sources) appendSummaryOutput(elements.outputs, "sources", labels.summarySources);
   if (summary.qrLinks) appendSummaryOutput(elements.outputs, "links", labels.summaryLinks);
+  if (summary.observationFigure) appendSummaryOutput(elements.outputs, "figure", labels.summaryFigure);
   if (summary.a4Pdf && summary.recipientPrint) appendSummaryOutput(elements.outputs, "print", labels.summaryPrint);
 }
 

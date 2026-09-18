@@ -16,6 +16,7 @@ function step(id: string, year: number, prompt: string): LessonPackStep {
     description: `${id}の説明`,
     period: `${year}年頃`,
     geometry: "点",
+    featureGeometry: { type: "Point", coordinates: [0, 0] },
     prompt,
     uncertainty: [],
     evidence: [],
@@ -57,6 +58,7 @@ describe("lesson pack builder", () => {
       qrLinks: true,
       a4Pdf: true,
       recipientPrint: true,
+      observationFigure: true,
       canPreview: true,
     });
     expect(JSON.stringify(summary)).not.toContain("問い1");
@@ -85,6 +87,9 @@ describe("lesson pack builder", () => {
       totalStepCount: 2,
       canPreview: false,
     });
+
+    const incompleteFigure = { ...model, steps: [model.steps[0]!, { ...model.steps[1]!, featureGeometry: undefined }] };
+    expect(deriveLessonPackBuilderSummary(incompleteFigure).observationFigure).toBe(false);
   });
 
   it("routes the summary CTA through the same preview submission as the form", () => {

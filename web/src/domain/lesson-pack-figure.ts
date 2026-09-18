@@ -37,13 +37,32 @@ export interface LessonPackFigureStepReference {
 }
 
 export interface LessonPackFigureProjectionInput {
-  readonly features: readonly FeatureVersion[];
+  readonly features: readonly (FeatureVersion | LessonPackFigureSourceFeature)[];
+  /** Optional fixed dataset extent so every lesson figure uses the same viewport. */
+  readonly bbox?: readonly [number, number, number, number];
   /** Feature IDs in the already-customized lesson step order. */
   readonly selectedFeatureIds?: readonly string[];
   /** Optional lesson-step references; takes precedence over selectedFeatureIds. */
   readonly steps?: readonly LessonPackFigureStepReference[];
   /** Metadata can be supplied independently when the selected IDs come from a pack model. */
   readonly featureMetadata?: Readonly<Record<string, Omit<LessonPackFigureStepReference, "featureId">>>;
+}
+
+/** Minimal public geometry projection input used by the pack renderer. */
+export interface LessonPackFigureSourceFeature {
+  readonly id: string;
+  readonly geometry: FeatureVersion["geometry"];
+  readonly labels?: LocalizedText;
+}
+
+/** Public geometry and display metadata projected from an already customized pack step. */
+export interface LessonPackFigurePackStep {
+  readonly featureId: string;
+  readonly geometry?: FeatureVersion["geometry"];
+  readonly labels?: LocalizedText;
+  readonly label?: string;
+  readonly yearLabel?: string;
+  readonly stepNumber?: number;
 }
 
 export interface LessonPackFigureModel {
@@ -79,17 +98,17 @@ export function projectLessonPackFigureModel(input: LessonPackFigureProjectionIn
     : input.selectedFeatureIds === undefined
       ? null
       : dedupeIds(input.selectedFeatureIds);
-  const byId = new Map<string, FeatureVersion>();
+  const byId = new Map<string, LessonPackFigureSourceFeature>();
   for (const feature of input.features) {
     if (!isFeature(feature) || byId.has(feature.id)) continue;
     byId.set(feature.id, feature);
   }
   const selectedFeatures = selectedIds === null
     ? [...byId.values()].map((feature) => ({ feature, metadata: metadata.get(feature.id) }))
-    : selectedIds.map((id) => byId.get(id)).filter((feature): feature is FeatureVersion => feature !== undefined).map((feature) => ({ feature, metadata: metadata.get(feature.id) }));
+    : selectedIds.map((id) => byId.get(id)).filter((feature): feature is LessonPackFigureSourceFeature => feature !== undefined).map((feature) => ({ feature, metadata: metadata.get(feature.id) }));
   if (!selectedFeatures.length) return null;
 
-  const parsed: { feature: FeatureVersion; metadata?: Omit<LessonPackFigureStepReference, "featureId">; raw: RawGeometry; vertexCount: number }[] = [];
+  const parsed: { feature: LessonPackFigureSourceFeature; metadata?: Omit<LessonPackFigureStepReference, "featureId">; raw: RawGeometry; vertexCount: number }[] = [];
   let vertexCount = 0;
   for (const selected of selectedFeatures) {
     const feature = selected.feature;
@@ -101,7 +120,9 @@ export function projectLessonPackFigureModel(input: LessonPackFigureProjectionIn
   }
 
   const allPoints = parsed.flatMap(({ raw }) => rawPoints(raw));
-  const bbox = bounds(allPoints);
+  const requestedBbox = normalizeBbox(input.bbox);
+  if (input.bbox !== undefined && !requestedBbox) return null;
+  const bbox = requestedBbox ?? bounds(allPoints);
   if (!bbox) return null;
   const [minX, minY, maxX, maxY] = bbox;
   const width = maxX - minX;
@@ -111,7 +132,7 @@ export function projectLessonPackFigureModel(input: LessonPackFigureProjectionIn
   const features = parsed.map(({ feature, metadata: featureMetadata, raw }) => Object.freeze({
     id: feature.id,
     geometryType: feature.geometry.type,
-    labels: freezeLabels(feature.properties.labels),
+    labels: freezeLabels(feature.labels),
     ...(featureMetadata?.label ? { label: featureMetadata.label } : {}),
     ...(featureMetadata?.yearLabel ? { yearLabel: featureMetadata.yearLabel } : {}),
     ...(featureMetadata?.stepNumber !== undefined ? { stepNumber: featureMetadata.stepNumber } : {}),
@@ -128,6 +149,29 @@ export function projectLessonPackFigureModel(input: LessonPackFigureProjectionIn
   });
 }
 
+/** Project a customized pack's steps using the same validation as the renderer and builder summary. */
+export function projectLessonPackFigureFromSteps(
+  steps: readonly LessonPackFigurePackStep[],
+  bbox?: readonly [number, number, number, number],
+): LessonPackFigureModel | null {
+  if (!steps.length || steps.some((step) => !step.geometry)) return null;
+  const features: LessonPackFigureSourceFeature[] = steps.map((step) => ({
+    id: step.featureId,
+    geometry: step.geometry!,
+    ...(step.labels ? { labels: step.labels } : {}),
+  }));
+  return projectLessonPackFigureModel({
+    features,
+    bbox,
+    steps: steps.map((step, index) => ({
+      featureId: step.featureId,
+      label: step.label,
+      yearLabel: step.yearLabel,
+      stepNumber: step.stepNumber ?? index + 1,
+    })),
+  });
+}
+
 function normalizeMetadata(step: LessonPackFigureStepReference): Omit<LessonPackFigureStepReference, "featureId"> {
   const label = typeof step.label === "string" ? step.label.slice(0, 240) : undefined;
   const yearLabel = typeof step.yearLabel === "string" ? step.yearLabel.slice(0, 80) : undefined;
@@ -139,13 +183,19 @@ function normalizeMetadata(step: LessonPackFigureStepReference): Omit<LessonPack
   });
 }
 
-function isFeature(value: unknown): value is FeatureVersion {
+function isFeature(value: unknown): value is LessonPackFigureSourceFeature {
   if (!value || typeof value !== "object") return false;
   const feature = value as Partial<FeatureVersion>;
   return typeof feature.id === "string" && feature.id.trim().length > 0
-    && feature.type === "Feature"
     && Boolean(feature.geometry && typeof feature.geometry === "object")
-    && Boolean(feature.properties && typeof feature.properties === "object");
+    && (feature.type === undefined || feature.type === "Feature");
+}
+
+function normalizeBbox(value: LessonPackFigureProjectionInput["bbox"]): [number, number, number, number] | null {
+  if (!value || value.length !== 4 || value.some((item) => typeof item !== "number" || !Number.isFinite(item))) return null;
+  const [minX, minY, maxX, maxY] = value;
+  if (!(maxX > minX) || !(maxY > minY)) return null;
+  return [minX, minY, maxX, maxY];
 }
 
 function dedupeIds(values: readonly unknown[]): string[] {
@@ -249,8 +299,16 @@ function normalizeGeometry(raw: RawGeometry, minX: number, minY: number, width: 
 }
 
 function normalizePoint(point: RawPoint, minX: number, minY: number, width: number, height: number): LessonPackFigurePoint {
-  const x = width === 0 ? LESSON_PACK_FIGURE_VIEWBOX_SIZE / 2 : LESSON_PACK_FIGURE_PADDING + ((point.x - minX) / width) * (LESSON_PACK_FIGURE_VIEWBOX_SIZE - LESSON_PACK_FIGURE_PADDING * 2);
-  const yFromBottom = height === 0 ? LESSON_PACK_FIGURE_VIEWBOX_SIZE / 2 : LESSON_PACK_FIGURE_PADDING + ((point.y - minY) / height) * (LESSON_PACK_FIGURE_VIEWBOX_SIZE - LESSON_PACK_FIGURE_PADDING * 2);
+  const usable = LESSON_PACK_FIGURE_VIEWBOX_SIZE - LESSON_PACK_FIGURE_PADDING * 2;
+  const xScale = width > 0 ? usable / width : Number.POSITIVE_INFINITY;
+  const yScale = height > 0 ? usable / height : Number.POSITIVE_INFINITY;
+  const scale = Number.isFinite(Math.min(xScale, yScale)) ? Math.min(xScale, yScale) : 1;
+  const drawnWidth = width * scale;
+  const drawnHeight = height * scale;
+  const offsetX = (LESSON_PACK_FIGURE_VIEWBOX_SIZE - drawnWidth) / 2;
+  const offsetY = (LESSON_PACK_FIGURE_VIEWBOX_SIZE - drawnHeight) / 2;
+  const x = width === 0 ? LESSON_PACK_FIGURE_VIEWBOX_SIZE / 2 : offsetX + (point.x - minX) * scale;
+  const yFromBottom = height === 0 ? LESSON_PACK_FIGURE_VIEWBOX_SIZE / 2 : offsetY + (point.y - minY) * scale;
   return Object.freeze({ x, y: LESSON_PACK_FIGURE_VIEWBOX_SIZE - yFromBottom });
 }
 
@@ -258,7 +316,7 @@ function freezePoints(points: readonly LessonPackFigurePoint[]): readonly Lesson
   return Object.freeze(points);
 }
 
-function freezeLabels(value: LocalizedText): LocalizedText {
+function freezeLabels(value: LocalizedText | undefined): LocalizedText {
   const labels = Object.fromEntries(Object.entries(value ?? {}).filter(([, text]) => typeof text === "string"));
   return Object.freeze(labels);
 }

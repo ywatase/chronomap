@@ -18,6 +18,7 @@ test.describe("outcome-first classroom builder", () => {
     await expect(summary.locator('[data-lesson-pack-summary-output="teacher"]')).toBeVisible();
     await expect(summary.locator('[data-lesson-pack-summary-output="sources"]')).toBeVisible();
     await expect(summary.locator('[data-lesson-pack-summary-output="links"]')).toBeVisible();
+    await expect(summary.locator('[data-lesson-pack-summary-output="figure"]')).toBeVisible();
     await expect(summary.locator('[data-lesson-pack-summary-output="print"]')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
     const summaryBox = await summary.boundingBox();
@@ -33,6 +34,7 @@ test.describe("outcome-first classroom builder", () => {
     await expect(pack.locator("[data-lesson-pack-teacher]")).toBeVisible();
     await expect(pack.locator("[data-lesson-pack-sources]")).toBeVisible();
     await expect(pack.locator("[data-lesson-pack-qr]")).toHaveCount(1);
+    await expect(pack.locator("[data-lesson-pack-figure] svg")).toBeVisible();
     await expect(pack.locator("[data-lesson-pack-print]")).toBeVisible();
   });
 

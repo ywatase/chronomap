@@ -1,7 +1,9 @@
 import { buildLessonPackAccessModel, type LessonPackAccessUrlModel } from "../domain/lesson-pack-access";
+import { projectLessonPackFigureFromSteps } from "../domain/lesson-pack-figure";
 import type { LessonPackModel, LessonPackSource, LessonPackStep } from "../domain/lesson-pack-model";
 import type { UiCopy } from "./copy";
 import { renderLessonPackFeedback, type LessonPackFeedbackActions, type LessonPackFeedbackState } from "./lesson-pack-feedback";
+import { renderLessonPackFigure } from "./lesson-pack-figure";
 import { renderLessonPackQr } from "./lesson-pack-qr";
 
 export type LessonPackPrintScope = "student" | "teacher" | "full";
@@ -111,6 +113,31 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   studentRights.textContent = `${copy.lessonPackRights}: ${model.datasetRights}`;
   student.append(studentRights);
   sheet.append(student);
+
+  const figurePage = page(copy.lessonPackFigureTitle);
+  figurePage.dataset.lessonPackFigurePage = "";
+  const figureModel = projectLessonPackFigureFromSteps(
+    model.steps.map((step, index) => ({
+      featureId: step.featureId,
+      geometry: step.featureGeometry,
+      labels: { [copy.language]: step.label },
+      label: step.label,
+      yearLabel: step.yearLabel,
+      stepNumber: index + 1,
+    })),
+    model.datasetBbox,
+  );
+  figurePage.append(renderLessonPackFigure(figureModel, {
+    language: copy.language,
+    title: copy.lessonPackFigureTitle,
+    caption: copy.lessonPackFigureCaption,
+    description: copy.lessonPackFigureDescription,
+    fallback: copy.lessonPackFigureFallback,
+    legendPoint: copy.lessonPackFigureLegendPoint,
+    legendLine: copy.lessonPackFigureLegendLine,
+    legendPolygon: copy.lessonPackFigureLegendPolygon,
+  }));
+  sheet.append(figurePage);
 
   if (model.includeTeacher !== false) {
     const teacher = page(copy.lessonPackTeacher);

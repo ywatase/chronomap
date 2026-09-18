@@ -93,6 +93,20 @@ describe("lesson-pack figure projection", () => {
     })).not.toBeNull();
     const tooMany = Array.from({ length: MAX_LESSON_PACK_FIGURE_VERTICES + 1 }, (_, index) => [index, index]);
     expect(projectLessonPackFigureModel({ features: [feature("too-many", "LineString", tooMany)] })).toBeNull();
+    expect(projectLessonPackFigureModel({ features: [feature("valid", "Point", [0, 0])], bbox: [0, 0, Number.NaN, 1] })).toBeNull();
+  });
+
+  it("uses a fixed bbox without stretching a wide source geometry", () => {
+    const model = projectLessonPackFigureModel({
+      features: [feature("wide", "LineString", [[0, 0], [10, 1]])],
+      bbox: [0, 0, 10, 10],
+    });
+    const path = model?.features[0]?.geometry;
+    expect(path?.kind).toBe("line");
+    if (path?.kind === "line") {
+      const points = path.paths[0]!;
+      expect(points[1]!.x - points[0]!.x).toBeGreaterThan(points[0]!.y - points[1]!.y);
+    }
   });
 });
 

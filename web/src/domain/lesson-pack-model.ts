@@ -2,7 +2,7 @@ import { comparisonCandidates } from "./comparison-candidates";
 import { displayYearLocalized, localizedText } from "./labels";
 import type { Lesson } from "./lesson";
 import { sharedQuery } from "./share-state";
-import type { FeatureVersion, PublicBundle, Rights, TemporalExtent } from "./types";
+import type { FeatureVersion, Geometry, PublicBundle, Rights, TemporalExtent } from "./types";
 
 export interface LessonPackEvidence {
   readonly id: string;
@@ -35,6 +35,8 @@ export interface LessonPackStep {
   readonly description: string;
   readonly period: string;
   readonly geometry: string;
+  /** Validated public geometry used only for the local printable observation figure. */
+  readonly featureGeometry?: Geometry;
   readonly prompt: string;
   readonly teacherNote?: string;
   readonly uncertainty: readonly string[];
@@ -66,6 +68,8 @@ export interface LessonPackModel {
   readonly datasetId: string;
   readonly datasetTitle: string;
   readonly datasetDescription: string;
+  /** Public dataset extent used to keep observation figures comparable across steps. */
+  readonly datasetBbox?: readonly [number, number, number, number];
   readonly datasetRights: string;
   readonly steps: readonly LessonPackStep[];
   readonly sources: readonly LessonPackSource[];
@@ -108,6 +112,7 @@ export function buildLessonPackModel(lesson: Lesson, bundle: PublicBundle, origi
       description: localizedText(feature.properties.description, bundle.dataset.defaultLanguage),
       period: formatTemporal(feature.properties.temporal, language),
       geometry: formatGeometry(feature.geometry.type, language),
+      featureGeometry: feature.geometry,
       prompt: localizedText(lessonStep.prompt, language),
       ...(lessonStep.teacherNote ? { teacherNote: localizedText(lessonStep.teacherNote, language) } : {}),
       uncertainty: Object.entries(feature.properties.uncertainty).map(([dimension, assessment]) => `${dimensionLabel(dimension, language)}: ${assessmentLabel(assessment.assessment, language)}${assessment.note ? ` — ${assessment.note}` : ""}`),
@@ -132,6 +137,7 @@ export function buildLessonPackModel(lesson: Lesson, bundle: PublicBundle, origi
     datasetId: bundle.dataset.id,
     datasetTitle: localizedText(bundle.dataset.title, bundle.dataset.defaultLanguage),
     datasetDescription: localizedText(bundle.dataset.description, bundle.dataset.defaultLanguage),
+    datasetBbox: Object.freeze([...bundle.dataset.bbox]) as [number, number, number, number],
     datasetRights: formatRights(bundle.dataset.rights, language),
     steps: Object.freeze(steps),
     sources: Object.freeze(sources),

@@ -46,6 +46,8 @@ describe("lesson pack model", () => {
   it("projects ordered steps, deduplicated sources, comparison, and share URLs", () => {
     const model = buildLessonPackModel(lesson, bundle, "https://example.test/app/?year=1596");
     expect(model?.steps.map((step) => step.year)).toEqual([1590, 1596]);
+    expect(model?.datasetBbox).toEqual([134, 34, 136, 36]);
+    expect(model?.steps[0]?.featureGeometry?.type).toBe("Point");
     expect(model?.steps[0]?.shareUrl).toContain("lesson=intro");
     expect(model?.steps[0]?.shareUrl).toContain("step=first");
     expect(model?.steps[1]?.comparison).toHaveLength(2);

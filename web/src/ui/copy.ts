@@ -100,6 +100,13 @@ export interface UiCopy {
   readonly lessonPackRights: string;
   readonly lessonPackAccessed: string;
   readonly lessonPackApproximation: string;
+  readonly lessonPackFigureTitle: string;
+  readonly lessonPackFigureDescription: string;
+  readonly lessonPackFigureFallback: string;
+  readonly lessonPackFigureLegendPoint: string;
+  readonly lessonPackFigureLegendLine: string;
+  readonly lessonPackFigureLegendPolygon: string;
+  readonly lessonPackFigureCaption: string;
   readonly lessonPackCitationOnly: string;
   readonly lessonPackNoSources: string;
   readonly lessonPackPrint: string;
@@ -124,6 +131,7 @@ export interface UiCopy {
   readonly lessonPackBuilderSummarySources: string;
   readonly lessonPackBuilderSummaryLinks: string;
   readonly lessonPackBuilderSummaryPrint: string;
+  readonly lessonPackBuilderSummaryFigure: string;
   readonly lessonPackBuilderSummaryPreview: string;
   readonly lessonPackBuilderSummaryEdit: string;
   readonly lessonPackBuilderSummaryInvalid: string;
@@ -343,6 +351,13 @@ const EN_COPY: UiCopy = {
   lessonPackRights: "Rights and attribution",
   lessonPackAccessed: "accessed",
   lessonPackApproximation: "Teaching note: reconstructed shapes may be approximate; do not treat them as precise boundaries.",
+  lessonPackFigureTitle: "Observation figure",
+  lessonPackFigureDescription: "A schematic comparison of the selected public historical geometries. This is not a current basemap or a precise boundary.",
+  lessonPackFigureFallback: "The observation figure is unavailable. Use the worksheet text and online map instead.",
+  lessonPackFigureLegendPoint: "Point feature",
+  lessonPackFigureLegendLine: "Line feature",
+  lessonPackFigureLegendPolygon: "Area feature",
+  lessonPackFigureCaption: "Chronomap schematic reconstruction for classroom observation. Not a basemap or precise boundary; open the online map for context and evidence.",
   lessonPackCitationOnly: "Citation-only metadata; no source body, image, or inscription is reproduced.",
   lessonPackNoSources: "No source metadata is available.",
   lessonPackPrint: "Print / save classroom pack",
@@ -367,6 +382,7 @@ const EN_COPY: UiCopy = {
   lessonPackBuilderSummarySources: "Sources and rights",
   lessonPackBuilderSummaryLinks: "QR code and online links",
   lessonPackBuilderSummaryPrint: "A4 / PDF and recipient print views",
+  lessonPackBuilderSummaryFigure: "Printable observation figure",
   lessonPackBuilderSummaryPreview: "See the finished example",
   lessonPackBuilderSummaryEdit: "Adjust the contents",
   lessonPackBuilderSummaryInvalid: "Select at least one step to see the finished example.",
@@ -587,6 +603,13 @@ const JA_COPY: UiCopy = {
   lessonPackRights: "権利・表示",
   lessonPackAccessed: "参照日",
   lessonPackApproximation: "授業上の注意: 復元形状には概略が含まれます。精密な境界として扱わないでください。",
+  lessonPackFigureTitle: "観察用概略図",
+  lessonPackFigureDescription: "選択した公開地物を同じ縮尺で重ねた比較図です。現在の背景地図や精密な境界ではありません。",
+  lessonPackFigureFallback: "概略図を表示できません。教材の文章とオンライン地図を参照してください。",
+  lessonPackFigureLegendPoint: "点の地物",
+  lessonPackFigureLegendLine: "線の地物",
+  lessonPackFigureLegendPolygon: "面の地物",
+  lessonPackFigureCaption: "Chronomap収録の概略復元を教材用に図示しています。背景地図・精密な境界ではありません。詳細と根拠はオンライン地図で確認してください。",
   lessonPackCitationOnly: "引用メタデータのみを収録しています。原資料の本文・画像・碑文は転載していません。",
   lessonPackNoSources: "出典メタデータはありません。",
   lessonPackPrint: "授業用教材パックを印刷 / PDF保存",
@@ -611,6 +634,7 @@ const JA_COPY: UiCopy = {
   lessonPackBuilderSummarySources: "出典・権利一覧",
   lessonPackBuilderSummaryLinks: "QRコード・オンラインリンク",
   lessonPackBuilderSummaryPrint: "A4 / PDF・受け手別の印刷",
+  lessonPackBuilderSummaryFigure: "印刷用の観察図",
   lessonPackBuilderSummaryPreview: "この内容で完成見本を見る",
   lessonPackBuilderSummaryEdit: "内容を調整する",
   lessonPackBuilderSummaryInvalid: "完成見本を見るには、少なくとも1つのステップを選択してください。",
