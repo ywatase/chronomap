@@ -143,6 +143,15 @@ editor, while mobile keeps the primary action in a safe-area-aware bottom bar.
 When no steps are selected, the builder explains why preview is unavailable and
 focuses the step selector so the same action can be recovered after correction.
 
+Every valid pack also includes a printable `観察用概略図` / `Observation figure`
+page after the student worksheet. It is an inline SVG made only from the selected
+public geometries, with a fixed dataset extent, step/year/feature legend, and
+line, point, and area marks that remain distinguishable in grayscale. It does
+not copy GSI tiles or source images, make network requests, or include edited
+titles, class labels, or prompts. The page is shared once by student, teacher,
+and full print scopes; its caption keeps the figure clearly marked as a
+schematic reconstruction rather than a precise boundary or current basemap.
+
 Use `下書きをファイル保存` when you need to continue later, then use
 `下書きファイルを開く` after reopening the same dataset and lesson. The browser
 downloads a UTF-8 JSON file named
