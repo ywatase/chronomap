@@ -18,7 +18,7 @@ import { renderLessonPanel } from "./lesson-panel";
 import { buildLessonPackModel } from "../domain/lesson-pack-model";
 import { customizeLessonPackModel, type LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import { renderLessonPack } from "./lesson-pack";
-import { showLessonPackFeedback } from "./lesson-pack-feedback";
+import { showLessonPackFeedback, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 import { renderLessonPackBuilder } from "./lesson-pack-builder";
 import type { LessonPackModel } from "../domain/lesson-pack-model";
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
@@ -46,6 +46,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
   let workshopBaseModel: LessonPackModel | null = null;
   let workshopInput: LessonPackCustomizationInput | null = null;
+  let workshopFeedbackState: LessonPackFeedbackState | null = null;
   let workshopPreviewOpen = false;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
@@ -188,6 +189,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     builderOpen = false;
     workshopBaseModel = null;
     workshopInput = null;
+    workshopFeedbackState = null;
     syncUrl();
     focusWorkshopTrigger();
   };
@@ -217,6 +219,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     if (!model) return;
     builderOpen = false;
     workshopPreviewOpen = false;
+    workshopFeedbackState = null;
     renderLessonPack(lessonPackDialog, model, copy, { onClose: closeLessonPack, onPrint: printLessonPack });
     lessonPackDialog.hidden = false;
     lessonHost.querySelector<HTMLButtonElement>("[data-lesson-pack-open]")?.setAttribute("aria-expanded", "true");
@@ -232,7 +235,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     workshopPreviewOpen = false;
     renderLessonPackBuilder(lessonPackBuilderDialog, model, copy, {
       onClose: closeLessonWorkshop,
-      onReset: () => { workshopInput = null; },
+      onReset: () => { workshopInput = null; workshopFeedbackState = null; },
       onPreview: (input) => {
         const customized = workshopBaseModel ? customizeLessonPackModel(workshopBaseModel, input) : null;
         if (!customized) return;
@@ -247,6 +250,8 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
             openLessonWorkshop(workshopInput);
           },
           onPrint: printLessonPack,
+          initialFeedbackState: workshopFeedbackState,
+          onFeedbackChange: (state) => { workshopFeedbackState = state; },
         });
         lessonPackDialog.hidden = false;
         lessonPackDialog.querySelector<HTMLButtonElement>("[data-lesson-pack-back]")?.focus();

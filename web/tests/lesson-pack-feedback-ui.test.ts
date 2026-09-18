@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import { NEXT_FEATURE_OPTIONS, UTILIZATION_OPTIONS } from "../src/domain/lesson-pack-feedback";
-import { renderLessonPackFeedback, showLessonPackFeedback } from "../src/ui/lesson-pack-feedback";
+import { renderLessonPackFeedback, showLessonPackFeedback, type LessonPackFeedbackState } from "../src/ui/lesson-pack-feedback";
 import { uiCopy } from "../src/ui/copy";
 
 const context = {
@@ -71,5 +71,32 @@ describe("lesson pack feedback form", () => {
     writeText.mockRejectedValueOnce(new Error("denied again"));
     await host.querySelector<HTMLButtonElement>("[data-lesson-pack-feedback-copy]")!.click();
     expect(host.querySelector("[data-lesson-pack-feedback-status]")?.textContent).toContain("Could not");
+  });
+
+  it("restores a generated answer and reports in-memory changes for a later preview", () => {
+    let state: LessonPackFeedbackState | null = null;
+    const host = document.createElement("section");
+    renderLessonPackFeedback(host, context, uiCopy("ja"), null, { onChange: (next) => { state = next; } });
+    const form = host.querySelector<HTMLFormElement>("[data-lesson-pack-feedback-form]")!;
+    host.querySelector<HTMLInputElement>(`input[name=utilization][value="${UTILIZATION_OPTIONS[0]}"]`)!.checked = true;
+    host.querySelector<HTMLInputElement>(`input[name=nextFeature][value="${NEXT_FEATURE_OPTIONS[3]}"]`)!.checked = true;
+    host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-comment]")!.value = "同じページで保持";
+    form.requestSubmit();
+    const savedState = state as unknown as LessonPackFeedbackState;
+    expect(savedState.answer).toContain("heijokyo");
+
+    const restored = document.createElement("section");
+    renderLessonPackFeedback(restored, context, uiCopy("ja"), savedState, {});
+    expect(restored.querySelector<HTMLInputElement>(`input[name=utilization][value="${UTILIZATION_OPTIONS[0]}"]`)!.checked).toBe(true);
+    expect(restored.querySelector<HTMLInputElement>(`input[name=nextFeature][value="${NEXT_FEATURE_OPTIONS[3]}"]`)!.checked).toBe(true);
+    expect(restored.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-comment]")!.value).toBe("同じページで保持");
+    expect(restored.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-answer]")!.value).toBe(savedState.answer);
+
+    const changedContext = { ...context, selectedStepCount: 4, includeTeacher: false };
+    const changedPreview = document.createElement("section");
+    renderLessonPackFeedback(changedPreview, changedContext, uiCopy("ja"), savedState, {});
+    const changedAnswer = changedPreview.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-answer]")!;
+    expect(changedAnswer.value).toContain("選択ステップ数: 4");
+    expect(changedAnswer.value).toContain("教員用資料: なし");
   });
 });

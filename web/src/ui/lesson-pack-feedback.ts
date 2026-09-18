@@ -2,12 +2,28 @@ import {
   buildLessonPackFeedbackAnswer,
   NEXT_FEATURE_OPTIONS,
   UTILIZATION_OPTIONS,
+  type LessonPackFeedbackInput,
   type LessonPackFeedbackContext,
 } from "../domain/lesson-pack-feedback";
 import type { UiCopy } from "./copy";
 
+export interface LessonPackFeedbackState {
+  readonly input: LessonPackFeedbackInput;
+  readonly answer: string;
+}
+
+export interface LessonPackFeedbackActions {
+  readonly onChange?: (state: LessonPackFeedbackState) => void;
+}
+
 /** Render the in-memory, copy-only feedback form below a lesson-pack toolbar. */
-export function renderLessonPackFeedback(container: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy): void {
+export function renderLessonPackFeedback(
+  container: HTMLElement,
+  context: LessonPackFeedbackContext,
+  copy: UiCopy,
+  initialState: LessonPackFeedbackState | null = null,
+  feedbackActions: LessonPackFeedbackActions = {},
+): void {
   container.replaceChildren();
   container.className = "lesson-pack-feedback-host";
   container.dataset.lessonPackFeedbackHost = "";
@@ -65,15 +81,15 @@ export function renderLessonPackFeedback(container: HTMLElement, context: Lesson
   error.textContent = copy.lessonPackFeedbackRequired;
   form.append(error);
 
-  const actions = document.createElement("div");
-  actions.className = "lesson-pack-feedback-actions";
+  const actionRow = document.createElement("div");
+  actionRow.className = "lesson-pack-feedback-actions";
   const generate = document.createElement("button");
   generate.type = "submit";
   generate.className = "lesson-pack-feedback-generate";
   generate.dataset.lessonPackFeedbackGenerate = "";
   generate.textContent = copy.lessonPackFeedbackGenerate;
-  actions.append(generate);
-  form.append(actions);
+  actionRow.append(generate);
+  form.append(actionRow);
 
   const answerLabel = document.createElement("label");
   answerLabel.className = "lesson-pack-feedback-answer-label";
@@ -101,15 +117,33 @@ export function renderLessonPackFeedback(container: HTMLElement, context: Lesson
   status.setAttribute("aria-live", "polite");
   form.append(status);
 
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
+    const selected = input.name === "utilization" ? initialState?.input.utilization : initialState?.input.nextFeature;
+    input.checked = input.value === selected;
+  }
+  comment.value = typeof initialState?.input.comment === "string" ? initialState.input.comment.trim().slice(0, 500) : "";
+  // A previous answer is a generated artifact, not trusted state. Regenerate it
+  // against the current preview metadata so changed step/teacher settings cannot
+  // carry stale metadata across the builder back button.
+  answer.value = initialState?.answer
+    ? buildLessonPackFeedbackAnswer(initialState.input, context) ?? ""
+    : "";
+  error.hidden = Boolean(answer.value);
+
+  const captureInput = (): LessonPackFeedbackInput => ({
+    utilization: form.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
+    nextFeature: form.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
+    comment: comment.value,
+  });
+  const notify = (): void => {
+    feedbackActions.onChange?.({ input: captureInput(), answer: answer.value });
+  };
+
   const update = (): boolean => {
-    const input = {
-      utilization: form.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
-      nextFeature: form.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
-      comment: comment.value,
-    };
-    const value = buildLessonPackFeedbackAnswer(input, context);
+    const value = buildLessonPackFeedbackAnswer(captureInput(), context);
     answer.value = value ?? "";
     error.hidden = value !== null;
+    notify();
     return value !== null;
   };
 
@@ -118,9 +152,9 @@ export function renderLessonPackFeedback(container: HTMLElement, context: Lesson
     update();
   });
   for (const input of form.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
-    input.addEventListener("change", () => { if (answer.value) update(); });
+    input.addEventListener("change", () => { if (answer.value) update(); else notify(); });
   }
-  comment.addEventListener("input", () => { if (answer.value) update(); });
+  comment.addEventListener("input", () => { if (answer.value) update(); else notify(); });
   copyButton.addEventListener("click", () => { void copyAnswer(answer, status, copy, update); });
 
   content.append(form);

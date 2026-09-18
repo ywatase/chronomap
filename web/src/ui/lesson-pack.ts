@@ -1,11 +1,13 @@
 import type { LessonPackModel, LessonPackSource, LessonPackStep } from "../domain/lesson-pack-model";
 import type { UiCopy } from "./copy";
-import { renderLessonPackFeedback } from "./lesson-pack-feedback";
+import { renderLessonPackFeedback, type LessonPackFeedbackActions, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 
 export interface LessonPackActions {
   readonly onClose: () => void;
   readonly onPrint: () => void;
   readonly onBack?: () => void;
+  readonly initialFeedbackState?: LessonPackFeedbackState | null;
+  readonly onFeedbackChange?: LessonPackFeedbackActions["onChange"];
 }
 
 /** Render a print-ready, citation-only classroom pack. */
@@ -42,7 +44,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
     selectedStepCount: model.steps.length,
     includeTeacher: model.includeTeacher !== false,
     language: copy.language,
-  }, copy);
+  }, copy, actions.initialFeedbackState ?? null, { onChange: actions.onFeedbackChange });
   container.append(feedbackHost);
 
   const sheet = document.createElement("article");
