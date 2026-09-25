@@ -120,10 +120,12 @@ describe("lesson pack feedback form", () => {
     expect(host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]")!.value).toBe("");
 
     host.querySelector<HTMLInputElement>('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]')!.click();
+    host.querySelector<HTMLInputElement>('input[name="pilot-plan"][value="custom-region"]')!.click();
     host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-region]")!.value = "奈良";
     host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
     const answer = host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]")!;
     expect(answer.value).toContain("相談意向: 地域・内容・条件が合えば検討したい");
+    expect(answer.value).toContain("導入プラン: 地域教材の個別制作");
     expect(answer.value).toContain("印刷範囲: 生徒用");
     expect(answer.value).toContain("希望地域・題材: 奈良");
     expect(host.querySelector("[data-lesson-pack-pilot-mail]")).toBeNull();

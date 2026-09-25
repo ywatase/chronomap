@@ -1,5 +1,6 @@
 import type { DatasetCatalogCardModel, DatasetCatalogViewModel } from "../domain/dataset-catalog-view-model";
 import { LESSON_PACK_DRAFT_MAX_BYTES } from "../domain/lesson-pack-draft";
+import { LESSON_PACK_OFFER_PLANS, type LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface DatasetCatalogDialogActions {
@@ -81,6 +82,7 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boo
   if (isRoot && model.featured) welcome.append(renderFeatured(model, copy));
 
   if (isRoot) welcome.append(renderPurposeHub(model, copy, actions));
+  welcome.append(renderOfferHub(model, copy));
 
   const steps = document.createElement("ol");
   steps.className = "dataset-catalog-steps";
@@ -95,6 +97,57 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boo
   if (!isRoot && model.featured) welcome.append(renderFeatured(model, copy));
 
   return welcome;
+}
+
+function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "dataset-catalog-offers";
+  section.dataset.datasetCatalogOffers = "";
+  const heading = document.createElement("h3");
+  heading.textContent = copy.datasetCatalogOfferHeading;
+  const lead = document.createElement("p");
+  lead.className = "dataset-catalog-offers-lead";
+  lead.textContent = copy.datasetCatalogOfferLead;
+  section.append(heading, lead);
+
+  const cards = document.createElement("div");
+  cards.className = "dataset-catalog-offer-cards";
+  const freeUrl = model.featured?.packUrl ?? model.cards.find((card) => card.lessonUrl)?.lessonUrl ?? model.cards.find((card) => card.status === "available")?.mapUrl;
+  const builderUrl = model.featured?.builderUrl ?? model.cards.find((card) => card.builderUrl)?.builderUrl;
+  for (const plan of LESSON_PACK_OFFER_PLANS) {
+    const card = document.createElement("article");
+    card.className = `dataset-catalog-offer dataset-catalog-offer-${plan}`;
+    card.dataset.datasetCatalogOffer = plan;
+    const title = document.createElement("h4");
+    title.textContent = copy.datasetCatalogOfferTitles[plan];
+    const description = document.createElement("p");
+    description.textContent = copy.datasetCatalogOfferLeads[plan];
+    const benefit = document.createElement("p");
+    benefit.className = "dataset-catalog-offer-benefit";
+    benefit.textContent = copy.datasetCatalogOfferBenefits[plan];
+    card.append(title, description, benefit);
+    const target = plan === "free-explore" ? freeUrl : builderUrl ? addOffer(builderUrl, plan) : undefined;
+    if (target) card.append(link(target, copy.datasetCatalogOfferActions[plan], "dataset-catalog-offer-link", plan !== "free-explore"));
+    else card.append(disabledPurposeAction(copy.datasetCatalogOfferActions[plan]));
+    cards.append(card);
+  }
+  section.append(cards);
+  const pricing = document.createElement("p");
+  pricing.className = "dataset-catalog-offer-pricing";
+  pricing.textContent = copy.datasetCatalogOfferPricing;
+  section.append(pricing);
+  return section;
+}
+
+function addOffer(url: string, plan: LessonPackOfferPlan): string {
+  try {
+    const base = typeof window === "undefined" ? "https://chronomap.invalid" : window.location.href;
+    const parsed = new URL(url, base);
+    parsed.searchParams.set("offer", plan);
+    return parsed.href.startsWith("https://chronomap.invalid") ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.href;
+  } catch {
+    return url;
+  }
 }
 
 function renderFeatured(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
@@ -406,7 +459,7 @@ function label(text: string): HTMLSpanElement {
   return element;
 }
 
-function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map" | "dataset-catalog-featured-pack" | "dataset-catalog-featured-builder" | "dataset-catalog-purpose-explore" | "dataset-catalog-purpose-build", primary: boolean): HTMLAnchorElement {
+function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map" | "dataset-catalog-featured-pack" | "dataset-catalog-featured-builder" | "dataset-catalog-purpose-explore" | "dataset-catalog-purpose-build" | "dataset-catalog-offer-link", primary: boolean): HTMLAnchorElement {
   const element = document.createElement("a");
   element.href = href;
   element.textContent = text;

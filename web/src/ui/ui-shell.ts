@@ -25,6 +25,7 @@ import { draftFilename, LESSON_PACK_DRAFT_MAX_BYTES, parseLessonPackDraft, seria
 import { DATASET_CATALOG } from "../domain/dataset-catalog";
 import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../domain/dataset-catalog-view-model";
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
+import type { LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 
 export interface MapAdapterLike { mount(container: HTMLElement): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
@@ -41,6 +42,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
+  const requestedOffer: LessonPackOfferPlan | undefined = sharedMatchesDataset ? shared.offer : undefined;
   let rootWelcomeOpen = typeof window !== "undefined" && window.location.pathname === "/" && window.location.search === "" && options.initialBuilderOpen !== true;
   const requestedLessonIndex = lesson && shared.view !== "builder" && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
   const requestedLessonStep = requestedLessonIndex !== null && lesson ? lesson.steps[requestedLessonIndex] : null;
@@ -55,6 +57,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let workshopBaseModel: LessonPackModel | null = null;
   let workshopInput: LessonPackCustomizationInput | null = null;
   let workshopFeedbackState: LessonPackFeedbackState | null = null;
+  let workshopOffer: LessonPackOfferPlan | null = requestedOffer ?? null;
   let workshopPreviewOpen = false;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
@@ -168,7 +171,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     const activeLesson = lesson && (lessonIndex !== null || builderOpen || lessonPackOpen) ? lesson : null;
     const activeStep = activeLesson && lessonIndex !== null ? activeLesson.steps[lessonIndex] ?? null : null;
     const view = builderOpen ? "builder" : lessonPackOpen ? "pack" : catalogOpen ? "catalog" : null;
-    const query = sharedQuery({ dataset: datasetSlug, view, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null });
+    const query = sharedQuery({ dataset: datasetSlug, view, lessonId: activeLesson?.id ?? null, lessonStepId: activeStep?.id ?? null, year: state.selectedYear, featureId: state.selectedFeatureId, longitude: camera?.longitude ?? null, latitude: camera?.latitude ?? null, zoom: camera?.zoom ?? null, offer: builderOpen || lessonPackOpen ? workshopOffer : null });
     window.history.replaceState(null, "", `${window.location.pathname}${query}${window.location.hash}`);
   };
   const setShareNotice = (message: string) => { shareNotice.hidden = false; shareNotice.textContent = message; };
@@ -201,6 +204,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     workshopBaseModel = null;
     workshopInput = null;
     workshopFeedbackState = null;
+    workshopOffer = null;
     syncUrl();
     focusWorkshopTrigger();
   };
@@ -294,6 +298,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
         openLessonWorkshop();
       },
       onPrint: printLessonPack,
+      initialPilotPlan: workshopOffer ?? undefined,
     });
     lessonPackDialog.hidden = false;
     syncUrl();
@@ -328,6 +333,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
             openLessonWorkshop(workshopInput);
           },
           onPrint: printLessonPack,
+          initialPilotPlan: workshopOffer ?? undefined,
           initialFeedbackState: workshopFeedbackState,
           onFeedbackChange: (state) => { workshopFeedbackState = state; },
         });

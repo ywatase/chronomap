@@ -5,7 +5,7 @@ import {
   type LessonPackFeedbackInput,
   type LessonPackFeedbackContext,
 } from "../domain/lesson-pack-feedback";
-import { LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
+import { DEFAULT_LESSON_PACK_OFFER_PLAN, LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_OFFER_PLANS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackOfferPlan, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface LessonPackFeedbackState {
@@ -17,6 +17,7 @@ export interface LessonPackFeedbackState {
 
 export interface LessonPackFeedbackActions {
   readonly onChange?: (state: LessonPackFeedbackState) => void;
+  readonly initialPilotPlan?: LessonPackOfferPlan;
 }
 
 /** Render the in-memory, copy-only feedback form below a lesson-pack toolbar. */
@@ -166,6 +167,7 @@ export function renderLessonPackFeedback(
 
   content.append(form);
   renderPilotHandoff(content, context, copy, initialState, {
+    initialPilotPlan: feedbackActions.initialPilotPlan,
     onChange: (nextInput, nextAnswer) => {
       pilotInput = nextInput;
       pilotAnswer = nextAnswer;
@@ -201,7 +203,7 @@ interface PilotHandoffActions {
   readonly onChange: (input: LessonPackPilotInput, answer: string) => void;
 }
 
-function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions): void {
+function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions & { readonly initialPilotPlan?: LessonPackOfferPlan }): void {
   const card = document.createElement("section");
   card.className = "lesson-pack-completion";
   card.dataset.lessonPackCompletion = "";
@@ -237,6 +239,28 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     input.checked = (state?.pilotInput?.route ?? "feedback") === value;
     option.append(input, document.createTextNode(label));
     route.append(option);
+  }
+
+  const plan = document.createElement("fieldset");
+  plan.className = "lesson-pack-pilot-plan";
+  plan.dataset.lessonPackPilotPlan = "";
+  plan.tabIndex = -1;
+  const planLegend = document.createElement("legend");
+  planLegend.textContent = copy.lessonPackPilotPlan;
+  plan.append(planLegend);
+  const initialPlan = state?.pilotInput?.plan && LESSON_PACK_OFFER_PLANS.includes(state.pilotInput.plan as LessonPackOfferPlan)
+    ? state.pilotInput.plan as LessonPackOfferPlan
+    : actions.initialPilotPlan ?? DEFAULT_LESSON_PACK_OFFER_PLAN;
+  for (const value of LESSON_PACK_OFFER_PLANS) {
+    const option = document.createElement("label");
+    option.className = "lesson-pack-completion-option";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "pilot-plan";
+    input.value = value;
+    input.checked = initialPlan === value;
+    option.append(input, document.createTextNode(copy.lessonPackPilotPlanOptions[value] ?? value));
+    plan.append(option);
   }
 
   const budget = document.createElement("fieldset");
@@ -317,13 +341,14 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   status.setAttribute("aria-live", "polite");
   actionsRow.append(back, copyButton, shareButton);
   if (mail) actionsRow.append(mail);
-  form.append(route, budget, regionLabel, review, error, answerLabel, actionsRow, status);
+  form.append(route, plan, budget, regionLabel, review, error, answerLabel, actionsRow, status);
   card.append(form);
   content.append(card);
 
   const routeValue = (): "feedback" | "consult" => form.querySelector<HTMLInputElement>('input[name="pilot-route"]:checked')?.value === "consult" ? "consult" : "feedback";
   const pilotInput = (): LessonPackPilotInput => ({
     route: routeValue(),
+    plan: form.querySelector<HTMLInputElement>('input[name="pilot-plan"]:checked')?.value,
     utilization: content.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
     nextFeature: content.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
     budgetIntent: form.querySelector<HTMLInputElement>('input[name="pilot-budget"]:checked')?.value,
@@ -332,9 +357,11 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   });
   const setRouteVisibility = (): void => {
     const consultation = routeValue() === "consult";
+    plan.hidden = !consultation;
     budget.hidden = !consultation;
     regionLabel.hidden = !consultation;
     review.textContent = consultation ? copy.lessonPackPilotReviewConsult : copy.lessonPackPilotReviewFeedback;
+    plan.setAttribute("aria-hidden", String(!consultation));
     budget.setAttribute("aria-hidden", String(!consultation));
     regionLabel.setAttribute("aria-hidden", String(!consultation));
   };
@@ -376,7 +403,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     lastPrintScope: scope(),
     language: context.language,
   }) ?? "";
-  for (const input of form.querySelectorAll<HTMLInputElement>('input[name="pilot-route"], input[name="pilot-budget"]')) {
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[name="pilot-route"], input[name="pilot-plan"], input[name="pilot-budget"]')) {
     input.addEventListener("change", () => { setRouteVisibility(); setReview(false); error.hidden = true; notify(); });
   }
   for (const input of [region, ...Array.from(content.querySelectorAll<HTMLInputElement>('input[name="utilization"], input[name="nextFeature"]'))]) {

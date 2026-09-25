@@ -1,6 +1,7 @@
 import { buildLessonPackAccessModel, type LessonPackAccessUrlModel } from "../domain/lesson-pack-access";
 import { projectLessonPackFigureFromSteps } from "../domain/lesson-pack-figure";
 import type { LessonPackModel, LessonPackSource, LessonPackStep } from "../domain/lesson-pack-model";
+import type { LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 import { renderLessonPackFeedback, type LessonPackFeedbackActions, type LessonPackFeedbackState } from "./lesson-pack-feedback";
 import { renderLessonPackFigure } from "./lesson-pack-figure";
@@ -13,6 +14,7 @@ export interface LessonPackActions {
   readonly onPrint: (scope: LessonPackPrintScope) => void;
   readonly onBack?: () => void;
   readonly initialFeedbackState?: LessonPackFeedbackState | null;
+  readonly initialPilotPlan?: LessonPackOfferPlan;
   readonly onFeedbackChange?: LessonPackFeedbackActions["onChange"];
 }
 
@@ -78,7 +80,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
     includeTeacher: model.includeTeacher !== false,
     observationFigure: figureModel !== null,
     language: copy.language,
-  }, copy, actions.initialFeedbackState ?? null, { onChange: actions.onFeedbackChange });
+  }, copy, actions.initialFeedbackState ?? null, { initialPilotPlan: actions.initialPilotPlan, onChange: actions.onFeedbackChange });
   container.append(feedbackHost);
 
   const sheet = document.createElement("article");

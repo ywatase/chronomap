@@ -102,6 +102,10 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-card="heijokyo"] [data-dataset-catalog-lesson]')?.href).toContain("lesson=heijokyo-intro");
     expect(root.querySelector("[data-dataset-catalog-free]")?.textContent).toContain("地図を見る");
     expect(root.querySelector("[data-dataset-catalog-future]")?.textContent).toContain("一括");
+    expect(root.querySelectorAll("[data-dataset-catalog-offer]")).toHaveLength(3);
+    expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("授業パイロット");
+    expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-link]')?.href).toContain("offer=custom-region");
+    expect(root.querySelector(".dataset-catalog-offer-pricing")?.textContent).toContain("価格");
   });
 
   it("calls the close action from the dialog toolbar", () => {

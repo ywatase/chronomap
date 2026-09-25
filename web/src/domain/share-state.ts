@@ -1,3 +1,5 @@
+import { LESSON_PACK_OFFER_PLANS, type LessonPackOfferPlan } from "./lesson-pack-pilot";
+
 export interface SharedState {
   readonly dataset?: string;
   readonly view?: "catalog" | "pack" | "builder";
@@ -8,6 +10,7 @@ export interface SharedState {
   readonly longitude?: number;
   readonly latitude?: number;
   readonly zoom?: number;
+  readonly offer?: LessonPackOfferPlan;
 }
 
 // Keep a small margin below MapLibre's projection clamp so restoring a URL
@@ -28,6 +31,8 @@ export function parseSharedState(search: string): SharedState {
   const longitude = boundedNumber(params.get("lng"), -180, 180);
   const latitude = boundedNumber(params.get("lat"), -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE);
   const zoom = boundedNumber(params.get("z"), 0, MAX_MAP_ZOOM);
+  const rawOffer = params.get("offer");
+  const offer = (LESSON_PACK_OFFER_PLANS as readonly string[]).includes(rawOffer ?? "") ? rawOffer as LessonPackOfferPlan : undefined;
   return {
     ...(dataset && /^[a-z0-9-]+$/.test(dataset) ? { dataset } : {}),
     ...(view ? { view } : {}),
@@ -38,10 +43,11 @@ export function parseSharedState(search: string): SharedState {
     ...(longitude !== undefined ? { longitude } : {}),
     ...(latitude !== undefined ? { latitude } : {}),
     ...(zoom !== undefined ? { zoom } : {}),
+    ...(offer ? { offer } : {}),
   };
 }
 
-export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | "pack" | "builder" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null }): string {
+export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | "pack" | "builder" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null; readonly offer?: LessonPackOfferPlan | null }): string {
   const params = new URLSearchParams();
   if (state.dataset) params.set("dataset", state.dataset);
   if (state.view === "catalog" || state.view === "pack" || state.view === "builder") params.set("view", state.view);
@@ -52,6 +58,7 @@ export function sharedQuery(state: { readonly dataset?: string | null; readonly 
   if (state.longitude !== undefined && state.longitude !== null && boundedNumber(state.longitude, -180, 180) !== undefined) params.set("lng", fixed(state.longitude, 5));
   if (state.latitude !== undefined && state.latitude !== null && boundedNumber(state.latitude, -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE) !== undefined) params.set("lat", fixed(state.latitude, 5));
   if (state.zoom !== undefined && state.zoom !== null && boundedNumber(state.zoom, 0, MAX_MAP_ZOOM) !== undefined) params.set("z", fixed(state.zoom, 2));
+  if (state.offer && (LESSON_PACK_OFFER_PLANS as readonly string[]).includes(state.offer)) params.set("offer", state.offer);
   const value = params.toString();
   return value ? `?${value}` : "";
 }

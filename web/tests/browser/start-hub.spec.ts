@@ -58,3 +58,29 @@ test("keeps the root hub when a malformed draft is selected", async ({ page }) =
   await expect(hub.locator("[data-dataset-catalog-purpose-status]")).toContainText(/下書きを読み込めませんでした|Could not load this draft/);
   expect(page.url()).not.toContain("invalid.json");
 });
+
+test("carries an adoption path from the catalog into the consultation handoff", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.print = () => { document.body.dataset.printCalled = "true"; };
+  });
+  await page.goto("/");
+  const offers = page.locator("[data-dataset-catalog-offers]");
+  await expect(offers).toBeVisible();
+  await expect(offers.locator("[data-dataset-catalog-offer]")).toHaveCount(3);
+  await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/地域教材の個別制作|Custom regional production/);
+  await offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]").click();
+  await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
+  const builder = page.locator("[data-lesson-pack-builder]");
+  await expect(builder).toBeVisible();
+  await builder.locator("[data-lesson-pack-builder-preview]").click();
+  const pack = page.locator("[data-lesson-pack-dialog]");
+  await pack.locator("[data-lesson-pack-print-student]").click();
+  const feedback = pack.locator("[data-lesson-pack-feedback-host]");
+  await feedback.locator('input[name="utilization"][value="近いうちに使いたい"]').check();
+  await feedback.locator('input[name="nextFeature"][value="自分の地域・題材を追加"]').check();
+  await feedback.locator('input[name="pilot-route"][value="consult"]').check();
+  await feedback.locator('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]').check();
+  await feedback.locator("[data-lesson-pack-pilot-form]").locator("button[type=submit]").click();
+  await expect(feedback.locator("[data-lesson-pack-pilot-answer]")).toHaveValue(/導入プラン: 地域教材の個別制作|Offer path: Custom regional lesson production/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+});

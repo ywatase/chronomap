@@ -36,8 +36,11 @@ describe("shareable map state", () => {
     expect(parseSharedState("?dataset=tonegawa&view=catalog")).toEqual({ dataset: "tonegawa", view: "catalog" });
     expect(parseSharedState("?dataset=ogurike&lesson=ogurike-intro&view=pack")).toEqual({ dataset: "ogurike", lessonId: "ogurike-intro", view: "pack" });
     expect(parseSharedState("?dataset=tonegawa&lesson=tonegawa-eastward&view=builder")).toEqual({ dataset: "tonegawa", lessonId: "tonegawa-eastward", view: "builder" });
+    expect(parseSharedState("?dataset=ogurike&lesson=ogurike-intro&view=builder&offer=custom-region").offer).toBe("custom-region");
+    expect(parseSharedState("?offer=not-a-plan").offer).toBeUndefined();
     expect(parseSharedState("?view=admin")).toEqual({});
     expect(sharedQuery({ dataset: "tonegawa", view: "catalog", year: 1654, featureId: null })).toBe("?dataset=tonegawa&view=catalog&year=1654");
+    expect(sharedQuery({ dataset: "ogurike", view: "builder", lessonId: "ogurike-intro", year: 1590, featureId: null, offer: "classroom-pilot" })).toContain("offer=classroom-pilot");
     expect(sharedQuery({ dataset: "ogurike", view: "pack", lessonId: "ogurike-intro", year: 1590, featureId: null })).toBe("?dataset=ogurike&view=pack&lesson=ogurike-intro&year=1590");
     expect(sharedQuery({ dataset: "tonegawa", view: "builder", lessonId: "tonegawa-eastward", year: 1654, featureId: null })).toBe("?dataset=tonegawa&view=builder&lesson=tonegawa-eastward&year=1654");
     expect(sharedQuery({ dataset: "tonegawa", view: null, year: 1654, featureId: null })).toBe("?dataset=tonegawa&year=1654");

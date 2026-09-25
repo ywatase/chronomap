@@ -16,6 +16,14 @@ describe("lesson-pack pilot handoff", () => {
     expect(feedbackOnly).not.toContain("相談意向");
   });
 
+  it("keeps the selected offer path allow-listed and visible only in consultation text", () => {
+    const input = { route: "consult", plan: "custom-region", utilization: "近いうちに使いたい", nextFeature: "自分の地域・題材を追加", budgetIntent: "地域・内容・条件が合えば検討したい" };
+    expect(normalizeLessonPackPilot(input)?.plan).toBe("custom-region");
+    expect(buildLessonPackPilotText(input, context)).toContain("導入プラン: 地域教材の個別制作");
+    expect(buildLessonPackPilotText({ ...input, plan: "unexpected" }, context)).toContain("導入プラン: 授業パイロット");
+    expect(buildLessonPackPilotText({ ...input, route: "feedback", plan: "custom-region" }, context)).not.toContain("導入プラン");
+  });
+
   it("builds only a CRLF-safe encoded mailto URL for a configured mailto address", () => {
     const answer = buildLessonPackPilotText({ route: "feedback", utilization: "近いうちに使いたい", nextFeature: "校内で共有", comment: "x\r\nBcc: no" }, context)!;
     const href = buildSafeLessonPackPilotMailto("mailto:pilot@example.test\r\nBcc:x", "Pilot\r\nBcc:x", answer);
