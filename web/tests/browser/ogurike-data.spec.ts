@@ -25,4 +25,35 @@ test.describe("Ogurike data snapshots", () => {
     await snapshots.selectOption("1942");
     await expect(page.getByRole("button", { name: /巨椋池干拓之碑/ })).toBeVisible();
   });
+
+  test("shows evidence, uncertainty, citation, and rights for point line and polygon", async ({ page }, testInfo) => {
+    await page.goto("/");
+    const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);
+    const detail = page.locator("#panel-detail");
+
+    await snapshots.selectOption("1590");
+    await page.getByRole("button", { name: /宇治川（1590年・工事前）/ }).click();
+    await expect(detail).toBeVisible();
+    await expect(detail).toContainText("根拠");
+    await expect(detail).toContainText("ogurike:evidence:ujigawa-1590-geometry");
+    await expect(detail).toContainText("PDF p.2-22 図2.2-1①");
+    await expect(detail).toContainText("国土交通省近畿地方整備局");
+    await expect(detail).toContainText("オープンライセンス");
+
+    await snapshots.selectOption("1910");
+    await page.getByRole("button", { name: /巨椋池（1910年・概略）/ }).click();
+    await expect(detail).toContainText("ogurike:evidence:waterbody-geometry");
+    await expect(detail).toContainText("精密な境界");
+    await expect(detail).toContainText("京都府レッドデータブック2015『巨椋池』");
+    await expect(detail).toContainText("引用メタデータのみ");
+
+    await snapshots.selectOption("1942");
+    await page.getByRole("button", { name: /巨椋池干拓之碑（1942年）/ }).click();
+    await expect(detail).toContainText("ogurike:evidence:monument-geometry");
+    await expect(detail).toContainText("『作成方法』の1942年Pointに関する記録");
+    await expect(detail).toContainText("京都市『巨椋池干拓碑』GA015");
+    await expect(detail).toContainText("代表点加工");
+
+    await page.screenshot({ path: testInfo.outputPath("ogurike-evidence.png"), fullPage: true });
+  });
 });
