@@ -257,6 +257,21 @@ code, source list, and PDF—without implying saving, accounts, or billing.
 
 ## Pilot data
 
+Before rebuilding a public bundle, validate the authoring package against the
+public publication rules. The audit command then emits a deterministic,
+Japanese Markdown record for every public FeatureVersion and its reachable
+evidence, source, uncertainty, and rights metadata:
+
+```sh
+cd .. && chronomap-data validate data/ogurike --profile public
+cd .. && chronomap-data audit data/ogurike --profile public > docs/data/ogurike-audit.md
+```
+
+The audit contains citation metadata and locators only. It does not copy
+restricted source bodies, images, or inscriptions, and it does not perform URL
+liveness checks or network uploads. The checked-in Ogurike snapshot is the
+reference used by the representative point/line/polygon browser E2E.
+
 The checked-in public files under `public/data/ogurike/` are generated with the
 repository's Python builder:
 

@@ -19,7 +19,7 @@
 - 地物: 巨椋池干拓之碑（1942年） (`ogurike:entity:reclamation-monument`)
 - geometry: `Point`
 - 年代: 1942年以降
-- 権利: `open-license` — 京都市Sourceは引用メタデータのみ。代表点はChronomapの概略復元です。
+- 権利: `open-license` — 表示: 京都市（引用）、Chronomap（代表点加工） — 京都市Sourceは引用メタデータのみ。代表点はChronomapの概略復元です。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:monument-citation`)
   - `location`: `approximate` — 所在地をもとに小数第3位へ丸めた代表位置です。 (Evidence: `ogurike:evidence:monument-citation`, `ogurike:evidence:monument-geometry`)
@@ -37,15 +37,15 @@
 
 - Source:
 
-  - `ogurike:source:kyoto-city-monument`: 京都市『巨椋池干拓碑』GA015 — rights: `restricted` — https://www2.city.kyoto.lg.jp/html/somu/rekishi/fm/ishibumi/html/ga015.html
-  - `ogurike:source:shape-notes`: Chronomap『巨椋池パイロット形状作成メモ』 — rights: `open-license` — https://github.com/ywatase/chronomap/blob/main/docs/data/ogurike-shape-notes.md
+  - `ogurike:source:kyoto-city-monument`: 京都市『巨椋池干拓碑』GA015 — 巨椋池干拓碑; 作成者: 京都市; 2014年; 参照日: 2026-09-17 — rights: `restricted` — https://www2.city.kyoto.lg.jp/html/somu/rekishi/fm/ishibumi/html/ga015.html
+  - `ogurike:source:shape-notes`: Chronomap『巨椋池パイロット形状作成メモ』 — 巨椋池パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-09-17 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/ogurike-shape-notes.md
 
 ### `ogurike:version:ujigawa-1590`
 
 - 地物: 宇治川（1590年・工事前） (`ogurike:entity:ujigawa`)
 - geometry: `LineString`
 - 年代: 1590年
-- 権利: `open-license` — PDL1.0の出典表示と編集・加工表示を含みます。
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1590-temporal`)
   - `location`: `approximate` — 資料図の相対位置を概略線にしたものです。 (Evidence: `ogurike:evidence:ujigawa-1590-temporal`)
@@ -63,14 +63,14 @@
 
 - Source:
 
-  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — rights: `open-license` — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
 
 ### `ogurike:version:ujigawa-1596`
 
 - 地物: 宇治川（1596年・工事後） (`ogurike:entity:ujigawa`)
 - geometry: `LineString`
 - 年代: 1596年
-- 権利: `open-license` — PDL1.0の出典表示と編集・加工表示を含みます。
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1596-temporal`)
   - `location`: `approximate` — 資料図の相対位置を概略線にしたものです。 (Evidence: `ogurike:evidence:ujigawa-1596-temporal`)
@@ -88,14 +88,14 @@
 
 - Source:
 
-  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — rights: `open-license` — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
 
 ### `ogurike:version:waterbody-1910`
 
 - 地物: 巨椋池（1910年・概略） (`ogurike:entity:waterbody`)
 - geometry: `Polygon`
 - 年代: 1910年
-- 権利: `open-license` — 各Sourceの出典表示・引用条件・編集加工表示を適用します。
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、京都府（引用）、Chronomap（概略加工） — 各Sourceの出典表示・引用条件・編集加工表示を適用します。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:waterbody-temporal`)
   - `location`: `approximate` — 京都府RDBの地域情報と資料図の相対位置をもとにした概略です。 (Evidence: `ogurike:evidence:waterbody-region`)
@@ -115,17 +115,17 @@
 
 - Source:
 
-  - `ogurike:source:kyoto-prefecture-rdb`: 京都府レッドデータブック2015『巨椋池』 — rights: `restricted` — https://www.pref.kyoto.jp/kankyo/rdb/geo/db/sur0005.html
-  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — rights: `open-license` — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+  - `ogurike:source:kyoto-prefecture-rdb`: 京都府レッドデータブック2015『巨椋池』 — 巨椋池（京都府レッドデータブック）; 作成者: 京都府; 2015年; 参照日: 2026-09-17 — rights: `restricted` — https://www.pref.kyoto.jp/kankyo/rdb/geo/db/sur0005.html
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
 
 ## Source一覧
 
-| Source | citation | rights | terms |
-|---|---|---|---|
-| `ogurike:source:kyoto-city-monument` | 京都市『巨椋池干拓碑』GA015 | restricted | 引用メタデータのみ。ページ本文、画像、碑文全文は再現しない。 |
-| `ogurike:source:kyoto-prefecture-rdb` | 京都府レッドデータブック2015『巨椋池』 | restricted | 引用メタデータのみ。掲載された本文・地図画像・写真は再現しない。 |
-| `ogurike:source:mlit-ogurike-transition` | 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 | open-license | PDL1.0。出典を記載し、編集・加工したことを別途表示する。 |
-| `ogurike:source:shape-notes` | Chronomap『巨椋池パイロット形状作成メモ』 | open-license | Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。 |
+| Source | citation | metadata | rights | terms |
+|---|---|---|---|---|
+| `ogurike:source:kyoto-city-monument` | 京都市『巨椋池干拓碑』GA015 | 巨椋池干拓碑; 作成者: 京都市; 2014年; 参照日: 2026-09-17; https://www2.city.kyoto.lg.jp/html/somu/rekishi/fm/ishibumi/html/ga015.html | restricted | 引用メタデータのみ。ページ本文、画像、碑文全文は再現しない。 |
+| `ogurike:source:kyoto-prefecture-rdb` | 京都府レッドデータブック2015『巨椋池』 | 巨椋池（京都府レッドデータブック）; 作成者: 京都府; 2015年; 参照日: 2026-09-17; https://www.pref.kyoto.jp/kankyo/rdb/geo/db/sur0005.html | restricted | 引用メタデータのみ。掲載された本文・地図画像・写真は再現しない。 |
+| `ogurike:source:mlit-ogurike-transition` | 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 | 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17; https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf | open-license; 表示: 国土交通省近畿地方整備局 | PDL1.0。出典を記載し、編集・加工したことを別途表示する。 |
+| `ogurike:source:shape-notes` | Chronomap『巨椋池パイロット形状作成メモ』 | 巨椋池パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-09-17; https://github.com/ywatase/chronomap/blob/main/docs/data/ogurike-shape-notes.md | open-license; 表示: Chronomap contributors | Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。 |
 
 ## 監査上の注意
 

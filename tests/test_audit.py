@@ -58,6 +58,7 @@ def test_audit_is_deterministic_and_exposes_four_uncertainty_dimensions(tmp_path
     )
     assert "ogurike:evidence:waterbody-geometry" in rendered
     assert "精密な境界" in rendered
+    assert "参照日: 2026-09-17" in rendered
 
 
 def test_audit_keeps_citation_only_sources_as_metadata_without_source_body():

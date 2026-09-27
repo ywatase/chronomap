@@ -354,7 +354,9 @@ def render_audit_markdown(report: AuditReport) -> str:
                 f"- 地物: {_markdown_text(feature.label)} (`{_markdown_text(feature.entity_id)}`)",
                 f"- geometry: `{_markdown_text(feature.geometry_type)}`",
                 f"- 年代: {_markdown_text(feature.period.display)}",
-                f"- 権利: `{_markdown_text(feature.rights_status)}` — {_markdown_text(feature.rights_terms)}",
+                f"- 権利: `{_markdown_text(feature.rights_status)}`"
+                f" — 表示: {_markdown_text(feature.rights_attribution)}"
+                f" — {_markdown_text(feature.rights_terms)}",
                 "- 不確実性:",
             )
         )
@@ -389,19 +391,54 @@ def render_audit_markdown(report: AuditReport) -> str:
         for source in feature.sources:
             rights = f"`{_markdown_text(source.rights_status)}`"
             url = f" — {_markdown_text(source.url)}" if source.url else ""
+            metadata = "; ".join(
+                part
+                for part in (
+                    _markdown_text(source.title),
+                    f"作成者: {_markdown_text(', '.join(source.creators))}" if source.creators else "",
+                    f"{source.published_year}年" if source.published_year is not None else "",
+                    f"参照日: {_markdown_text(source.accessed_date)}" if source.accessed_date else "",
+                )
+                if part
+            )
+            attribution = f"; 表示: {_markdown_text(source.rights_attribution)}" if source.rights_attribution else ""
             lines.append(
-                f"  - `{_markdown_text(source.id)}`: {_markdown_text(_source_label(source))} — rights: {rights}{url}"
+                f"  - `{_markdown_text(source.id)}`: {_markdown_text(_source_label(source))}"
+                f" — {metadata} — rights: {rights}{attribution}{url}"
             )
 
-    lines.extend(("", "## Source一覧", "", "| Source | citation | rights | terms |", "|---|---|---|---|"))
+    lines.extend(
+        (
+            "",
+            "## Source一覧",
+            "",
+            "| Source | citation | metadata | rights | terms |",
+            "|---|---|---|---|---|",
+        )
+    )
     for source in report.sources:
+        metadata = "; ".join(
+            part
+            for part in (
+                _markdown_text(source.title),
+                f"作成者: {_markdown_text(', '.join(source.creators))}" if source.creators else "",
+                f"{source.published_year}年" if source.published_year is not None else "",
+                f"参照日: {_markdown_text(source.accessed_date)}" if source.accessed_date else "",
+                _markdown_text(source.url) if source.url else "",
+            )
+            if part
+        )
+        rights = _markdown_text(source.rights_status)
+        if source.rights_attribution:
+            rights += f"; 表示: {_markdown_text(source.rights_attribution)}"
         lines.append(
             "| "
             + " | ".join(
                 (
                     f"`{_markdown_text(source.id)}`",
                     _markdown_text(source.citation),
-                    _markdown_text(source.rights_status),
+                    metadata,
+                    rights,
                     _markdown_text(source.rights_terms),
                 )
             )
