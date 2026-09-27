@@ -4,6 +4,7 @@ import argparse
 from collections.abc import Sequence
 import sys
 
+from .audit import audit_package, render_audit_markdown
 from .loader import PackageLoadError, load_package
 from .models import ValidationIssue, ValidationProfile
 from .public_builder import PublicBuildIOError, PublicBuildValidationError, build_public_bundle
@@ -19,6 +20,13 @@ def _parser() -> argparse.ArgumentParser:
         "--profile",
         choices=tuple(profile.value for profile in ValidationProfile),
         default=ValidationProfile.AUTHORING.value,
+    )
+    audit = commands.add_parser("audit")
+    audit.add_argument("dataset_dir")
+    audit.add_argument(
+        "--profile",
+        choices=tuple(profile.value for profile in ValidationProfile),
+        default=ValidationProfile.PUBLIC.value,
     )
     build_public = commands.add_parser("build-public")
     build_public.add_argument("dataset_dir")
@@ -48,6 +56,22 @@ def main(argv: Sequence[str] | None = None) -> int:
         for issue in issues:
             print(format_issue(issue), file=sys.stderr)
         return 1 if issues else 0
+
+    if arguments.command == "audit":
+        profile = ValidationProfile(arguments.profile)
+        issues = validate_package(package, profile)
+        for issue in issues:
+            print(format_issue(issue), file=sys.stderr)
+        if issues:
+            return 1
+        try:
+            report = audit_package(package, profile)
+            rendered = render_audit_markdown(report)
+        except ValueError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 1
+        print(rendered, end="")
+        return 0
 
     try:
         summary = build_public_bundle(package, arguments.output)

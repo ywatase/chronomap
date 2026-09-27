@@ -130,6 +130,45 @@ def test_installed_validate_command_succeeds_for_a_valid_package(tmp_path: Path)
     assert result.stderr == ""
 
 
+def test_audit_prints_a_markdown_report_for_a_valid_package(capsys):
+    exit_code = main(["audit", str(OGURIKE_PACKAGE)])
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert captured.err == ""
+    assert captured.out.startswith("# データ監査: 巨椋池パイロットデータ\n")
+    for feature_id in (
+        "ogurike:version:reclamation-monument-1942",
+        "ogurike:version:ujigawa-1590",
+        "ogurike:version:ujigawa-1596",
+        "ogurike:version:waterbody-1910",
+    ):
+        assert captured.out.count(f"### `{feature_id}`") == 1
+
+
+def test_audit_reports_validation_errors_without_partial_markdown(tmp_path: Path, capsys):
+    package_dir = copy_package(tmp_path)
+    dataset_path = package_dir / "dataset.json"
+    dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
+    dataset["unexpected"] = "synthetic"
+    dataset_path.write_text(json.dumps(dataset), encoding="utf-8")
+
+    exit_code = main(["audit", str(package_dir)])
+
+    captured = capsys.readouterr()
+    assert exit_code == 1
+    assert captured.out == ""
+    assert "dataset.json: [schema.invalid]" in captured.err
+
+
+def test_installed_audit_command_succeeds_for_ogurike():
+    result = run_installed_cli("audit", str(OGURIKE_PACKAGE))
+
+    assert result.returncode == 0
+    assert result.stdout.startswith("# データ監査: 巨椋池パイロットデータ\n")
+    assert result.stderr == ""
+
+
 @pytest.mark.parametrize("profile", ["authoring", "public"])
 def test_installed_validate_command_accepts_ogurike_package(profile: str):
     result = run_installed_cli("validate", str(OGURIKE_PACKAGE), "--profile", profile)

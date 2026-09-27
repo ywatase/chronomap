@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from chronomap_data.audit import audit_package
 from chronomap_data.loader import load_package
 from chronomap_data.models import ValidationProfile
 from chronomap_data.schema_validation import validate_package
@@ -38,3 +39,13 @@ def test_ogurike_restricted_sources_are_citation_only():
     for evidence in package.evidence:
         if evidence["sourceId"] in restricted:
             assert evidence["usage"] == "citation"
+
+
+def test_ogurike_audit_reaches_all_public_versions_and_source_rights():
+    report = audit_package(load_package(PACKAGE))
+
+    assert report.feature_count == 4
+    assert {feature.geometry_type for feature in report.features} == {"Point", "LineString", "Polygon"}
+    assert all(len(feature.uncertainty) == 4 for feature in report.features)
+    assert all(feature.evidence for feature in report.features)
+    assert {source.rights_status for source in report.sources} == {"open-license", "restricted"}
