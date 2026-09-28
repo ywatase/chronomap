@@ -269,8 +269,9 @@ cd .. && chronomap-data audit data/ogurike --profile public > docs/data/ogurike-
 
 The audit contains citation metadata and locators only. It does not copy
 restricted source bodies, images, or inscriptions, and it does not perform URL
-liveness checks or network uploads. The checked-in Ogurike snapshot is the
-reference used by the representative point/line/polygon browser E2E.
+liveness checks or network uploads. The checked-in
+`docs/data/{ogurike,tonegawa,heijokyo}-audit.md` snapshots are the references
+used by the representative point/line/polygon browser E2E.
 
 The checked-in public files under `public/data/ogurike/` are generated with the
 repository's Python builder:

@@ -80,9 +80,9 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 カタログに、無料で試す、授業パイロット、地域教材の個別制作という3つの導入プランを表示する。価格・決済・納期・契約の存在は断定せず、無料範囲と相談対象の違いだけを示す。授業パイロット／地域個別制作のCTAは、allow-list済みの`offer`クエリを教材ビルダーへ引き継ぎ、印刷後の相談フォームで選択済みプランを確認文へ投影する。相談文は既存どおりブラウザ内で作成・確認・コピー／共有するだけで、自動送信、保存、認証、個人情報収集は行わない。
 
-## 実装済みデータ信頼性ゲート: 巨椋池の出典・不確実性監査
+## 実装済みデータ信頼性ゲート: 3地域の出典・不確実性監査
 
-巨椋池の公開データは、`chronomap-data validate data/ogurike --profile public`を通過したうえで、`chronomap-data audit data/ogurike`から決定的なMarkdown監査資料を生成できる。監査資料は公開FeatureVersion 4件（点・線・面）ごとに、年代、4次元の不確実性、Evidenceのlocatorと用途、到達可能なSource、Feature／Sourceの権利条件を列挙する。チェックイン済みの[監査スナップショット](../data/ogurike-audit.md)は、教員が授業準備中に地図の詳細と出典を照合するための再現可能な基準とする。
+巨椋池、利根川東遷、平城京の公開データは、それぞれ`chronomap-data validate data/<dataset> --profile public`を通過したうえで、`chronomap-data audit data/<dataset>`から決定的なMarkdown監査資料を生成できる。監査資料は公開FeatureVersionごとに、年代、4次元の不確実性、Evidenceのlocatorと用途、到達可能なSource、Feature／Sourceの権利条件を列挙する。チェックイン済みの[巨椋池](../data/ogurike-audit.md)、[利根川東遷](../data/tonegawa-audit.md)、[平城京](../data/heijokyo-audit.md)のスナップショットは、教員が授業準備中に地図の詳細と出典を照合するための再現可能な基準とする。
 
 監査の対象は正規化されたメタデータだけであり、restricted Sourceの本文・画像・碑文全文、URLの到達性確認、原資料の再配布、認証・保存・送信・課金は行わない。点・線・面の詳細パネルとlocator／権利表示は、390×844と1440×900のPlaywright E2Eおよびスクリーンショットで確認する。
 

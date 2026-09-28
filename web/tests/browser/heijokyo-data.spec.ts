@@ -1,5 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 
+async function selectFeatureFromList(page: Page, name: RegExp): Promise<void> {
+  const feature = page.getByRole("button", { name });
+  if (!(await feature.isVisible())) {
+    const listTab = page.getByRole("tab", { name: /地物一覧|Feature list/ });
+    if (await listTab.isVisible()) await listTab.click();
+    else await page.getByRole("button", { name: /詳細を閉じる|Close details/ }).click();
+  }
+  await feature.click();
+}
+
 const heijokyoFixture = {
   "dataset.json": {
     schemaVersion: "1.0.0",
@@ -144,4 +154,31 @@ test("loads the checked-in Heijokyo bundle and completes its single-year lesson"
   await page.locator("[data-lesson-next]").click();
   await expect(page.locator("[data-lesson-progress]")).toContainText(/3\/3|3 of 3/);
   await expect(page.locator("[data-lesson-pack-open]")).toBeVisible();
+});
+
+test("shows evidence, uncertainty, citation, and rights for Heijokyo polygon point and line snapshots", async ({ page }, testInfo) => {
+  await page.goto("/?dataset=heijokyo");
+  const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);
+  const detail = page.locator("#panel-detail");
+
+  await snapshots.selectOption("710");
+  await selectFeatureFromList(page, /平城京（710年・概略範囲）/);
+  await expect(detail).toBeVisible();
+  await expect(detail).toContainText("heijokyo:evidence:shape");
+  await expect(detail).toContainText("作成方法と限界");
+  await expect(detail).toContainText("奈良市『奈良のあゆみ－明治以前－』");
+  await expect(detail).toContainText("正確な都城境界");
+  await expect(detail).toContainText("引用メタデータのみ");
+
+  await selectFeatureFromList(page, /平城宮（710年・代表点）/);
+  await expect(detail).toContainText("平城宮（710年・代表点）");
+  await expect(detail).toContainText("宮域の正確な境界");
+
+  await selectFeatureFromList(page, /朱雀大路（710年・概略軸）/);
+  await expect(detail).toContainText("朱雀大路（710年・概略軸）");
+  await expect(detail).toContainText("heijokyo:evidence:suzaku");
+  await expect(detail).toContainText("奈良市『平城京朱雀大路跡』");
+  await expect(detail).toContainText("精密な道路線形");
+
+  await page.screenshot({ path: testInfo.outputPath("heijokyo-evidence.png"), fullPage: true });
 });

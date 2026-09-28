@@ -1,5 +1,15 @@
 import { expect, test } from "@playwright/test";
 
+async function selectFeatureFromList(page: import("@playwright/test").Page, name: RegExp): Promise<void> {
+  const feature = page.getByRole("button", { name });
+  if (!(await feature.isVisible())) {
+    const listTab = page.getByRole("tab", { name: /地物一覧|Feature list/ });
+    if (await listTab.isVisible()) await listTab.click();
+    else await page.getByRole("button", { name: /詳細を閉じる|Close details/ }).click();
+  }
+  await feature.click();
+}
+
 test.describe("Tone River eastward-shift dataset", () => {
   test("loads the second dataset, compares river snapshots, and restores the lesson URL", async ({ page }) => {
     await page.goto("/?dataset=tonegawa");
@@ -79,5 +89,35 @@ test.describe("Tone River eastward-shift dataset", () => {
     await expect(dialog.locator("[data-lesson-pack-student]")).toBeVisible();
     await expect(dialog.locator("[data-lesson-pack-teacher]")).toContainText(/会の川締切地点|川俣締切|Kawamata/);
     await expect(dialog.locator("[data-lesson-pack-sources]")).toContainText(/国土交通省|Ministry of Land/);
+  });
+
+  test("shows evidence, uncertainty, citation, and rights for Tone River line and point snapshots", async ({ page }, testInfo) => {
+    await page.goto("/?dataset=tonegawa");
+    const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);
+    const detail = page.locator("#panel-detail");
+
+    await snapshots.selectOption("1590");
+    await selectFeatureFromList(page, /利根川（1590年・東遷初期）/);
+    await expect(detail).toBeVisible();
+    await expect(detail).toContainText("tonegawa:evidence:river-1590-geometry");
+    await expect(detail).toContainText("1590年LineString");
+    await expect(detail).toContainText("国土交通省『利根川』日本の川");
+    await expect(detail).toContainText("概略・近似");
+    await expect(detail).toContainText("引用メタデータのみ");
+
+    await snapshots.selectOption("1594");
+    await selectFeatureFromList(page, /会の川締切地点（1594年・代表点）/);
+    await expect(detail).toContainText("tonegawa:evidence:closure-geometry");
+    await expect(detail).toContainText("1594年Point");
+    await expect(detail).toContainText("埼玉県『埼玉県の文化財』");
+    await expect(detail).toContainText("精密な位置や形状");
+
+    await snapshots.selectOption("1654");
+    await selectFeatureFromList(page, /利根川（1654年・東遷後）/);
+    await expect(detail).toContainText("tonegawa:evidence:river-1654-geometry");
+    await expect(detail).toContainText("1654年LineString");
+    await expect(detail).toContainText("国土交通省『利根川水系河川整備基本方針』");
+
+    await page.screenshot({ path: testInfo.outputPath("tonegawa-evidence.png"), fullPage: true });
   });
 });
