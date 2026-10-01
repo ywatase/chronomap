@@ -40,6 +40,8 @@ export interface DatasetCatalogCardModel {
   readonly featureCount: number;
   readonly entityCount: number;
   readonly sourceCount: number;
+  /** Present only when every public feature reaches complete audit metadata. */
+  readonly audit: DatasetCatalogAuditModel | null;
   readonly lesson: DatasetCatalogLessonModel | null;
   readonly lessons?: readonly DatasetCatalogLessonModel[];
   readonly status: "available" | "unavailable";
@@ -47,6 +49,13 @@ export interface DatasetCatalogCardModel {
   readonly mapUrl: string;
   readonly lessonUrl: string | null;
   readonly builderUrl: string | null;
+}
+
+export interface DatasetCatalogAuditModel {
+  readonly featureCount: number;
+  readonly evidenceCount: number;
+  readonly sourceCount: number;
+  readonly uncertaintyDimensionCount: 4;
 }
 
 export interface DatasetCatalogFeaturedModel {
@@ -90,6 +99,7 @@ export function buildDatasetCatalogViewModel(
       featureCount: bundle?.features.length ?? 0,
       entityCount: bundle ? Object.keys(bundle.entitiesById).length : 0,
       sourceCount: bundle ? Object.keys(bundle.sourcesById).length : 0,
+      audit: bundle ? auditSummary(bundle) : null,
       lesson: lessonModel,
       lessons: Object.freeze(lessonModels),
       status: bundle ? "available" as const : "unavailable" as const,
@@ -112,6 +122,31 @@ export function buildDatasetCatalogViewModel(
     })
     : null;
   return Object.freeze({ language, featured, cards: Object.freeze(cards) });
+}
+
+function auditSummary(bundle: PublicBundle): DatasetCatalogAuditModel | null {
+  if (bundle.features.length === 0) return null;
+  const evidenceIds = new Set<string>();
+  const sourceIds = new Set<string>();
+  for (const feature of bundle.features) {
+    const properties = feature.properties;
+    if (properties.evidenceIds.length === 0) return null;
+    for (const dimension of ["temporal", "location", "geometry", "identity"] as const) {
+      if (!properties.uncertainty[dimension]) return null;
+    }
+    for (const evidenceId of properties.evidenceIds) {
+      const evidence = bundle.evidenceById[evidenceId];
+      if (!evidence || !bundle.sourcesById[evidence.sourceId]) return null;
+      evidenceIds.add(evidenceId);
+      sourceIds.add(evidence.sourceId);
+    }
+  }
+  return Object.freeze({
+    featureCount: bundle.features.length,
+    evidenceCount: evidenceIds.size,
+    sourceCount: sourceIds.size,
+    uncertaintyDimensionCount: 4,
+  });
 }
 
 function lessonForEntry(snapshot: DatasetCatalogSnapshot | undefined, lessonId: string): Lesson | null {

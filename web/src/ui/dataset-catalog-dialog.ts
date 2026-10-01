@@ -328,6 +328,7 @@ function renderCard(card: DatasetCatalogCardModel, copy: UiCopy, isRoot: boolean
     if (lessonRows.length) article.append(renderLessonRows(lessonRows, copy));
   } else {
     article.append(renderStats(card, copy));
+    if (card.audit) article.append(renderAudit(card.audit, card.mapUrl, copy));
     article.append(renderCapabilities(copy, lessonRows.some((lesson) => lesson.status !== "unavailable")));
     if (lessonRows.length) article.append(renderLessonRows(lessonRows, copy));
     else {
@@ -345,6 +346,27 @@ function renderCard(card: DatasetCatalogCardModel, copy: UiCopy, isRoot: boolean
     article.append(actions);
   }
   return article;
+}
+
+function renderAudit(audit: NonNullable<DatasetCatalogCardModel["audit"]>, mapUrl: string, copy: UiCopy): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "dataset-catalog-audit";
+  section.dataset.datasetCatalogAudit = "";
+  const heading = document.createElement("h4");
+  heading.textContent = copy.datasetCatalogAuditHeading;
+  const status = document.createElement("p");
+  status.className = "dataset-catalog-audit-status";
+  status.textContent = copy.datasetCatalogAuditStatus(audit.featureCount, audit.evidenceCount, audit.sourceCount);
+  const detail = document.createElement("p");
+  detail.className = "dataset-catalog-audit-detail";
+  detail.textContent = copy.datasetCatalogAuditDetail(audit.uncertaintyDimensionCount);
+  const link = document.createElement("a");
+  link.className = "dataset-catalog-audit-link";
+  link.dataset.datasetCatalogAuditLink = "";
+  link.href = mapUrl;
+  link.textContent = copy.datasetCatalogAuditAction;
+  section.append(heading, status, detail, link);
+  return section;
 }
 
 function renderStats(card: DatasetCatalogCardModel, copy: UiCopy): HTMLElement {

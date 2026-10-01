@@ -388,6 +388,12 @@ footer a { color: #155e8a; }
 .dataset-catalog-stats > div { min-width: 0; padding: .45rem .5rem; border: 1px solid #d0dbe2; border-radius: .4rem; background: #fff; }
 .dataset-catalog-stats dt { color: #536b7e; font-size: .72rem; font-weight: 700; }
 .dataset-catalog-stats dd { margin: .18rem 0 0; color: #17324d; font-size: .9rem; font-weight: 700; }
+.dataset-catalog-audit { display: grid; gap: .25rem; margin-top: .7rem; padding: .65rem .7rem; border-left: 4px solid #2f7d58; background: #eef8f0; }
+.dataset-catalog-audit h4 { margin: 0; color: #205b42; font-size: .82rem; }
+.dataset-catalog-audit p { margin: 0; color: #2c5140; font-size: .76rem; line-height: 1.4; }
+.dataset-catalog-audit-status { font-weight: 700; }
+.dataset-catalog-audit-detail { overflow-wrap: anywhere; }
+.dataset-catalog-audit-link { display: inline-flex; align-items: center; justify-self: start; min-height: 2.45rem; padding: .45rem .6rem; color: #155e8a; font-size: .78rem; font-weight: 700; line-height: 1.25; }
 .dataset-catalog-capabilities { margin-top: .7rem; padding-top: .6rem; border-top: 1px solid #d0dbe2; }
 .dataset-catalog-capabilities h4 { margin: 0 0 .3rem; color: #304b60; font-size: .82rem; }
 .dataset-catalog-capabilities ul { display: flex; flex-wrap: wrap; gap: .2rem .8rem; margin: 0; padding-left: 1.1rem; color: #40566a; font-size: .8rem; }

@@ -50,6 +50,20 @@ test("separates explore, build, and local draft resume at the root", async ({ pa
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 });
 
+test("surfaces the public evidence audit before opening a region map", async ({ page }, testInfo) => {
+  await page.goto("/");
+  const cards = page.locator("[data-dataset-catalog-card]");
+  await expect(cards).toHaveCount(3);
+  for (const slug of ["ogurike", "tonegawa", "heijokyo"]) {
+    const card = page.locator(`[data-dataset-catalog-card="${slug}"]`);
+    await expect(card.locator("[data-dataset-catalog-audit]")).toBeVisible();
+    await expect(card.locator("[data-dataset-catalog-audit]")).toContainText(/公開監査済み|Public audit ready/);
+    await expect(card.locator("[data-dataset-catalog-audit-link]")).toHaveAttribute("href", new RegExp(`dataset=${slug}`));
+  }
+  await page.screenshot({ path: testInfo.outputPath("catalog-audit-status.png"), fullPage: true });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+});
+
 test("keeps the root hub when a malformed draft is selected", async ({ page }) => {
   await page.goto("/");
   const hub = page.locator("[data-dataset-catalog-purpose-hub]");

@@ -226,6 +226,12 @@ Use `地域・教材を選ぶ` in the header to open the allow-listed region and
 catalog. Each card derives its recorded years and public feature/entity/source
 counts from the bundle, and renders one purpose-specific row per registered
 lesson with its title, duration, step count, editor, and preview/start links.
+When every public feature in a loaded bundle reaches all four uncertainty
+dimensions and its evidence/source records, the card also shows a
+`Public audit ready` status with the reachable feature, evidence, and source
+counts. This status is computed fail-closed from public metadata; it does not
+fetch the checked-in Markdown snapshot or any source body. A missing, empty, or
+incomplete bundle receives no audit status.
 Ogurike currently offers the featured introduction and a two-step river-change
 comparison; the card keeps one map-only route. Available cards link to a free
 map view and, when published, a guided lesson plus the classroom editor; a

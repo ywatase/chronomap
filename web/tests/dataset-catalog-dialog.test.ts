@@ -25,6 +25,7 @@ const model: DatasetCatalogViewModel = {
       featureCount: 4,
       entityCount: 3,
       sourceCount: 2,
+      audit: { featureCount: 4, evidenceCount: 6, sourceCount: 2, uncertaintyDimensionCount: 4 },
       lesson: { id: "ogurike-intro", title: "巨椋池をたどる", durationMinutes: 15, stepCount: 4, recommendedFor: "地域史の導入に", learningGoal: "変化を説明する。", firstStepId: "uji-1590" },
       status: "available",
       availabilityMessage: "",
@@ -42,6 +43,7 @@ const model: DatasetCatalogViewModel = {
       featureCount: 0,
       entityCount: 0,
       sourceCount: 0,
+      audit: null,
       lesson: null,
       status: "unavailable",
       availabilityMessage: "読み込みに失敗しました",
@@ -59,6 +61,7 @@ const model: DatasetCatalogViewModel = {
       featureCount: 3,
       entityCount: 3,
       sourceCount: 3,
+      audit: { featureCount: 3, evidenceCount: 3, sourceCount: 3, uncertaintyDimensionCount: 4 },
       lesson: { id: "heijokyo-intro", title: "平城京の都市軸をたどる", durationMinutes: 10, stepCount: 3, firstStepId: "capital-710" },
       status: "available",
       availabilityMessage: "",
@@ -93,6 +96,9 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("授業用に編集");
     expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-map]")?.href).toContain("dataset=ogurike");
     expect(root.querySelector('[data-dataset-catalog-card="ogurike"]')?.textContent).toContain("4");
+    expect(root.querySelector('[data-dataset-catalog-card="ogurike"] [data-dataset-catalog-audit]')?.textContent).toContain("公開監査済み");
+    expect(root.querySelector('[data-dataset-catalog-card="ogurike"] [data-dataset-catalog-audit]')?.textContent).toContain("根拠6件");
+    expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-audit]')).toBeNull();
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"]')?.textContent).toContain("読み込みに失敗しました");
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-lesson]')).toBeNull();
     expect(root.querySelector('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-builder]')).toBeNull();

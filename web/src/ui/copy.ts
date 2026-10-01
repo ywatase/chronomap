@@ -220,6 +220,10 @@ export interface UiCopy {
   readonly datasetCatalogFeatures: string;
   readonly datasetCatalogEntities: string;
   readonly datasetCatalogSources: string;
+  readonly datasetCatalogAuditHeading: string;
+  readonly datasetCatalogAuditStatus: (features: number, evidence: number, sources: number) => string;
+  readonly datasetCatalogAuditDetail: (dimensions: number) => string;
+  readonly datasetCatalogAuditAction: string;
   readonly datasetCatalogLesson: string;
   readonly datasetCatalogCapabilities: string;
   readonly datasetCatalogCompare: string;
@@ -519,6 +523,10 @@ const EN_COPY: UiCopy = {
   datasetCatalogFeatures: "Public features",
   datasetCatalogEntities: "Historical entities",
   datasetCatalogSources: "Sources",
+  datasetCatalogAuditHeading: "Evidence and uncertainty audit",
+  datasetCatalogAuditStatus: (features, evidence, sources) => `Public audit ready · ${features} features · ${evidence} evidence records · ${sources} sources`,
+  datasetCatalogAuditDetail: (dimensions) => `All ${dimensions} uncertainty dimensions are linked. Open the map to inspect each locator, source, and rights condition.`,
+  datasetCatalogAuditAction: "Inspect on the map",
   datasetCatalogLesson: "Guided lesson",
   datasetCatalogCapabilities: "Available in this pilot",
   datasetCatalogCompare: "Compare snapshots",
@@ -810,6 +818,10 @@ const JA_COPY: UiCopy = {
   datasetCatalogFeatures: "公開地物",
   datasetCatalogEntities: "歴史対象",
   datasetCatalogSources: "出典",
+  datasetCatalogAuditHeading: "出典・不確実性",
+  datasetCatalogAuditStatus: (features, evidence, sources) => `公開監査済み：地物${features}件・根拠${evidence}件・出典${sources}件`,
+  datasetCatalogAuditDetail: (dimensions) => `不確実性${dimensions}次元（年代・位置・形状・同一性）を、各地物の詳細パネルで確認できます。`,
+  datasetCatalogAuditAction: "地図で根拠を確認",
   datasetCatalogLesson: "ガイド教材",
   datasetCatalogCapabilities: "このパイロットでできること",
   datasetCatalogCompare: "時点を比較",

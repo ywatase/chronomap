@@ -47,6 +47,24 @@ const bundle = {
   features: [feature("first", 1590), feature("second", 1910)],
 } as unknown as PublicBundle;
 
+const auditedBundle = {
+  ...bundle,
+  evidenceById: {
+    "ogurike:evidence:one": {
+      id: "ogurike:evidence:one",
+      sourceId: "ogurike:source:one",
+      locator: "p. 1",
+      usage: "citation",
+      supports: ["temporal"],
+      note: "根拠",
+    },
+  },
+  features: bundle.features.map((item) => ({
+    ...item,
+    properties: { ...item.properties, evidenceIds: ["ogurike:evidence:one"] },
+  })),
+} as unknown as PublicBundle;
+
 const lesson: Lesson = {
   id: "ogurike-intro",
   dataset: "ogurike",
@@ -87,6 +105,7 @@ describe("dataset catalog view model", () => {
     expect(ogurike.featureCount).toBe(2);
     expect(ogurike.entityCount).toBe(2);
     expect(ogurike.sourceCount).toBe(1);
+    expect(ogurike.audit).toBeNull();
     expect(ogurike.lesson).toMatchObject({ id: "ogurike-intro", durationMinutes: 15, stepCount: 1, firstStepId: "first", title: "巨椋池をたどる" });
     expect(ogurike.lesson).toMatchObject({ recommendedFor: "地域史の導入に", learningGoal: "変化を説明する。" });
     expect(ogurike.lessons!.map((entry) => entry.id)).toEqual(["ogurike-intro", "ogurike-river-compare"]);
@@ -100,6 +119,7 @@ describe("dataset catalog view model", () => {
     expect(tonegawa.title).toBe("利根川東遷");
     expect(tonegawa.description).toBe("");
     expect(tonegawa.featureCount).toBe(0);
+    expect(tonegawa.audit).toBeNull();
     expect(tonegawa.lesson).toBeNull();
     expect(tonegawa.lessonUrl).toBeNull();
     expect(tonegawa.builderUrl).toBeNull();
@@ -110,6 +130,13 @@ describe("dataset catalog view model", () => {
     expect(model.cards[0]).toMatchObject({ title: "Ogurike", description: "Ogurike description", region: "Southern Kyoto" });
     expect(model.cards[0]!.lesson?.title).toBe("Trace Ogurike");
     expect(model.cards[0]!.lesson).toMatchObject({ recommendedFor: "For a local-history introduction", learningGoal: "Explain change." });
+  });
+
+  it("marks a bundle audited only when every public feature reaches evidence and sources", () => {
+    const model = buildDatasetCatalogViewModel(DATASET_CATALOG.slice(0, 1), {
+      ogurike: { bundle: auditedBundle, lesson, lessons: { "ogurike-intro": lesson } },
+    }, "ja", "/");
+    expect(model.cards[0]!.audit).toEqual({ featureCount: 2, evidenceCount: 1, sourceCount: 1, uncertaintyDimensionCount: 4 });
   });
 
   it("falls back to the first available lesson when the featured dataset is unavailable", () => {

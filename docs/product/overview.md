@@ -74,4 +74,6 @@ MVPはJapan-firstとし、巨椋池周辺を深掘りする。背景地図に対
 
 29. **3地域の実データ信頼性ゲート（初回完了）**: 巨椋池、利根川東遷、平城京の各パッケージを`chronomap-data validate data/<dataset> --profile public`で確認し、`chronomap-data audit data/<dataset>`で公開FeatureVersionの年代、4次元不確実性、Evidence locator、到達可能なSource、権利条件を決定的なMarkdownへ投影する。各地域の点・線・面を選んだWeb詳細パネルで同じ根拠・引用メタデータ・権利境界を確認するPlaywright E2Eを390×844／1440×900で固定した。[巨椋池](../data/ogurike-audit.md)、[利根川東遷](../data/tonegawa-audit.md)、[平城京](../data/heijokyo-audit.md)の監査スナップショットは授業準備時の照合用であり、restricted Sourceの本文・画像・碑文全文やURL本文の再配布は行わない。
 
+30. **カタログの公開監査ステータス（初回実装）**: 地域カードは、公開バンドルの全FeatureVersionから4次元の不確実性とEvidence／Sourceへ到達できるときだけ、公開監査済みの件数を表示する。空・不完全・読み込み失敗のカードは監査済みと表示せず、既存の地図・詳細導線へ留める。追加の監査ファイルやSource本文はブラウザへ取得せず、3地域のdesktop／mobileスクリーンショットとPlaywright E2Eで表示を固定した。
+
 進行順は、まず小規模な実データ制作を行い、そのデータを使って日本語化とE2Eを確認し、最後にスクリーンショットベースのUI/UX改善とCI整備を行う。次は実利用で下書きファイルを受け渡す教員導線と追加データの価値を確認する。PMTiles、サーバーAPI、クラウド保存を伴うデータ編集機能は、データ量や運用要件が静的MVPの範囲を超えた時点で別途判断する。
