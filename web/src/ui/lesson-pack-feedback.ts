@@ -18,6 +18,8 @@ export interface LessonPackFeedbackState {
 export interface LessonPackFeedbackActions {
   readonly onChange?: (state: LessonPackFeedbackState) => void;
   readonly initialPilotPlan?: LessonPackOfferPlan;
+  /** Optional host override; production defaults to the Vite build-time contact. */
+  readonly pilotContact?: string | null;
 }
 
 /** Render the in-memory, copy-only feedback form below a lesson-pack toolbar. */
@@ -168,6 +170,7 @@ export function renderLessonPackFeedback(
   content.append(form);
   renderPilotHandoff(content, context, copy, initialState, {
     initialPilotPlan: feedbackActions.initialPilotPlan,
+    pilotContact: feedbackActions.pilotContact,
     onChange: (nextInput, nextAnswer) => {
       pilotInput = nextInput;
       pilotAnswer = nextAnswer;
@@ -203,7 +206,7 @@ interface PilotHandoffActions {
   readonly onChange: (input: LessonPackPilotInput, answer: string) => void;
 }
 
-function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions & { readonly initialPilotPlan?: LessonPackOfferPlan }): void {
+function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions & { readonly initialPilotPlan?: LessonPackOfferPlan; readonly pilotContact?: string | null }): void {
   const card = document.createElement("section");
   card.className = "lesson-pack-completion";
   card.dataset.lessonPackCompletion = "";
@@ -328,7 +331,8 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   shareButton.type = "button";
   shareButton.textContent = copy.lessonPackPilotShare;
   shareButton.dataset.lessonPackPilotShare = "";
-  const mail = LESSON_PACK_PILOT_CONTACT ? document.createElement("a") : null;
+  const contact = actions.pilotContact === undefined ? LESSON_PACK_PILOT_CONTACT : actions.pilotContact;
+  const mail = contact ? document.createElement("a") : null;
   if (mail) {
     mail.textContent = copy.lessonPackPilotMail;
     mail.dataset.lessonPackPilotMail = "";
@@ -428,7 +432,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     error.hidden = true;
     answer.value = text;
     const subject = copy.lessonPackPilotSubject;
-    const href = buildSafeLessonPackPilotMailto(LESSON_PACK_PILOT_CONTACT, subject, text);
+    const href = buildSafeLessonPackPilotMailto(contact, subject, text);
     if (mail) {
       if (href) { mail.href = href; mail.hidden = false; } else { mail.removeAttribute("href"); mail.hidden = true; }
     }

@@ -134,4 +134,19 @@ describe("lesson pack feedback form", () => {
     host.querySelector<HTMLButtonElement>("[data-lesson-pack-pilot-back]")!.click();
     expect(saved.value?.pilotAnswer).toBe("");
   });
+
+  it("shows a reviewable mail draft only when the host supplies a public contact", () => {
+    const host = document.createElement("section");
+    renderLessonPackFeedback(host, context, uiCopy("en"), null, { pilotContact: "mailto:pilot@example.test" });
+    showLessonPackFeedback(host, "full", uiCopy("en"));
+    host.querySelector<HTMLInputElement>('input[name="utilization"][value="近いうちに使いたい"]')!.checked = true;
+    host.querySelector<HTMLInputElement>('input[name="nextFeature"][value="校内で共有"]')!.checked = true;
+    host.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]')!.click();
+    host.querySelector<HTMLInputElement>('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]')!.click();
+    host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
+    const mail = host.querySelector<HTMLAnchorElement>("[data-lesson-pack-pilot-mail]")!;
+    expect(mail.hidden).toBe(false);
+    expect(mail.href).toMatch(/^mailto:pilot@example\.test\?subject=/);
+    expect(mail.href).not.toContain("%0D");
+  });
 });

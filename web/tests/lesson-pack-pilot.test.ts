@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildLessonPackPilotText, buildSafeLessonPackPilotMailto, normalizeLessonPackPilot } from "../src/domain/lesson-pack-pilot";
+import { buildLessonPackPilotText, buildSafeLessonPackPilotMailto, normalizeLessonPackPilot, normalizeLessonPackPilotContact } from "../src/domain/lesson-pack-pilot";
 
 describe("lesson-pack pilot handoff", () => {
   const context = { datasetSlug: "heijokyo", lessonId: "intro", selectedStepCount: 3, includeTeacher: false, observationFigure: true, lastPrintScope: "student" as const, language: "ja" as const };
@@ -33,5 +33,12 @@ describe("lesson-pack pilot handoff", () => {
     expect(safe).toMatch(/^mailto:pilot@example\.test\?subject=/);
     expect(safe).not.toContain("\r");
     expect(safe).not.toContain("\n");
+  });
+
+  it("accepts only a public, single-address build-time contact", () => {
+    expect(normalizeLessonPackPilotContact(" mailto:pilot@example.test ")).toBe("mailto:pilot@example.test");
+    expect(normalizeLessonPackPilotContact("mailto:pilot%0d%0a@example.test")).toBeNull();
+    expect(normalizeLessonPackPilotContact("https://example.test/contact")).toBeNull();
+    expect(normalizeLessonPackPilotContact("mailto:pilot@example.test\r\nBcc:other@example.test")).toBeNull();
   });
 });

@@ -12,11 +12,11 @@ export const LESSON_PACK_BUDGET_INTENTS = [
   "今回は検討しない",
 ] as const;
 /**
- * No public contact address is shipped until the operator has chosen one.
- * Replacing this build-time constant is the only way to expose the mail CTA;
- * the UI never invents a recipient or collects an address from a visitor.
+ * A public build-time contact is optional. Vite embeds `VITE_*` values in the
+ * browser bundle, so this must only ever be a deliberately public mailbox;
+ * secrets and visitor-entered addresses are never accepted here.
  */
-export const LESSON_PACK_PILOT_CONTACT: string | null = null;
+export const LESSON_PACK_PILOT_CONTACT: string | null = normalizeLessonPackPilotContact(import.meta.env.VITE_CHRONOMAP_PILOT_CONTACT);
 export type LessonPackPilotRoute = (typeof LESSON_PACK_PILOT_ROUTES)[number];
 export type LessonPackBudgetIntent = (typeof LESSON_PACK_BUDGET_INTENTS)[number];
 export interface LessonPackPilotInput { readonly route?: unknown; readonly plan?: unknown; readonly utilization?: unknown; readonly nextFeature?: unknown; readonly budgetIntent?: unknown; readonly regionTopic?: unknown; readonly comment?: unknown; readonly [key: string]: unknown; }
@@ -83,8 +83,15 @@ function planLabelJa(plan: LessonPackOfferPlan): string {
 }
 
 export function buildSafeLessonPackPilotMailto(contact: string | null | undefined, subject: string, body: string): string | null {
-  if (typeof contact !== "string" || /[%\r\n]/.test(contact) || !/^mailto:[^@\s?&#]+@[^@\s?&#]+$/i.test(contact)) return null;
-  return `${contact}?subject=${encodeURIComponent(clean(subject, 160))}&body=${encodeURIComponent(clean(body, 8000))}`;
+  const safeContact = normalizeLessonPackPilotContact(contact);
+  if (!safeContact) return null;
+  return `${safeContact}?subject=${encodeURIComponent(clean(subject, 160))}&body=${encodeURIComponent(clean(body, 8000))}`;
+}
+
+export function normalizeLessonPackPilotContact(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const contact = value.trim();
+  return /[%\r\n]/.test(contact) || !/^mailto:[^@\s?&#]+@[^@\s?&#]+$/i.test(contact) ? null : contact;
 }
 
 function safeCount(value: number): string { return Number.isFinite(value) && value >= 0 ? String(Math.floor(value)) : "0"; }

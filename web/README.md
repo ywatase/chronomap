@@ -4,10 +4,11 @@ This is Chronomap's static, responsive historical-map pilot. It reads the
 Japanese public bundle at `/data/ogurike/` by default, which contains a small,
 approximate set of cited 巨椋池 snapshots for 1590, 1596, 1910, and 1942. The
 allow-listed `tonegawa` bundle adds a three-snapshot Tone River eastward-shift
-pilot, and `heijokyo` adds a single-year pilot for the Heijokyo capital and
-Suzaku Avenue. Restricted source pages are represented by citation-only
-metadata; the browser does not receive private authoring records or copied
-source body text.
+pilot, `heijokyo` adds a single-year pilot for the Heijokyo capital and Suzaku
+Avenue, and `azuchijo` adds a four-step Azuchi Castle/Lake Biwa east-shore
+comparison. Restricted source pages are represented by citation-only metadata;
+the browser does not receive private authoring records or copied source body
+text.
 
 ## Setup and commands
 
@@ -52,6 +53,16 @@ Install Playwright's Chromium browser if it is not already available with
 
 If `npm test` reports that `chronomap-data` is missing, confirm that the
 repository `.venv/bin` directory is still present on `PATH` in the same shell.
+
+### Optional consultation mailbox
+
+The consultation handoff is copy/share-only by default. To add a reviewable
+email-draft action at build time, copy `.env.example` to `.env.local` and set
+`VITE_CHRONOMAP_PILOT_CONTACT` to a public `mailto:` address chosen by the
+operator, for example `mailto:pilot@example.com`. Vite embeds `VITE_*` values
+in the browser bundle, so never put a password, API key, private mailbox, or
+other secret in this variable. The app validates the address, encodes the
+subject/body, and never sends automatically.
 
 ## Shareable views
 
@@ -114,11 +125,12 @@ view.
 ## Guided lesson
 
 The static `巨椋池と宇治川の変化をたどる`, `利根川東遷を概略地図でたどる`,
-and `平城京の都市軸をたどる` lessons turn their public snapshots into short
-guided routes. The Ogurike route covers 1590, 1596, 1910, and 1942; the Tone
-River route covers 1590, 1594, and 1654; the Heijokyo route covers three
-observations in 710. Each final step offers sharing, a printable report, and
-the classroom pack. Lesson state is encoded as `lesson=...&step=...` alongside
+`平城京の都市軸をたどる`, and `安土城・琵琶湖東岸の変化をたどる` lessons
+turn their public snapshots into short guided routes. The Ogurike route covers
+1590, 1596, 1910, and 1942; the Tone River route covers 1590, 1594, and 1654;
+the Heijokyo route covers three observations in 710; and the Azuchi route covers
+1576, 1579, 1582, and the approximate east-shore relation. Each final step
+offers sharing, a printable report, and the classroom pack. Lesson state is encoded as `lesson=...&step=...` alongside
 the normal year, feature, and camera parameters, so a copied URL and a reload
 restore the same step. Lesson JSON is optional static content: if it is missing
 or does not match the validated public bundle, the map still opens in normal
