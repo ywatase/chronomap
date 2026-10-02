@@ -211,6 +211,8 @@ test("offers a privacy-bounded paid-interest consultation handoff after printing
   await expect(answer).toHaveValue(/地域・内容・条件が合えば検討したい/);
   await expect(answer).toHaveValue(/印刷範囲: 生徒用/);
   await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
+  await expect(answer).toHaveValue(/希望成果物: .*生徒用資料.*観察用概略図.*（印刷範囲: 生徒用）|Requested deliverables: .*student worksheet.*observation figure.*\(print scope: Student\)/);
+  await expect(answer).toHaveValue(/相談で確認する項目: 対象範囲、出典整理、納品形式、納期、最終見積。|Consultation checklist: confirm regional scope, source curation, delivery format, schedule, and final quote\./);
   await expect(answer).not.toHaveValue(/秘密/);
   await expect(answer).not.toHaveValue(/授業設計メモ|Teaching guide|学習のねらい/);
   const noContact = feedback.locator("[data-lesson-pack-pilot-no-contact]");

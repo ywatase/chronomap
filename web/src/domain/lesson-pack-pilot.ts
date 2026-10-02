@@ -62,17 +62,22 @@ export function buildLessonPackPilotText(input: LessonPackPilotInput, context: L
   if (!value) return null;
   const en = context.language === "en";
   const scope = context.lastPrintScope === "student" ? (en ? "Student" : "生徒用") : context.lastPrintScope === "teacher" ? (en ? "Teacher" : "教員用") : (en ? "Full" : "全体");
+  const deliverables = en
+    ? ["student worksheet", "QR/start links", "sources/rights", ...(context.observationFigure ? ["observation figure"] : []), ...(context.includeTeacher ? ["teacher reference"] : [])].join(", ")
+    : ["生徒用資料", "QR・開始リンク", "出典・権利", ...(context.observationFigure ? ["観察用概略図"] : []), ...(context.includeTeacher ? ["教員用資料"] : [])].join("、");
   const lines = en ? [
     value.route === "consult" ? "Chronomap regional lesson-pack consultation" : "Chronomap lesson-pack feedback",
     ...(value.plan ? [`Offer path: ${EN_PLAN[value.plan]}`] : []),
     `Utilization intention: ${EN_UTILIZATION[value.utilization]}`, `Next feature: ${EN_NEXT_FEATURE[value.nextFeature]}`,
     ...(value.budgetIntent ? [`Budget intention: ${EN_BUDGET[value.budgetIntent]}`] : []), ...(value.regionTopic ? [`Preferred region or topic: ${value.regionTopic}`] : []), ...(value.comment ? [`Comment: ${value.comment}`] : []),
+    ...(value.route === "consult" ? [`Requested deliverables: ${deliverables} (print scope: ${scope})`, "Consultation checklist: confirm regional scope, source curation, delivery format, schedule, and final quote."] : []),
     `Dataset slug: ${clean(context.datasetSlug, 120)}`, `Lesson ID: ${clean(context.lessonId, 120)}`, `Selected step count: ${safeCount(context.selectedStepCount)}`, `Observation figure: ${context.observationFigure ? "yes" : "no"}`, `Student material: yes`, `Teacher material: ${context.includeTeacher ? "yes" : "no"}`, "QR and sources/rights: included", `Last print scope: ${scope}`, "Language: en",
   ] : [
     value.route === "consult" ? "Chronomap 地域教材パックの相談" : "Chronomap 教材パックのフィードバック",
     ...(value.plan ? [`導入プラン: ${planLabelJa(value.plan)}`] : []),
     `利用意向: ${value.utilization}`, `次にほしい機能: ${value.nextFeature}`,
     ...(value.budgetIntent ? [`相談意向: ${value.budgetIntent}`] : []), ...(value.regionTopic ? [`希望地域・題材: ${value.regionTopic}`] : []), ...(value.comment ? [`コメント: ${value.comment}`] : []),
+    ...(value.route === "consult" ? [`希望成果物: ${deliverables}（印刷範囲: ${scope}）`, "相談で確認する項目: 対象範囲、出典整理、納品形式、納期、最終見積。"] : []),
     `データセット: ${clean(context.datasetSlug, 120)}`, `教材ID: ${clean(context.lessonId, 120)}`, `選択ステップ数: ${safeCount(context.selectedStepCount)}`, `観察図: ${context.observationFigure ? "あり" : "なし"}`, "生徒用資料: あり", `教員用資料: ${context.includeTeacher ? "あり" : "なし"}`, "QR・出典権利: あり", `印刷範囲: ${scope}`, "言語: ja",
   ];
   return lines.join("\n");

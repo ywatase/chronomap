@@ -239,6 +239,12 @@ and the file is created in memory after the user clicks the save action. A real
 public `mailto:` recipient can be configured later, at which point the CTA opens
 a reviewable email draft and still does not send automatically. Scope changes and
 reloads discard the review text, and print CSS hides the entire completion card.
+For consultation routes, the reviewed text also states the requested deliverables
+for the current print scope (student material, QR/start links, sources/rights,
+the observation figure, and teacher reference when selected) and a short checklist
+for the operator to confirm: regional scope, source curation, delivery format,
+schedule, and final quote. These are discussion prompts, not a price or delivery
+promise.
 
 ## Dataset catalog
 

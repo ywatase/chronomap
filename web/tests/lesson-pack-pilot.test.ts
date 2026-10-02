@@ -10,6 +10,8 @@ describe("lesson-pack pilot handoff", () => {
     expect(answer).toContain("校費・組織予算");
     expect(answer).toContain("生徒用資料: あり");
     expect(answer).toContain("印刷範囲: 生徒用");
+    expect(answer).toContain("希望成果物: 生徒用資料、QR・開始リンク、出典・権利、観察用概略図（印刷範囲: 生徒用）");
+    expect(answer).toContain("相談で確認する項目: 対象範囲、出典整理、納品形式、納期、最終見積。");
     expect(answer).not.toContain("秘密");
     const feedbackOnly = buildLessonPackPilotText({ route: "feedback", utilization: "近いうちに使いたい", nextFeature: "校内で共有", budgetIntent: "校費・組織予算で相談したい", regionTopic: "秘密の地域", comment: "短い感想" }, context)!;
     expect(feedbackOnly).not.toContain("秘密の地域");
@@ -22,6 +24,19 @@ describe("lesson-pack pilot handoff", () => {
     expect(buildLessonPackPilotText(input, context)).toContain("導入プラン: 地域教材の個別制作");
     expect(buildLessonPackPilotText({ ...input, plan: "unexpected" }, context)).toContain("導入プラン: 授業パイロット");
     expect(buildLessonPackPilotText({ ...input, route: "feedback", plan: "custom-region" }, context)).not.toContain("導入プラン");
+  });
+
+  it("tailors the consultation deliverables to the current teacher scope", () => {
+    const answer = buildLessonPackPilotText({ route: "consult", utilization: "近いうちに使いたい", nextFeature: "校内で共有", budgetIntent: "まず無料試用を続けたい" }, {
+      ...context,
+      includeTeacher: true,
+      observationFigure: false,
+      lastPrintScope: "teacher",
+      language: "en",
+    });
+    expect(answer).toContain("Requested deliverables: student worksheet, QR/start links, sources/rights, teacher reference (print scope: Teacher)");
+    expect(answer).toContain("Consultation checklist: confirm regional scope, source curation, delivery format, schedule, and final quote.");
+    expect(answer).not.toContain("observation figure");
   });
 
   it("builds only a CRLF-safe encoded mailto URL for a configured mailto address", () => {
