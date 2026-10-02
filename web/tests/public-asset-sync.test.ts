@@ -1,6 +1,6 @@
-import { readFile, mkdtemp, rm } from "node:fs/promises";
+import { access, readFile, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
@@ -8,10 +8,20 @@ import { describe, expect, it } from "vitest";
 const execFileAsync = promisify(execFile);
 const files = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"];
 
+async function chronomapDataCommand(): Promise<string> {
+  const repositoryCommand = resolve("..", ".venv", "bin", "chronomap-data");
+  try {
+    await access(repositoryCommand);
+    return repositoryCommand;
+  } catch {
+    return "chronomap-data";
+  }
+}
+
 async function expectPublicAssetsMatch(source: string, target: string): Promise<void> {
   const directory = await mkdtemp(join(tmpdir(), "chronomap-ui-"));
   try {
-    await execFileAsync("chronomap-data", ["build-public", source, "--output", directory], { cwd: ".." });
+    await execFileAsync(await chronomapDataCommand(), ["build-public", source, "--output", directory], { cwd: ".." });
     for (const name of files) {
       const checkedIn = await readFile(join(target, name));
       expect(checkedIn).toEqual(await readFile(join(directory, name)));

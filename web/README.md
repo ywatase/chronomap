@@ -52,8 +52,10 @@ The browser tests run both 390×844 smartphone and 1440×900 desktop projects.
 Install Playwright's Chromium browser if it is not already available with
 `npx playwright install chromium`.
 
-If `npm test` reports that `chronomap-data` is missing, confirm that the
-repository `.venv/bin` directory is still present on `PATH` in the same shell.
+The public-asset sync tests use the repository's `.venv/bin/chronomap-data`
+automatically when it is present, and otherwise fall back to a `chronomap-data`
+executable on `PATH`. If both are missing, run `uv sync --dev` from the
+repository root before running the tests.
 
 ### Optional consultation mailbox
 
