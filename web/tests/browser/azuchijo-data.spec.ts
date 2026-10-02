@@ -43,6 +43,8 @@ test("opens the Azuchi Castle pilot from the catalog and compares its dated cast
   await expect(page).toHaveURL(/dataset=azuchijo&lesson=azuchijo-intro&step=water-transport-1576/);
   await expect(page.locator("[data-lesson-progress]")).toContainText(/5\/5|5 of 5/);
   await expect(page.locator("#panel-detail")).toContainText(/湖上交通|water transport/);
+  await expect(page.locator("#panel-detail")).toContainText("azuchijo:evidence:transport");
+  await expect(page.locator("#panel-detail")).toContainText(/滋賀県『琵琶湖と人の長いつきあい』|Lake Biwa/);
   await page.screenshot({ path: testInfo.outputPath("azuchijo-water-transport.png"), fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 });
