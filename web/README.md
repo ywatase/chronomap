@@ -252,10 +252,12 @@ map view and, when published, a guided lesson plus the classroom editor; a
 failed lesson row is isolated without hiding the bundle, map, or other lessons.
 The catalog itself can be opened directly and restored with `?view=catalog`, for
 example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
-pilot functions from future teacher-workflow candidates and does not assert a
-price, contract, or billing state. The Tone River and Heijokyo geometries are
-explicitly approximate reconstructions; external source text and images remain
-citation-only.
+pilot functions from future teacher-workflow candidates and shows β版 price
+proposals (`¥49,800〜` for one classroom pilot and `¥198,000〜` for one custom
+region) next to their deliverables. These are consultation starting points, not
+a contract or billing state; checkout is not enabled. The Tone River and
+Heijokyo geometries are explicitly approximate reconstructions; external source
+text and images remain citation-only.
 
 The adoption cards also make the output boundary explicit. Free exploration
 covers the map/evidence/uncertainty view, shareable reports and links, and one
@@ -263,9 +265,9 @@ finished classroom-pack example. A classroom pilot covers a one-class pack
 draft, student worksheet plus teacher reference, and a source/rights/start-QR
 checklist. Custom regional production covers region/topic source curation,
 scope-matched lesson design, and the intended student/teacher PDF delivery
-scope. The latter two are consultation topics, not published prices or delivery
-guarantees; their CTA only carries an allow-listed `offer` value into the
-browser-only consultation handoff.
+scope. The latter two use β版 price proposals as consultation starting points,
+not delivery guarantees; their CTA only carries an allow-listed `offer` value
+into the browser-only consultation handoff.
 
 ## Teacher quick start
 

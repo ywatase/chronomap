@@ -213,6 +213,7 @@ export interface UiCopy {
   readonly datasetCatalogOfferHeading: string;
   readonly datasetCatalogOfferLead: string;
   readonly datasetCatalogOfferTitles: Readonly<Record<LessonPackOfferPlan, string>>;
+  readonly datasetCatalogOfferPrices: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferLeads: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferBenefits: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferOutputsHeading: string;
@@ -496,7 +497,7 @@ const EN_COPY: UiCopy = {
   lessonPackPilotShareFailed: "Sharing was canceled or unavailable. The review text is still here.",
   lessonPackPilotMailOpened: "Email app opened. The message has not been sent.",
   lessonPackPilotSubject: "Chronomap regional lesson-pack consultation",
-  datasetCatalogOpen: "Choose a region or lesson",
+  datasetCatalogOpen: "Choose a region or lesson · plans",
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
@@ -524,9 +525,10 @@ const EN_COPY: UiCopy = {
   datasetCatalogPurposeResumeInvalid: "Could not load this draft. Check its dataset, lesson, steps, and file size.",
   datasetCatalogPurposeCoverage: (regions, lessons) => `Coverage: ${regions} regions / ${lessons} guided lessons (pilot)`,
   datasetCatalogPurposeValue: "Teacher value validation in progress",
-  datasetCatalogOfferHeading: "Choose an adoption path",
-  datasetCatalogOfferLead: "Try the public map first. If a class needs a supported pilot or a region-specific lesson, choose the path and carry it into a consultation handoff.",
+  datasetCatalogOfferHeading: "Choose an adoption path and price",
+  datasetCatalogOfferLead: "Try the public map first. If a class needs a supported pilot or a region-specific lesson, choose the path, scope, and beta price proposal before starting a consultation.",
   datasetCatalogOfferTitles: { "free-explore": "Free exploration", "classroom-pilot": "Classroom pilot", "custom-region": "Custom regional production" },
+  datasetCatalogOfferPrices: { "free-explore": "¥0 · self-serve", "classroom-pilot": "From ¥49,800 · one class", "custom-region": "From ¥198,000 · one region" },
   datasetCatalogOfferLeads: { "free-explore": "Inspect maps, evidence, sharing, and one classroom pack locally.", "classroom-pilot": "Shape a lesson for one class and discuss the teacher workflow.", "custom-region": "Discuss source curation and lesson design for your own region or topic." },
   datasetCatalogOfferBenefits: { "free-explore": "No account or contact required", "classroom-pilot": "Teacher guide + feedback handoff", "custom-region": "Region/topic scope + source discussion" },
   datasetCatalogOfferOutputsHeading: "What this path covers",
@@ -536,7 +538,7 @@ const EN_COPY: UiCopy = {
     "custom-region": ["Region/topic source curation", "Lesson design matched to your scope", "Student and teacher PDF delivery scope"],
   },
   datasetCatalogOfferActions: { "free-explore": "Try the free example", "classroom-pilot": "Create a pilot consultation message", "custom-region": "Create a custom-production consultation message" },
-  datasetCatalogOfferPricing: "Prices, checkout, and delivery dates are not published yet; the consultation text records intent only.",
+  datasetCatalogOfferPricing: "Beta price proposal: tax, scope, delivery date, and final quote are confirmed in consultation. Checkout is not enabled; the handoff only records intent.",
   datasetCatalogStepObserve: "1. Choose a topic and evidence",
   datasetCatalogStepWrite: "2. Shape the observation prompt",
   datasetCatalogStepShare: "3. Print and share the PDF",
@@ -806,7 +808,7 @@ const JA_COPY: UiCopy = {
   lessonPackPilotShareFailed: "共有をキャンセルしたか利用できません。相談文はこの画面に残っています。",
   lessonPackPilotMailOpened: "メールアプリを開きました（送信は完了していません）。",
   lessonPackPilotSubject: "Chronomap 地域教材パックの相談",
-  datasetCatalogOpen: "地域・教材を選ぶ",
+  datasetCatalogOpen: "地域・教材を選ぶ（料金も見る）",
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
@@ -834,9 +836,10 @@ const JA_COPY: UiCopy = {
   datasetCatalogPurposeResumeInvalid: "下書きを読み込めませんでした。データセット・教材・ステップ・ファイルサイズを確認してください。",
   datasetCatalogPurposeCoverage: (regions, lessons) => `現在の収録範囲: ${regions}地域／${lessons}教材（試験公開）`,
   datasetCatalogPurposeValue: "教員向け価値検証中",
-  datasetCatalogOfferHeading: "導入の選択肢",
-  datasetCatalogOfferLead: "まず公開地図を無料で試せます。授業で伴走が必要な場合や、地域別の教材を作りたい場合は、選択したプランを相談文に引き継げます。",
+  datasetCatalogOfferHeading: "導入プランと価格案",
+  datasetCatalogOfferLead: "まず公開地図を無料で試せます。授業で伴走が必要な場合や、地域別の教材を作りたい場合は、範囲とβ版の価格案を確認してから相談文に引き継げます。",
   datasetCatalogOfferTitles: { "free-explore": "無料で試す", "classroom-pilot": "授業パイロット", "custom-region": "地域教材の個別制作" },
+  datasetCatalogOfferPrices: { "free-explore": "¥0・登録不要", "classroom-pilot": "¥49,800〜・1クラス", "custom-region": "¥198,000〜・1地域" },
   datasetCatalogOfferLeads: { "free-explore": "地図・根拠・共有・1つの教材パックを端末上で確認します。", "classroom-pilot": "1クラス分の教材を整え、教員の使い方を相談します。", "custom-region": "希望地域・題材の出典整理と教材設計を相談します。" },
   datasetCatalogOfferBenefits: { "free-explore": "登録・連絡先なしで開始", "classroom-pilot": "教員用資料＋相談文", "custom-region": "地域・題材の範囲＋出典相談" },
   datasetCatalogOfferOutputsHeading: "この選択肢で扱う内容",
@@ -846,7 +849,7 @@ const JA_COPY: UiCopy = {
     "custom-region": ["希望地域・題材の出典整理", "範囲に合わせた授業設計", "生徒用・教員用PDFの納品範囲"],
   },
   datasetCatalogOfferActions: { "free-explore": "無料の完成見本を見る", "classroom-pilot": "授業パイロットの相談文を作る", "custom-region": "個別制作の相談文を作る" },
-  datasetCatalogOfferPricing: "価格・決済・納期はまだ公開していません。相談文には検討意向だけが記録されます。",
+  datasetCatalogOfferPricing: "β版の価格案です。税・範囲・納期・最終見積は相談で確定し、このサイトでは決済しません。相談文には検討意向だけが記録されます。",
   datasetCatalogStepObserve: "1. 題材と根拠を選ぶ",
   datasetCatalogStepWrite: "2. 観察する問いを整える",
   datasetCatalogStepShare: "3. PDFで配る",

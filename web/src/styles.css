@@ -390,6 +390,7 @@ footer a { color: #155e8a; }
 .dataset-catalog-offer-custom-region { border-color: #d1b37a; background: #fffaf0; }
 .dataset-catalog-offer h4 { margin: 0; color: #102a43; font-size: .9rem; line-height: 1.25; }
 .dataset-catalog-offer p { min-height: 2.7em; margin: 0; color: #40566a; font-size: .78rem; line-height: 1.4; }
+.dataset-catalog-offer .dataset-catalog-offer-price { min-height: 0; color: #17324d; font-size: 1rem; font-weight: 800; line-height: 1.25; }
 .dataset-catalog-offer .dataset-catalog-offer-benefit { min-height: 0; color: #17324d; font-size: .76rem; font-weight: 700; }
 .dataset-catalog-offer-outputs { display: grid; gap: .2rem; margin-top: .05rem; padding-top: .4rem; border-top: 1px solid #d0dbe2; }
 .dataset-catalog-offer-outputs h5 { margin: 0; color: #536b7e; font-size: .72rem; line-height: 1.3; }

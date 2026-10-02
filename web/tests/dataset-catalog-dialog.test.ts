@@ -109,6 +109,8 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector("[data-dataset-catalog-free]")?.textContent).toContain("地図を見る");
     expect(root.querySelector("[data-dataset-catalog-future]")?.textContent).toContain("一括");
     expect(root.querySelectorAll("[data-dataset-catalog-offer]")).toHaveLength(3);
+    expect(root.querySelectorAll("[data-dataset-catalog-offer-price]")).toHaveLength(3);
+    expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-price]')?.textContent).toContain("¥49,800");
     expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("授業パイロット");
     expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("相談文を作る");
     expect(root.querySelectorAll('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-output]')).toHaveLength(3);
