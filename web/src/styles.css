@@ -188,6 +188,7 @@ footer a { color: #155e8a; }
 .lesson-pack-actions button:hover, .lesson-pack-actions button:focus-visible { background: #e8f2fb; }
 .lesson-pack-actions button[data-lesson-pack-print]:hover, .lesson-pack-actions button[data-lesson-pack-print]:focus-visible { background: #0f4f75; }
 .lesson-pack-print-warning { flex: 1 1 100%; margin: 0; color: #40566a; font-size: .8rem; line-height: 1.4; }
+.lesson-pack-offer { flex: 1 1 100%; margin: 0; padding: .55rem .65rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .82rem; font-weight: 700; line-height: 1.45; }
 .lesson-pack-page { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #d0dbe2; break-after: page; page-break-after: always; }
 .lesson-pack-page:last-child { break-after: auto; page-break-after: auto; }
 .lesson-pack-page > h2 { margin: 0 0 .55rem; color: #304b60; font-size: 1.15rem; }

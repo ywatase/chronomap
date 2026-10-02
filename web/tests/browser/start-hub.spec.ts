@@ -138,7 +138,15 @@ test("lets a paid path preview the finished example before editing", async ({ pa
   const preview = page.locator('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-preview]');
   await expect(preview).toHaveAttribute("href", /offer=classroom-pilot/);
   await preview.click();
-  await expect(page.locator("[data-lesson-pack-dialog]")).toBeVisible();
+  const pack = page.locator("[data-lesson-pack-dialog]");
+  await expect(pack).toBeVisible();
+  await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/授業パイロット|Classroom pilot/);
+  await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/¥49,800|49,800/);
+  await page.emulateMedia({ media: "print" });
+  await page.evaluate(() => { document.body.dataset.printDocument = "lesson-pack"; });
+  await expect(pack.locator("[data-lesson-pack-offer]")).toBeHidden();
+  await page.evaluate(() => { delete document.body.dataset.printDocument; });
+  await page.emulateMedia({ media: "screen" });
   await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("classroom-pilot");
   await expect.poll(() => new URL(page.url()).searchParams.get("view")).toBe("pack");
   await page.locator("[data-lesson-pack-back]").click();

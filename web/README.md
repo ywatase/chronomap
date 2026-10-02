@@ -301,6 +301,9 @@ the consultation path.
 The paid primary CTA states that sequence explicitly: preview the finished
 example, then create the consultation message. It opens the browser-only builder
 first; the consultation handoff still appears after the print/PDF attempt.
+When a paid path is selected, the same plan and beta price proposal remain visible
+in the finished-pack toolbar before printing. The toolbar is hidden by print CSS,
+so the proposal is not part of the classroom PDF.
 
 ## Teacher quick start
 

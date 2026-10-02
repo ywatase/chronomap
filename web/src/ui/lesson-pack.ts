@@ -34,6 +34,15 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   warning.className = "lesson-pack-print-warning";
   warning.dataset.lessonPackPrintWarning = "";
   warning.textContent = copy.lessonPackStudentPrintWarning;
+  const offer = actions.initialPilotPlan ? document.createElement("p") : null;
+  if (offer && actions.initialPilotPlan) {
+    offer.className = "lesson-pack-offer";
+    offer.dataset.lessonPackOffer = actions.initialPilotPlan;
+    offer.textContent = copy.lessonPackBuilderOffer(
+      copy.datasetCatalogOfferTitles[actions.initialPilotPlan],
+      copy.datasetCatalogOfferPrices[actions.initialPilotPlan],
+    );
+  }
   const printStudent = button(copy.lessonPackPrintStudent, "lesson-pack-print lesson-pack-print-student");
   printStudent.dataset.lessonPackPrintStudent = "";
   printStudent.addEventListener("click", () => actions.onPrint("student"));
@@ -54,7 +63,9 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   const close = button(copy.lessonPackClose, "lesson-pack-close");
   close.dataset.lessonPackClose = "";
   close.addEventListener("click", actions.onClose);
-  toolbar.append(warning, printStudent);
+  toolbar.append(warning);
+  if (offer) toolbar.append(offer);
+  toolbar.append(printStudent);
   if (model.includeTeacher !== false) toolbar.append(printTeacher);
   toolbar.append(printFull, close);
   container.append(toolbar);
