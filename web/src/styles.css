@@ -511,9 +511,11 @@ footer a { color: #155e8a; }
   .shell-content { display: flex; flex-direction: column; gap: .55rem; padding: .65rem .75rem .9rem; }
   .live-status, .basemap-alert, .shell-content > button { flex: 0 0 auto; }
   .map-frame { order: 1; width: 100%; min-height: 45svh; height: 46svh; }
-  .root-quickstart { top: auto; right: .55rem; bottom: .55rem; left: .55rem; width: auto; padding: .65rem; }
+  .root-quickstart { top: auto; right: .55rem; bottom: .55rem; left: .55rem; width: auto; gap: .3rem; padding: .55rem; }
+  .root-quickstart-kicker, .root-quickstart-note { display: none; }
   .root-quickstart h2 { font-size: 1rem; }
   .root-quickstart-lead { font-size: .78rem; }
+  .root-quickstart-lead { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .root-quickstart-actions { grid-template-columns: minmax(0, 1fr); }
   .map-placeholder { min-height: 100%; height: 100%; }
   .sidebar { order: 2; max-height: none; border-radius: .65rem; }
