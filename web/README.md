@@ -253,6 +253,9 @@ comparison; Azuchi Castle offers a five-step castle/shore/water-transport
 comparison; each card keeps one map-only route. Available cards link to a free
 map view and, when published, a guided lesson plus the classroom editor; a
 failed lesson row is isolated without hiding the bundle, map, or other lessons.
+The visible feature list also has a Japanese/English search field for feature
+names, descriptions, entity labels, and IDs. Search only filters the list; the
+map, selected year, and share URL remain unchanged.
 The catalog itself can be opened directly and restored with `?view=catalog`, for
 example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
 pilot functions from future teacher-workflow candidates and shows β版 price

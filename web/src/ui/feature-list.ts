@@ -4,16 +4,37 @@ import type { FeatureVersion, PublicBundle, TemporalExtent } from "../domain/typ
 import { uiCopy } from "./copy";
 import { localizedText } from "../domain/labels";
 
-export function renderFeatureList(container: HTMLElement, state: AppState, bundle: PublicBundle, onSelect: (featureId: string, trigger: HTMLButtonElement) => void): void {
+export interface FeatureListOptions {
+  readonly query?: string;
+}
+
+export function renderFeatureList(container: HTMLElement, state: AppState, bundle: PublicBundle, onSelect: (featureId: string, trigger: HTMLButtonElement) => void, options: FeatureListOptions = {}): void {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
   container.replaceChildren();
   const heading = document.createElement("h2"); heading.id = "feature-list-heading"; heading.textContent = copy.featureHeading; container.append(heading);
   if (state.visibleFeatures.length === 0) {
     const notice = document.createElement("p"); notice.setAttribute("role", "status"); notice.textContent = copy.noFeatures(formatYear(state.selectedYear, bundle.dataset.defaultLanguage)); container.append(notice); return;
   }
-  const count = document.createElement("p"); count.className = "feature-count"; count.textContent = copy.language === "ja" ? `${state.visibleFeatures.length}件を表示` : `${state.visibleFeatures.length} feature${state.visibleFeatures.length === 1 ? "" : "s"} shown`; container.append(count);
-  const list = document.createElement("ul"); list.className = "feature-list";
-  for (const group of groupedFeatures(state.visibleFeatures)) {
+  const query = (options.query ?? container.dataset.featureListQuery ?? "").trim();
+  container.dataset.featureListQuery = query;
+  const searchLabel = document.createElement("label"); searchLabel.className = "feature-list-search";
+  const searchText = document.createElement("span"); searchText.textContent = copy.featureSearchLabel;
+  const search = document.createElement("input"); search.type = "search"; search.id = "feature-list-search"; search.dataset.featureListSearch = ""; search.placeholder = copy.featureSearchPlaceholder; search.value = query; search.autocomplete = "off"; search.spellcheck = false; search.setAttribute("aria-controls", "feature-list-items");
+  searchLabel.append(searchText, search); container.append(searchLabel);
+  const filteredFeatures = query === "" ? state.visibleFeatures : state.visibleFeatures.filter((feature) => featureMatches(feature, bundle, query));
+  const count = document.createElement("p"); count.className = "feature-count"; count.textContent = copy.featureCount(filteredFeatures.length, state.visibleFeatures.length); container.append(count);
+  search.addEventListener("input", () => {
+    const nextQuery = search.value;
+    renderFeatureList(container, state, bundle, onSelect, { query: nextQuery });
+    const nextSearch = container.querySelector<HTMLInputElement>("[data-feature-list-search]");
+    nextSearch?.focus();
+    nextSearch?.setSelectionRange(nextSearch.value.length, nextSearch.value.length);
+  });
+  if (filteredFeatures.length === 0) {
+    const notice = document.createElement("p"); notice.setAttribute("role", "status"); notice.textContent = copy.featureSearchNoMatch(query); container.append(notice); return;
+  }
+  const list = document.createElement("ul"); list.className = "feature-list"; list.id = "feature-list-items";
+  for (const group of groupedFeatures(filteredFeatures)) {
     const item = document.createElement("li");
     if (group.label) { const title = document.createElement("p"); title.className = "hypothesis-group"; title.textContent = `${group.label} — ${copy.noPreferredHypothesis}`; item.append(title); }
     const members = document.createElement("ul");
@@ -36,6 +57,25 @@ export function renderFeatureList(container: HTMLElement, state: AppState, bundl
     item.append(members); list.append(item);
   }
   container.append(list);
+}
+
+function featureMatches(feature: FeatureVersion, bundle: PublicBundle, query: string): boolean {
+  const entity = bundle.entitiesById[feature.properties.entityId];
+  const values = [
+    feature.id,
+    feature.properties.entityId,
+    ...Object.values(feature.properties.labels),
+    ...Object.values(feature.properties.description),
+    ...(feature.properties.hypothesisLabel ? Object.values(feature.properties.hypothesisLabel) : []),
+    ...(entity ? Object.values(entity.labels) : []),
+    ...(entity ? Object.values(entity.description) : []),
+  ];
+  const normalizedQuery = normalizeSearch(query);
+  return values.some((value) => normalizeSearch(value).includes(normalizedQuery));
+}
+
+function normalizeSearch(value: string): string {
+  return value.trim().toLocaleLowerCase();
 }
 
 function groupedFeatures(features: readonly FeatureVersion[]): readonly { label: string | null; features: readonly FeatureVersion[] }[] {

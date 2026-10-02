@@ -47,6 +47,7 @@ describe("metadata and list rendering", () => {
   it("renders a semantic selectable list with shape, year, uncertainty, and unranked hypothesis labels", () => {
     const container = document.createElement("div");
     renderFeatureList(container, state, bundle, () => undefined);
+    expect(container.querySelector("[data-feature-list-search]")).not.toBeNull();
     expect(container.querySelector("ul button")?.textContent).toContain("LineString");
     expect(container.querySelector("ul button")?.textContent).toContain("Entity label");
     expect(container.querySelector("ul button")?.textContent).toContain("2 BCE");
@@ -68,5 +69,25 @@ describe("metadata and list rendering", () => {
 
     expect(container.textContent).toContain("javascript:alert(document.domain)");
     expect(container.querySelector('a[href^="javascript:"]')).toBeNull();
+  });
+
+  it("filters the visible list by localized feature metadata without changing the bundle", () => {
+    const second = {
+      ...feature,
+      id: "version:a",
+      properties: { ...feature.properties, labels: { en: "Other river" }, description: { en: "Another description" } },
+    } as typeof feature;
+    const searchableBundle = { ...bundle, features: [feature, second] } as PublicBundle;
+    const searchableState = { ...state, visibleFeatures: [feature, second], allFeatures: [feature, second] };
+    const container = document.createElement("div");
+
+    renderFeatureList(container, searchableState, searchableBundle, () => undefined, { query: "other" });
+
+    expect(container.querySelectorAll("[data-feature-id]")).toHaveLength(1);
+    expect(container.querySelector("[data-feature-id]")?.getAttribute("data-feature-id")).toBe("version:a");
+    expect(container.textContent).toContain("1 of 2 features");
+    renderFeatureList(container, searchableState, searchableBundle, () => undefined, { query: "missing" });
+    expect(container.querySelector("[role=status]")?.textContent).toContain("No visible features match");
+    expect(searchableBundle.features).toHaveLength(2);
   });
 });

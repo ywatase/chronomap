@@ -264,6 +264,10 @@ export interface UiCopy {
   readonly footerBasemap: string;
   readonly mapCandidates: string;
   readonly featureHeading: string;
+  readonly featureSearchLabel: string;
+  readonly featureSearchPlaceholder: string;
+  readonly featureSearchNoMatch: (query: string) => string;
+  readonly featureCount: (shown: number, total: number) => string;
   readonly noFeatures: (year: string) => string;
   readonly unknownEntity: string;
   readonly noPreferredHypothesis: string;
@@ -583,6 +587,10 @@ const EN_COPY: UiCopy = {
   footerBasemap: "Basemap: GSI Maps attribution and terms",
   mapCandidates: "Map candidates at this location",
   featureHeading: "Features",
+  featureSearchLabel: "Search visible features",
+  featureSearchPlaceholder: "Name, description, or ID",
+  featureSearchNoMatch: (query) => `No visible features match “${query}”.`,
+  featureCount: (shown, total) => shown === total ? `${total} feature${total === 1 ? "" : "s"} shown` : `${shown} of ${total} features shown`,
   noFeatures: (year) => `No features match ${year}.`,
   unknownEntity: "Unknown entity",
   noPreferredHypothesis: "No preferred hypothesis",
@@ -894,6 +902,10 @@ const JA_COPY: UiCopy = {
   footerBasemap: "背景地図: 国土地理院（出典・利用条件）",
   mapCandidates: "この位置の候補",
   featureHeading: "表示中の地物",
+  featureSearchLabel: "表示中の地物を検索",
+  featureSearchPlaceholder: "名称・説明・IDで検索",
+  featureSearchNoMatch: (query) => `「${query}」に一致する地物はありません。`,
+  featureCount: (shown, total) => shown === total ? `${total}件を表示` : `${total}件中${shown}件を表示`,
   noFeatures: (year) => `${year}に一致する公開地物はありません。`,
   unknownEntity: "地物の同一性情報なし",
   noPreferredHypothesis: "優先順位を付けていない復元案",
