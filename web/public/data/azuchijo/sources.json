@@ -38,6 +38,24 @@
   },
   {
     "accessedDate": "2026-10-02",
+    "citation": "滋賀県『琵琶湖と人の長いつきあい』",
+    "creators": [
+      "滋賀県"
+    ],
+    "id": "azuchijo:source:shiga-biwako-human",
+    "publishedYear": 2018,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・写真・図版は再現しない。"
+    },
+    "title": {
+      "ja": "琵琶湖と人の長いつきあい"
+    },
+    "type": "official-web-page",
+    "url": "https://www.pref.shiga.lg.jp/biwakatsu/20521.html"
+  },
+  {
+    "accessedDate": "2026-10-02",
     "citation": "滋賀県『特別史跡安土城跡の調査と整備』",
     "creators": [
       "滋賀県"

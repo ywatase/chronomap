@@ -5,8 +5,9 @@ Japanese public bundle at `/data/ogurike/` by default, which contains a small,
 approximate set of cited 巨椋池 snapshots for 1590, 1596, 1910, and 1942. The
 allow-listed `tonegawa` bundle adds a three-snapshot Tone River eastward-shift
 pilot, `heijokyo` adds a single-year pilot for the Heijokyo capital and Suzaku
-Avenue, and `azuchijo` adds a four-step Azuchi Castle/Lake Biwa east-shore
-comparison. Restricted source pages are represented by citation-only metadata;
+Avenue, and `azuchijo` adds a five-step Azuchi Castle/Lake Biwa east-shore and
+water-transport context comparison. Restricted source pages are represented by
+citation-only metadata;
 the browser does not receive private authoring records or copied source body
 text.
 
@@ -129,7 +130,8 @@ The static `巨椋池と宇治川の変化をたどる`, `利根川東遷を概�
 turn their public snapshots into short guided routes. The Ogurike route covers
 1590, 1596, 1910, and 1942; the Tone River route covers 1590, 1594, and 1654;
 the Heijokyo route covers three observations in 710; and the Azuchi route covers
-1576, 1579, 1582, and the approximate east-shore relation. Each final step
+1576, 1579, 1582, the approximate east-shore relation, and the water-transport
+context. Each final step
 offers sharing, a printable report, and the classroom pack. Lesson state is encoded as `lesson=...&step=...` alongside
 the normal year, feature, and camera parameters, so a copied URL and a reload
 restore the same step. Lesson JSON is optional static content: if it is missing

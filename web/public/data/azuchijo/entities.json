@@ -28,5 +28,15 @@
       "ja": "安土山"
     },
     "type": "archaeological-site"
+  },
+  {
+    "description": {
+      "ja": "安土城と琵琶湖東岸を結ぶ水運の文脈を考えるための概略接続線。実際の航路・港・船着場の位置ではありません。"
+    },
+    "id": "azuchijo:entity:water-transport",
+    "labels": {
+      "ja": "安土城と湖上交通の関係（概略）"
+    },
+    "type": "route"
   }
 ]

@@ -23,5 +23,13 @@
     "supports": ["geometry", "location"],
     "note": "公開された所在地の相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。現在・過去の正確な境界や湖岸線ではない。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:transport",
+    "sourceId": "azuchijo:source:shiga-biwako-human",
+    "locator": "安土城などの湖岸拠点と、琵琶湖を利用する人の移動・物資輸送を行う湖上交通の概要",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "安土桃山期の湖上交通と安土城の位置関係を示す引用メタデータ。個別の航路、港、船着場、運航日を特定する資料ではありません。"
   }
 ]

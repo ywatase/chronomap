@@ -31,5 +31,16 @@
     "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md",
     "accessedDate": "2026-10-02",
     "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "公開メタデータから作成した概略復元メモ。" }
+  },
+  {
+    "id": "azuchijo:source:shiga-biwako-human",
+    "type": "official-web-page",
+    "citation": "滋賀県『琵琶湖と人の長いつきあい』",
+    "title": { "ja": "琵琶湖と人の長いつきあい" },
+    "creators": ["滋賀県"],
+    "publishedYear": 2018,
+    "url": "https://www.pref.shiga.lg.jp/biwakatsu/20521.html",
+    "accessedDate": "2026-10-02",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文・写真・図版は再現しない。" }
   }
 ]

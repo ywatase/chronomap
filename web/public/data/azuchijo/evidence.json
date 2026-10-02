@@ -32,5 +32,17 @@
       "identity"
     ],
     "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:transport",
+    "locator": "安土城などの湖岸拠点と、琵琶湖を利用する人の移動・物資輸送を行う湖上交通の概要",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:shiga-biwako-human",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
   }
 ]

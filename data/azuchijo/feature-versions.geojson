@@ -100,6 +100,26 @@
         "publicationStatus": "public",
         "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
       }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:water-transport-1576",
+      "geometry": { "type": "LineString", "coordinates": [[136.139, 35.155], [136.072, 35.170]] },
+      "properties": {
+        "entityId": "azuchijo:entity:water-transport",
+        "labels": { "ja": "安土城と湖上交通の関係（1576年頃・概略）" },
+        "description": { "ja": "安土城と琵琶湖東岸を結ぶ水運の文脈を考えるための概略接続線です。実際の航路・港・船着場の位置ではありません。" },
+        "temporal": { "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "circa" }, "end": null },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土桃山期の湖上交通という文脈を1576年頃に置いています。個別の運航年ではありません。", "evidenceIds": ["azuchijo:evidence:transport"] },
+          "location": { "assessment": "approximate", "note": "安土城の代表点と東岸概略線の関係を示す接続線です。港の位置ではありません。", "evidenceIds": ["azuchijo:evidence:transport", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "直線的な概略接続線で、実際の航路・距離・船着場を表しません。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土城と琵琶湖を利用する移動・物資輸送の関係を考えるための表示です。", "evidenceIds": ["azuchijo:evidence:transport"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:transport", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用）", "terms": "外部本文・写真・図版は再現しない。" }
+      }
     }
   ]
 }

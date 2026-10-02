@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 5
+- 公開FeatureVersion: 6
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -14,6 +14,7 @@
 | `azuchijo:version:castle-1582` | 安土城（1582年・主郭部焼失後） | Point | 1582年 | open-license |
 | `azuchijo:version:lakeshore-1576` | 琵琶湖東岸（安土付近・概略） | LineString | 1576年以降 | open-license |
 | `azuchijo:version:mountain-1576` | 安土山（1576年・代表点） | Point | 1576年以降 | open-license |
+| `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
 
 ### `azuchijo:version:castle-1576`
 
@@ -160,12 +161,39 @@
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
   - `azuchijo:source:shiga-castle`: 滋賀県『特別史跡安土城跡の調査と整備』 — 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/sd00/2591.html
 
+### `azuchijo:version:water-transport-1576`
+
+- 地物: 安土城と湖上交通の関係（1576年頃・概略） (`azuchijo:entity:water-transport`)
+- geometry: `LineString`
+- 年代: 1576年以降
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用） — 外部本文・写真・図版は再現しない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土桃山期の湖上交通という文脈を1576年頃に置いています。個別の運航年ではありません。 (Evidence: `azuchijo:evidence:transport`)
+  - `location`: `approximate` — 安土城の代表点と東岸概略線の関係を示す接続線です。港の位置ではありません。 (Evidence: `azuchijo:evidence:shape`, `azuchijo:evidence:transport`)
+  - `geometry`: `approximate` — 直線的な概略接続線で、実際の航路・距離・船着場を表しません。 (Evidence: `azuchijo:evidence:shape`)
+  - `identity`: `well-supported` — 安土城と琵琶湖を利用する移動・物資輸送の関係を考えるための表示です。 (Evidence: `azuchijo:evidence:transport`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:shape` | derived-geometry | geometry, location | 代表点・東岸概略線の作成方法と限界 | `azuchijo:source:shape-notes` |
+  - `azuchijo:evidence:shape` — 公開された所在地の相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。現在・過去の正確な境界や湖岸線ではない。 (publicationBasis: `original-reconstruction`)
+| `azuchijo:evidence:transport` | citation | identity, location, temporal | 安土城などの湖岸拠点と、琵琶湖を利用する人の移動・物資輸送を行う湖上交通の概要 | `azuchijo:source:shiga-biwako-human` |
+  - `azuchijo:evidence:transport` — 安土桃山期の湖上交通と安土城の位置関係を示す引用メタデータ。個別の航路、港、船着場、運航日を特定する資料ではありません。
+
+- Source:
+
+  - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
+  - `azuchijo:source:shiga-biwako-human`: 滋賀県『琵琶湖と人の長いつきあい』 — 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/biwakatsu/20521.html
+
 ## Source一覧
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
 | `azuchijo:source:omi8-castle` | 近江八幡市観光物産協会『安土城跡』 | 安土城跡; 作成者: 近江八幡市観光物産協会; 2026年; 参照日: 2026-10-02; https://www.omi8.com/spot/detail_1217.html | restricted | 引用メタデータのみ。本文・写真・地図画像は再現しない。 |
 | `azuchijo:source:shape-notes` | Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 | 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md | open-license; 表示: Chronomap contributors | 公開メタデータから作成した概略復元メモ。 |
+| `azuchijo:source:shiga-biwako-human` | 滋賀県『琵琶湖と人の長いつきあい』 | 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/biwakatsu/20521.html | restricted | 引用メタデータのみ。本文・写真・図版は再現しない。 |
 | `azuchijo:source:shiga-castle` | 滋賀県『特別史跡安土城跡の調査と整備』 | 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/sd00/2591.html | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 
 ## 監査上の注意

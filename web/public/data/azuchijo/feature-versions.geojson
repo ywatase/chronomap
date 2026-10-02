@@ -386,6 +386,82 @@
         }
       },
       "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            136.139,
+            35.155
+          ],
+          [
+            136.072,
+            35.17
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "azuchijo:version:water-transport-1576",
+      "properties": {
+        "description": {
+          "ja": "安土城と琵琶湖東岸を結ぶ水運の文脈を考えるための概略接続線です。実際の航路・港・船着場の位置ではありません。"
+        },
+        "entityId": "azuchijo:entity:water-transport",
+        "evidenceIds": [
+          "azuchijo:evidence:shape",
+          "azuchijo:evidence:transport"
+        ],
+        "labels": {
+          "ja": "安土城と湖上交通の関係（1576年頃・概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、滋賀県（引用）",
+          "status": "open-license",
+          "terms": "外部本文・写真・図版は再現しない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 1576,
+            "latestYear": 1576,
+            "precision": "year",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:shape"
+            ],
+            "note": "直線的な概略接続線で、実際の航路・距離・船着場を表しません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "azuchijo:evidence:transport"
+            ],
+            "note": "安土城と琵琶湖を利用する移動・物資輸送の関係を考えるための表示です。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:shape",
+              "azuchijo:evidence:transport"
+            ],
+            "note": "安土城の代表点と東岸概略線の関係を示す接続線です。港の位置ではありません。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:transport"
+            ],
+            "note": "安土桃山期の湖上交通という文脈を1576年頃に置いています。個別の運航年ではありません。"
+          }
+        }
+      },
+      "type": "Feature"
     }
   ],
   "type": "FeatureCollection"
