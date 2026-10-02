@@ -121,6 +121,9 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector('[data-dataset-catalog-offer="free-explore"]')?.textContent).toContain("共有リンクとレポート");
     expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-link]')?.href).toContain("offer=custom-region");
     expect(root.querySelector(".dataset-catalog-offer-pricing")?.textContent).toContain("価格");
+    expect(root.querySelector("[data-dataset-catalog-process]")?.textContent).toContain("導入までの流れ");
+    expect(root.querySelectorAll("[data-dataset-catalog-process-step]")).toHaveLength(3);
+    expect(root.querySelector("[data-dataset-catalog-process]")?.textContent).toContain("範囲・価格・納期");
   });
 
   it("puts the value proposition and one next action above the root catalog", () => {

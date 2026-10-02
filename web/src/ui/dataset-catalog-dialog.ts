@@ -195,8 +195,29 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
   const pricing = document.createElement("p");
   pricing.className = "dataset-catalog-offer-pricing";
   pricing.textContent = copy.datasetCatalogOfferPricing;
-  section.append(pricing);
+  section.append(pricing, renderAdoptionProcess(copy));
   return section;
+}
+
+function renderAdoptionProcess(copy: UiCopy): HTMLElement {
+  const process = document.createElement("section");
+  process.className = "dataset-catalog-process";
+  process.dataset.datasetCatalogProcess = "";
+  const heading = document.createElement("h4");
+  heading.textContent = copy.datasetCatalogProcessHeading;
+  const lead = document.createElement("p");
+  lead.className = "dataset-catalog-process-lead";
+  lead.textContent = copy.datasetCatalogProcessLead;
+  const steps = document.createElement("ol");
+  steps.className = "dataset-catalog-process-steps";
+  for (const text of copy.datasetCatalogProcessSteps) {
+    const step = document.createElement("li");
+    step.dataset.datasetCatalogProcessStep = "";
+    step.textContent = text;
+    steps.append(step);
+  }
+  process.append(heading, lead, steps);
+  return process;
 }
 
 function addOffer(url: string, plan: LessonPackOfferPlan): string {

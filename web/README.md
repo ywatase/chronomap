@@ -276,6 +276,10 @@ scope-matched lesson design, and the intended student/teacher PDF delivery
 scope. The latter two use β版 price proposals as consultation starting points,
 not delivery guarantees; their CTA only carries an allow-listed `offer` value
 into the browser-only consultation handoff.
+The catalog also shows the three-step adoption path: try the cited free example,
+preview a class-ready pack and choose a path, then confirm scope, price, and
+delivery in consultation. This site does not take payment or promise a delivery
+date.
 
 ## Teacher quick start
 

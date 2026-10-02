@@ -223,6 +223,9 @@ export interface UiCopy {
   readonly datasetCatalogOfferOutputs: Readonly<Record<LessonPackOfferPlan, readonly string[]>>;
   readonly datasetCatalogOfferActions: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferPricing: string;
+  readonly datasetCatalogProcessHeading: string;
+  readonly datasetCatalogProcessLead: string;
+  readonly datasetCatalogProcessSteps: readonly string[];
   readonly datasetCatalogStepObserve: string;
   readonly datasetCatalogStepWrite: string;
   readonly datasetCatalogStepShare: string;
@@ -549,6 +552,9 @@ const EN_COPY: UiCopy = {
   },
   datasetCatalogOfferActions: { "free-explore": "Try the free example", "classroom-pilot": "Create a pilot consultation message", "custom-region": "Create a custom-production consultation message" },
   datasetCatalogOfferPricing: "Beta price proposal: tax, scope, delivery date, and final quote are confirmed in consultation. Checkout is not enabled; the handoff only records intent.",
+  datasetCatalogProcessHeading: "How adoption works",
+  datasetCatalogProcessLead: "No payment is taken here. Try the free example first, then carry a reviewed scope into a consultation.",
+  datasetCatalogProcessSteps: ["Try the cited map and free example", "Preview a class-ready pack and choose a path", "Confirm scope, price, and delivery in consultation"],
   datasetCatalogStepObserve: "1. Choose a topic and evidence",
   datasetCatalogStepWrite: "2. Shape the observation prompt",
   datasetCatalogStepShare: "3. Print and share the PDF",
@@ -867,6 +873,9 @@ const JA_COPY: UiCopy = {
   },
   datasetCatalogOfferActions: { "free-explore": "無料の完成見本を見る", "classroom-pilot": "授業パイロットの相談文を作る", "custom-region": "個別制作の相談文を作る" },
   datasetCatalogOfferPricing: "β版の価格案です。税・範囲・納期・最終見積は相談で確定し、このサイトでは決済しません。相談文には検討意向だけが記録されます。",
+  datasetCatalogProcessHeading: "導入までの流れ",
+  datasetCatalogProcessLead: "このサイトで決済は行いません。まず無料の完成見本を試し、確認した範囲を相談文へ引き継ぎます。",
+  datasetCatalogProcessSteps: ["出典付きの地図と無料見本を試す", "授業用パックを確認し、プランを選ぶ", "範囲・価格・納期を相談で確定する"],
   datasetCatalogStepObserve: "1. 題材と根拠を選ぶ",
   datasetCatalogStepWrite: "2. 観察する問いを整える",
   datasetCatalogStepShare: "3. PDFで配る",

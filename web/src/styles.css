@@ -401,6 +401,12 @@ footer a { color: #155e8a; }
 .dataset-catalog-offer-output::before { position: absolute; top: 0; left: 0; color: #2f7d58; content: "✓"; font-weight: 900; }
 .dataset-catalog-offer .dataset-catalog-cta { width: 100%; flex: 1 1 auto; }
 .dataset-catalog-offer-pricing { margin: 0; padding: .45rem .55rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .76rem; line-height: 1.4; }
+.dataset-catalog-process { display: grid; gap: .35rem; padding: .65rem .7rem; border: 1px solid #9bb3c2; border-radius: .45rem; background: #f7fafc; }
+.dataset-catalog-process h4 { margin: 0; color: #17324d; font-size: .86rem; line-height: 1.3; }
+.dataset-catalog-process-lead { margin: 0; color: #40566a; font-size: .76rem; line-height: 1.4; }
+.dataset-catalog-process-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .45rem; margin: 0; padding: 0; list-style: none; counter-reset: adoption-step; }
+.dataset-catalog-process-step { min-width: 0; padding: .5rem .55rem .5rem 1.8rem; border: 1px solid #c4d0d9; border-radius: .4rem; background: #fff; color: #304b60; font-size: .76rem; line-height: 1.35; counter-increment: adoption-step; position: relative; }
+.dataset-catalog-process-step::before { position: absolute; top: .45rem; left: .55rem; display: inline-flex; width: 1rem; height: 1rem; align-items: center; justify-content: center; border-radius: 999px; background: #155e8a; color: #fff; content: counter(adoption-step); font-size: .68rem; font-weight: 800; }
 .dataset-catalog-grid { scroll-margin-top: 1rem; }
 .dataset-catalog-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .55rem; margin: 0; padding: 0; list-style: none; counter-reset: welcome-step; }
 .dataset-catalog-step { min-width: 0; min-height: 2.75rem; padding: .55rem .6rem; border: 1px solid #c4d0d9; border-radius: .45rem; background: #fff; color: #17324d; font-size: .86rem; font-weight: 700; line-height: 1.35; }
@@ -504,6 +510,7 @@ footer a { color: #155e8a; }
   .dataset-catalog-grid, .dataset-catalog-notes { grid-template-columns: minmax(0, 1fr); }
   .dataset-catalog-purpose-cards { grid-template-columns: minmax(0, 1fr); }
   .dataset-catalog-offer-cards { grid-template-columns: minmax(0, 1fr); }
+  .dataset-catalog-process-steps { grid-template-columns: minmax(0, 1fr); }
   .dataset-catalog-hero-proof-list { grid-template-columns: minmax(0, 1fr); }
   .dataset-catalog-purpose-card p { min-height: 0; }
   .dataset-catalog-offer p { min-height: 0; }
