@@ -1,0 +1,35 @@
+[
+  {
+    "id": "azuchijo:source:shiga-castle",
+    "type": "official-web-page",
+    "citation": "滋賀県『特別史跡安土城跡の調査と整備』",
+    "title": { "ja": "特別史跡安土城跡の調査と整備" },
+    "creators": ["滋賀県"],
+    "publishedYear": 2026,
+    "url": "https://www.pref.shiga.lg.jp/sd00/2591.html",
+    "accessedDate": "2026-10-02",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文・図版・地図画像は再現しない。" }
+  },
+  {
+    "id": "azuchijo:source:omi8-castle",
+    "type": "official-tourism-web-page",
+    "citation": "近江八幡市観光物産協会『安土城跡』",
+    "title": { "ja": "安土城跡" },
+    "creators": ["近江八幡市観光物産協会"],
+    "publishedYear": 2026,
+    "url": "https://www.omi8.com/spot/detail_1217.html",
+    "accessedDate": "2026-10-02",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文・写真・地図画像は再現しない。" }
+  },
+  {
+    "id": "azuchijo:source:shape-notes",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』",
+    "title": { "ja": "安土城・琵琶湖東岸パイロット形状作成メモ" },
+    "creators": ["Chronomap contributors"],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md",
+    "accessedDate": "2026-10-02",
+    "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "公開メタデータから作成した概略復元メモ。" }
+  }
+]

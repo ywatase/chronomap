@@ -3,7 +3,7 @@ import { DATASET_CATALOG, datasetFromSearch } from "../src/domain/dataset-catalo
 
 describe("dataset catalog", () => {
   it("allow-lists all public bundles and lesson entries", () => {
-    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo"]);
+    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo", "azuchijo"]);
     expect(DATASET_CATALOG.find((entry) => entry.slug === "ogurike")?.lessons).toEqual([
       { id: "ogurike-intro", path: "/lessons/ogurike-intro.json", featured: true },
       { id: "ogurike-river-compare", path: "/lessons/ogurike-river-compare.json", featured: false },
@@ -13,6 +13,8 @@ describe("dataset catalog", () => {
     expect(datasetFromSearch("?dataset=heijokyo").bundlePath).toBe("/data/heijokyo/");
     expect(datasetFromSearch("?dataset=heijokyo").lessons[0]?.path).toContain("heijokyo-intro");
     expect(datasetFromSearch("?dataset=heijokyo").region.ja).toBe("奈良盆地北部");
+    expect(datasetFromSearch("?dataset=azuchijo").bundlePath).toBe("/data/azuchijo/");
+    expect(datasetFromSearch("?dataset=azuchijo").lessons[0]?.path).toContain("azuchijo-intro");
   });
 
   it("falls back to the default bundle for unknown or absent values", () => {

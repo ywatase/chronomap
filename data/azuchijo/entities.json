@@ -1,0 +1,20 @@
+[
+  {
+    "id": "azuchijo:entity:castle",
+    "type": "fortification",
+    "labels": { "ja": "安土城" },
+    "description": { "ja": "安土山に築かれた織田信長の居城。表示位置は代表点で、城郭全体の境界ではありません。" }
+  },
+  {
+    "id": "azuchijo:entity:mountain",
+    "type": "archaeological-site",
+    "labels": { "ja": "安土山" },
+    "description": { "ja": "安土城が築かれた山。表示位置は安土城との相対関係を見るための代表点です。" }
+  },
+  {
+    "id": "azuchijo:entity:lakeshore",
+    "type": "coastline",
+    "labels": { "ja": "琵琶湖東岸（安土付近）" },
+    "description": { "ja": "安土が琵琶湖東岸に位置することを示す概略線。現在・過去の正確な湖岸線ではありません。" }
+  }
+]

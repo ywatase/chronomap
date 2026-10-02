@@ -32,6 +32,8 @@ jobs:
         run: uv run chronomap-data validate data/tonegawa --profile public
       - name: Validate the Heijokyo public package
         run: uv run chronomap-data validate data/heijokyo --profile public
+      - name: Validate the Azuchi public package
+        run: uv run chronomap-data validate data/azuchijo --profile public
 
   web:
     name: Web unit, build, and browser

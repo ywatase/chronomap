@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:castle-1576",
+      "geometry": { "type": "Point", "coordinates": [136.139, 35.155] },
+      "properties": {
+        "entityId": "azuchijo:entity:castle",
+        "labels": { "ja": "安土城（1576年・築城開始）" },
+        "description": { "ja": "安土山の代表点で、1576年に始まった築城を示します。城郭全体の境界や正確な天主位置ではありません。" },
+        "temporal": { "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "築城開始年を単年で表示します。", "evidenceIds": ["azuchijo:evidence:timeline"] },
+          "location": { "assessment": "approximate", "note": "安土山上の代表点です。", "evidenceIds": ["azuchijo:evidence:location", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "城郭全体ではなく表示用の代表点です。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土城の築城開始を示す地物です。", "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:castle-1579",
+      "geometry": { "type": "Point", "coordinates": [136.139, 35.155] },
+      "properties": {
+        "entityId": "azuchijo:entity:castle",
+        "labels": { "ja": "安土城（1579年・完成）" },
+        "description": { "ja": "築城開始から約3年後に天主・本丸御殿が完成した時期を、同じ代表点で示します。" },
+        "temporal": { "start": { "earliestYear": 1579, "latestYear": 1579, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1579, "latestYear": 1579, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "天主・本丸御殿の完成時期を単年で表示します。", "evidenceIds": ["azuchijo:evidence:timeline"] },
+          "location": { "assessment": "approximate", "note": "安土山上の代表点です。", "evidenceIds": ["azuchijo:evidence:location", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "完成した城郭の境界や建物配置は表示しません。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土城の完成時期を示す地物です。", "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:castle-1582",
+      "geometry": { "type": "Point", "coordinates": [136.139, 35.155] },
+      "properties": {
+        "entityId": "azuchijo:entity:castle",
+        "labels": { "ja": "安土城（1582年・主郭部焼失後）" },
+        "description": { "ja": "1582年の本能寺の変後に主郭部が焼失した経緯を、同じ代表点で示します。焼失範囲や原因の詳細を地図上で断定しません。" },
+        "temporal": { "start": { "earliestYear": 1582, "latestYear": 1582, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "1582年の焼失時期を単年で表示します。", "evidenceIds": ["azuchijo:evidence:timeline"] },
+          "location": { "assessment": "approximate", "note": "焼失した主郭部を含む安土山上の代表点です。", "evidenceIds": ["azuchijo:evidence:location", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "焼失範囲を表す面ではなく代表点です。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土城の焼失経緯を示す地物です。", "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:lakeshore-1576",
+      "geometry": { "type": "LineString", "coordinates": [[136.071, 35.205], [136.062, 35.170], [136.068, 35.135], [136.082, 35.105]] },
+      "properties": {
+        "entityId": "azuchijo:entity:lakeshore",
+        "labels": { "ja": "琵琶湖東岸（安土付近・概略）" },
+        "description": { "ja": "安土山が琵琶湖東岸に位置する相対関係を見るための概略線です。現在・過去の正確な湖岸線ではありません。" },
+        "temporal": { "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "circa" }, "end": null },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土の位置関係を1576年前後の表示年へ置いています。", "evidenceIds": ["azuchijo:evidence:timeline"] },
+          "location": { "assessment": "approximate", "note": "東岸の相対位置を示す概略線です。", "evidenceIds": ["azuchijo:evidence:location", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "少数の頂点で作った表示用の線で、湖岸の精密な復元ではありません。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土が琵琶湖東岸に位置するという関係を示します。", "evidenceIds": ["azuchijo:evidence:location"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:mountain-1576",
+      "geometry": { "type": "Point", "coordinates": [136.139, 35.155] },
+      "properties": {
+        "entityId": "azuchijo:entity:mountain",
+        "labels": { "ja": "安土山（1576年・代表点）" },
+        "description": { "ja": "安土城が築かれた山の代表点です。山域の境界や標高を示すものではありません。" },
+        "temporal": { "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "circa" }, "end": null },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城の築城開始時期に合わせた表示です。", "evidenceIds": ["azuchijo:evidence:timeline"] },
+          "location": { "assessment": "approximate", "note": "山域を一点で示しています。", "evidenceIds": ["azuchijo:evidence:location", "azuchijo:evidence:shape"] },
+          "geometry": { "assessment": "approximate", "note": "山域の範囲・標高モデルではありません。", "evidenceIds": ["azuchijo:evidence:shape"] },
+          "identity": { "assessment": "well-supported", "note": "安土城が築かれた安土山を示します。", "evidenceIds": ["azuchijo:evidence:location"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:timeline", "azuchijo:evidence:location", "azuchijo:evidence:shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用）", "terms": "外部本文・写真・地図画像は再現しない。" }
+      }
+    }
+  ]
+}

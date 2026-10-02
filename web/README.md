@@ -235,7 +235,7 @@ counts. This status is computed fail-closed from public metadata; it does not
 fetch the checked-in Markdown snapshot or any source body. A missing, empty, or
 incomplete bundle receives no audit status.
 Ogurike currently offers the featured introduction and a two-step river-change
-comparison; the card keeps one map-only route. Available cards link to a free
+comparison; Azuchi Castle offers a four-step castle/shore comparison; each card keeps one map-only route. Available cards link to a free
 map view and, when published, a guided lesson plus the classroom editor; a
 failed lesson row is isolated without hiding the bundle, map, or other lessons.
 The catalog itself can be opened directly and restored with `?view=catalog`, for

@@ -1,0 +1,42 @@
+{
+  "bbox": [
+    136.02,
+    35.1,
+    136.18,
+    35.21
+  ],
+  "defaultLanguage": "ja",
+  "description": {
+    "ja": "1576年の築城開始と1582年の焼失を、安土山の代表点と琵琶湖東岸の概略線で比べる小規模データです。"
+  },
+  "files": {
+    "entities": "entities.json",
+    "evidence": "evidence.json",
+    "featureVersions": "feature-versions.geojson",
+    "sources": "sources.json"
+  },
+  "id": "azuchijo:dataset:pilot",
+  "rights": {
+    "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用メタデータ）",
+    "status": "open-license",
+    "terms": "外部資料の本文・図版・地図画像は再現しない。"
+  },
+  "schemaVersion": "1.0.0",
+  "temporalExtent": {
+    "end": {
+      "earliestYear": 1582,
+      "latestYear": 1582,
+      "precision": "year",
+      "qualifier": "exact"
+    },
+    "start": {
+      "earliestYear": 1576,
+      "latestYear": 1576,
+      "precision": "year",
+      "qualifier": "exact"
+    }
+  },
+  "title": {
+    "ja": "安土城・琵琶湖東岸パイロット"
+  }
+}

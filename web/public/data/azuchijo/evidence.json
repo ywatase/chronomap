@@ -1,0 +1,36 @@
+[
+  {
+    "id": "azuchijo:evidence:location",
+    "locator": "安土山・琵琶湖東岸にある安土城跡の所在地と概要",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:omi8-castle",
+    "supports": [
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:shape",
+    "locator": "代表点・東岸概略線の作成方法と限界",
+    "note": "公開された所在地の相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。現在・過去の正確な境界や湖岸線ではない。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
+    "id": "azuchijo:evidence:timeline",
+    "locator": "安土城の築城開始（1576年）と焼失・廃城の経緯",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:shiga-castle",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "usage": "citation"
+  }
+]

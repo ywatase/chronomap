@@ -55,6 +55,17 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     region: { ja: "奈良盆地北部", en: "Northern Nara Basin" },
     failureMessage: { ja: "平城京の公開データを読み込めませんでした。再試行してください。", en: "The Heijokyo public dataset could not be loaded. Please retry." },
   },
+  {
+    slug: "azuchijo",
+    bundlePath: "/data/azuchijo/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "azuchijo-intro", path: "/lessons/azuchijo-intro.json", featured: true }),
+    ]),
+    lessonPath: "/lessons/azuchijo-intro.json",
+    label: { ja: "安土城・琵琶湖東岸", en: "Azuchi Castle and Lake Biwa's east shore" },
+    region: { ja: "近江八幡・安土", en: "Azuchi, Omi-Hachiman" },
+    failureMessage: { ja: "安土城・琵琶湖東岸の公開データを読み込めませんでした。再試行してください。", en: "The Azuchi Castle public dataset could not be loaded. Please retry." },
+  },
 ]);
 
 const DEFAULT_DATASET = DATASET_CATALOG[0]!;

@@ -5,6 +5,7 @@ const lessons = [
   { slug: "ogurike", lesson: "ogurike-river-compare" },
   { slug: "tonegawa", lesson: "tonegawa-eastward" },
   { slug: "heijokyo", lesson: "heijokyo-intro" },
+  { slug: "azuchijo", lesson: "azuchijo-intro" },
 ] as const;
 
 for (const dataset of lessons) {

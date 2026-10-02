@@ -1,0 +1,27 @@
+[
+  {
+    "id": "azuchijo:evidence:timeline",
+    "sourceId": "azuchijo:source:shiga-castle",
+    "locator": "安土城の築城開始（1576年）と焼失・廃城の経緯",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "1576年に築城が始まり、1582年の本能寺の変後に主郭部が焼失したという引用メタデータ。本文は再現しない。"
+  },
+  {
+    "id": "azuchijo:evidence:location",
+    "sourceId": "azuchijo:source:omi8-castle",
+    "locator": "安土山・琵琶湖東岸にある安土城跡の所在地と概要",
+    "usage": "citation",
+    "supports": ["location", "identity"],
+    "note": "安土城が安土山にあり、琵琶湖東岸の安土付近に位置するという引用メタデータ。本文・写真は再現しない。"
+  },
+  {
+    "id": "azuchijo:evidence:shape",
+    "sourceId": "azuchijo:source:shape-notes",
+    "locator": "代表点・東岸概略線の作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "公開された所在地の相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。現在・過去の正確な境界や湖岸線ではない。",
+    "publicationBasis": "original-reconstruction"
+  }
+]

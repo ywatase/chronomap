@@ -37,4 +37,8 @@ describe("public demo assets", () => {
   it("checked-in Heijokyo assets equal the public builder output", async () => {
     await expectPublicAssetsMatch("data/heijokyo", "public/data/heijokyo");
   });
+
+  it("checked-in Azuchi assets equal the public builder output", async () => {
+    await expectPublicAssetsMatch("data/azuchijo", "public/data/azuchijo");
+  });
 });
