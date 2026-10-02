@@ -43,13 +43,14 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
   const requestedOffer: LessonPackOfferPlan | undefined = sharedMatchesDataset ? shared.offer : undefined;
-  let rootWelcomeOpen = typeof window !== "undefined" && window.location.pathname === "/" && window.location.search === "" && options.initialBuilderOpen !== true;
+  const rootQuickStartOpen = typeof window !== "undefined" && window.location.pathname === "/" && window.location.search === "" && options.initialBuilderOpen !== true;
+  let rootWelcomeOpen = false;
   const requestedLessonIndex = lesson && shared.view !== "builder" && sharedMatchesDataset && shared.lessonId === lesson.id ? lessonStepIndex(lesson, shared.lessonStepId) : null;
   const requestedLessonStep = requestedLessonIndex !== null && lesson ? lesson.steps[requestedLessonIndex] : null;
   const sharedYear = sharedMatchesDataset && shared.year !== undefined && yearWithinDataset(shared.year, bundle.dataset) ? shared.year : undefined;
   const requestedCamera = sharedMatchesDataset ? cameraFromSharedState(shared) : null;
   let lessonIndex: number | null = requestedLessonIndex;
-  let catalogOpen = shared.view === "catalog" || rootWelcomeOpen;
+  let catalogOpen = shared.view === "catalog";
   let lessonPackOpen = shared.view === "pack" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id);
   let builderOpen = (shared.view === "builder" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id)) || (options.initialBuilderOpen === true && Boolean(lesson));
   let catalogSnapshots: DatasetCatalogSnapshots | null = null;
@@ -69,7 +70,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   root.replaceChildren();
 
   const shell = document.createElement("div"); shell.className = "app-shell"; root.append(shell);
-  if (rootWelcomeOpen) shell.dataset.rootWelcome = "";
+  if (rootQuickStartOpen) shell.dataset.rootQuickstart = "";
   const header = document.createElement("header"); header.className = "app-header";
   const eyebrow = document.createElement("p"); eyebrow.className = "eyebrow"; eyebrow.textContent = copy.language === "ja" ? "歴史地図パイロット" : "Historical map pilot";
   const title = document.createElement("h1"); title.textContent = localizedText(bundle.dataset.title, bundle.dataset.defaultLanguage);
@@ -155,6 +156,8 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback;
   const mapSettings = createMapSettings(copy, (settings) => { adapter?.setBasemapOpacity?.(settings.basemapOpacity); adapter?.setHistoricalOpacity?.(settings.historicalOpacity); adapter?.setHistoricalVisibility?.(settings.historicalVisible); });
   mapFrame.append(map, mapSettings.element); content.append(mapFrame);
+  const rootQuickStart = rootQuickStartOpen ? renderRootQuickStart(copy, bundle, lesson, datasetSlug) : null;
+  if (rootQuickStart) mapFrame.append(rootQuickStart);
   const sidebar = document.createElement("section"); sidebar.className = "sidebar";
   const comparison = document.createElement("section"); comparison.className = "comparison"; sidebar.append(comparison);
   const tabs = document.createElement("div"); tabs.className = "mobile-tabs"; tabs.setAttribute("role", "tablist"); tabs.setAttribute("aria-label", copy.featureInformation);
@@ -368,6 +371,11 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   };
   const fallbackCatalogSnapshots = (): DatasetCatalogSnapshots => Object.freeze(Object.fromEntries(DATASET_CATALOG.map((entry) => [entry.slug, entry.slug === datasetSlug ? { bundle, lesson, lessons: lesson ? { [lesson.id]: lesson } : {} } : { bundle: null, lesson: null, lessons: {} }]))) as DatasetCatalogSnapshots;
   const openDatasetCatalog = async () => {
+    if (rootQuickStartOpen) {
+      rootWelcomeOpen = true;
+      delete shell.dataset.rootQuickstart;
+      shell.dataset.rootWelcome = "";
+    }
     catalogOpen = true;
     lessonPackOpen = false;
     catalogButton.setAttribute("aria-expanded", "true");
@@ -390,6 +398,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const closeDatasetCatalog = () => {
     catalogOpen = false;
     rootWelcomeOpen = false;
+    if (rootQuickStartOpen) shell.dataset.rootQuickstart = "";
     delete shell.dataset.rootWelcome;
     datasetCatalogDialog.hidden = true;
     catalogButton.setAttribute("aria-expanded", "false");
@@ -488,6 +497,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   shareButton.addEventListener("click", () => void shareCurrentView());
   reportButton.addEventListener("click", openReport);
   catalogButton.addEventListener("click", () => { void openDatasetCatalog(); });
+  rootQuickStart?.querySelector<HTMLButtonElement>("[data-root-quickstart-secondary]")?.addEventListener("click", () => { void openDatasetCatalog(); });
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
   const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
@@ -503,6 +513,47 @@ function adjacentYear(years: readonly number[], current: number, direction: -1 |
 function datasetKey(id: string): string { return id.split(":", 1)[0] ?? id; }
 function yearWithinDataset(year: number, dataset: Dataset): boolean { const minimum = dataset.temporalExtent.start?.earliestYear; const maximum = dataset.temporalExtent.end?.latestYear; return (minimum === null || minimum === undefined || year >= minimum) && (maximum === null || maximum === undefined || year <= maximum); }
 function cameraFromSharedState(state: ReturnType<typeof parseSharedState>): MapCamera | null { return state.longitude !== undefined && state.latitude !== undefined && state.zoom !== undefined ? { longitude: state.longitude, latitude: state.latitude, zoom: state.zoom } : null; }
+function renderRootQuickStart(copy: UiCopy, bundle: PublicBundle, lesson: Lesson | null, datasetSlug: string): HTMLElement {
+  const aside = document.createElement("aside");
+  aside.className = "root-quickstart";
+  aside.dataset.rootQuickstart = "";
+  aside.setAttribute("aria-label", copy.datasetCatalogRootQuickStartTitle);
+  const kicker = document.createElement("p");
+  kicker.className = "root-quickstart-kicker";
+  kicker.textContent = copy.datasetCatalogRootQuickStartKicker;
+  const heading = document.createElement("h2");
+  heading.textContent = copy.datasetCatalogRootQuickStartTitle;
+  const lead = document.createElement("p");
+  lead.className = "root-quickstart-lead";
+  lead.textContent = copy.datasetCatalogRootQuickStartLead;
+  const actions = document.createElement("div");
+  actions.className = "root-quickstart-actions";
+  const firstStep = lesson?.steps[0] ?? null;
+  const query = sharedQuery({
+    dataset: datasetSlug,
+    view: null,
+    lessonId: lesson?.id ?? null,
+    lessonStepId: firstStep?.id ?? null,
+    year: firstStep?.year ?? initialYear(bundle.dataset),
+    featureId: firstStep?.featureId ?? null,
+  });
+  const primary = document.createElement("a");
+  primary.className = "root-quickstart-primary";
+  primary.dataset.rootQuickstartPrimary = "";
+  primary.href = `${typeof window === "undefined" ? "/" : window.location.pathname}${query}`;
+  primary.textContent = copy.datasetCatalogRootQuickStartPrimary;
+  const secondary = document.createElement("button");
+  secondary.type = "button";
+  secondary.className = "root-quickstart-secondary";
+  secondary.dataset.rootQuickstartSecondary = "";
+  secondary.textContent = copy.datasetCatalogRootQuickStartSecondary;
+  actions.append(primary, secondary);
+  const note = document.createElement("p");
+  note.className = "root-quickstart-note";
+  note.textContent = copy.datasetCatalogRootQuickStartNote;
+  aside.append(kicker, heading, lead, actions, note);
+  return aside;
+}
 function button(text: string): HTMLButtonElement { const element = document.createElement("button"); element.type = "button"; element.textContent = text; return element; }
 function isLessonPackPrintScope(value: unknown): value is LessonPackPrintScope { return value === "student" || value === "teacher" || value === "full"; }
 function cycleDialogFocus(dialog: HTMLElement, event: KeyboardEvent): void {

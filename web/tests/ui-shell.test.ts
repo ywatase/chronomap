@@ -209,6 +209,8 @@ describe("ui shell", () => {
       heijokyo: { bundle: null, lesson: null },
     }));
     await new Promise((resolve) => setTimeout(resolve, 0));
+    root.querySelector<HTMLButtonElement>("aside[data-root-quickstart] [data-root-quickstart-secondary]")!.click();
+    await new Promise((resolve) => setTimeout(resolve, 0));
     const catalog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
     expect(catalog.getAttribute("role")).toBe("region");
     expect(catalog.hasAttribute("aria-modal")).toBe(false);
@@ -237,6 +239,8 @@ describe("ui shell", () => {
       tonegawa: { bundle: null, lesson: null },
       heijokyo: { bundle: null, lesson: null },
     }), { onResumeDraft });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    root.querySelector<HTMLButtonElement>("aside[data-root-quickstart] [data-root-quickstart-secondary]")!.click();
     await new Promise((resolve) => setTimeout(resolve, 0));
     const catalog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
     const input = catalog.querySelector<HTMLInputElement>("[data-dataset-catalog-purpose-draft-file]")!;

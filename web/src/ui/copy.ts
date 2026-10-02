@@ -188,6 +188,15 @@ export interface UiCopy {
   readonly datasetCatalogLead: string;
   readonly datasetCatalogWelcomeTitle: string;
   readonly datasetCatalogWelcomeLead: string;
+  readonly datasetCatalogHeroTrust: string;
+  readonly datasetCatalogHeroSecondary: string;
+  readonly datasetCatalogHeroProof: readonly string[];
+  readonly datasetCatalogRootQuickStartKicker: string;
+  readonly datasetCatalogRootQuickStartTitle: string;
+  readonly datasetCatalogRootQuickStartLead: string;
+  readonly datasetCatalogRootQuickStartPrimary: string;
+  readonly datasetCatalogRootQuickStartSecondary: string;
+  readonly datasetCatalogRootQuickStartNote: string;
   readonly datasetCatalogPurposeHeading: string;
   readonly datasetCatalogPurposeExplore: string;
   readonly datasetCatalogPurposeExploreLead: string;
@@ -457,7 +466,7 @@ const EN_COPY: UiCopy = {
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps} step${steps === 1 ? "" : "s"} · ${observationFigure ? "observation figure" : "figure unavailable"} · student material${includeTeacher ? " · teacher material" : ""} · QR · sources/rights · ${scope} print`,
   lessonPackPilotPrivacy: "Chronomap does not send or save this text. Do not enter a school name, student name, contact details, or other personal information. Review it before copying or sharing; sending is always your action.",
   lessonPackPilotFeedbackRoute: "Feedback only",
-  lessonPackPilotConsultRoute: "Consult about a regional lesson pack",
+  lessonPackPilotConsultRoute: "Create a regional lesson-pack consultation message",
   lessonPackPilotPlan: "Offer path (required for consultation)",
   lessonPackPilotPlanOptions: {
     "free-explore": "Free exploration",
@@ -489,8 +498,17 @@ const EN_COPY: UiCopy = {
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
-  datasetCatalogWelcomeTitle: "Evidence-backed worksheet in 3 minutes",
-  datasetCatalogWelcomeLead: "Choose a region and shape the observation prompt. Export a student worksheet, teacher reference, QR code, and source list as a PDF.",
+  datasetCatalogWelcomeTitle: "Turn historical maps into classroom-ready materials",
+  datasetCatalogWelcomeLead: "Start with a cited historical map, see an evidence-backed worksheet in three minutes, then shape a student PDF, teacher reference, QR code, and source list for your class.",
+  datasetCatalogHeroTrust: "Free demo: no account or payment required. Classroom pilots and regional production begin with a consultation.",
+  datasetCatalogHeroSecondary: "Explore the map first",
+  datasetCatalogHeroProof: ["Evidence and uncertainty stay visible", "Student PDF + teacher reference", "Regional materials via consultation"],
+  datasetCatalogRootQuickStartKicker: "Free historical map pilot",
+  datasetCatalogRootQuickStartTitle: "See change around Ogurike",
+  datasetCatalogRootQuickStartLead: "Start with the 1590 and 1596 Ujigawa snapshots. Compare the map first; make a classroom pack when you are ready.",
+  datasetCatalogRootQuickStartPrimary: "See Ogurike change",
+  datasetCatalogRootQuickStartSecondary: "Choose a region",
+  datasetCatalogRootQuickStartNote: "Free to explore: evidence, uncertainty, sharing, and reports stay visible.",
   datasetCatalogPurposeHeading: "Choose what you want to do",
   datasetCatalogPurposeExplore: "Explore the map",
   datasetCatalogPurposeExploreLead: "Open a region card to inspect historical geography and evidence.",
@@ -752,7 +770,7 @@ const JA_COPY: UiCopy = {
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps}ステップ · ${observationFigure ? "観察用概略図" : "概略図なし"} · 生徒用資料${includeTeacher ? " · 教員用資料" : ""} · QR・出典／権利 · ${scope === "student" ? "生徒用" : scope === "teacher" ? "教員用" : "全体"}を印刷`,
   lessonPackPilotPrivacy: "この文章はChronomapから自動送信・保存されません。学校名、児童生徒名、連絡先などの個人情報は入力しないでください。コピー・共有前に全文を確認し、送信はご自身で行ってください。",
   lessonPackPilotFeedbackRoute: "フィードバックのみ送る",
-  lessonPackPilotConsultRoute: "地域教材パックを相談する",
+  lessonPackPilotConsultRoute: "地域教材パックの相談文を作る",
   lessonPackPilotPlan: "導入プラン（相談する場合は必須）",
   lessonPackPilotPlanOptions: {
     "free-explore": "無料で試す",
@@ -784,8 +802,17 @@ const JA_COPY: UiCopy = {
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
-  datasetCatalogWelcomeTitle: "根拠付きワークシートを3分で",
-  datasetCatalogWelcomeLead: "地域を選び、観察する問いを整えるだけ。生徒用ワークシート、教員用参照資料、QRコード、出典一覧をPDFにできます。",
+  datasetCatalogWelcomeTitle: "歴史地図を、授業で使える教材に",
+  datasetCatalogWelcomeLead: "出典をたどれる歴史地図から、根拠付きワークシートを3分で。完成見本では生徒用ワークシート、教員用資料、QRコード、出典一覧をPDFにできます。",
+  datasetCatalogHeroTrust: "無料デモは登録・決済不要。授業パイロットと地域別制作は相談から始められます。",
+  datasetCatalogHeroSecondary: "まず地図を調べる",
+  datasetCatalogHeroProof: ["出典と不確実性が見える", "生徒用PDF＋教員用資料", "地域教材は相談から"],
+  datasetCatalogRootQuickStartKicker: "無料の歴史地図パイロット",
+  datasetCatalogRootQuickStartTitle: "巨椋池の変化を、まず地図で見る",
+  datasetCatalogRootQuickStartLead: "1590年と1596年の宇治川スナップショットから始めます。先に地図で比べ、必要になったら授業用教材に整えられます。",
+  datasetCatalogRootQuickStartPrimary: "巨椋池の変化を見る",
+  datasetCatalogRootQuickStartSecondary: "地域を選ぶ",
+  datasetCatalogRootQuickStartNote: "無料で比較・出典確認・共有・レポートまで試せます。",
   datasetCatalogPurposeHeading: "目的から選ぶ",
   datasetCatalogPurposeExplore: "調べる",
   datasetCatalogPurposeExploreLead: "地域カードから歴史地図を開き、地物と出典を確認します。",

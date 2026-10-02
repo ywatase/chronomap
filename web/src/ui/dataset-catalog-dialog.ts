@@ -79,7 +79,7 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boo
   lead.textContent = copy.datasetCatalogWelcomeLead;
   welcome.append(heading, lead);
 
-  if (isRoot && model.featured) welcome.append(renderFeatured(model, copy));
+  if (isRoot && model.featured) welcome.append(renderHero(model, copy));
 
   if (isRoot) welcome.append(renderPurposeHub(model, copy, actions));
   welcome.append(renderOfferHub(model, copy));
@@ -97,6 +97,48 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boo
   if (!isRoot && model.featured) welcome.append(renderFeatured(model, copy));
 
   return welcome;
+}
+
+function renderHero(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
+  const hero = document.createElement("section");
+  hero.className = "dataset-catalog-hero";
+  hero.dataset.datasetCatalogHero = "";
+
+  const proof = document.createElement("ul");
+  proof.className = "dataset-catalog-hero-proof-list";
+  for (const text of copy.datasetCatalogHeroProof) {
+    const item = document.createElement("li");
+    item.dataset.datasetCatalogHeroProof = "";
+    item.textContent = text;
+    proof.append(item);
+  }
+  hero.append(proof);
+
+  const featured = renderFeatured(model, copy);
+  featured.classList.add("dataset-catalog-hero-featured");
+  featured.querySelector<HTMLElement>("[data-dataset-catalog-featured-pack]")?.setAttribute("data-dataset-catalog-hero-primary", "");
+  hero.append(featured);
+
+  const secondary = link("#dataset-catalog-cards", copy.datasetCatalogHeroSecondary, "dataset-catalog-purpose-explore", false);
+  secondary.dataset.datasetCatalogHeroSecondary = "";
+  secondary.addEventListener("click", (event) => {
+    const target = document.getElementById("dataset-catalog-cards");
+    if (!target) return;
+    event.preventDefault();
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: "start" });
+  });
+  const secondaryRow = document.createElement("div");
+  secondaryRow.className = "dataset-catalog-hero-secondary";
+  secondaryRow.append(secondary);
+  hero.append(secondaryRow);
+
+  const trust = document.createElement("p");
+  trust.className = "dataset-catalog-hero-trust";
+  trust.dataset.datasetCatalogHeroTrust = "";
+  trust.textContent = copy.datasetCatalogHeroTrust;
+  hero.append(trust);
+  return hero;
 }
 
 function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {

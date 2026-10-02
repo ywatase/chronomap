@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("shows purpose-specific lesson rows while keeping one map route", async ({ page }, testInfo) => {
   await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog).toBeVisible();
   const card = catalog.locator('[data-dataset-catalog-card="ogurike"]');

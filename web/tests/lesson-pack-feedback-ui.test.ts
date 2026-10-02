@@ -108,6 +108,7 @@ describe("lesson pack feedback form", () => {
     showLessonPackFeedback(host, "student", uiCopy("ja"));
     expect(host.querySelector("[data-lesson-pack-completion-facts]")?.textContent).toContain("生徒用を印刷");
     expect(host.querySelector("[data-lesson-pack-pilot-budget]")).toHaveProperty("hidden", true);
+    expect(host.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]')?.parentElement?.textContent).toContain("相談文を作る");
 
     host.querySelector<HTMLInputElement>('input[name="utilization"][value="近いうちに使いたい"]')!.checked = true;
     host.querySelector<HTMLInputElement>('input[name="nextFeature"][value="校内で共有"]')!.checked = true;

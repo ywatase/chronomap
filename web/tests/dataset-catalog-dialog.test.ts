@@ -114,6 +114,16 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector(".dataset-catalog-offer-pricing")?.textContent).toContain("価格");
   });
 
+  it("puts the value proposition and one next action above the root catalog", () => {
+    const root = document.createElement("section");
+    renderDatasetCatalog(root, model, uiCopy("ja"), { onClose: vi.fn(), isRoot: true });
+    expect(root.querySelector("[data-dataset-catalog-hero]")).toBeTruthy();
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-hero-primary]")?.href).toContain("view=pack");
+    expect(root.querySelector<HTMLAnchorElement>("[data-dataset-catalog-hero-secondary]")?.getAttribute("href")).toBe("#dataset-catalog-cards");
+    expect(root.querySelectorAll("[data-dataset-catalog-hero-proof]")).toHaveLength(3);
+    expect(root.querySelector("[data-dataset-catalog-hero-trust]")?.textContent).toContain("登録・決済不要");
+  });
+
   it("calls the close action from the dialog toolbar", () => {
     const onClose = vi.fn();
     const root = document.createElement("section");

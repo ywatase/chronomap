@@ -69,12 +69,14 @@ the Web Mercator-safe latitude range and MapLibre's default zoom ceiling.
 
 ## Start hub
 
-The root page (`/`) starts with three work-oriented choices: explore a region's
-historical map, make a classroom pack from the featured lesson, or resume a
-draft file saved on the current device. The root also states the current pilot
-coverage and the teacher workflows being validated. Existing `dataset=...`
-direct links continue to open the requested map or lesson view without the
-root hub.
+The root page (`/`) starts with the historical map as the work surface. A small
+welcome card offers one primary action (`巨椋池の変化を見る` / `See Ogurike
+change`) and one secondary action (`地域を選ぶ` / `Choose a region`). The map,
+evidence, uncertainty, sharing, and report controls remain available without
+opening a catalog. The secondary action opens the work-oriented catalog hub for
+exploring a region, making a classroom pack, or resuming a draft file saved on
+the current device. Existing `dataset=...` direct links continue to open the
+requested map or lesson view without the root quick-start card.
 
 To resume a draft from the root, choose the UTF-8 JSON file created by
 `下書きをファイル保存`. Chronomap validates its dataset, lesson, steps, and
@@ -203,8 +205,8 @@ available and falls back to a selectable answer textarea. Nothing is sent to a
 server or stored in browser storage, and the in-memory answers disappear on
 reload.
 
-The same completion card also offers `地域教材パックを相談する` / `Consult
-about a regional lesson pack`. This route keeps the two feedback answers and
+The same completion card also offers `地域教材パックの相談文を作る` / `Create
+a regional lesson-pack consultation message`. This route keeps the two feedback answers and
 requires one of four allow-listed paid-interest choices, with an optional
 200-character region/topic hint. `相談文を確認する` / `Review consultation
 text` shows the entire handoff before any copy or share action. It includes only
@@ -245,11 +247,12 @@ citation-only.
 
 ## Teacher quick start
 
-Opening `/` shows a lightweight welcome flow before the map header. It explains
-the three-step path—choose evidence, shape an observation prompt, and share a
-PDF—and links directly to the Ogurike finished example. The root welcome is a
-normal page region, so the map and existing dataset controls remain available
-after scrolling. The finished example uses an allow-listed deep link:
+Opening `/` shows the historical map first with a compact welcome card. It
+explains the free Ogurike 1590/1596 comparison and offers one primary action to
+see the change plus one secondary action to choose a region. The map and its
+evidence, uncertainty, sharing, report, and display-setting controls remain the
+work surface; the longer three-step classroom welcome and purpose hub open only
+after choosing a region. The finished example uses an allow-listed deep link:
 
 ```text
 /?dataset=ogurike&lesson=ogurike-intro&view=pack

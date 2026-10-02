@@ -1,15 +1,25 @@
 import { expect, test } from "@playwright/test";
 
-test("turns the root welcome into a pack preview and classroom editor path", async ({ page }) => {
+test("turns the root map-first welcome into a pack preview and classroom editor path", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     window.print = () => { document.body.dataset.printCalled = "true"; };
   });
   await page.goto("/");
 
   const catalog = page.locator("[data-dataset-catalog-dialog]");
+  await expect(page.locator("aside[data-root-quickstart]")).toBeVisible();
+  await expect(catalog).toBeHidden();
+  await page.screenshot({ path: testInfo.outputPath("root-map-first.png"), fullPage: true });
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   await expect(catalog).toBeVisible();
   const welcome = catalog.locator("[data-dataset-catalog-welcome]");
   await expect(welcome).toContainText(/根拠付きワークシート|evidence-backed worksheet/i);
+  const hero = catalog.locator("[data-dataset-catalog-hero]");
+  await expect(hero).toBeVisible();
+  await expect(hero.locator("[data-dataset-catalog-hero-proof]")).toHaveCount(3);
+  await expect(hero.locator("[data-dataset-catalog-hero-trust]")).toContainText(/登録・決済不要|no account or payment/i);
+  await expect(hero.locator("[data-dataset-catalog-hero-primary]")).toBeVisible();
+  await expect(hero.locator("[data-dataset-catalog-hero-secondary]")).toContainText(/まず地図を調べる|Explore the map first/i);
   await expect(catalog.locator("[data-dataset-catalog-step]")).toHaveCount(3);
   const featuredPack = catalog.locator("[data-dataset-catalog-featured-pack]");
   await expect(featuredPack).toContainText(/完成見本を見る|See the finished example/i);

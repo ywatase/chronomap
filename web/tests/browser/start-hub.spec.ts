@@ -1,8 +1,23 @@
 import { expect, test } from "@playwright/test";
 
+test("shows the historical map first with one primary and one secondary action", async ({ page }, testInfo) => {
+  await page.goto("/");
+  const quickStart = page.locator("aside[data-root-quickstart]");
+  await expect(quickStart).toBeVisible();
+  await expect(page.locator("[data-dataset-catalog-dialog]")).toBeHidden();
+  await expect(page.locator("[data-map-host]")).toBeVisible();
+  await expect(quickStart.locator("[data-root-quickstart-primary]")).toContainText(/巨椋池の変化を見る|See Ogurike change/i);
+  await expect(quickStart.locator("[data-root-quickstart-secondary]")).toContainText(/地域を選ぶ|Choose a region/i);
+  await expect(quickStart.locator("a,button")).toHaveCount(2);
+  const mapTop = await page.locator("[data-map-host]").evaluate((element) => element.getBoundingClientRect().top);
+  expect(mapTop).toBeLessThan(testInfo.project.name === "mobile-chromium" ? 520 : 620);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+});
+
 test("separates explore, build, and local draft resume at the root", async ({ page }) => {
   test.setTimeout(45_000);
   await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const hub = page.locator("[data-dataset-catalog-purpose-hub]");
   await expect(hub).toBeVisible();
   await expect(hub).toContainText(/調べる|Explore the map/);
@@ -12,10 +27,6 @@ test("separates explore, build, and local draft resume at the root", async ({ pa
   await expect(hub).toContainText(/教員向け価値検証中|teacher value/);
   const build = hub.locator("[data-dataset-catalog-purpose-build]");
   await expect(build).toBeVisible();
-  expect(await build.evaluate((element) => {
-    const rect = element.getBoundingClientRect();
-    return rect.top >= 0 && rect.bottom <= window.innerHeight;
-  })).toBeTruthy();
 
   await hub.locator("[data-dataset-catalog-purpose-explore]").click();
   await expect(page.locator("#dataset-catalog-cards")).toBeFocused();
@@ -52,6 +63,7 @@ test("separates explore, build, and local draft resume at the root", async ({ pa
 
 test("surfaces the public evidence audit before opening a region map", async ({ page }, testInfo) => {
   await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const cards = page.locator("[data-dataset-catalog-card]");
   await expect(cards).toHaveCount(3);
   for (const slug of ["ogurike", "tonegawa", "heijokyo"]) {
@@ -66,6 +78,7 @@ test("surfaces the public evidence audit before opening a region map", async ({ 
 
 test("keeps the root hub when a malformed draft is selected", async ({ page }) => {
   await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const hub = page.locator("[data-dataset-catalog-purpose-hub]");
   await hub.locator("[data-dataset-catalog-purpose-draft-file]").setInputFiles({ name: "invalid.json", mimeType: "application/json", buffer: Buffer.from("not json") });
   await expect(hub).toBeVisible();
@@ -78,6 +91,7 @@ test("carries an adoption path from the catalog into the consultation handoff", 
     window.print = () => { document.body.dataset.printCalled = "true"; };
   });
   await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const offers = page.locator("[data-dataset-catalog-offers]");
   await expect(offers).toBeVisible();
   await expect(offers.locator("[data-dataset-catalog-offer]")).toHaveCount(3);
