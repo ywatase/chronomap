@@ -215,6 +215,8 @@ export interface UiCopy {
   readonly datasetCatalogOfferTitles: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferLeads: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferBenefits: Readonly<Record<LessonPackOfferPlan, string>>;
+  readonly datasetCatalogOfferOutputsHeading: string;
+  readonly datasetCatalogOfferOutputs: Readonly<Record<LessonPackOfferPlan, readonly string[]>>;
   readonly datasetCatalogOfferActions: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferPricing: string;
   readonly datasetCatalogStepObserve: string;
@@ -527,6 +529,12 @@ const EN_COPY: UiCopy = {
   datasetCatalogOfferTitles: { "free-explore": "Free exploration", "classroom-pilot": "Classroom pilot", "custom-region": "Custom regional production" },
   datasetCatalogOfferLeads: { "free-explore": "Inspect maps, evidence, sharing, and one classroom pack locally.", "classroom-pilot": "Shape a lesson for one class and discuss the teacher workflow.", "custom-region": "Discuss source curation and lesson design for your own region or topic." },
   datasetCatalogOfferBenefits: { "free-explore": "No account or contact required", "classroom-pilot": "Teacher guide + feedback handoff", "custom-region": "Region/topic scope + source discussion" },
+  datasetCatalogOfferOutputsHeading: "What this path covers",
+  datasetCatalogOfferOutputs: {
+    "free-explore": ["Map, evidence, and uncertainty review", "Shareable report and links", "One finished classroom-pack example"],
+    "classroom-pilot": ["One-class lesson-pack draft", "Student worksheet + teacher reference", "Source, rights, and start-QR checklist"],
+    "custom-region": ["Region/topic source curation", "Lesson design matched to your scope", "Student and teacher PDF delivery scope"],
+  },
   datasetCatalogOfferActions: { "free-explore": "Try the free example", "classroom-pilot": "Create a pilot consultation message", "custom-region": "Create a custom-production consultation message" },
   datasetCatalogOfferPricing: "Prices, checkout, and delivery dates are not published yet; the consultation text records intent only.",
   datasetCatalogStepObserve: "1. Choose a topic and evidence",
@@ -831,6 +839,12 @@ const JA_COPY: UiCopy = {
   datasetCatalogOfferTitles: { "free-explore": "無料で試す", "classroom-pilot": "授業パイロット", "custom-region": "地域教材の個別制作" },
   datasetCatalogOfferLeads: { "free-explore": "地図・根拠・共有・1つの教材パックを端末上で確認します。", "classroom-pilot": "1クラス分の教材を整え、教員の使い方を相談します。", "custom-region": "希望地域・題材の出典整理と教材設計を相談します。" },
   datasetCatalogOfferBenefits: { "free-explore": "登録・連絡先なしで開始", "classroom-pilot": "教員用資料＋相談文", "custom-region": "地域・題材の範囲＋出典相談" },
+  datasetCatalogOfferOutputsHeading: "この選択肢で扱う内容",
+  datasetCatalogOfferOutputs: {
+    "free-explore": ["地図・根拠・不確実性の確認", "共有リンクとレポート", "1つの教材パックの完成見本"],
+    "classroom-pilot": ["1クラス向けの授業パック案", "生徒用ワークシート＋教員用参照資料", "出典・権利・開始QRの整理"],
+    "custom-region": ["希望地域・題材の出典整理", "範囲に合わせた授業設計", "生徒用・教員用PDFの納品範囲"],
+  },
   datasetCatalogOfferActions: { "free-explore": "無料の完成見本を見る", "classroom-pilot": "授業パイロットの相談文を作る", "custom-region": "個別制作の相談文を作る" },
   datasetCatalogOfferPricing: "価格・決済・納期はまだ公開していません。相談文には検討意向だけが記録されます。",
   datasetCatalogStepObserve: "1. 題材と根拠を選ぶ",

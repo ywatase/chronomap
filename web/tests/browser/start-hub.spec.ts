@@ -96,6 +96,9 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect(offers).toBeVisible();
   await expect(offers.locator("[data-dataset-catalog-offer]")).toHaveCount(3);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/地域教材の個別制作|Custom regional production/);
+  await expect(offers.locator("[data-dataset-catalog-offer=free-explore] [data-dataset-catalog-offer-output]")).toHaveCount(3);
+  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-output]")).toHaveCount(3);
+  await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/希望地域・題材の出典整理|Region\/topic source curation/);
   await offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]").click();
   await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
   const builder = page.locator("[data-lesson-pack-builder]");

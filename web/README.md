@@ -245,6 +245,16 @@ price, contract, or billing state. The Tone River and Heijokyo geometries are
 explicitly approximate reconstructions; external source text and images remain
 citation-only.
 
+The adoption cards also make the output boundary explicit. Free exploration
+covers the map/evidence/uncertainty view, shareable reports and links, and one
+finished classroom-pack example. A classroom pilot covers a one-class pack
+draft, student worksheet plus teacher reference, and a source/rights/start-QR
+checklist. Custom regional production covers region/topic source curation,
+scope-matched lesson design, and the intended student/teacher PDF delivery
+scope. The latter two are consultation topics, not published prices or delivery
+guarantees; their CTA only carries an allow-listed `offer` value into the
+browser-only consultation handoff.
+
 ## Teacher quick start
 
 Opening `/` shows the historical map first with a compact welcome card. It

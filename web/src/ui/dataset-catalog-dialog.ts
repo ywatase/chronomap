@@ -167,7 +167,21 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
     const benefit = document.createElement("p");
     benefit.className = "dataset-catalog-offer-benefit";
     benefit.textContent = copy.datasetCatalogOfferBenefits[plan];
-    card.append(title, description, benefit);
+    const outputs = document.createElement("div");
+    outputs.className = "dataset-catalog-offer-outputs";
+    outputs.dataset.datasetCatalogOfferOutputs = plan;
+    const outputsHeading = document.createElement("h5");
+    outputsHeading.textContent = copy.datasetCatalogOfferOutputsHeading;
+    const outputList = document.createElement("ul");
+    for (const outputText of copy.datasetCatalogOfferOutputs[plan]) {
+      const output = document.createElement("li");
+      output.className = "dataset-catalog-offer-output";
+      output.dataset.datasetCatalogOfferOutput = "";
+      output.textContent = outputText;
+      outputList.append(output);
+    }
+    outputs.append(outputsHeading, outputList);
+    card.append(title, description, benefit, outputs);
     const target = plan === "free-explore" ? freeUrl : builderUrl ? addOffer(builderUrl, plan) : undefined;
     if (target) card.append(link(target, copy.datasetCatalogOfferActions[plan], "dataset-catalog-offer-link", plan !== "free-explore"));
     else card.append(disabledPurposeAction(copy.datasetCatalogOfferActions[plan]));

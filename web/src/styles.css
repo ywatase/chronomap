@@ -391,6 +391,11 @@ footer a { color: #155e8a; }
 .dataset-catalog-offer h4 { margin: 0; color: #102a43; font-size: .9rem; line-height: 1.25; }
 .dataset-catalog-offer p { min-height: 2.7em; margin: 0; color: #40566a; font-size: .78rem; line-height: 1.4; }
 .dataset-catalog-offer .dataset-catalog-offer-benefit { min-height: 0; color: #17324d; font-size: .76rem; font-weight: 700; }
+.dataset-catalog-offer-outputs { display: grid; gap: .2rem; margin-top: .05rem; padding-top: .4rem; border-top: 1px solid #d0dbe2; }
+.dataset-catalog-offer-outputs h5 { margin: 0; color: #536b7e; font-size: .72rem; line-height: 1.3; }
+.dataset-catalog-offer-outputs ul { display: grid; gap: .15rem; margin: 0; padding: 0; list-style: none; }
+.dataset-catalog-offer-output { position: relative; padding-left: 1rem; color: #304b60; font-size: .74rem; line-height: 1.35; }
+.dataset-catalog-offer-output::before { position: absolute; top: 0; left: 0; color: #2f7d58; content: "✓"; font-weight: 900; }
 .dataset-catalog-offer .dataset-catalog-cta { width: 100%; flex: 1 1 auto; }
 .dataset-catalog-offer-pricing { margin: 0; padding: .45rem .55rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .76rem; line-height: 1.4; }
 .dataset-catalog-grid { scroll-margin-top: 1rem; }
