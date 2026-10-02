@@ -60,3 +60,14 @@ test("turns the root map-first welcome into a pack preview and classroom editor 
   await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
   await expect(page.locator("[data-lesson-pack-dialog]")).toBeHidden();
 });
+
+test("keeps the map-first hierarchy calm and touchable with reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const quickStart = page.locator("aside[data-root-quickstart]");
+  await expect(quickStart).toBeVisible();
+  await expect.poll(() => quickStart.evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
+  const targets = await quickStart.locator("a,button").evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().height)));
+  expect(targets.every((height) => height >= 44)).toBeTruthy();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+});
