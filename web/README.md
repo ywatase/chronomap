@@ -232,6 +232,8 @@ normalized before text or URL generation.
 The handoff is never sent or saved by Chronomap. With no build-time contact
 configured, the completion card exposes copy, a local `.txt` download, and (when
 supported) the device share menu; it does not render a placeholder email CTA.
+It also states that no consultation mailbox is configured, so the operator must
+provide a destination separately; the UI never invents or guesses a contact.
 The downloaded filename is derived from the public dataset and lesson IDs only,
 and the file is created in memory after the user clicks the save action. A real
 public `mailto:` recipient can be configured later, at which point the CTA opens

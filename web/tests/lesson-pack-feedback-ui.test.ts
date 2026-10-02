@@ -109,6 +109,7 @@ describe("lesson pack feedback form", () => {
     expect(host.querySelector("[data-lesson-pack-completion-facts]")?.textContent).toContain("生徒用を印刷");
     expect(host.querySelector("[data-lesson-pack-pilot-budget]")).toHaveProperty("hidden", true);
     expect(host.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]')?.parentElement?.textContent).toContain("相談文を作る");
+    expect(host.querySelector("[data-lesson-pack-pilot-no-contact]")?.textContent).toContain("相談窓口が設定されていません");
 
     host.querySelector<HTMLInputElement>('input[name="utilization"][value="近いうちに使いたい"]')!.checked = true;
     host.querySelector<HTMLInputElement>('input[name="nextFeature"][value="校内で共有"]')!.checked = true;
@@ -148,6 +149,7 @@ describe("lesson pack feedback form", () => {
     expect(mail.hidden).toBe(false);
     expect(mail.href).toMatch(/^mailto:pilot@example\.test\?subject=/);
     expect(mail.href).not.toContain("%0D");
+    expect(host.querySelector("[data-lesson-pack-pilot-no-contact]")).toBeNull();
   });
 
   it("offers a user-initiated local text download without sending the handoff", () => {

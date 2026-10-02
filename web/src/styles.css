@@ -242,6 +242,7 @@ footer a { color: #155e8a; }
 .lesson-pack-completion h3 { margin: 0; color: #17324d; font-size: 1rem; }
 .lesson-pack-completion p { line-height: 1.45; overflow-wrap: anywhere; }
 .lesson-pack-completion .lesson-pack-pilot-privacy { padding: .55rem .65rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .84rem; }
+.lesson-pack-completion .lesson-pack-pilot-no-contact { padding: .55rem .65rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; font-size: .84rem; }
 .lesson-pack-completion fieldset { margin: .75rem 0 0; padding: .55rem; border: 1px solid #c4d0d9; border-radius: .45rem; }
 .lesson-pack-completion .lesson-pack-pilot-plan { border-color: #9bb3c2; background: #eef7fb; }
 .lesson-pack-completion .lesson-pack-pilot-plan legend { color: #17324d; font-weight: 700; }

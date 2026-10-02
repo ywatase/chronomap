@@ -163,6 +163,7 @@ export interface UiCopy {
   readonly lessonPackCompletionSummary: string;
   readonly lessonPackCompletionFacts: (steps: number, scope: "student" | "teacher" | "full", includeTeacher: boolean, observationFigure: boolean) => string;
   readonly lessonPackPilotPrivacy: string;
+  readonly lessonPackPilotNoContact: string;
   readonly lessonPackPilotFeedbackRoute: string;
   readonly lessonPackPilotConsultRoute: string;
   readonly lessonPackPilotPlan: string;
@@ -481,6 +482,7 @@ const EN_COPY: UiCopy = {
   lessonPackCompletionSummary: "Printed pack summary",
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps} step${steps === 1 ? "" : "s"} · ${observationFigure ? "observation figure" : "figure unavailable"} · student material${includeTeacher ? " · teacher material" : ""} · QR · sources/rights · ${scope} print`,
   lessonPackPilotPrivacy: "Chronomap does not send or save this text. Do not enter a school name, student name, contact details, or other personal information. Review it before copying or sharing; sending is always your action.",
+  lessonPackPilotNoContact: "No consultation mailbox is configured for this demo. Save or copy the handoff and send it to the operator yourself.",
   lessonPackPilotFeedbackRoute: "Feedback only",
   lessonPackPilotConsultRoute: "Create a regional lesson-pack consultation message",
   lessonPackPilotPlan: "Offer path (required for consultation)",
@@ -804,6 +806,7 @@ const JA_COPY: UiCopy = {
   lessonPackCompletionSummary: "印刷した教材パックの概要",
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps}ステップ · ${observationFigure ? "観察用概略図" : "概略図なし"} · 生徒用資料${includeTeacher ? " · 教員用資料" : ""} · QR・出典／権利 · ${scope === "student" ? "生徒用" : scope === "teacher" ? "教員用" : "全体"}を印刷`,
   lessonPackPilotPrivacy: "この文章はChronomapから自動送信・保存されません。学校名、児童生徒名、連絡先などの個人情報は入力しないでください。コピー・共有前に全文を確認し、送信はご自身で行ってください。",
+  lessonPackPilotNoContact: "このデモには相談窓口が設定されていません。相談文を保存またはコピーし、運営者へご自身で送ってください。",
   lessonPackPilotFeedbackRoute: "フィードバックのみ送る",
   lessonPackPilotConsultRoute: "地域教材パックの相談文を作る",
   lessonPackPilotPlan: "導入プラン（相談する場合は必須）",

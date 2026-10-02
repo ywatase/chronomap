@@ -207,6 +207,7 @@ interface PilotHandoffActions {
 }
 
 function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackContext, copy: UiCopy, state: LessonPackFeedbackState | null, actions: PilotHandoffActions & { readonly initialPilotPlan?: LessonPackOfferPlan; readonly pilotContact?: string | null }): void {
+  const contact = actions.pilotContact === undefined ? LESSON_PACK_PILOT_CONTACT : actions.pilotContact;
   const card = document.createElement("section");
   card.className = "lesson-pack-completion";
   card.dataset.lessonPackCompletion = "";
@@ -223,6 +224,13 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   privacy.className = "lesson-pack-pilot-privacy";
   privacy.textContent = copy.lessonPackPilotPrivacy;
   card.append(heading, summary, privacy);
+  if (!contact) {
+    const noContact = document.createElement("p");
+    noContact.className = "lesson-pack-pilot-no-contact";
+    noContact.dataset.lessonPackPilotNoContact = "";
+    noContact.textContent = copy.lessonPackPilotNoContact;
+    card.append(noContact);
+  }
 
   const form = document.createElement("form");
   form.dataset.lessonPackPilotForm = "";
@@ -335,7 +343,6 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   downloadButton.type = "button";
   downloadButton.textContent = copy.lessonPackPilotDownload;
   downloadButton.dataset.lessonPackPilotDownload = "";
-  const contact = actions.pilotContact === undefined ? LESSON_PACK_PILOT_CONTACT : actions.pilotContact;
   const mail = contact ? document.createElement("a") : null;
   if (mail) {
     mail.textContent = copy.lessonPackPilotMail;

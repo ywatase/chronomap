@@ -213,6 +213,12 @@ test("offers a privacy-bounded paid-interest consultation handoff after printing
   await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
   await expect(answer).not.toHaveValue(/秘密/);
   await expect(answer).not.toHaveValue(/授業設計メモ|Teaching guide|学習のねらい/);
+  const noContact = feedback.locator("[data-lesson-pack-pilot-no-contact]");
+  if (process.env.VITE_CHRONOMAP_PILOT_CONTACT) {
+    await expect(noContact).toHaveCount(0);
+  } else {
+    await expect(noContact).toContainText(/相談窓口が設定されていません|no consultation mailbox/i);
+  }
   const downloadPromise = page.waitForEvent("download");
   await feedback.locator("[data-lesson-pack-pilot-download]").click();
   const consultationDownload = await downloadPromise;
