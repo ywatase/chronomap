@@ -88,6 +88,11 @@ export function buildSafeLessonPackPilotMailto(contact: string | null | undefine
   return `${safeContact}?subject=${encodeURIComponent(clean(subject, 160))}&body=${encodeURIComponent(clean(body, 8000))}`;
 }
 
+/** Build a path-safe filename for the user-initiated local handoff download. */
+export function buildLessonPackPilotDownloadFilename(datasetSlug: unknown, lessonId: unknown): string {
+  return `chronomap-${safeFilenamePart(datasetSlug, "dataset")}-${safeFilenamePart(lessonId, "lesson")}-consultation.txt`;
+}
+
 export function normalizeLessonPackPilotContact(value: unknown): string | null {
   if (typeof value !== "string") return null;
   const contact = value.trim();
@@ -95,3 +100,8 @@ export function normalizeLessonPackPilotContact(value: unknown): string | null {
 }
 
 function safeCount(value: number): string { return Number.isFinite(value) && value >= 0 ? String(Math.floor(value)) : "0"; }
+
+function safeFilenamePart(value: unknown, fallback: string): string {
+  const normalized = clean(value, 80).normalize("NFKC").replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-+|-+$/g, "");
+  return normalized.slice(0, 60) || fallback;
+}

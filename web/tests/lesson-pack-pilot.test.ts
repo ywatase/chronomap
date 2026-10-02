@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildLessonPackPilotText, buildSafeLessonPackPilotMailto, normalizeLessonPackPilot, normalizeLessonPackPilotContact } from "../src/domain/lesson-pack-pilot";
+import { buildLessonPackPilotText, buildSafeLessonPackPilotMailto, buildLessonPackPilotDownloadFilename, normalizeLessonPackPilot, normalizeLessonPackPilotContact } from "../src/domain/lesson-pack-pilot";
 
 describe("lesson-pack pilot handoff", () => {
   const context = { datasetSlug: "heijokyo", lessonId: "intro", selectedStepCount: 3, includeTeacher: false, observationFigure: true, lastPrintScope: "student" as const, language: "ja" as const };
@@ -40,5 +40,11 @@ describe("lesson-pack pilot handoff", () => {
     expect(normalizeLessonPackPilotContact("mailto:pilot%0d%0a@example.test")).toBeNull();
     expect(normalizeLessonPackPilotContact("https://example.test/contact")).toBeNull();
     expect(normalizeLessonPackPilotContact("mailto:pilot@example.test\r\nBcc:other@example.test")).toBeNull();
+  });
+
+  it("creates a safe, stable text-download filename from public lesson identifiers", () => {
+    expect(buildLessonPackPilotDownloadFilename("heijokyo", "heijokyo-intro")).toBe("chronomap-heijokyo-heijokyo-intro-consultation.txt");
+    expect(buildLessonPackPilotDownloadFilename("../秘密地域", "lesson/1\r\n")).toBe("chronomap-dataset-lesson-1-consultation.txt");
+    expect(buildLessonPackPilotDownloadFilename("", "")).toBe("chronomap-dataset-lesson-consultation.txt");
   });
 });

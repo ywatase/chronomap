@@ -149,4 +149,39 @@ describe("lesson pack feedback form", () => {
     expect(mail.href).toMatch(/^mailto:pilot@example\.test\?subject=/);
     expect(mail.href).not.toContain("%0D");
   });
+
+  it("offers a user-initiated local text download without sending the handoff", () => {
+    const host = document.createElement("section");
+    renderLessonPackFeedback(host, context, uiCopy("ja"));
+    showLessonPackFeedback(host, "student", uiCopy("ja"));
+    host.querySelector<HTMLInputElement>('input[name="utilization"][value="近いうちに使いたい"]')!.click();
+    host.querySelector<HTMLInputElement>('input[name="nextFeature"][value="校内で共有"]')!.click();
+    host.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]')!.click();
+    host.querySelector<HTMLInputElement>('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]')!.click();
+    host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
+
+    const originalCreate = URL.createObjectURL;
+    const originalRevoke = URL.revokeObjectURL;
+    const createObjectURL = vi.fn().mockReturnValue("blob:chronomap-consultation");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createObjectURL });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeObjectURL });
+    const anchorClick = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
+      expect(this.download).toBe("chronomap-heijokyo-intro-consultation.txt");
+    });
+    try {
+      const download = host.querySelector<HTMLButtonElement>("[data-lesson-pack-pilot-download]")!;
+      expect(download.hidden).toBe(false);
+      download.click();
+      expect(createObjectURL).toHaveBeenCalledOnce();
+      expect(createObjectURL.mock.calls[0][0]).toBeInstanceOf(Blob);
+      expect(host.querySelector("[data-lesson-pack-pilot-status]")?.textContent).toContain("保存しました");
+    } finally {
+      anchorClick.mockRestore();
+      if (originalCreate) Object.defineProperty(URL, "createObjectURL", { configurable: true, value: originalCreate });
+      else delete (URL as unknown as { createObjectURL?: unknown }).createObjectURL;
+      if (originalRevoke) Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: originalRevoke });
+      else delete (URL as unknown as { revokeObjectURL?: unknown }).revokeObjectURL;
+    }
+  });
 });

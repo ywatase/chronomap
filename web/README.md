@@ -57,7 +57,7 @@ repository `.venv/bin` directory is still present on `PATH` in the same shell.
 
 ### Optional consultation mailbox
 
-The consultation handoff is copy/share-only by default. To add a reviewable
+The consultation handoff is copy/share/download-only by default. To add a reviewable
 email-draft action at build time, copy `.env.example` to `.env.local` and set
 `VITE_CHRONOMAP_PILOT_CONTACT` to a public `mailto:` address chosen by the
 operator, for example `mailto:pilot@example.com`. Vite embeds `VITE_*` values
@@ -230,10 +230,12 @@ drafts, source bodies, contact details, and device data are excluded. CR/LF is
 normalized before text or URL generation.
 
 The handoff is never sent or saved by Chronomap. With no build-time contact
-configured, the completion card exposes copy and (when supported) the device
-share menu only; it does not render a placeholder email CTA. A real public
-`mailto:` recipient can be configured later, at which point the CTA opens a
-reviewable email draft and still does not send automatically. Scope changes and
+configured, the completion card exposes copy, a local `.txt` download, and (when
+supported) the device share menu; it does not render a placeholder email CTA.
+The downloaded filename is derived from the public dataset and lesson IDs only,
+and the file is created in memory after the user clicks the save action. A real
+public `mailto:` recipient can be configured later, at which point the CTA opens
+a reviewable email draft and still does not send automatically. Scope changes and
 reloads discard the review text, and print CSS hides the entire completion card.
 
 ## Dataset catalog

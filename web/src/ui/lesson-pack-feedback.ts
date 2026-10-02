@@ -5,7 +5,7 @@ import {
   type LessonPackFeedbackInput,
   type LessonPackFeedbackContext,
 } from "../domain/lesson-pack-feedback";
-import { DEFAULT_LESSON_PACK_OFFER_PLAN, LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_OFFER_PLANS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackOfferPlan, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
+import { DEFAULT_LESSON_PACK_OFFER_PLAN, LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_OFFER_PLANS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotDownloadFilename, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackOfferPlan, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface LessonPackFeedbackState {
@@ -331,6 +331,10 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   shareButton.type = "button";
   shareButton.textContent = copy.lessonPackPilotShare;
   shareButton.dataset.lessonPackPilotShare = "";
+  const downloadButton = document.createElement("button");
+  downloadButton.type = "button";
+  downloadButton.textContent = copy.lessonPackPilotDownload;
+  downloadButton.dataset.lessonPackPilotDownload = "";
   const contact = actions.pilotContact === undefined ? LESSON_PACK_PILOT_CONTACT : actions.pilotContact;
   const mail = contact ? document.createElement("a") : null;
   if (mail) {
@@ -343,7 +347,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   status.dataset.lessonPackPilotStatus = "";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  actionsRow.append(back, copyButton, shareButton);
+  actionsRow.append(back, copyButton, shareButton, downloadButton);
   if (mail) actionsRow.append(mail);
   form.append(route, plan, budget, regionLabel, review, error, answerLabel, actionsRow, status);
   card.append(form);
@@ -380,6 +384,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     back.hidden = !visible;
     copyButton.hidden = !visible;
     shareButton.hidden = !visible || typeof navigator === "undefined" || typeof navigator.share !== "function";
+    downloadButton.hidden = !visible;
     if (mail) mail.hidden = !visible || !Boolean(mail.href);
   };
   const scope = (): LessonPackPilotContext["lastPrintScope"] => {
@@ -442,6 +447,9 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   });
   back.addEventListener("click", () => { setReview(false); error.hidden = true; notify(); review.focus(); });
   copyButton.addEventListener("click", () => { void copyPilotAnswer(answer.value, status, copy); });
+  downloadButton.addEventListener("click", () => {
+    downloadPilotAnswer(answer.value, context, status, copy);
+  });
   shareButton.addEventListener("click", () => {
     if (!answer.value || typeof navigator === "undefined" || typeof navigator.share !== "function") return;
     try {
@@ -464,9 +472,39 @@ function clearPilotReview(container: HTMLElement): void {
   if (error) error.hidden = true;
   const status = container.querySelector<HTMLElement>("[data-lesson-pack-pilot-status]");
   if (status) status.textContent = "";
-  for (const selector of ["[data-lesson-pack-pilot-copy]", "[data-lesson-pack-pilot-share]", "[data-lesson-pack-pilot-mail]", "[data-lesson-pack-pilot-back]"]) {
+  for (const selector of ["[data-lesson-pack-pilot-copy]", "[data-lesson-pack-pilot-share]", "[data-lesson-pack-pilot-download]", "[data-lesson-pack-pilot-mail]", "[data-lesson-pack-pilot-back]"]) {
     const element = container.querySelector<HTMLElement>(selector);
     if (element) element.hidden = true;
+  }
+}
+
+function downloadPilotAnswer(value: string, context: LessonPackFeedbackContext, status: HTMLElement, copy: UiCopy): void {
+  if (!value) {
+    status.textContent = copy.lessonPackFeedbackRequired;
+    return;
+  }
+  if (typeof Blob === "undefined" || typeof URL === "undefined" || typeof URL.createObjectURL !== "function") {
+    status.textContent = copy.lessonPackPilotDownloadFailed;
+    return;
+  }
+  let objectUrl: string | null = null;
+  try {
+    const blob = new Blob([`\ufeff${value}`], { type: "text/plain;charset=utf-8" });
+    objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = buildLessonPackPilotDownloadFilename(context.datasetSlug, context.lessonId);
+    link.rel = "noopener";
+    link.hidden = true;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    status.textContent = copy.lessonPackPilotDownloaded;
+    const url = objectUrl;
+    globalThis.setTimeout(() => URL.revokeObjectURL(url), 0);
+  } catch {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    status.textContent = copy.lessonPackPilotDownloadFailed;
   }
 }
 

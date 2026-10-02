@@ -213,6 +213,11 @@ test("offers a privacy-bounded paid-interest consultation handoff after printing
   await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
   await expect(answer).not.toHaveValue(/秘密/);
   await expect(answer).not.toHaveValue(/授業設計メモ|Teaching guide|学習のねらい/);
+  const downloadPromise = page.waitForEvent("download");
+  await feedback.locator("[data-lesson-pack-pilot-download]").click();
+  const consultationDownload = await downloadPromise;
+  expect(consultationDownload.suggestedFilename()).toBe("chronomap-heijokyo-heijokyo-intro-consultation.txt");
+  await expect(feedback.locator("[data-lesson-pack-pilot-status]")).toContainText(/保存しました|downloaded/i);
   const mail = feedback.locator("[data-lesson-pack-pilot-mail]");
   if (process.env.VITE_CHRONOMAP_PILOT_CONTACT) {
     await expect(mail).toHaveCount(1);

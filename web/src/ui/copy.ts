@@ -176,10 +176,13 @@ export interface UiCopy {
   readonly lessonPackPilotBackToEdit: string;
   readonly lessonPackPilotCopy: string;
   readonly lessonPackPilotShare: string;
+  readonly lessonPackPilotDownload: string;
   readonly lessonPackPilotMail: string;
   readonly lessonPackPilotCopied: string;
   readonly lessonPackPilotCopyFailed: string;
   readonly lessonPackPilotShareFailed: string;
+  readonly lessonPackPilotDownloaded: string;
+  readonly lessonPackPilotDownloadFailed: string;
   readonly lessonPackPilotMailOpened: string;
   readonly lessonPackPilotSubject: string;
   readonly datasetCatalogOpen: string;
@@ -495,10 +498,13 @@ const EN_COPY: UiCopy = {
   lessonPackPilotBackToEdit: "Back to editing",
   lessonPackPilotCopy: "Copy handoff text",
   lessonPackPilotShare: "Share handoff text",
+  lessonPackPilotDownload: "Save text file",
   lessonPackPilotMail: "Open email draft",
   lessonPackPilotCopied: "Handoff text copied.",
   lessonPackPilotCopyFailed: "Could not copy. Select the review text and copy it manually.",
   lessonPackPilotShareFailed: "Sharing was canceled or unavailable. The review text is still here.",
+  lessonPackPilotDownloaded: "Handoff text downloaded.",
+  lessonPackPilotDownloadFailed: "Could not save the file. Select the review text and save it manually.",
   lessonPackPilotMailOpened: "Email app opened. The message has not been sent.",
   lessonPackPilotSubject: "Chronomap regional lesson-pack consultation",
   datasetCatalogOpen: "Choose a region or lesson · plans",
@@ -810,10 +816,13 @@ const JA_COPY: UiCopy = {
   lessonPackPilotBackToEdit: "編集に戻る",
   lessonPackPilotCopy: "相談文をコピー",
   lessonPackPilotShare: "相談文を共有",
+  lessonPackPilotDownload: "相談文を保存",
   lessonPackPilotMail: "メール下書きを開く",
   lessonPackPilotCopied: "相談文をコピーしました。",
   lessonPackPilotCopyFailed: "コピーできませんでした。表示された相談文を選択して手動でコピーしてください。",
   lessonPackPilotShareFailed: "共有をキャンセルしたか利用できません。相談文はこの画面に残っています。",
+  lessonPackPilotDownloaded: "相談文をテキストファイルに保存しました。",
+  lessonPackPilotDownloadFailed: "保存できませんでした。表示された相談文を選択して手動で保存してください。",
   lessonPackPilotMailOpened: "メールアプリを開きました（送信は完了していません）。",
   lessonPackPilotSubject: "Chronomap 地域教材パックの相談",
   datasetCatalogOpen: "地域・教材を選ぶ（料金も見る）",
