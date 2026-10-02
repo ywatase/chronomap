@@ -223,6 +223,7 @@ export interface UiCopy {
   readonly datasetCatalogOfferOutputsHeading: string;
   readonly datasetCatalogOfferOutputs: Readonly<Record<LessonPackOfferPlan, readonly string[]>>;
   readonly datasetCatalogOfferActions: Readonly<Record<LessonPackOfferPlan, string>>;
+  readonly datasetCatalogOfferPreview: string;
   readonly datasetCatalogOfferPricing: string;
   readonly datasetCatalogProcessHeading: string;
   readonly datasetCatalogProcessLead: string;
@@ -553,6 +554,7 @@ const EN_COPY: UiCopy = {
     "custom-region": ["Region/topic source curation", "Lesson design matched to your scope", "Student and teacher PDF delivery scope"],
   },
   datasetCatalogOfferActions: { "free-explore": "Try the free example", "classroom-pilot": "Create a pilot consultation message", "custom-region": "Create a custom-production consultation message" },
+  datasetCatalogOfferPreview: "Preview the finished example",
   datasetCatalogOfferPricing: "Beta price proposal: tax, scope, delivery date, and final quote are confirmed in consultation. Checkout is not enabled; the handoff only records intent.",
   datasetCatalogProcessHeading: "How adoption works",
   datasetCatalogProcessLead: "No payment is taken here. Try the free example first, then carry a reviewed scope into a consultation.",
@@ -875,6 +877,7 @@ const JA_COPY: UiCopy = {
     "custom-region": ["希望地域・題材の出典整理", "範囲に合わせた授業設計", "生徒用・教員用PDFの納品範囲"],
   },
   datasetCatalogOfferActions: { "free-explore": "無料の完成見本を見る", "classroom-pilot": "授業パイロットの相談文を作る", "custom-region": "個別制作の相談文を作る" },
+  datasetCatalogOfferPreview: "完成見本で内容を見る",
   datasetCatalogOfferPricing: "β版の価格案です。税・範囲・納期・最終見積は相談で確定し、このサイトでは決済しません。相談文には検討意向だけが記録されます。",
   datasetCatalogProcessHeading: "導入までの流れ",
   datasetCatalogProcessLead: "このサイトで決済は行いません。まず無料の完成見本を試し、確認した範囲を相談文へ引き継ぎます。",

@@ -283,6 +283,9 @@ date.
 When a paid-path CTA opens the browser-only builder, the selected path and beta
 price remain visible above the editor so the user can verify the context before
 previewing and generating the consultation handoff.
+Each paid card also offers a finished-example preview while preserving the same
+allow-listed `offer` value, so a buyer can inspect the output before starting
+the consultation path.
 
 ## Teacher quick start
 

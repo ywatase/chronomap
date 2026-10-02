@@ -189,6 +189,10 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
     const target = plan === "free-explore" ? freeUrl : builderUrl ? addOffer(builderUrl, plan) : undefined;
     if (target) card.append(link(target, copy.datasetCatalogOfferActions[plan], "dataset-catalog-offer-link", plan !== "free-explore"));
     else card.append(disabledPurposeAction(copy.datasetCatalogOfferActions[plan]));
+    if (plan !== "free-explore" && freeUrl) {
+      const preview = link(addOffer(model.featured?.packUrl ?? freeUrl, plan), copy.datasetCatalogOfferPreview, "dataset-catalog-offer-preview", false);
+      card.append(preview);
+    }
     cards.append(card);
   }
   section.append(cards);
@@ -562,7 +566,7 @@ function label(text: string): HTMLSpanElement {
   return element;
 }
 
-function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map" | "dataset-catalog-featured-pack" | "dataset-catalog-featured-builder" | "dataset-catalog-purpose-explore" | "dataset-catalog-purpose-build" | "dataset-catalog-offer-link", primary: boolean): HTMLAnchorElement {
+function link(href: string, text: string, dataName: "dataset-catalog-builder" | "dataset-catalog-lesson" | "dataset-catalog-map" | "dataset-catalog-featured-pack" | "dataset-catalog-featured-builder" | "dataset-catalog-purpose-explore" | "dataset-catalog-purpose-build" | "dataset-catalog-offer-link" | "dataset-catalog-offer-preview", primary: boolean): HTMLAnchorElement {
   const element = document.createElement("a");
   element.href = href;
   element.textContent = text;

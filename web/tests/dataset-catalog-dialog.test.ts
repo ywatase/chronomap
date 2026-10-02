@@ -118,6 +118,8 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelector('[data-dataset-catalog-offer="custom-region"]')?.textContent).toContain("相談文を作る");
     expect(root.querySelectorAll('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-output]')).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-offer="custom-region"]')?.textContent).toContain("希望地域・題材の出典整理");
+    expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-preview]')?.textContent).toContain("完成見本");
+    expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-preview]')?.href).toContain("offer=custom-region");
     expect(root.querySelector('[data-dataset-catalog-offer="free-explore"]')?.textContent).toContain("共有リンクとレポート");
     expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-link]')?.href).toContain("offer=custom-region");
     expect(root.querySelector(".dataset-catalog-offer-pricing")?.textContent).toContain("価格");
