@@ -16,7 +16,9 @@ test("opens the Azuchi Castle pilot from the catalog and compares its dated cast
   await expect(page.locator("[data-lesson-progress]")).toContainText(/1\/5|1 of 5/);
   await page.getByRole("button", { name: /詳細を閉じる|Close details/ }).click();
   const featureSearch = page.getByLabel(/表示中の地物を検索|Search visible features/);
+  const urlBeforeSearch = page.url();
   await featureSearch.fill("水運");
+  await expect(page).toHaveURL(urlBeforeSearch);
   await expect(page.locator("[data-feature-id]")).toHaveCount(1);
   await expect(page.locator("[data-feature-id]")).toContainText(/水運|water transport/);
   await expect(page.locator(".feature-count")).toContainText(/4件中1件|1 of 4/);
