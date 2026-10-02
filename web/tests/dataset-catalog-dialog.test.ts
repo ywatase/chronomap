@@ -112,10 +112,10 @@ describe("dataset catalog dialog", () => {
     expect(root.querySelectorAll("[data-dataset-catalog-offer-price]")).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-price]')?.textContent).toContain("¥49,800");
     expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("授業パイロット");
-    expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("相談文を作る");
+    expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("完成見本を確認して授業パイロットの相談文を作る");
     expect(root.querySelectorAll('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-output]')).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-offer="classroom-pilot"]')?.textContent).toContain("生徒用ワークシート");
-    expect(root.querySelector('[data-dataset-catalog-offer="custom-region"]')?.textContent).toContain("相談文を作る");
+    expect(root.querySelector('[data-dataset-catalog-offer="custom-region"]')?.textContent).toContain("完成見本を確認して個別制作の相談文を作る");
     expect(root.querySelectorAll('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-output]')).toHaveLength(3);
     expect(root.querySelector('[data-dataset-catalog-offer="custom-region"]')?.textContent).toContain("希望地域・題材の出典整理");
     expect(root.querySelector<HTMLAnchorElement>('[data-dataset-catalog-offer="custom-region"] [data-dataset-catalog-offer-preview]')?.textContent).toContain("完成見本");

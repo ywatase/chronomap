@@ -296,6 +296,9 @@ previewing and generating the consultation handoff.
 Each paid card also offers a finished-example preview while preserving the same
 allow-listed `offer` value, so a buyer can inspect the output before starting
 the consultation path.
+The paid primary CTA states that sequence explicitly: preview the finished
+example, then create the consultation message. It opens the browser-only builder
+first; the consultation handoff still appears after the print/PDF attempt.
 
 ## Teacher quick start
 
