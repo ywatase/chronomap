@@ -122,6 +122,8 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await feedback.locator('input[name="utilization"][value="近いうちに使いたい"]').check();
   await feedback.locator('input[name="nextFeature"][value="自分の地域・題材を追加"]').check();
   await feedback.locator('input[name="pilot-route"][value="consult"]').check();
+  await expect(feedback.locator('input[name="pilot-plan"][value="custom-region"]').locator("..")).toContainText(/¥198,000|198,000/);
+  await expect(feedback.locator("[data-lesson-pack-pilot-plan-note]")).toContainText(/価格案|Beta price proposal/);
   await feedback.locator('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]').check();
   await feedback.locator("[data-lesson-pack-pilot-form]").locator("button[type=submit]").click();
   await expect(feedback.locator("[data-lesson-pack-pilot-answer]")).toHaveValue(/導入プラン: 地域教材の個別制作|Offer path: Custom regional lesson production/);

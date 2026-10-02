@@ -244,7 +244,9 @@ for the current print scope (student material, QR/start links, sources/rights,
 the observation figure, and teacher reference when selected) and a short checklist
 for the operator to confirm: regional scope, source curation, delivery format,
 schedule, and final quote. These are discussion prompts, not a price or delivery
-promise.
+promise. The plan choices in this form repeat the catalog's beta price proposals
+so the comparison context is not lost; the proposals are not copied into the
+handoff and do not enable checkout.
 
 ## Dataset catalog
 

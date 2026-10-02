@@ -117,6 +117,8 @@ describe("lesson pack feedback form", () => {
     consultRoute.checked = true;
     consultRoute.dispatchEvent(new Event("change", { bubbles: true }));
     expect(host.querySelector("[data-lesson-pack-pilot-budget]")).toHaveProperty("hidden", false);
+    expect(host.querySelector<HTMLInputElement>('input[name="pilot-plan"][value="custom-region"]')?.parentElement?.textContent).toContain("¥198,000");
+    expect(host.querySelector("[data-lesson-pack-pilot-plan-note]")?.textContent).toContain("価格案");
     host.querySelector<HTMLFormElement>("[data-lesson-pack-pilot-form]")!.requestSubmit();
     expect(host.querySelector("[data-lesson-pack-pilot-error]")).toHaveProperty("hidden", false);
     expect(host.querySelector<HTMLTextAreaElement>("[data-lesson-pack-pilot-answer]")!.value).toBe("");

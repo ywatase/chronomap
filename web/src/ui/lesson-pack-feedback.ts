@@ -258,7 +258,11 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   plan.tabIndex = -1;
   const planLegend = document.createElement("legend");
   planLegend.textContent = copy.lessonPackPilotPlan;
-  plan.append(planLegend);
+  const planNote = document.createElement("p");
+  planNote.className = "lesson-pack-pilot-plan-note";
+  planNote.dataset.lessonPackPilotPlanNote = "";
+  planNote.textContent = copy.datasetCatalogOfferPricing;
+  plan.append(planLegend, planNote);
   const initialPlan = state?.pilotInput?.plan && LESSON_PACK_OFFER_PLANS.includes(state.pilotInput.plan as LessonPackOfferPlan)
     ? state.pilotInput.plan as LessonPackOfferPlan
     : actions.initialPilotPlan ?? DEFAULT_LESSON_PACK_OFFER_PLAN;
@@ -270,7 +274,9 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     input.name = "pilot-plan";
     input.value = value;
     input.checked = initialPlan === value;
-    option.append(input, document.createTextNode(copy.lessonPackPilotPlanOptions[value] ?? value));
+    const planLabel = copy.lessonPackPilotPlanOptions[value] ?? value;
+    const planPrice = copy.datasetCatalogOfferPrices[value];
+    option.append(input, document.createTextNode(planPrice ? `${planLabel} · ${planPrice}` : planLabel));
     plan.append(option);
   }
 
