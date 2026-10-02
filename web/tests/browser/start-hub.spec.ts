@@ -109,6 +109,8 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
   const builder = page.locator("[data-lesson-pack-builder]");
   await expect(builder).toBeVisible();
+  await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/地域教材の個別制作|Custom regional production/);
+  await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/¥198,000|198,000/);
   await builder.locator("[data-lesson-pack-builder-preview]").click();
   const pack = page.locator("[data-lesson-pack-dialog]");
   await pack.locator("[data-lesson-pack-print-student]").click();

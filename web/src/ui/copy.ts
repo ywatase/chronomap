@@ -136,6 +136,7 @@ export interface UiCopy {
   readonly lessonPackBuilderSummaryPreview: string;
   readonly lessonPackBuilderSummaryEdit: string;
   readonly lessonPackBuilderSummaryInvalid: string;
+  readonly lessonPackBuilderOffer: (plan: string, price: string) => string;
   readonly lessonPackClassLabel: string;
   readonly lessonPackDraftSave: string;
   readonly lessonPackDraftFileLabel: string;
@@ -443,6 +444,7 @@ const EN_COPY: UiCopy = {
   lessonPackBuilderSummaryPreview: "See the finished example",
   lessonPackBuilderSummaryEdit: "Adjust the contents",
   lessonPackBuilderSummaryInvalid: "Select at least one step to see the finished example.",
+  lessonPackBuilderOffer: (plan, price) => `Selected adoption path: ${plan} · ${price}. Scope and final quote are confirmed in consultation.`,
   lessonPackClassLabel: "Class / audience",
   lessonPackDraftSave: "Save draft to file",
   lessonPackDraftFileLabel: "Draft file",
@@ -764,6 +766,7 @@ const JA_COPY: UiCopy = {
   lessonPackBuilderSummaryPreview: "この内容で完成見本を見る",
   lessonPackBuilderSummaryEdit: "内容を調整する",
   lessonPackBuilderSummaryInvalid: "完成見本を見るには、少なくとも1つのステップを選択してください。",
+  lessonPackBuilderOffer: (plan, price) => `選択中の導入プラン: ${plan}・${price}。範囲・最終見積は相談で確定します。`,
   lessonPackClassLabel: "対象・クラス",
   lessonPackDraftSave: "下書きをファイル保存",
   lessonPackDraftFileLabel: "下書きファイル",

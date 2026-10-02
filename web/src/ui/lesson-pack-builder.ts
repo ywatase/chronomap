@@ -2,6 +2,7 @@ import { LESSON_PACK_CLASS_LABEL_MAX_LENGTH, LESSON_PACK_PROMPT_MAX_LENGTH, LESS
 import { projectLessonPackFigureFromSteps } from "../domain/lesson-pack-figure";
 import type { LessonPackCustomizationInput } from "../domain/lesson-pack-customization";
 import type { LessonPackModel, LessonPackStep } from "../domain/lesson-pack-model";
+import type { LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface LessonPackBuilderActions {
@@ -10,6 +11,7 @@ export interface LessonPackBuilderActions {
   readonly onReset?: () => void;
   readonly onSaveDraft?: (input: LessonPackCustomizationInput) => void;
   readonly onDraftFile?: (file: File) => void;
+  readonly initialOfferPlan?: LessonPackOfferPlan;
 }
 
 export type LessonPackBuilderSummaryState = "ready" | "editing" | "invalid";
@@ -112,6 +114,17 @@ export function renderLessonPackBuilder(
   note.dataset.lessonPackBuilderNote = "";
   note.textContent = labels.note;
   sheet.append(note);
+
+  if (actions.initialOfferPlan) {
+    const offer = document.createElement("p");
+    offer.className = "lesson-pack-builder-offer";
+    offer.dataset.lessonPackBuilderOffer = actions.initialOfferPlan;
+    offer.textContent = copy.lessonPackBuilderOffer(
+      copy.datasetCatalogOfferTitles[actions.initialOfferPlan],
+      copy.datasetCatalogOfferPrices[actions.initialOfferPlan],
+    );
+    sheet.append(offer);
+  }
 
   const layout = document.createElement("div");
   layout.className = "lesson-pack-builder-layout";

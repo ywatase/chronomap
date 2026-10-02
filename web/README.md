@@ -280,6 +280,9 @@ The catalog also shows the three-step adoption path: try the cited free example,
 preview a class-ready pack and choose a path, then confirm scope, price, and
 delivery in consultation. This site does not take payment or promise a delivery
 date.
+When a paid-path CTA opens the browser-only builder, the selected path and beta
+price remain visible above the editor so the user can verify the context before
+previewing and generating the consultation handoff.
 
 ## Teacher quick start
 

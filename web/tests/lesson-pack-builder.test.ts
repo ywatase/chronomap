@@ -140,6 +140,16 @@ describe("lesson pack builder", () => {
     }
   });
 
+  it("keeps the selected adoption path visible while editing", () => {
+    const root = document.createElement("div");
+    renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn(), initialOfferPlan: "custom-region" });
+    const offer = root.querySelector<HTMLElement>("[data-lesson-pack-builder-offer]");
+    expect(offer?.dataset.lessonPackBuilderOffer).toBe("custom-region");
+    expect(offer?.textContent).toContain("地域教材の個別制作");
+    expect(offer?.textContent).toContain("¥198,000");
+    expect(offer?.textContent).toContain("最終見積");
+  });
+
   it("keeps teaching-fit guidance compact and expandable in the outcome summary", () => {
     const root = document.createElement("div");
     renderLessonPackBuilder(root, model, uiCopy("ja"), { onPreview: vi.fn(), onClose: vi.fn() });

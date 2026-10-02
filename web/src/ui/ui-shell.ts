@@ -322,6 +322,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
       onReset: () => { workshopInput = null; workshopFeedbackState = null; },
       onSaveDraft: saveLessonPackDraft,
       onDraftFile: (file) => { void loadLessonPackDraft(file); },
+      initialOfferPlan: workshopOffer ?? undefined,
       onPreview: (input) => {
         const customized = workshopBaseModel ? customizeLessonPackModel(workshopBaseModel, input) : null;
         if (!customized) return;

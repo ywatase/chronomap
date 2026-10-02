@@ -260,6 +260,7 @@ footer a { color: #155e8a; }
 .lesson-pack-builder-sheet > h2 { margin: 0; color: #102a43; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.2; }
 .lesson-pack-builder-lead { margin: .5rem 0 0; color: #40566a; line-height: 1.5; }
 .lesson-pack-builder-note { margin: .7rem 0 0; padding: .6rem .7rem; border-left: 4px solid #7192ab; background: #f0f6f9; color: #304b60; line-height: 1.45; }
+.lesson-pack-builder-offer { margin: .7rem 0 0; padding: .6rem .7rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .86rem; font-weight: 700; line-height: 1.45; }
 .lesson-pack-builder-layout { display: grid; grid-template-areas: "main summary"; grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem); gap: 1rem; align-items: start; margin-top: 1rem; }
 .lesson-pack-builder-main { grid-area: main; min-width: 0; }
 .lesson-pack-builder-summary { position: sticky; top: 1rem; grid-area: summary; min-width: 0; padding: 1rem; border: 1px solid #9aadb9; border-radius: .65rem; background: #f7fafc; box-shadow: 0 8px 22px rgb(16 42 67 / 10%); overflow-wrap: anywhere; }
