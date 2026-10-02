@@ -127,3 +127,17 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect(feedback.locator("[data-lesson-pack-pilot-answer]")).toHaveValue(/導入プラン: 地域教材の個別制作|Offer path: Custom regional lesson production/);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 });
+
+test("lets a paid path preview the finished example before editing", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
+  const preview = page.locator('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-preview]');
+  await expect(preview).toHaveAttribute("href", /offer=classroom-pilot/);
+  await preview.click();
+  await expect(page.locator("[data-lesson-pack-dialog]")).toBeVisible();
+  await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("classroom-pilot");
+  await expect.poll(() => new URL(page.url()).searchParams.get("view")).toBe("pack");
+  await page.locator("[data-lesson-pack-back]").click();
+  await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
+  await expect(page.locator("[data-lesson-pack-builder-offer]")).toContainText(/授業パイロット|Classroom pilot/);
+});
