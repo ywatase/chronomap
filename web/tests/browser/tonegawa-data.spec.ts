@@ -18,7 +18,7 @@ test.describe("Tone River eastward-shift dataset", () => {
     await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
     const catalog = page.locator("[data-dataset-catalog-dialog]");
     await expect(catalog).toBeVisible();
-  await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(4);
+    await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(5);
     await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"]')).toContainText(/関東東部|Eastern Kanto/);
     await expect(catalog.locator('[data-dataset-catalog-card="tonegawa"]')).toContainText(/3件|3/);
     await catalog.locator('[data-dataset-catalog-card="tonegawa"] [data-dataset-catalog-lesson]').click();
@@ -66,7 +66,7 @@ test.describe("Tone River eastward-shift dataset", () => {
     const close = catalog.locator("[data-dataset-catalog-close]");
     await expect(close).toBeFocused();
     await page.keyboard.press("Shift+Tab");
-    await expect(catalog.locator('[data-dataset-catalog-card="azuchijo"] [data-dataset-catalog-map]')).toBeFocused();
+    await expect(catalog.locator('[data-dataset-catalog-card="kinugawa"] [data-dataset-catalog-map]')).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(catalog).toBeHidden();
     await expect(page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ })).toBeFocused();

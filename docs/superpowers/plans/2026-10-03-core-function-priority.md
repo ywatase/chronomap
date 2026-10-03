@@ -41,7 +41,7 @@
 
 - [x] **Step 1: Write the failing test**
 
-  4地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
+  5地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
 
 - [x] **Step 2: Run test to verify it fails**
 
@@ -55,7 +55,7 @@
 
 - [x] **Step 4: Run test to verify it passes**
 
-  Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q` と `uv run chronomap-data validate data/<dataset> --profile public`（4地域）。
+  Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q` と `uv run chronomap-data validate data/<dataset> --profile public`（5地域）。
 
   Expected: PASS。監査表と公開bundleの件数が一致する。
 
@@ -144,29 +144,29 @@
 - Consumes: Task 1のカバレッジ表、公式・公開資料、Task 2/3の表示契約。
 - Produces: 1地域の水域／交通、地点、可能なら領域を含むallow-list済み公開bundleとlesson。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
   新地域のcatalog到達、データ検証、少なくとも1つの水域／交通と1つの地点、根拠・不確実性、直接URL復元を固定する。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
   Run: `uv run pytest -q` と対象E2E。
 
   Expected: 新しいslugが未登録のためFAILする。
 
-- [ ] **Step 3: Add only source-backed public records**
+- [x] **Step 3: Add only source-backed public records**
 
   公開根拠と権利を確認できるFeatureVersionだけを追加し、概略復元・代表点・未確認の境界を明示する。資料がない種別は作らず、監査記録に未達理由を残す。
 
-- [ ] **Step 4: Run the full quality gate**
+- [x] **Step 4: Run the full quality gate**
 
-  Run: 4地域の `validate --profile public`、`uv run pytest -q`、`cd web && npm run test -- --run`、`npm run build`、`npm run test:browser -- --workers=2 --trace=off`。
+  Run: 5地域の `validate --profile public`、`uv run pytest -q`、`cd web && npm run test -- --run`、`npm run build`、`npm run test:browser -- --workers=2 --trace=off`。
 
-  Expected: 既存4地域を含む全テストがPASSする。
+  Expected: 既存5地域を含む全テストがPASSする。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
-  データ、公開bundle、catalog、lesson、監査、E2Eを1つの縦切りコミットとして保存する。
+  `data/kinugawa/`、`web/public/data/kinugawa/`、`web/public/lessons/kinugawa-history.json`、catalog、監査、E2Eを1つの縦切りコミットとして保存する。
 
 ## Execution order
 

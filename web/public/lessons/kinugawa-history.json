@@ -1,0 +1,45 @@
+{
+  "id": "kinugawa-history",
+  "dataset": "kinugawa",
+  "title": { "ja": "鬼怒川・小貝川の分離と河道変遷を比べる", "en": "Compare the Kinugawa–Kokaigawa separation and channel change" },
+  "description": { "ja": "768年・1629年・2020年の根拠付きスナップショットを約12分で比べます。線と点は関係を読むための概略復元です。", "en": "Compare evidence-linked snapshots from 768, 1629, and 2020 in about 12 minutes. Lines and the point are schematic reconstructions for reading relationships." },
+  "durationMinutes": 12,
+  "teachingGuide": {
+    "recommendedFor": { "ja": "河川改変と地域の境界を、出典と不確実性に注意して読む導入に", "en": "An introduction to reading river change and regional boundaries with attention to evidence and uncertainty" },
+    "learningGoal": { "ja": "鬼怒川・小貝川の分離前後と現在の水系を、年代・位置・表現の限界とともに説明する。", "en": "Explain the pre- and post-separation relationship and the present river system with dates, location, and representational limits." },
+    "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }],
+    "assessment": { "ja": "768年・1629年・2020年の表示を、出典と概略復元の限界を含めて一文で比較できるか。", "en": "Can learners compare the 768, 1629, and 2020 views in one evidence-based sentence that includes the limits of the schematic reconstruction?" },
+    "usageNote": { "ja": "線は旧河道や工事区間の精密図ではなく、年代間の流路を補間していないことを先に確認します。", "en": "First make clear that the lines are not exact old-channel or construction-zone maps and do not interpolate routes between dates." }
+  },
+  "steps": [
+    {
+      "id": "channel-768",
+      "year": 768,
+      "featureId": "kinugawa:version:river-768",
+      "prompt": { "ja": "768年の概略線は、鬼怒川の流路関係をどのように示していますか。線の精度についても確認してください。", "en": "How does the 768 schematic line show the river relationship? Check its precision as well." },
+      "teacherNote": { "ja": "資料に示される流路開削の年代と南流の関係を考える手がかりですが、旧河道の精密な中心線や幅ではありません。", "en": "It is a clue for the date of channel opening and the southward relationship described in the sources, not a precise old-channel centerline or width." }
+    },
+    {
+      "id": "channel-1629",
+      "year": 1629,
+      "featureId": "kinugawa:version:river-1629",
+      "comparisonEntityId": "kinugawa:entity:old-channel",
+      "prompt": { "ja": "1629年の概略線は、768年の表示と比べて何を考える材料になりますか。", "en": "Compared with the 768 view, what can the 1629 schematic line help you consider?" },
+      "teacherNote": { "ja": "鬼怒川・小貝川の分離前後の関係を比べる材料です。線は工事区間や旧河道全体を表さず、年代の間を補間しません。", "en": "It supports comparison of the Kinugawa–Kokaigawa relationship around the separation. The line is not the construction zone or the full old channel and does not interpolate between dates." }
+    },
+    {
+      "id": "separation-1629",
+      "year": 1629,
+      "featureId": "kinugawa:version:separation-1629",
+      "prompt": { "ja": "1629年の代表点から分かることと、分からないことを分けてください。", "en": "Separate what the 1629 representative point can show from what it cannot show." },
+      "teacherNote": { "ja": "分離事業を地図上で確認する代表位置ですが、工事区間・施設・史跡の精密位置ではありません。", "en": "It is a representative location for checking the separation on the map, not the precise construction zone, facility, or historic-site location." }
+    },
+    {
+      "id": "current-2020",
+      "year": 2020,
+      "featureId": "kinugawa:version:river-2020",
+      "prompt": { "ja": "2020年の概略線と1629年の表示を比べ、現在の水系を説明できる範囲と、出典で確かめるべき範囲を分けてください。", "en": "Compare the 2020 schematic line with the 1629 view. Separate what the current system can explain from what should be checked in the sources." },
+      "teacherNote": { "ja": "現在の鬼怒川が利根川へ合流する水系関係は読めますが、線は現況河道中心線ではありません。位置や工事の詳細は出典リンクで確認します。", "en": "The current Kinugawa-to-Tone system relationship is readable, but the line is not a current channel centerline. Check detailed locations and works in the source links." }
+    }
+  ]
+}

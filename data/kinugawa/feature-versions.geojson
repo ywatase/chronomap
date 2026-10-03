@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "kinugawa:version:river-768",
+      "geometry": { "type": "LineString", "coordinates": [[139.88, 36.3], [139.92, 36.22], [139.98, 36.13], [140.03, 36.02], [140.07, 35.9]] },
+      "properties": {
+        "entityId": "kinugawa:entity:old-channel",
+        "labels": { "ja": "鬼怒川（768年・流路開削の概略）" },
+        "description": { "ja": "768年の流路開削に関する資料をもとに、鬼怒川の南流関係を概略線で示します。精密な旧河道ではありません。" },
+        "temporal": { "start": { "earliestYear": 768, "latestYear": 768, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 768, "latestYear": 768, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "768年の流路開削として資料に示されます。", "evidenceIds": ["kinugawa:evidence:history"] },
+          "location": { "assessment": "approximate", "note": "資料の相対関係を現在地図上の概略線に置き換えています。", "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:old-geometry"] },
+          "geometry": { "assessment": "approximate", "note": "少数の折れ点による概略復元で、旧河道の精密な中心線ではありません。", "evidenceIds": ["kinugawa:evidence:old-geometry"] },
+          "identity": { "assessment": "well-supported", "note": "鬼怒川の河道変遷を示す比較用の地物です。", "evidenceIds": ["kinugawa:evidence:history"] }
+        },
+        "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:old-geometry"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、国土交通省（引用）", "terms": "外部資料の本文・図版は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kinugawa:version:river-1629",
+      "geometry": { "type": "LineString", "coordinates": [[139.92, 36.16], [139.98, 36.08], [140.02, 36.0], [140.12, 35.92]] },
+      "properties": {
+        "entityId": "kinugawa:entity:old-channel",
+        "labels": { "ja": "鬼怒川・小貝川分離前の河道（1629年・概略）" },
+        "description": { "ja": "江戸時代初期までの鬼怒川・小貝川の接続関係を、1629年の分離前後を考えるための概略線で示します。工事区間や旧河道全体ではありません。" },
+        "temporal": { "start": { "earliestYear": 1629, "latestYear": 1629, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1629, "latestYear": 1629, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "1629年の分離事業として資料に示されます。", "evidenceIds": ["kinugawa:evidence:history"] },
+          "location": { "assessment": "approximate", "note": "分離関係を現在地図上の概略線へ置き換えています。", "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:change-map", "kinugawa:evidence:old-geometry"] },
+          "geometry": { "assessment": "approximate", "note": "少数の折れ点による概略復元で、旧河道の精密な中心線ではありません。", "evidenceIds": ["kinugawa:evidence:old-geometry"] },
+          "identity": { "assessment": "well-supported", "note": "鬼怒川・小貝川分離前の河道関係を示す比較用地物です。", "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:change-map"] }
+        },
+        "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:change-map", "kinugawa:evidence:old-geometry"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、国土交通省・国土地理院（引用）", "terms": "外部資料の本文・図版は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kinugawa:version:separation-1629",
+      "geometry": { "type": "Point", "coordinates": [140.02, 36.0] },
+      "properties": {
+        "entityId": "kinugawa:entity:separation",
+        "labels": { "ja": "鬼怒川・小貝川分離（1629年・代表点）" },
+        "description": { "ja": "1629年の分離事業を地図上で確認するための代表点です。実際の工事区間・施設位置・範囲を確定しません。" },
+        "temporal": { "start": { "earliestYear": 1629, "latestYear": 1629, "precision": "year", "qualifier": "exact" }, "end": null },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "1629年の分離として資料に示されます。", "evidenceIds": ["kinugawa:evidence:history"] },
+          "location": { "assessment": "approximate", "note": "分離関係を比較するための代表位置で、史跡の精密位置ではありません。", "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:separation-geometry"] },
+          "geometry": { "assessment": "approximate", "note": "一点の代表表示で、工事線や施設形状を示しません。", "evidenceIds": ["kinugawa:evidence:separation-geometry"] },
+          "identity": { "assessment": "well-supported", "note": "鬼怒川・小貝川分離事業を示す比較用地物です。", "evidenceIds": ["kinugawa:evidence:history"] }
+        },
+        "evidenceIds": ["kinugawa:evidence:history", "kinugawa:evidence:separation-geometry"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（代表点加工）、国土交通省（引用）", "terms": "外部資料の本文・図版は再現しない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "kinugawa:version:river-2020",
+      "geometry": { "type": "LineString", "coordinates": [[139.96, 36.27], [140.0, 36.18], [140.04, 36.08], [140.08, 35.98], [140.15, 35.9]] },
+      "properties": {
+        "entityId": "kinugawa:entity:river",
+        "labels": { "ja": "鬼怒川（2020年・現在流路の概略）" },
+        "description": { "ja": "公式河川概要に示される鬼怒川の水源・南流・利根川合流の関係を現在地図上の概略線で示します。精密な河道中心線ではありません。" },
+        "temporal": { "start": { "earliestYear": 2020, "latestYear": 2020, "precision": "year", "qualifier": "exact" }, "end": null },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "河川概要を比較するための2020年スナップショットとして扱います。", "evidenceIds": ["kinugawa:evidence:current-temporal"] },
+          "location": { "assessment": "approximate", "note": "水源から利根川合流までの相対関係を概略線へ置き換えています。", "evidenceIds": ["kinugawa:evidence:overview", "kinugawa:evidence:current-geometry"] },
+          "geometry": { "assessment": "approximate", "note": "少数の折れ点による概略復元で、現在の河道中心線ではありません。", "evidenceIds": ["kinugawa:evidence:current-geometry"] },
+          "identity": { "assessment": "well-supported", "note": "利根川水系鬼怒川としての同一性を示します。", "evidenceIds": ["kinugawa:evidence:overview", "kinugawa:evidence:current-temporal"] }
+        },
+        "evidenceIds": ["kinugawa:evidence:overview", "kinugawa:evidence:current-temporal", "kinugawa:evidence:current-geometry"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、国土交通省（引用）", "terms": "外部資料の本文・図版は再現しない。" }
+      }
+    }
+  ]
+}

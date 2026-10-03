@@ -1,0 +1,32 @@
+[
+  {
+    "description": {
+      "ja": "江戸時代初期までの鬼怒川・小貝川の接続関係を示す概略線。旧河道の精密な位置や幅ではありません。"
+    },
+    "id": "kinugawa:entity:old-channel",
+    "labels": {
+      "ja": "鬼怒川・小貝川分離前の河道"
+    },
+    "type": "watercourse"
+  },
+  {
+    "description": {
+      "ja": "栃木・茨城を南流して利根川へ合流する水系。表示線は年代ごとの相対関係を見る概略復元です。"
+    },
+    "id": "kinugawa:entity:river",
+    "labels": {
+      "ja": "鬼怒川"
+    },
+    "type": "watercourse"
+  },
+  {
+    "description": {
+      "ja": "1629年の分離事業を地図上で確認するための代表点。工事区間や施設位置を確定しません。"
+    },
+    "id": "kinugawa:entity:separation",
+    "labels": {
+      "ja": "鬼怒川・小貝川分離（代表点）"
+    },
+    "type": "other"
+  }
+]

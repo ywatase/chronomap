@@ -123,7 +123,7 @@ describe("ui shell", () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     const dialog = root.querySelector<HTMLElement>("[data-dataset-catalog-dialog]")!;
     expect(dialog.hidden).toBe(false);
-    expect(dialog.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(4);
+    expect(dialog.querySelectorAll("[data-dataset-catalog-card]")).toHaveLength(5);
     expect(new URLSearchParams(window.location.search).get("view")).toBe("catalog");
     dialog.querySelector<HTMLButtonElement>("[data-dataset-catalog-close]")!.click();
     expect(dialog.hidden).toBe(true);

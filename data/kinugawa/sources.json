@@ -1,0 +1,46 @@
+[
+  {
+    "id": "kinugawa:source:mlit-overview",
+    "type": "official-web-page",
+    "citation": "国土交通省『日本の川・鬼怒川』",
+    "title": { "ja": "日本の川 - 関東 - 鬼怒川" },
+    "creators": ["国土交通省 水管理・国土保全局"],
+    "publishedYear": 2006,
+    "url": "https://www.mlit.go.jp/river/toukei_chousa/kasen/jiten/nihon_kawa/0303_kinugawa/0303_kinugawa_00.html",
+    "accessedDate": "2026-10-03",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文、図版、地図画像は再現しない。" }
+  },
+  {
+    "id": "kinugawa:source:history",
+    "type": "official-web-page",
+    "citation": "国土交通省関東地方整備局『鬼怒川・小貝川の歴史（治水）』",
+    "title": { "ja": "鬼怒川・小貝川の歴史（治水）" },
+    "creators": ["国土交通省関東地方整備局 下館河川事務所"],
+    "publishedYear": 2016,
+    "url": "https://www.ktr.mlit.go.jp/shimodate/shimodate_know020.html",
+    "accessedDate": "2026-10-03",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文、図版、地図画像は再現しない。" }
+  },
+  {
+    "id": "kinugawa:source:river-change",
+    "type": "official-report",
+    "citation": "国土地理院『鬼怒川の河道変遷（旧版地形図と米軍写真による把握）』",
+    "title": { "ja": "鬼怒川の河道変遷" },
+    "creators": ["国土地理院"],
+    "publishedYear": 2014,
+    "url": "https://www.gsi.go.jp/common/000061425.pdf",
+    "accessedDate": "2026-10-03",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。旧版地形図・写真・図版は再現しない。" }
+  },
+  {
+    "id": "kinugawa:source:shape-notes",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『鬼怒川・小貝川河道変遷パイロット形状作成メモ』",
+    "title": { "ja": "鬼怒川・小貝川河道変遷パイロット形状作成メモ" },
+    "creators": ["Chronomap contributors"],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/kinugawa-shape-notes.md",
+    "accessedDate": "2026-10-03",
+    "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。" }
+  }
+]

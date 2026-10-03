@@ -66,6 +66,17 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     region: { ja: "近江八幡・安土", en: "Azuchi, Omi-Hachiman" },
     failureMessage: { ja: "安土城・琵琶湖東岸の公開データを読み込めませんでした。再試行してください。", en: "The Azuchi Castle public dataset could not be loaded. Please retry." },
   },
+  {
+    slug: "kinugawa",
+    bundlePath: "/data/kinugawa/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "kinugawa-history", path: "/lessons/kinugawa-history.json", featured: true }),
+    ]),
+    lessonPath: "/lessons/kinugawa-history.json",
+    label: { ja: "鬼怒川・小貝川", en: "Kinugawa and Kokaigawa" },
+    region: { ja: "鬼怒川・小貝川流域", en: "Kinugawa–Kokaigawa basin" },
+    failureMessage: { ja: "鬼怒川・小貝川の公開データを読み込めませんでした。再試行してください。", en: "The Kinugawa–Kokaigawa public dataset could not be loaded. Please retry." },
+  },
 ]);
 
 const DEFAULT_DATASET = DATASET_CATALOG[0]!;

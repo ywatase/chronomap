@@ -6,6 +6,7 @@ const lessons = [
   { slug: "tonegawa", lesson: "tonegawa-eastward", steps: 3 },
   { slug: "heijokyo", lesson: "heijokyo-intro", steps: 3 },
   { slug: "azuchijo", lesson: "azuchijo-intro", steps: 5 },
+  { slug: "kinugawa", lesson: "kinugawa-history", steps: 4 },
 ] as const;
 
 for (const lesson of lessons) {

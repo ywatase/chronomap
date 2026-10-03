@@ -4,9 +4,10 @@ Chronomap packages are normalized, versioned historical-data records.  This
 repository contains their JSON Schemas, validator, and fail-closed public
 bundle builder. Installed wheels include the versioned schemas as internal
 package resources, so validation does not depend on a checkout. The checked-in
-`data/ogurike/`, `data/tonegawa/`, `data/heijokyo/`, and `data/azuchijo/` are
-small, citation-linked pilots for the Ogurike, Tone River, Heijokyo, and Azuchi
-Castle/Lake Biwa areas; the test fixture remains synthetic and is not history.
+`data/ogurike/`, `data/tonegawa/`, `data/heijokyo/`, `data/azuchijo/`, and
+`data/kinugawa/` are small, citation-linked pilots for the Ogurike, Tone River,
+Heijokyo, Azuchi Castle/Lake Biwa, and Kinugawa/Kokaigawa areas; the test
+fixture remains synthetic and is not history.
 
 ## Setup
 
@@ -58,6 +59,13 @@ uv run chronomap-data validate data/azuchijo --profile public
 uv run chronomap-data build-public data/azuchijo --output web/public/data/azuchijo
 ```
 
+The fifth public pilot uses the same contract:
+
+```sh
+uv run chronomap-data validate data/kinugawa --profile public
+uv run chronomap-data build-public data/kinugawa --output web/public/data/kinugawa
+```
+
 Build a deterministic public projection.  The target is replaced only after
 public-profile validation and staging both succeed:
 
@@ -73,8 +81,8 @@ contract.
 The static responsive UI, setup instructions, and browser acceptance tests are
 documented in [web/README.md](web/README.md). The default `/data/ogurike/`
 bundle is generated from the pilot package; the header's region/lesson catalog
-or `/?dataset=tonegawa`, `/?dataset=heijokyo`, or `/?dataset=azuchijo` selects
-another pilot. All
+or `/?dataset=tonegawa`, `/?dataset=heijokyo`, `/?dataset=azuchijo`, or
+`/?dataset=kinugawa` selects another pilot. All
 bundles keep restricted source material as citation-only metadata.
 
 GitHub Actions runs the Python contract/public-data checks and the Web

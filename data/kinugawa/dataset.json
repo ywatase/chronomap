@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "kinugawa:dataset:river-history",
+  "title": { "ja": "鬼怒川・小貝川の河道変遷パイロット" },
+  "description": { "ja": "鬼怒川・小貝川の分離と河道変遷を、768年・1629年・2020年の概略geometryと出典付きで比べる小規模データです。線形は精密な河道中心線ではありません。" },
+  "defaultLanguage": "ja",
+  "bbox": [139.84, 35.83, 140.2, 36.32],
+  "temporalExtent": {
+    "start": { "earliestYear": 768, "latestYear": 768, "precision": "year", "qualifier": "exact" },
+    "end": { "earliestYear": 2020, "latestYear": 2020, "precision": "year", "qualifier": "exact" }
+  },
+  "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、国土交通省・国土地理院（引用メタデータ）", "terms": "外部資料の本文・図版・地図画像は再現せず、個別Sourceの権利条件と出典表示を併せて適用します。" },
+  "files": { "entities": "entities.json", "sources": "sources.json", "evidence": "evidence.json", "featureVersions": "feature-versions.geojson" }
+}
