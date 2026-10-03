@@ -5,7 +5,7 @@ import {
   type LessonPackFeedbackInput,
   type LessonPackFeedbackContext,
 } from "../domain/lesson-pack-feedback";
-import { DEFAULT_LESSON_PACK_OFFER_PLAN, LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_OFFER_PLANS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotDownloadFilename, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackOfferPlan, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
+import { DEFAULT_LESSON_PACK_OFFER_PLAN, LESSON_PACK_AUDIENCE_OPTIONS, LESSON_PACK_BUDGET_INTENTS, LESSON_PACK_DELIVERY_OPTIONS, LESSON_PACK_DURATION_OPTIONS, LESSON_PACK_OFFER_PLANS, LESSON_PACK_PILOT_CONTACT, buildLessonPackPilotDownloadFilename, buildLessonPackPilotText, buildSafeLessonPackPilotMailto, type LessonPackOfferPlan, type LessonPackPilotContext, type LessonPackPilotInput } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface LessonPackFeedbackState {
@@ -299,6 +299,37 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     budget.append(option);
   }
 
+  const scopeGrid = document.createElement("div");
+  scopeGrid.className = "lesson-pack-pilot-scope-grid";
+  const audience = pilotChoiceFieldset(
+    copy.lessonPackPilotAudience,
+    "pilot-audience",
+    LESSON_PACK_AUDIENCE_OPTIONS,
+    copy.lessonPackPilotAudienceOptions,
+    typeof state?.pilotInput?.audience === "string" ? state.pilotInput.audience : "未定",
+  );
+  audience.classList.add("lesson-pack-pilot-audience");
+  audience.dataset.lessonPackPilotAudience = "";
+  const duration = pilotChoiceFieldset(
+    copy.lessonPackPilotDuration,
+    "pilot-duration",
+    LESSON_PACK_DURATION_OPTIONS,
+    copy.lessonPackPilotDurationOptions,
+    typeof state?.pilotInput?.lessonDuration === "string" ? state.pilotInput.lessonDuration : "未定",
+  );
+  duration.classList.add("lesson-pack-pilot-duration");
+  duration.dataset.lessonPackPilotDuration = "";
+  const delivery = pilotChoiceFieldset(
+    copy.lessonPackPilotDelivery,
+    "pilot-delivery",
+    LESSON_PACK_DELIVERY_OPTIONS,
+    copy.lessonPackPilotDeliveryOptions,
+    typeof state?.pilotInput?.deliveryFormat === "string" ? state.pilotInput.deliveryFormat : "相談で決めたい",
+  );
+  delivery.classList.add("lesson-pack-pilot-delivery");
+  delivery.dataset.lessonPackPilotDelivery = "";
+  scopeGrid.append(audience, duration, delivery);
+
   const regionLabel = document.createElement("label");
   regionLabel.className = "lesson-pack-pilot-region";
   regionLabel.textContent = copy.lessonPackPilotRegionTopic;
@@ -362,7 +393,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
   status.setAttribute("aria-live", "polite");
   actionsRow.append(back, copyButton, shareButton, downloadButton);
   if (mail) actionsRow.append(mail);
-  form.append(route, plan, budget, regionLabel, review, error, answerLabel, actionsRow, status);
+  form.append(route, plan, budget, scopeGrid, regionLabel, review, error, answerLabel, actionsRow, status);
   card.append(form);
   content.append(card);
 
@@ -373,6 +404,9 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     utilization: content.querySelector<HTMLInputElement>('input[name="utilization"]:checked')?.value,
     nextFeature: content.querySelector<HTMLInputElement>('input[name="nextFeature"]:checked')?.value,
     budgetIntent: form.querySelector<HTMLInputElement>('input[name="pilot-budget"]:checked')?.value,
+    audience: form.querySelector<HTMLInputElement>('input[name="pilot-audience"]:checked')?.value,
+    lessonDuration: form.querySelector<HTMLInputElement>('input[name="pilot-duration"]:checked')?.value,
+    deliveryFormat: form.querySelector<HTMLInputElement>('input[name="pilot-delivery"]:checked')?.value,
     regionTopic: region.value,
     comment: content.querySelector<HTMLTextAreaElement>("[data-lesson-pack-feedback-comment]")?.value,
   });
@@ -380,10 +414,16 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     const consultation = routeValue() === "consult";
     plan.hidden = !consultation;
     budget.hidden = !consultation;
+    audience.hidden = !consultation;
+    duration.hidden = !consultation;
+    delivery.hidden = !consultation;
     regionLabel.hidden = !consultation;
     review.textContent = consultation ? copy.lessonPackPilotReviewConsult : copy.lessonPackPilotReviewFeedback;
     plan.setAttribute("aria-hidden", String(!consultation));
     budget.setAttribute("aria-hidden", String(!consultation));
+    audience.setAttribute("aria-hidden", String(!consultation));
+    duration.setAttribute("aria-hidden", String(!consultation));
+    delivery.setAttribute("aria-hidden", String(!consultation));
     regionLabel.setAttribute("aria-hidden", String(!consultation));
   };
   const setReview = (visible: boolean): void => {
@@ -425,7 +465,7 @@ function renderPilotHandoff(content: HTMLElement, context: LessonPackFeedbackCon
     lastPrintScope: scope(),
     language: context.language,
   }) ?? "";
-  for (const input of form.querySelectorAll<HTMLInputElement>('input[name="pilot-route"], input[name="pilot-plan"], input[name="pilot-budget"]')) {
+  for (const input of form.querySelectorAll<HTMLInputElement>('input[name="pilot-route"], input[name="pilot-plan"], input[name="pilot-budget"], input[name="pilot-audience"], input[name="pilot-duration"], input[name="pilot-delivery"]')) {
     input.addEventListener("change", () => { setRouteVisibility(); setReview(false); error.hidden = true; notify(); });
   }
   for (const input of [region, ...Array.from(content.querySelectorAll<HTMLInputElement>('input[name="utilization"], input[name="nextFeature"]'))]) {
@@ -550,6 +590,33 @@ function fieldset<T extends readonly string[]>(legendText: string, name: string,
     input.required = true;
     label.append(input, document.createTextNode(labels[value as T[number]] ?? value));
     fieldset.append(label);
+  }
+  return fieldset;
+}
+
+function pilotChoiceFieldset(
+  legendText: string,
+  name: string,
+  values: readonly string[],
+  labels: Readonly<Record<string, string>>,
+  selected: string,
+): HTMLFieldSetElement {
+  const fieldset = document.createElement("fieldset");
+  fieldset.className = "lesson-pack-pilot-scope-fieldset";
+  fieldset.tabIndex = -1;
+  const legend = document.createElement("legend");
+  legend.textContent = legendText;
+  fieldset.append(legend);
+  for (const value of values) {
+    const option = document.createElement("label");
+    option.className = "lesson-pack-completion-option";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = name;
+    input.value = value;
+    input.checked = selected === value;
+    option.append(input, document.createTextNode(labels[value] ?? value));
+    fieldset.append(option);
   }
   return fieldset;
 }

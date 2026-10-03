@@ -204,11 +204,17 @@ test("offers a privacy-bounded paid-interest consultation handoff after printing
   await feedback.locator('input[name="nextFeature"][value="校内で共有"]').check();
   await feedback.locator('input[name="pilot-route"][value="consult"]').check();
   await feedback.locator('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]').check();
+  await feedback.locator('input[name="pilot-audience"][value="中学校"]').check();
+  await feedback.locator('input[name="pilot-duration"][value="45〜50分"]').check();
+  await feedback.locator('input[name="pilot-delivery"][value="印刷用PDF"]').check();
   await feedback.locator("[data-lesson-pack-pilot-region]").fill("奈良の水路");
   await feedback.locator("[data-lesson-pack-pilot-form]").locator("button[type=submit]").click();
   const answer = feedback.locator("[data-lesson-pack-pilot-answer]");
   await expect(answer).toBeVisible();
   await expect(answer).toHaveValue(/地域・内容・条件が合えば検討したい/);
+  await expect(answer).toHaveValue(/対象: 中学校|Audience: Middle school/);
+  await expect(answer).toHaveValue(/授業時間: 45〜50分|Lesson duration: 45–50 minutes/);
+  await expect(answer).toHaveValue(/希望納品: 印刷用PDF|Requested delivery: Print-ready PDF/);
   await expect(answer).toHaveValue(/印刷範囲: 生徒用/);
   await expect(answer).toHaveValue(/希望地域・題材: 奈良の水路/);
   await expect(answer).toHaveValue(/希望成果物: .*生徒用資料.*観察用概略図.*（印刷範囲: 生徒用）|Requested deliverables: .*student worksheet.*observation figure.*\(print scope: Student\)/);

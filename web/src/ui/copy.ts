@@ -1,5 +1,5 @@
 import { displayYearLocalized } from "../domain/labels";
-import type { LessonPackBudgetIntent, LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
+import type { LessonPackAudience, LessonPackBudgetIntent, LessonPackDelivery, LessonPackDuration, LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 import type { LessonPackNextFeature, LessonPackUtilization } from "../domain/lesson-pack-feedback";
 import type { GeometryType, RightsStatus, UncertaintyAssessment } from "../domain/types";
 
@@ -170,6 +170,12 @@ export interface UiCopy {
   readonly lessonPackPilotPlanOptions: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly lessonPackPilotBudget: string;
   readonly lessonPackPilotBudgetOptions: Readonly<Record<LessonPackBudgetIntent, string>>;
+  readonly lessonPackPilotAudience: string;
+  readonly lessonPackPilotAudienceOptions: Readonly<Record<LessonPackAudience, string>>;
+  readonly lessonPackPilotDuration: string;
+  readonly lessonPackPilotDurationOptions: Readonly<Record<LessonPackDuration, string>>;
+  readonly lessonPackPilotDelivery: string;
+  readonly lessonPackPilotDeliveryOptions: Readonly<Record<LessonPackDelivery, string>>;
   readonly lessonPackPilotRegionTopic: string;
   readonly lessonPackPilotRegionHint: string;
   readonly lessonPackPilotReviewFeedback: string;
@@ -498,6 +504,27 @@ const EN_COPY: UiCopy = {
     "まず無料試用を続けたい": "I want to continue the free trial first",
     "今回は検討しない": "I will not consider it this time",
   },
+  lessonPackPilotAudience: "Learner / audience (optional)",
+  lessonPackPilotAudienceOptions: {
+    "小学校": "Elementary school",
+    "中学校": "Middle school",
+    "高校": "High school",
+    "大学・社会人": "University / adult learning",
+    "未定": "Not decided",
+  },
+  lessonPackPilotDuration: "Lesson duration (optional)",
+  lessonPackPilotDurationOptions: {
+    "15分以内": "Up to 15 minutes",
+    "45〜50分": "45–50 minutes",
+    "複数時限": "Multiple class periods",
+    "未定": "Not decided",
+  },
+  lessonPackPilotDelivery: "Preferred delivery (optional)",
+  lessonPackPilotDeliveryOptions: {
+    "印刷用PDF": "Print-ready PDF",
+    "PDF＋QR・オンライン開始リンク": "PDF plus QR / online start link",
+    "相談で決めたい": "Decide in consultation",
+  },
   lessonPackPilotRegionTopic: "Preferred region or topic (optional, up to 200 characters)",
   lessonPackPilotRegionHint: "Do not include a school, student, or contact name.",
   lessonPackPilotReviewFeedback: "Review feedback text",
@@ -821,6 +848,27 @@ const JA_COPY: UiCopy = {
     "地域・内容・条件が合えば検討したい": "地域・内容・条件が合えば検討したい",
     "まず無料試用を続けたい": "まず無料試用を続けたい",
     "今回は検討しない": "今回は検討しない",
+  },
+  lessonPackPilotAudience: "対象（任意）",
+  lessonPackPilotAudienceOptions: {
+    "小学校": "小学校",
+    "中学校": "中学校",
+    "高校": "高校",
+    "大学・社会人": "大学・社会人",
+    "未定": "未定",
+  },
+  lessonPackPilotDuration: "授業時間（任意）",
+  lessonPackPilotDurationOptions: {
+    "15分以内": "15分以内",
+    "45〜50分": "45〜50分",
+    "複数時限": "複数時限",
+    "未定": "未定",
+  },
+  lessonPackPilotDelivery: "希望納品（任意）",
+  lessonPackPilotDeliveryOptions: {
+    "印刷用PDF": "印刷用PDF",
+    "PDF＋QR・オンライン開始リンク": "PDF＋QR・オンライン開始リンク",
+    "相談で決めたい": "相談で決めたい",
   },
   lessonPackPilotRegionTopic: "希望地域・題材（任意、200字まで）",
   lessonPackPilotRegionHint: "学校名、児童生徒名、連絡先は書かないでください。",

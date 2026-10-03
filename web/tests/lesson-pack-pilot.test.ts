@@ -26,6 +26,30 @@ describe("lesson-pack pilot handoff", () => {
     expect(buildLessonPackPilotText({ ...input, route: "feedback", plan: "custom-region" }, context)).not.toContain("導入プラン");
   });
 
+  it("keeps quote-scoping choices allow-listed and consultation-only", () => {
+    const input = {
+      route: "consult",
+      plan: "classroom-pilot",
+      utilization: "近いうちに使いたい",
+      nextFeature: "自分の地域・題材を追加",
+      budgetIntent: "地域・内容・条件が合えば検討したい",
+      audience: "中学校",
+      lessonDuration: "45〜50分",
+      deliveryFormat: "印刷用PDF",
+    };
+    expect(normalizeLessonPackPilot(input)).toMatchObject({ audience: "中学校", lessonDuration: "45〜50分", deliveryFormat: "印刷用PDF" });
+    const answer = buildLessonPackPilotText(input, context)!;
+    expect(answer).toContain("対象: 中学校");
+    expect(answer).toContain("授業時間: 45〜50分");
+    expect(answer).toContain("希望納品: 印刷用PDF");
+
+    const feedback = buildLessonPackPilotText({ ...input, route: "feedback" }, context)!;
+    expect(feedback).not.toContain("対象: 中学校");
+    expect(feedback).not.toContain("授業時間");
+    expect(feedback).not.toContain("希望納品");
+    expect(normalizeLessonPackPilot({ ...input, audience: "秘密の学校" })?.audience).toBe("未定");
+  });
+
   it("tailors the consultation deliverables to the current teacher scope", () => {
     const answer = buildLessonPackPilotText({ route: "consult", utilization: "近いうちに使いたい", nextFeature: "校内で共有", budgetIntent: "まず無料試用を続けたい" }, {
       ...context,
