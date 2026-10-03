@@ -152,6 +152,17 @@ test("lets a paid path preview the finished example before editing", async ({ pa
   const consultationFeedback = pack.locator("[data-lesson-pack-feedback-host]");
   await expect(consultationFeedback).toBeVisible();
   await expect(consultationFeedback.locator('input[name="pilot-route"][value="consult"]')).toBeChecked();
+  const choiceGridColumns = async (selector: string): Promise<number> => {
+    return consultationFeedback.locator(selector).evaluate((element) => {
+      const leftEdges = new Set(Array.from(element.querySelectorAll<HTMLElement>(":scope > label")).map((label) => Math.round(label.getBoundingClientRect().left)));
+      return leftEdges.size;
+    });
+  };
+  expect(await choiceGridColumns("[data-lesson-pack-pilot-plan]")).toBe(testInfo.project.name === "mobile-chromium" ? 2 : 3);
+  expect(await choiceGridColumns("[data-lesson-pack-pilot-budget]")).toBe(2);
+  for (const selector of ["[data-lesson-pack-pilot-audience]", "[data-lesson-pack-pilot-duration]", "[data-lesson-pack-pilot-delivery]"]) {
+    expect(await choiceGridColumns(selector)).toBe(2);
+  }
   await page.screenshot({ path: testInfo.outputPath("paid-preview-consult-shortcut.png"), fullPage: true });
   await page.emulateMedia({ media: "print" });
   await page.evaluate(() => { document.body.dataset.printDocument = "lesson-pack"; });

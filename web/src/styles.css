@@ -266,6 +266,16 @@ footer a { color: #155e8a; }
 .lesson-pack-completion .lesson-pack-pilot-plan { border-color: #9bb3c2; background: #eef7fb; }
 .lesson-pack-completion .lesson-pack-pilot-plan legend { color: #17324d; font-weight: 700; }
 .lesson-pack-completion .lesson-pack-pilot-plan-note { margin: .35rem 0 .15rem; padding: .45rem .55rem; border-left: 3px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .78rem; line-height: 1.4; }
+.lesson-pack-completion .lesson-pack-pilot-route,
+.lesson-pack-completion .lesson-pack-pilot-plan,
+.lesson-pack-completion .lesson-pack-pilot-budget,
+.lesson-pack-completion .lesson-pack-pilot-scope-fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem .55rem; min-width: 0; align-items: start; }
+.lesson-pack-completion .lesson-pack-pilot-plan { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lesson-pack-completion .lesson-pack-pilot-route > legend,
+.lesson-pack-completion .lesson-pack-pilot-plan > legend,
+.lesson-pack-completion .lesson-pack-pilot-budget > legend,
+.lesson-pack-completion .lesson-pack-pilot-scope-fieldset > legend,
+.lesson-pack-completion .lesson-pack-pilot-plan-note { grid-column: 1 / -1; }
 .lesson-pack-pilot-scope-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; }
 .lesson-pack-pilot-scope-grid fieldset { min-width: 0; }
 .lesson-pack-pilot-scope-grid legend { color: #304b60; font-size: .86rem; font-weight: 700; }
@@ -537,6 +547,7 @@ footer a { color: #155e8a; }
   .lesson-pack-feedback-actions { align-items: stretch; }
   .lesson-pack-feedback-actions button, .lesson-pack-feedback-copy { width: 100%; }
   .lesson-pack-pilot-scope-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .lesson-pack-completion .lesson-pack-pilot-plan { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lesson-pack-builder { padding: .65rem; }
   .lesson-pack-builder-sheet { padding: 1rem 1rem calc(5.5rem + env(safe-area-inset-bottom)); }
   .lesson-pack-builder-layout { grid-template-areas: "summary" "main"; grid-template-columns: minmax(0, 1fr); gap: .8rem; }
