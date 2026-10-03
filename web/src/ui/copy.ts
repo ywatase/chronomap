@@ -227,6 +227,7 @@ export interface UiCopy {
   readonly datasetCatalogOfferPrices: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferLeads: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferBenefits: Readonly<Record<LessonPackOfferPlan, string>>;
+  readonly datasetCatalogOfferNextSteps: Readonly<Record<LessonPackOfferPlan, string>>;
   readonly datasetCatalogOfferOutputsHeading: string;
   readonly datasetCatalogOfferOutputs: Readonly<Record<LessonPackOfferPlan, readonly string[]>>;
   readonly datasetCatalogOfferActions: Readonly<Record<LessonPackOfferPlan, string>>;
@@ -576,6 +577,7 @@ const EN_COPY: UiCopy = {
   datasetCatalogOfferPrices: { "free-explore": "¥0 · self-serve", "classroom-pilot": "From ¥49,800 · one class", "custom-region": "From ¥198,000 · one region" },
   datasetCatalogOfferLeads: { "free-explore": "Inspect maps, evidence, sharing, and one classroom pack locally.", "classroom-pilot": "Shape a lesson for one class and discuss the teacher workflow.", "custom-region": "Discuss source curation and lesson design for your own region or topic." },
   datasetCatalogOfferBenefits: { "free-explore": "No account or contact required", "classroom-pilot": "Teacher guide + feedback handoff", "custom-region": "Region/topic scope + source discussion" },
+  datasetCatalogOfferNextSteps: { "free-explore": "Next: open the finished example", "classroom-pilot": "Next: choose class conditions, then review a consultation brief", "custom-region": "Next: choose region conditions, then review a consultation brief" },
   datasetCatalogOfferOutputsHeading: "What this path covers",
   datasetCatalogOfferOutputs: {
     "free-explore": ["Map, evidence, and uncertainty review", "Shareable report and links", "One finished classroom-pack example"],
@@ -921,6 +923,7 @@ const JA_COPY: UiCopy = {
   datasetCatalogOfferPrices: { "free-explore": "¥0・登録不要", "classroom-pilot": "¥49,800〜・1クラス", "custom-region": "¥198,000〜・1地域" },
   datasetCatalogOfferLeads: { "free-explore": "地図・根拠・共有・1つの教材パックを端末上で確認します。", "classroom-pilot": "1クラス分の教材を整え、教員の使い方を相談します。", "custom-region": "希望地域・題材の出典整理と教材設計を相談します。" },
   datasetCatalogOfferBenefits: { "free-explore": "登録・連絡先なしで開始", "classroom-pilot": "教員用資料＋相談文", "custom-region": "地域・題材の範囲＋出典相談" },
+  datasetCatalogOfferNextSteps: { "free-explore": "次の一歩: 完成見本を確認", "classroom-pilot": "次の一歩: 授業条件を選び、相談文を確認", "custom-region": "次の一歩: 地域条件を選び、相談文を確認" },
   datasetCatalogOfferOutputsHeading: "この選択肢で扱う内容",
   datasetCatalogOfferOutputs: {
     "free-explore": ["地図・根拠・不確実性の確認", "共有リンクとレポート", "1つの教材パックの完成見本"],

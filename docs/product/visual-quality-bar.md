@@ -29,6 +29,12 @@ npm run test:browser -- tests/browser/quick-start.spec.ts --project=desktop-chro
 npm run test:browser -- tests/browser/start-hub.spec.ts --project=desktop-chromium --project=mobile-chromium --grep "surfaces the public evidence audit" --workers=2 --trace=off
 ```
 
+## 2026-10-03 セルフレビュー記録
+
+価格カードから完成見本・相談文へ進む画面を1440×900／390×844で再撮影した。最も大きかった違和感は、価格と納品物を読んだ後の次の行動がカードごとに明示されていなかったことだったため、「完成見本を開く」「授業条件を選び相談文を確認」「地域条件を選び相談文を確認」を各カードへ追加した。相談で確定する価格・範囲・納期の境界、メール窓口未設定時の手動ハンドオフ、横overflowなしは再確認済みである。
+
+同日の品質ゲートは、unit 32 files / 180 tests、対象catalog E2E 2 projects、production build成功。buildのchunk-size warningは既存のMapLibre／アプリバンドルサイズに関する警告で、機能失敗ではない。
+
 既存の全E2E、unit、`npm run build` が通ることを品質ゲートとする。`prefers-reduced-motion: reduce`、キーボードフォーカス、公開データの出典・不確実性、相談文の個人情報非漏洩は、視覚改善で後退させない。
 
 ## 参照した公開評価観点
@@ -36,4 +42,3 @@ npm run test:browser -- tests/browser/start-hub.spec.ts --project=desktop-chromi
 - [Awwwards](https://www.awwwards.com/sites/finely-crafted): Design / Usability / Creativity / Content、および Semantics / Animations / Accessibility / WPO / Responsive Design。
 - [The Webby Awards](https://www.webbyawards.com/judging-criteria/): Content / Structure and Navigation / Visual Design / Functionality / Interactivity / Innovation / Overall Experience。
 - [FWA](https://www.thefwa.org/): 実験性、レスポンシブなライブ体験、技術と表現の結びつきを重視する公開アーカイブの考え方。
-

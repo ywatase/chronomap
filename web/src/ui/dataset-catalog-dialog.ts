@@ -171,6 +171,10 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
     const benefit = document.createElement("p");
     benefit.className = "dataset-catalog-offer-benefit";
     benefit.textContent = copy.datasetCatalogOfferBenefits[plan];
+    const nextStep = document.createElement("p");
+    nextStep.className = "dataset-catalog-offer-next";
+    nextStep.dataset.datasetCatalogOfferNext = plan;
+    nextStep.textContent = copy.datasetCatalogOfferNextSteps[plan];
     const outputs = document.createElement("div");
     outputs.className = "dataset-catalog-offer-outputs";
     outputs.dataset.datasetCatalogOfferOutputs = plan;
@@ -185,7 +189,7 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
       outputList.append(output);
     }
     outputs.append(outputsHeading, outputList);
-    card.append(title, price, description, benefit, outputs);
+    card.append(title, price, description, benefit, nextStep, outputs);
     const target = plan === "free-explore" ? freeUrl : builderUrl ? addOffer(builderUrl, plan) : undefined;
     if (target) card.append(link(target, copy.datasetCatalogOfferActions[plan], "dataset-catalog-offer-link", plan !== "free-explore"));
     else card.append(disabledPurposeAction(copy.datasetCatalogOfferActions[plan]));

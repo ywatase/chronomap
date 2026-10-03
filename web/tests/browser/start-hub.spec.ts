@@ -86,7 +86,7 @@ test("keeps the root hub when a malformed draft is selected", async ({ page }) =
   expect(page.url()).not.toContain("invalid.json");
 });
 
-test("carries an adoption path from the catalog into the consultation handoff", async ({ page }) => {
+test("carries an adoption path from the catalog into the consultation handoff", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     window.print = () => { document.body.dataset.printCalled = "true"; };
   });
@@ -100,6 +100,8 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/地域教材の個別制作|Custom regional production/);
   await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);
+  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-next]")).toContainText(/次の一歩: 授業条件を選び|Next: choose class conditions/);
+  await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-next]")).toContainText(/次の一歩: 地域条件を選び|Next: choose region conditions/);
   await expect(offers.locator("[data-dataset-catalog-offer=free-explore] [data-dataset-catalog-offer-output]")).toHaveCount(3);
   await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-output]")).toHaveCount(3);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/希望地域・題材の出典整理|Region\/topic source curation/);
@@ -111,6 +113,7 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect(process).toBeVisible();
   await expect(process.locator("[data-dataset-catalog-process-step]")).toHaveCount(3);
   await expect(process).toContainText(/範囲・価格・納期|scope, price, and delivery/);
+  await page.screenshot({ path: testInfo.outputPath("catalog-offers.png"), fullPage: true });
   await offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]").click();
   await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
   const builder = page.locator("[data-lesson-pack-builder]");
