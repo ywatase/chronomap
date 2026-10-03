@@ -423,6 +423,7 @@ footer a { color: #155e8a; }
 .dataset-catalog-offer:hover, .dataset-catalog-offer:focus-within { border-color: #6d9db7; box-shadow: 0 8px 18px rgb(16 42 67 / 10%); transform: translateY(-2px); }
 .dataset-catalog-offer-classroom-pilot { border: 2px solid #2d7fa0; background: linear-gradient(160deg, #eaf7fb 0%, #f5fbfd 100%); box-shadow: 0 7px 18px rgb(21 94 138 / 12%); }
 .dataset-catalog-offer-custom-region { border-color: #d1b37a; background: #fffaf0; }
+.dataset-catalog-offer-badge { display: inline-flex; width: fit-content; margin: -.1rem 0 .05rem; padding: .2rem .4rem; border-radius: 999px; background: #155e8a; color: #fff; font-size: .68rem; font-weight: 800; line-height: 1.25; }
 .dataset-catalog-offer h4 { margin: 0; color: #102a43; font-size: .9rem; line-height: 1.25; }
 .dataset-catalog-offer p { min-height: 2.7em; margin: 0; color: #40566a; font-size: .78rem; line-height: 1.4; }
 .dataset-catalog-offer .dataset-catalog-offer-price { min-height: 0; color: #17324d; font-size: 1rem; font-weight: 800; line-height: 1.25; }

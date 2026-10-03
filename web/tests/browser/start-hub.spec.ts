@@ -97,6 +97,7 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await expect(offers.locator("[data-dataset-catalog-offer]")).toHaveCount(3);
   await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-price]")).toContainText(/¥49,800|49,800/);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-price]")).toContainText(/¥198,000|198,000/);
+  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-badge]")).toContainText(/最初の有料パイロットにおすすめ|Recommended first paid pilot/);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/地域教材の個別制作|Custom regional production/);
   await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);
   await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);

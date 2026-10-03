@@ -160,6 +160,14 @@ function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLEleme
     const card = document.createElement("article");
     card.className = `dataset-catalog-offer dataset-catalog-offer-${plan}`;
     card.dataset.datasetCatalogOffer = plan;
+    const badgeText = copy.datasetCatalogOfferBadges[plan];
+    if (badgeText) {
+      const badge = document.createElement("p");
+      badge.className = "dataset-catalog-offer-badge";
+      badge.dataset.datasetCatalogOfferBadge = plan;
+      badge.textContent = badgeText;
+      card.append(badge);
+    }
     const title = document.createElement("h4");
     title.textContent = copy.datasetCatalogOfferTitles[plan];
     const price = document.createElement("p");
