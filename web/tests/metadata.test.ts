@@ -41,6 +41,8 @@ describe("metadata and list rendering", () => {
     renderMetadataPanel(container, feature, territoryBundle, () => undefined);
 
     expect(container.textContent).toContain("勢力範囲A（勢力圏）");
+    expect(container.textContent).toContain("Alternative B");
+    expect(container.textContent).toContain("仮説グループ");
     expect(container.textContent).toContain("形状: 概略・近似");
   });
 

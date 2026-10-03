@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 6
+- 公開FeatureVersion: 8
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -14,6 +14,8 @@
 | `azuchijo:version:castle-1582` | 安土城（1582年・主郭部焼失後） | Point | 1582年 | open-license |
 | `azuchijo:version:lakeshore-1576` | 琵琶湖東岸（安土付近・概略） | LineString | 1576年以降 | open-license |
 | `azuchijo:version:mountain-1576` | 安土山（1576年・代表点） | Point | 1576年以降 | open-license |
+| `azuchijo:version:omi-sphere-1576-broad` | 織田信長の近江支配の拠点網（1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
+| `azuchijo:version:omi-sphere-1576-lakeshore` | 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
 
 ### `azuchijo:version:castle-1576`
@@ -161,6 +163,58 @@
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
   - `azuchijo:source:shiga-castle`: 滋賀県『特別史跡安土城跡の調査と整備』 — 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/sd00/2591.html
 
+### `azuchijo:version:omi-sphere-1576-broad`
+
+- 地物: 織田信長の近江支配の拠点網（1576〜1582年頃・概略） (`azuchijo:entity:omi-sphere`)
+- geometry: `Polygon`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。領域は行政境界・国境の確定図ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの、信長を中心とする近江支配の拠点網を概略期間で示します。 (Evidence: `azuchijo:evidence:omi-control`)
+  - `location`: `approximate` — 近江全体という説明と琵琶湖岸の拠点城郭の相対関係を囲む概略面です。 (Evidence: `azuchijo:evidence:omi-control`, `azuchijo:evidence:omi-shape`)
+  - `geometry`: `approximate` — 行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点 Polygon です。 (Evidence: `azuchijo:evidence:omi-shape`)
+  - `identity`: `approximate` — 拠点城郭網から推定した勢力圏の仮説表示であり、単一の確定領域を主張しません。 (Evidence: `azuchijo:evidence:omi-control`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-control` | citation | identity, location, temporal | 近江支配と琵琶湖岸の拠点城郭に関する解説 | `azuchijo:source:omi-control` |
+  - `azuchijo:evidence:omi-control` — 信長の上洛後の近江支配、1576年の安土城築城、琵琶湖岸の拠点城郭網が近江全体の支配を目的としたという引用メタデータ。行政境界や精密な実効支配範囲を示す資料ではありません。
+| `azuchijo:evidence:omi-shape` | derived-geometry | geometry, location | 近江支配の拠点網 Polygon の作成方法と限界 | `azuchijo:source:shape-notes` |
+  - `azuchijo:evidence:omi-shape` — 滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:omi-control`: 滋賀県『信長の城と戦国近江』 — 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf
+  - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
+
+### `azuchijo:version:omi-sphere-1576-lakeshore`
+
+- 地物: 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） (`azuchijo:entity:omi-sphere`)
+- geometry: `Polygon`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。領域は行政境界・国境の確定図ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの、信長を中心とする近江支配の拠点網を概略期間で示します。 (Evidence: `azuchijo:evidence:omi-control`)
+  - `location`: `approximate` — 琵琶湖岸の拠点城郭の相対関係を重視した概略面です。 (Evidence: `azuchijo:evidence:omi-control`, `azuchijo:evidence:omi-shape`)
+  - `geometry`: `approximate` — 行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点 Polygon です。 (Evidence: `azuchijo:evidence:omi-shape`)
+  - `identity`: `approximate` — 拠点城郭網から推定した勢力圏の別仮説であり、単一の確定領域を主張しません。 (Evidence: `azuchijo:evidence:omi-control`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-control` | citation | identity, location, temporal | 近江支配と琵琶湖岸の拠点城郭に関する解説 | `azuchijo:source:omi-control` |
+  - `azuchijo:evidence:omi-control` — 信長の上洛後の近江支配、1576年の安土城築城、琵琶湖岸の拠点城郭網が近江全体の支配を目的としたという引用メタデータ。行政境界や精密な実効支配範囲を示す資料ではありません。
+| `azuchijo:evidence:omi-shape` | derived-geometry | geometry, location | 近江支配の拠点網 Polygon の作成方法と限界 | `azuchijo:source:shape-notes` |
+  - `azuchijo:evidence:omi-shape` — 滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:omi-control`: 滋賀県『信長の城と戦国近江』 — 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf
+  - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
+
 ### `azuchijo:version:water-transport-1576`
 
 - 地物: 安土城と湖上交通の関係（1576年頃・概略） (`azuchijo:entity:water-transport`)
@@ -191,6 +245,7 @@
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
+| `azuchijo:source:omi-control` | 滋賀県『信長の城と戦国近江』 | 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 | `azuchijo:source:omi8-castle` | 近江八幡市観光物産協会『安土城跡』 | 安土城跡; 作成者: 近江八幡市観光物産協会; 2026年; 参照日: 2026-10-02; https://www.omi8.com/spot/detail_1217.html | restricted | 引用メタデータのみ。本文・写真・地図画像は再現しない。 |
 | `azuchijo:source:shape-notes` | Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 | 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md | open-license; 表示: Chronomap contributors | 公開メタデータから作成した概略復元メモ。 |
 | `azuchijo:source:shiga-biwako-human` | 滋賀県『琵琶湖と人の長いつきあい』 | 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/biwakatsu/20521.html | restricted | 引用メタデータのみ。本文・写真・図版は再現しない。 |

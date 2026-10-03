@@ -168,6 +168,22 @@
 
   `data/kinugawa/`、`web/public/data/kinugawa/`、`web/public/lessons/kinugawa-history.json`、catalog、監査、E2Eを1つの縦切りコミットとして保存する。
 
+### Task 5: 実データの勢力圏縦切り
+
+**Files:**
+- Modify: `data/azuchijo/dataset.json`, `entities.json`, `sources.json`, `evidence.json`, `feature-versions.geojson`
+- Create: `docs/data/azuchijo-omi-sphere-shape-notes.md`, `tests/test_azuchijo_package.py`
+- Modify: `web/public/data/azuchijo/`, `web/tests/browser/azuchijo-data.spec.ts`, `docs/data/azuchijo-audit.md`, `docs/product/japan-coverage-matrix.md`
+
+**Interfaces:**
+- Consumes: Task 2の領域Entity表示契約と、滋賀県『信長の城と戦国近江』の引用メタデータ。
+- Produces: `sphere-of-influence` Entity、重なる2案のPolygon、時代境界・仮説ラベル・4次元不確実性・出典到達性を持つ安土城公開bundle。
+
+- [x] **Step 1: Write the failing test** — `tests/test_azuchijo_package.py` と安土城desktop／mobile E2Eで、勢力圏Entity、2案のPolygon、仮説ラベル、証拠、UI表示を固定した。
+- [x] **Step 2: Run test to verify it fails** — 実データ追加前にPythonのEntity参照とPlaywrightの一覧件数／領域ボタンが失敗することを確認した。
+- [x] **Step 3: Add only source-backed public records** — 滋賀県資料の引用メタデータのみを収録し、2案とも行政境界・確定国境ではない独自概略復元として公開した。
+- [x] **Step 4: Run the quality gate** — `validate --profile public`、公開bundle生成、Python監査・カバレッジ・安土城packageテスト、安土城desktop／mobile E2Eを通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 3は権利と取得方式が確認できた場合だけ進め、Task 4は題材の出典が揃った候補から1つだけ選ぶ。価格・相談導線の追加はTask 2またはTask 3とTask 4の受け入れ後に再評価する。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は`boundary`／`polity`または別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

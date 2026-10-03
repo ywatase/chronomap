@@ -1,5 +1,23 @@
 [
   {
+    "accessedDate": "2026-10-04",
+    "citation": "滋賀県『信長の城と戦国近江』",
+    "creators": [
+      "滋賀県"
+    ],
+    "id": "azuchijo:source:omi-control",
+    "publishedYear": 2018,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・図版・地図画像は再現しない。"
+    },
+    "title": {
+      "ja": "信長の城と戦国近江"
+    },
+    "type": "official-report",
+    "url": "https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf"
+  },
+  {
     "accessedDate": "2026-10-02",
     "citation": "近江八幡市観光物産協会『安土城跡』",
     "creators": [

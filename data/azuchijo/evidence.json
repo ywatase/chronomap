@@ -31,5 +31,22 @@
     "usage": "citation",
     "supports": ["temporal", "location", "identity"],
     "note": "安土桃山期の湖上交通と安土城の位置関係を示す引用メタデータ。個別の航路、港、船着場、運航日を特定する資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:omi-control",
+    "sourceId": "azuchijo:source:omi-control",
+    "locator": "近江支配と琵琶湖岸の拠点城郭に関する解説",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "信長の上洛後の近江支配、1576年の安土城築城、琵琶湖岸の拠点城郭網が近江全体の支配を目的としたという引用メタデータ。行政境界や精密な実効支配範囲を示す資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:omi-shape",
+    "sourceId": "azuchijo:source:shape-notes",
+    "locator": "近江支配の拠点網 Polygon の作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

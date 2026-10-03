@@ -35,7 +35,7 @@
 | 城・史跡・集落・街・港・古戦場 | `fortification`, `archaeological-site`, `settlement`, `port`, `battlefield` | 代表点または範囲を、精度の限界とともに表示する |
 | 国・勢力圏 | `polity`, `sphere-of-influence` | Polygon/MultiPolygon、時代境界、仮説ラベル、凡例と表示切替を持つ |
 
-現時点の公開データは5地域、20 FeatureVersion、15 Entity、6 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、石山本願寺、小氷期の海進、古大阪湾、および原要求に照らして不足している港・古戦場・勢力圏である。
+現時点の公開データは5地域、22 FeatureVersion、16 Entity、6 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、石山本願寺、小氷期の海進、古大阪湾、および原要求に照らして不足している港・古戦場・`boundary`／`polity`である。
 
 新しい地域を「完了」と呼ぶ条件は、次をすべて満たすこととする。
 
@@ -72,10 +72,10 @@
 | --- | --- | --- |
 | P0地図・年代・詳細・根拠 | 実装済み | `web/src/map/`, `web/src/domain/temporal-filter.ts`, `web/src/ui/metadata-panel.ts` |
 | P0比較・共有・レポート | 実装済み | `web/src/domain/comparison-candidates.ts`, `share-state.ts`, `report-model.ts` |
-| P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`, 194 unit / 152 browser tests |
+| P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`, 194 unit / 154 browser tests |
 | P1 5地域パイロット | 一部実装 | `data/{ogurike,tonegawa,heijokyo,azuchijo,kinugawa}`。日本全体の網羅ではない |
-| P1 港・古戦場・国・勢力圏 | 未検証 | schema enumにはあるが、公開データとUI導線が不足 |
-| P2 領域レイヤー | UI契約を実装、実データ待ち | `boundary`／`polity`／`sphere-of-influence` のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。公開bundleにはまだ該当Entityがないため、実データの重なり・時代境界は未検証 |
+| P1 港・古戦場・国・勢力圏 | 一部検証 | 安土城・琵琶湖東岸に、滋賀県の解説をもとにした2案の`sphere-of-influence`概略Polygonを追加。港・古戦場・`polity`・`boundary`は未収録 |
+| P2 領域レイヤー | `sphere-of-influence`縦切り済み | `boundary`／`polity`／`sphere-of-influence` のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。安土城データで重なる仮説2案、1576〜1582年頃の時代境界、出典・4次元不確実性、desktop／mobile E2Eを検証済み。`boundary`／`polity`の実データは未収録 |
 | P2 古地図画像／タイル | 未着手 | 現在地図＋概略geometryのみ |
 | 中国史・世界史 | 対象外 | 現在のJapan-first MVPの非目標 |
 | 課金・相談導線 | 凍結 | コア受け入れ基準の外。現行UIは維持するが、追加実装しない |

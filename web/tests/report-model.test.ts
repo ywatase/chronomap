@@ -12,6 +12,8 @@ const first = {
     entityId: "ogurike:entity:ogurike",
     labels: { ja: "巨椋池" },
     description: { ja: "概略復元" },
+    hypothesisGroupId: "ogurike:hypothesis:waterbody-shape",
+    hypothesisLabel: { ja: "概略復元案" },
     temporal: { start: { earliestYear: 1910, latestYear: 1910, precision: "year" as const, qualifier: "exact" as const }, end: { earliestYear: 1910, latestYear: 1910, precision: "year" as const, qualifier: "exact" as const } },
     uncertainty: {
       temporal: { assessment: "well-supported" as const, note: "年次資料", evidenceIds: ["evidence:map"] },
@@ -51,6 +53,7 @@ describe("report model", () => {
     expect(model?.feature.entityType).toBe("水域");
     expect(model?.feature.period).toContain("1910年");
     expect(model?.feature.geometry).toBe("面");
+    expect((model?.feature as unknown as { hypothesis?: string }).hypothesis).toBe("概略復元案");
     expect(model?.feature.evidence[0]?.citationOnly).toBe(true);
     expect(model?.feature.evidence[0]?.locator).toBe("図1");
     expect(model?.comparison.map((version) => version.year)).toEqual(["1910年", "1942年"]);

@@ -120,6 +120,62 @@
         "publicationStatus": "public",
         "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用）", "terms": "外部本文・写真・図版は再現しない。" }
       }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:omi-sphere-1576-broad",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.82, 35.00], [135.76, 35.18], [135.90, 35.43], [136.10, 35.52], [136.39, 35.43], [136.46, 35.18], [136.29, 34.99], [136.02, 34.92], [135.82, 35.00]]]
+      },
+      "properties": {
+        "entityId": "azuchijo:entity:omi-sphere",
+        "labels": { "ja": "織田信長の近江支配の拠点網（1576〜1582年頃・概略）" },
+        "description": { "ja": "滋賀県の解説にある、琵琶湖岸の拠点城郭から近江全体を支配する構想を考えるための概略面です。行政境界・確定した国境・実効支配の精密な面ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "period", "qualifier": "circa" },
+          "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "period", "qualifier": "circa" }
+        },
+        "hypothesisGroupId": "azuchijo:hypothesis:omi-control-envelope-1576",
+        "hypothesisLabel": { "ja": "近江全体を囲む案" },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城築城開始から本能寺の変までの、信長を中心とする近江支配の拠点網を概略期間で示します。", "evidenceIds": ["azuchijo:evidence:omi-control"] },
+          "location": { "assessment": "approximate", "note": "近江全体という説明と琵琶湖岸の拠点城郭の相対関係を囲む概略面です。", "evidenceIds": ["azuchijo:evidence:omi-control", "azuchijo:evidence:omi-shape"] },
+          "geometry": { "assessment": "approximate", "note": "行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点 Polygon です。", "evidenceIds": ["azuchijo:evidence:omi-shape"] },
+          "identity": { "assessment": "approximate", "note": "拠点城郭網から推定した勢力圏の仮説表示であり、単一の確定領域を主張しません。", "evidenceIds": ["azuchijo:evidence:omi-control"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:omi-control", "azuchijo:evidence:omi-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。領域は行政境界・国境の確定図ではない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:omi-sphere-1576-lakeshore",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[135.90, 35.07], [135.84, 35.22], [135.98, 35.43], [136.20, 35.45], [136.37, 35.29], [136.31, 35.10], [136.12, 35.01], [135.90, 35.07]]]
+      },
+      "properties": {
+        "entityId": "azuchijo:entity:omi-sphere",
+        "labels": { "ja": "織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略）" },
+        "description": { "ja": "琵琶湖岸の拠点城郭との関係を強調した、近江支配の別の概略面です。行政境界・確定した国境・実効支配の精密な面ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "period", "qualifier": "circa" },
+          "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "period", "qualifier": "circa" }
+        },
+        "hypothesisGroupId": "azuchijo:hypothesis:omi-control-envelope-1576",
+        "hypothesisLabel": { "ja": "琵琶湖岸の拠点網を重視する案" },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城築城開始から本能寺の変までの、信長を中心とする近江支配の拠点網を概略期間で示します。", "evidenceIds": ["azuchijo:evidence:omi-control"] },
+          "location": { "assessment": "approximate", "note": "琵琶湖岸の拠点城郭の相対関係を重視した概略面です。", "evidenceIds": ["azuchijo:evidence:omi-control", "azuchijo:evidence:omi-shape"] },
+          "geometry": { "assessment": "approximate", "note": "行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点 Polygon です。", "evidenceIds": ["azuchijo:evidence:omi-shape"] },
+          "identity": { "assessment": "approximate", "note": "拠点城郭網から推定した勢力圏の別仮説であり、単一の確定領域を主張しません。", "evidenceIds": ["azuchijo:evidence:omi-control"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:omi-control", "azuchijo:evidence:omi-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。領域は行政境界・国境の確定図ではない。" }
+      }
     }
   ]
 }

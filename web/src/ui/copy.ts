@@ -49,6 +49,7 @@ export interface UiCopy {
   readonly reportFeatureId: string;
   readonly reportEntity: string;
   readonly reportEntityType: string;
+  readonly reportHypothesis: string;
   readonly reportDescription: string;
   readonly reportPeriod: string;
   readonly reportGeometry: string;
@@ -294,6 +295,7 @@ export interface UiCopy {
   readonly noFeatures: (year: string) => string;
   readonly unknownEntity: string;
   readonly noPreferredHypothesis: string;
+  readonly hypothesisGroup: string;
   readonly possible: (value: string) => string;
   readonly uncertainty: string;
   readonly entity: string;
@@ -371,6 +373,7 @@ const EN_COPY: UiCopy = {
   reportFeatureId: "Feature ID",
   reportEntity: "Entity",
   reportEntityType: "Entity type",
+  reportHypothesis: "Hypothesis",
   reportDescription: "Description",
   reportPeriod: "Possible period",
   reportGeometry: "Geometry",
@@ -653,6 +656,7 @@ const EN_COPY: UiCopy = {
   noFeatures: (year) => `No features match ${year}.`,
   unknownEntity: "Unknown entity",
   noPreferredHypothesis: "No preferred hypothesis",
+  hypothesisGroup: "Hypothesis group",
   possible: (value) => `possible ${value}`,
   uncertainty: "uncertainty",
   entity: "Entity",
@@ -722,6 +726,7 @@ const JA_COPY: UiCopy = {
   reportFeatureId: "地物ID",
   reportEntity: "歴史対象",
   reportEntityType: "種別",
+  reportHypothesis: "仮説",
   reportDescription: "説明",
   reportPeriod: "可能期間",
   reportGeometry: "形状",
@@ -1004,6 +1009,7 @@ const JA_COPY: UiCopy = {
   noFeatures: (year) => `${year}に一致する公開地物はありません。`,
   unknownEntity: "地物の同一性情報なし",
   noPreferredHypothesis: "優先順位を付けていない復元案",
+  hypothesisGroup: "仮説グループ",
   possible: (value) => `可能期間: ${value}`,
   uncertainty: "不確実性",
   entity: "歴史対象",

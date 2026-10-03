@@ -11,6 +11,30 @@
     "usage": "citation"
   },
   {
+    "id": "azuchijo:evidence:omi-control",
+    "locator": "近江支配と琵琶湖岸の拠点城郭に関する解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:omi-control",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:omi-shape",
+    "locator": "近江支配の拠点網 Polygon の作成方法と限界",
+    "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
     "id": "azuchijo:evidence:shape",
     "locator": "代表点・東岸概略線の作成方法と限界",
     "note": "公開された所在地の相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。現在・過去の正確な境界や湖岸線ではない。",

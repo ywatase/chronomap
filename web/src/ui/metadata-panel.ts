@@ -12,7 +12,10 @@ export function renderMetadataPanel(container: HTMLElement, selectedFeature: Fea
   section(container, copy.entity, entity
     ? [`${localizedText(entity.labels, bundle.dataset.defaultLanguage)}${copy.language === "ja" ? `（${entityTypeLabel(entity.type, copy.language)}）` : ` (${entityTypeLabel(entity.type, copy.language)})`}`, localizedText(entity.description, bundle.dataset.defaultLanguage)]
     : [copy.unknownEntity]);
-  section(container, copy.version, [localizedText(selectedFeature.properties.labels, bundle.dataset.defaultLanguage), localizedText(selectedFeature.properties.description, bundle.dataset.defaultLanguage), `${copy.geometry}: ${copy.geometryType(selectedFeature.geometry.type)}`]);
+  const hypothesis = selectedFeature.properties.hypothesisLabel
+    ? [`${copy.hypothesisGroup}: ${localizedText(selectedFeature.properties.hypothesisLabel, bundle.dataset.defaultLanguage)}${selectedFeature.properties.hypothesisGroupId ? ` (${selectedFeature.properties.hypothesisGroupId})` : ""}`]
+    : [];
+  section(container, copy.version, [localizedText(selectedFeature.properties.labels, bundle.dataset.defaultLanguage), ...hypothesis, localizedText(selectedFeature.properties.description, bundle.dataset.defaultLanguage), `${copy.geometry}: ${copy.geometryType(selectedFeature.geometry.type)}`]);
   section(container, copy.time, [periodText(selectedFeature.properties.temporal, bundle.dataset.defaultLanguage)]);
   const uncertainty = document.createElement("section"); const uncertaintyHeading = document.createElement("h3"); uncertaintyHeading.textContent = copy.uncertaintyHeading; uncertainty.append(uncertaintyHeading);
   for (const [dimension, assessment] of Object.entries(selectedFeature.properties.uncertainty)) uncertainty.append(line(copy.language === "ja"

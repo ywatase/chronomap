@@ -2,9 +2,9 @@
   "schemaVersion": "1.0.0",
   "id": "azuchijo:dataset:pilot",
   "title": { "ja": "安土城・琵琶湖東岸パイロット" },
-  "description": { "ja": "1576年の築城開始と1582年の焼失を、安土山・琵琶湖東岸・湖上交通の概略関係とともに比べる小規模データです。" },
+  "description": { "ja": "1576年の築城開始と1582年の焼失を、安土山・琵琶湖東岸・湖上交通、織田信長の近江支配の拠点網（概略）とともに比べる小規模データです。" },
   "defaultLanguage": "ja",
-  "bbox": [136.02, 35.10, 136.18, 35.21],
+  "bbox": [135.74, 34.92, 136.46, 35.52],
   "temporalExtent": {
     "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "year", "qualifier": "exact" },
     "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "year", "qualifier": "exact" }

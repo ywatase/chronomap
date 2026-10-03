@@ -29,6 +29,7 @@ export interface ReportFeature {
   readonly entityType?: string;
   readonly entityDescription: string;
   readonly label: string;
+  readonly hypothesis?: string;
   readonly description: string;
   readonly period: string;
   readonly geometry: string;
@@ -83,6 +84,7 @@ function projectFeature(feature: FeatureVersion, bundle: PublicBundle, language:
     ...(entity ? { entityType: entityTypeLabel(entity.type, language) } : {}),
     entityDescription: entity ? localizedText(entity.description, bundle.dataset.defaultLanguage) : "",
     label: localizedText(feature.properties.labels, bundle.dataset.defaultLanguage),
+    ...(feature.properties.hypothesisLabel ? { hypothesis: localizedText(feature.properties.hypothesisLabel, bundle.dataset.defaultLanguage) } : {}),
     description: localizedText(feature.properties.description, bundle.dataset.defaultLanguage),
     period: formatTemporal(feature.properties.temporal, language),
     geometry: formatGeometry(feature.geometry.type, language),

@@ -31,6 +31,16 @@
   },
   {
     "description": {
+      "ja": "琵琶湖岸の拠点城郭から近江全体を支配する構想を考えるための概略範囲。行政境界・確定した国境・実効支配の精密な面ではありません。"
+    },
+    "id": "azuchijo:entity:omi-sphere",
+    "labels": {
+      "ja": "織田信長の近江支配の拠点網（概略）"
+    },
+    "type": "sphere-of-influence"
+  },
+  {
+    "description": {
       "ja": "安土城と琵琶湖東岸を結ぶ水運の文脈を考えるための概略接続線。実際の航路・港・船着場の位置ではありません。"
     },
     "id": "azuchijo:entity:water-transport",

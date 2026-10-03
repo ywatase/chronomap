@@ -18,6 +18,7 @@ const model: ReportModel = {
     entityDescription: "歴史上の池",
     label: "巨椋池（1910年・概略）",
     description: "概略復元",
+    hypothesis: "概略復元案",
     period: "1910年時点（year・exact）。",
     geometry: "面",
     uncertainty: ["年代: 根拠が強い", "位置: 概略・近似"],
@@ -37,6 +38,7 @@ describe("print report", () => {
     expect(root.querySelector("h2")?.textContent).toContain("1910年");
     expect(root.textContent).toContain("図1");
     expect(root.textContent).toContain("種別: 水域");
+    expect(root.textContent).toContain("仮説: 概略復元案");
     expect(root.textContent).toContain("引用メタデータのみを収録しています");
     expect(root.querySelector("a[href='https://example.com/source']")?.textContent).toBe("出典を開く");
     expect(root.querySelector("[data-report-print]")).toBeTruthy();
