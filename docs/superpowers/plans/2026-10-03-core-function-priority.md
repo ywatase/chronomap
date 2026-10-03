@@ -39,27 +39,27 @@
 - Consumes: `data/*/dataset.json`, `entities.json`, `sources.json`, `evidence.json`, `feature-versions.geojson`。
 - Produces: 地域ごとの必須データ種別、出典到達性、欠落理由、公開可否を決定的に確認できる監査表。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
   4地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
   Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q`
 
   Expected: 新しいカバレッジ assertion が、まだ監査表を生成していないためFAILする。
 
-- [ ] **Step 3: Implement the deterministic coverage audit**
+- [x] **Step 3: Implement the deterministic coverage audit**
 
   既存のPythonデータ検証ロジックを再利用し、地域、Entity type、FeatureVersion数、Source/Evidence到達数、欠落理由をMarkdownへ決定的に投影する。公開対象を黙って除外せず、未達を明示する。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
   Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q` と `uv run chronomap-data validate data/<dataset> --profile public`（4地域）。
 
   Expected: PASS。監査表と公開bundleの件数が一致する。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   `git add docs/product/japan-coverage-matrix.md docs/product/core-acceptance.md tests/test_dataset_audits.py tests/test_audit.py` でコミットする。
 
