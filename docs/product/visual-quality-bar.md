@@ -35,6 +35,8 @@ npm run test:browser -- tests/browser/start-hub.spec.ts --project=desktop-chromi
 
 同日の品質ゲートは、unit 32 files / 180 tests、対象catalog E2E 2 projects、production build成功。buildのchunk-size warningは既存のMapLibre／アプリバンドルサイズに関する警告で、機能失敗ではない。
 
+続く購入導線のセルフレビューでは、有料完成見本から相談文を開くショートカットを追加し、390×844／1440×900で、印刷前でも相談ルートへ到達できること、無料ルートには表示されないこと、横overflowがないことを確認した。
+
 既存の全E2E、unit、`npm run build` が通ることを品質ゲートとする。`prefers-reduced-motion: reduce`、キーボードフォーカス、公開データの出典・不確実性、相談文の個人情報非漏洩は、視覚改善で後退させない。
 
 ## 参照した公開評価観点

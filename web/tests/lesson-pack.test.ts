@@ -52,6 +52,21 @@ describe("lesson pack preview", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("offers a consultation shortcut only when a paid path is active", () => {
+    const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
+    const freeRoot = document.createElement("div");
+    renderLessonPack(freeRoot, model, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn() });
+    expect(freeRoot.querySelector("[data-lesson-pack-consult]")).toBeNull();
+
+    const paidRoot = document.createElement("div");
+    const onConsult = vi.fn();
+    renderLessonPack(paidRoot, model, uiCopy("ja"), { onClose: vi.fn(), onPrint: vi.fn(), onConsult, initialPilotPlan: "classroom-pilot" });
+    const consult = paidRoot.querySelector<HTMLButtonElement>("[data-lesson-pack-consult]")!;
+    expect(consult.textContent).toContain("相談文を作る");
+    consult.click();
+    expect(onConsult).toHaveBeenCalledOnce();
+  });
+
   it("offers strict student, teacher, and full print scopes while keeping teacher scope conditional", () => {
     const model = buildLessonPackModel(lesson, bundle, "https://example.test/")!;
     const root = document.createElement("div");

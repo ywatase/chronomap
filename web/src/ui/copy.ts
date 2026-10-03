@@ -115,6 +115,7 @@ export interface UiCopy {
   readonly lessonPackPrintTeacher: string;
   readonly lessonPackPrintFull: string;
   readonly lessonPackStudentPrintWarning: string;
+  readonly lessonPackConsult: string;
   readonly lessonPackClose: string;
   readonly lessonPackStartQrHint: string;
   readonly lessonPackStartQrLabel: string;
@@ -433,6 +434,7 @@ const EN_COPY: UiCopy = {
   lessonPackPrintTeacher: "Print teacher reference + sources",
   lessonPackPrintFull: "Print full classroom pack",
   lessonPackStudentPrintWarning: "Student print excludes teacher reading examples.",
+  lessonPackConsult: "Create a consultation brief",
   lessonPackClose: "Close classroom pack",
   lessonPackStartQrHint: "Scan with a smartphone/tablet to open the guided lesson.",
   lessonPackStartQrLabel: "QR code to open the guided lesson",
@@ -487,7 +489,7 @@ const EN_COPY: UiCopy = {
   lessonPackFeedbackCopied: "Feedback answer copied.",
   lessonPackFeedbackCopyFailed: "Could not copy. Select the answer text and copy it manually.",
   lessonPackFeedbackRequired: "Please answer both required questions.",
-  lessonPackCompletionSummary: "Printed pack summary",
+  lessonPackCompletionSummary: "Classroom pack summary",
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps} step${steps === 1 ? "" : "s"} · ${observationFigure ? "observation figure" : "figure unavailable"} · student material${includeTeacher ? " · teacher material" : ""} · QR · sources/rights · ${scope} print`,
   lessonPackPilotPrivacy: "Chronomap does not send or save this text. Do not enter a school name, student name, contact details, or other personal information. Review it before copying or sharing; sending is always your action.",
   lessonPackPilotNoContact: "No consultation mailbox is configured for this demo. Save or copy the handoff and send it to the operator yourself.",
@@ -780,6 +782,7 @@ const JA_COPY: UiCopy = {
   lessonPackPrintTeacher: "教員用資料・出典を印刷",
   lessonPackPrintFull: "教材パック全体を印刷",
   lessonPackStudentPrintWarning: "生徒用印刷では教員の読み取り例を含めません。",
+  lessonPackConsult: "相談文を作る",
   lessonPackClose: "教材パックを閉じる",
   lessonPackStartQrHint: "スマートフォン/タブレットで読み取って教材を開く",
   lessonPackStartQrLabel: "ガイド教材を開くQRコード",
@@ -834,7 +837,7 @@ const JA_COPY: UiCopy = {
   lessonPackFeedbackCopied: "フィードバック回答文をコピーしました。",
   lessonPackFeedbackCopyFailed: "コピーできませんでした。回答文を選択して手動でコピーしてください。",
   lessonPackFeedbackRequired: "必須項目を選択してください。",
-  lessonPackCompletionSummary: "印刷した教材パックの概要",
+  lessonPackCompletionSummary: "教材パックの概要",
   lessonPackCompletionFacts: (steps, scope, includeTeacher, observationFigure) => `${steps}ステップ · ${observationFigure ? "観察用概略図" : "概略図なし"} · 生徒用資料${includeTeacher ? " · 教員用資料" : ""} · QR・出典／権利 · ${scope === "student" ? "生徒用" : scope === "teacher" ? "教員用" : "全体"}を印刷`,
   lessonPackPilotPrivacy: "この文章はChronomapから自動送信・保存されません。学校名、児童生徒名、連絡先などの個人情報は入力しないでください。コピー・共有前に全文を確認し、送信はご自身で行ってください。",
   lessonPackPilotNoContact: "このデモには相談窓口が設定されていません。相談文を保存またはコピーし、運営者へご自身で送ってください。",

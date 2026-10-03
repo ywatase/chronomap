@@ -250,6 +250,12 @@ promise. The plan choices in this form repeat the catalog's beta price proposals
 so the comparison context is not lost; the proposals are not copied into the
 handoff and do not enable checkout.
 
+When a paid adoption path is active, the finished example also exposes a
+`相談文を作る` / `Create a consultation brief` shortcut before printing. It
+opens the same review-only handoff with the selected offer path intact; the
+student/teacher print actions remain available, and the free exploration path
+does not show this shortcut.
+
 ## Dataset catalog
 
 Use `地域・教材を選ぶ` in the header to open the allow-listed region and lesson

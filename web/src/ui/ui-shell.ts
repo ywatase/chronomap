@@ -241,6 +241,17 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     timeoutId = window.setTimeout(clearPrintMode, 1500);
     window.print();
   };
+  const openLessonConsultation = () => {
+    const feedbackHost = lessonPackDialog.querySelector<HTMLElement>("[data-lesson-pack-feedback-host]");
+    if (!feedbackHost) return;
+    showLessonPackFeedback(feedbackHost, "full", copy);
+    feedbackHost.querySelector<HTMLElement>("[data-lesson-pack-completion]")?.scrollIntoView?.({ block: "start" });
+    const route = feedbackHost.querySelector<HTMLInputElement>('input[name="pilot-route"][value="consult"]');
+    if (route) {
+      route.click();
+      route.focus();
+    }
+  };
   const setDraftStatus = (message: string, valid: boolean | null = null) => {
     const status = lessonPackBuilderDialog.querySelector<HTMLElement>("[data-lesson-pack-draft-status]");
     if (!status) return;
@@ -301,6 +312,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
         openLessonWorkshop();
       },
       onPrint: printLessonPack,
+      onConsult: openLessonConsultation,
       initialPilotPlan: workshopOffer ?? undefined,
     });
     lessonPackDialog.hidden = false;
@@ -337,6 +349,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
             openLessonWorkshop(workshopInput);
           },
           onPrint: printLessonPack,
+          onConsult: openLessonConsultation,
           initialPilotPlan: workshopOffer ?? undefined,
           initialFeedbackState: workshopFeedbackState,
           onFeedbackChange: (state) => { workshopFeedbackState = state; },

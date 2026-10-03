@@ -12,6 +12,8 @@ export type LessonPackPrintScope = "student" | "teacher" | "full";
 export interface LessonPackActions {
   readonly onClose: () => void;
   readonly onPrint: (scope: LessonPackPrintScope) => void;
+  /** Open the consultation handoff without requiring a browser print first. */
+  readonly onConsult?: () => void;
   readonly onBack?: () => void;
   readonly initialFeedbackState?: LessonPackFeedbackState | null;
   readonly initialPilotPlan?: LessonPackOfferPlan;
@@ -54,6 +56,11 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   // Keep the original selector as the full-pack compatibility path.
   printFull.dataset.lessonPackPrint = "";
   printFull.addEventListener("click", () => actions.onPrint("full"));
+  const consult = actions.initialPilotPlan && actions.onConsult ? button(copy.lessonPackConsult, "lesson-pack-consult") : null;
+  if (consult) {
+    consult.dataset.lessonPackConsult = "";
+    consult.addEventListener("click", () => actions.onConsult?.());
+  }
   if (actions.onBack) {
     const back = button(copy.lessonWorkshopBack, "lesson-pack-back");
     back.dataset.lessonPackBack = "";
@@ -65,6 +72,7 @@ export function renderLessonPack(container: HTMLElement, model: LessonPackModel,
   close.addEventListener("click", actions.onClose);
   toolbar.append(warning);
   if (offer) toolbar.append(offer);
+  if (consult) toolbar.append(consult);
   toolbar.append(printStudent);
   if (model.includeTeacher !== false) toolbar.append(printTeacher);
   toolbar.append(printFull, close);

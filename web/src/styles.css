@@ -201,8 +201,10 @@ footer a { color: #155e8a; }
 .lesson-pack-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .55rem; width: 100%; max-width: 62rem; margin: 0 auto .75rem; }
 .lesson-pack-actions button { min-height: 2.8rem; padding: .55rem .85rem; border: 1px solid #8297a8; border-radius: .5rem; background: #fff; color: #17324d; font-weight: 700; transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease; }
 .lesson-pack-actions button[data-lesson-pack-print] { border-color: #155e8a; background: #155e8a; color: #fff; }
+.lesson-pack-actions button[data-lesson-pack-consult] { border-color: #b47b18; background: #fff8e8; color: #713f12; }
 .lesson-pack-actions button:hover, .lesson-pack-actions button:focus-visible { background: #e8f2fb; box-shadow: 0 4px 10px rgb(16 42 67 / 9%); transform: translateY(-1px); }
 .lesson-pack-actions button[data-lesson-pack-print]:hover, .lesson-pack-actions button[data-lesson-pack-print]:focus-visible { background: #0f4f75; }
+.lesson-pack-actions button[data-lesson-pack-consult]:hover, .lesson-pack-actions button[data-lesson-pack-consult]:focus-visible { background: #ffefc4; }
 .lesson-pack-print-warning { flex: 1 1 100%; margin: 0; color: #40566a; font-size: .8rem; line-height: 1.4; }
 .lesson-pack-offer { flex: 1 1 100%; margin: 0; padding: .55rem .65rem; border-left: 4px solid #b47b18; background: #fff8e8; color: #713f12; font-size: .82rem; font-weight: 700; line-height: 1.45; }
 .lesson-pack-page { margin-top: 1rem; padding-top: .8rem; border-top: 1px solid #d0dbe2; break-after: page; page-break-after: always; }

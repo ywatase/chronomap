@@ -136,7 +136,7 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 });
 
-test("lets a paid path preview the finished example before editing", async ({ page }) => {
+test("lets a paid path preview the finished example before editing", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const preview = page.locator('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-preview]');
@@ -146,6 +146,13 @@ test("lets a paid path preview the finished example before editing", async ({ pa
   await expect(pack).toBeVisible();
   await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/授業パイロット|Classroom pilot/);
   await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/¥49,800|49,800/);
+  const consultation = pack.locator("[data-lesson-pack-consult]");
+  await expect(consultation).toContainText(/相談文を作る|Create a consultation brief/);
+  await consultation.click();
+  const consultationFeedback = pack.locator("[data-lesson-pack-feedback-host]");
+  await expect(consultationFeedback).toBeVisible();
+  await expect(consultationFeedback.locator('input[name="pilot-route"][value="consult"]')).toBeChecked();
+  await page.screenshot({ path: testInfo.outputPath("paid-preview-consult-shortcut.png"), fullPage: true });
   await page.emulateMedia({ media: "print" });
   await page.evaluate(() => { document.body.dataset.printDocument = "lesson-pack"; });
   await expect(pack.locator("[data-lesson-pack-offer]")).toBeHidden();
