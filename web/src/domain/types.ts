@@ -2,6 +2,8 @@ export type LocalizedText = Readonly<Record<string, string>>;
 export type RightsStatus = "public-domain" | "open-license" | "permission" | "restricted" | "unknown";
 export type TemporalPrecision = "year" | "decade" | "century" | "period" | "unknown";
 export type TemporalQualifier = "exact" | "circa" | "before" | "after" | "unknown";
+export const ENTITY_TYPES = ["waterbody", "watercourse", "coastline", "fortification", "settlement", "port", "battlefield", "route", "boundary", "polity", "sphere-of-influence", "archaeological-site", "other"] as const;
+export type EntityType = typeof ENTITY_TYPES[number];
 
 export interface Rights {
   readonly status: RightsStatus;
@@ -35,7 +37,7 @@ export interface Dataset {
 
 export interface Entity {
   readonly id: string;
-  readonly type: string;
+  readonly type: EntityType;
   readonly labels: LocalizedText;
   readonly description: LocalizedText;
 }
@@ -84,6 +86,8 @@ export interface Geometry {
 
 export interface FeatureProperties {
   readonly entityId: string;
+  /** Derived from the referenced Entity when a public bundle is loaded. */
+  readonly entityType?: EntityType;
   readonly labels: LocalizedText;
   readonly description: LocalizedText;
   readonly temporal: TemporalExtent;

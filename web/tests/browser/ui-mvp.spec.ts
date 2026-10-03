@@ -1,6 +1,23 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Chronomap UI MVP", () => {
+  test("territory visibility is independent from the feature list and details", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
+    const settings = page.locator("[data-map-settings]");
+    await settings.locator("summary").click();
+    const territory = page.getByLabel(/territor|領域・勢力圏/i);
+    await expect(territory).toBeChecked();
+    await territory.uncheck();
+    await settings.locator("summary").click();
+    const river = page.getByRole("button", { name: /宇治川（1590年・工事前）/ });
+    await expect(river).toBeVisible();
+    await river.click();
+    if (isMobileProject(test.info())) await page.getByRole("tab", { name: /Details|詳細/ }).click();
+    await expect(page.getByRole("heading", { name: /Entity|歴史対象/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Evidence|根拠/ })).toBeVisible();
+  });
+
   test("loads the Ogurike data and exposes point metadata", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);

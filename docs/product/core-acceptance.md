@@ -75,7 +75,7 @@
 | P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`, 181 unit / 140 browser tests |
 | P1 4地域パイロット | 一部実装 | `data/{ogurike,tonegawa,heijokyo,azuchijo}`。日本全体の網羅ではない |
 | P1 港・古戦場・国・勢力圏 | 未検証 | schema enumにはあるが、公開データとUI導線が不足 |
-| P2 領域レイヤー | 未完了 | Polygonは表示できるが、政治領域専用の種別・凡例・切替・実データ縦切りが不足 |
+| P2 領域レイヤー | UI契約を実装、実データ待ち | `boundary`／`polity`／`sphere-of-influence` のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。公開bundleにはまだ該当Entityがないため、実データの重なり・時代境界は未検証 |
 | P2 古地図画像／タイル | 未着手 | 現在地図＋概略geometryのみ |
 | 中国史・世界史 | 対象外 | 現在のJapan-first MVPの非目標 |
 | 課金・相談導線 | 凍結 | コア受け入れ基準の外。現行UIは維持するが、追加実装しない |

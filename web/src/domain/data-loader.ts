@@ -1,8 +1,11 @@
-import type { Dataset, Entity, Evidence, FeatureVersion, Geometry, PublicBundle, Source, TemporalBoundary, TemporalExtent } from "./types";
+import { ENTITY_TYPES, type Dataset, type Entity, type Evidence, type FeatureVersion, type Geometry, type PublicBundle, type Source, type TemporalBoundary, type TemporalExtent } from "./types";
 import { parseLesson, type Lesson } from "./lesson";
 import type { DatasetCatalogLessonEntry } from "./dataset-catalog";
 
 const resources = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"] as const;
+
+/** Keep malformed public geometry from consuming an unbounded amount of browser memory. */
+export const MAX_PUBLIC_GEOMETRY_VERTICES = 5_000;
 
 export class BundleLoadError extends Error {
   readonly resource: string;
@@ -31,12 +34,18 @@ export async function loadPublicBundle(baseUrl: string): Promise<PublicBundle> {
     }
   }
   const publicFeatures = collection.features.filter(hasPublicStatus) as FeatureVersion[];
+  const entitiesById = indexById(entities);
+  const projectedFeatures = publicFeatures.map((feature): FeatureVersion => {
+    const entity = entitiesById[feature.properties.entityId];
+    if (!entity) throw new BundleLoadError("feature-versions.geojson");
+    return { ...feature, properties: { ...feature.properties, entityType: entity.type } };
+  });
   return Object.freeze({
     dataset: freeze(dataset),
-    entitiesById: indexById(entities),
+    entitiesById,
     sourcesById: indexById(sources),
     evidenceById: indexById(evidence),
-    features: Object.freeze(publicFeatures.map((feature) => freeze(feature))),
+    features: Object.freeze(projectedFeatures.map((feature) => freeze(feature))),
   });
 }
 
@@ -92,7 +101,7 @@ function isDataset(value: unknown): value is Dataset {
 }
 
 function isEntityArray(value: unknown): value is Entity[] {
-  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.type === "string" && isTextMap(item.labels) && isTextMap(item.description));
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && ENTITY_TYPES.includes(item.type as Entity["type"]) && isTextMap(item.labels) && isTextMap(item.description));
 }
 function isSourceArray(value: unknown): value is Source[] {
   return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.id === "string" && typeof item.type === "string" && typeof item.citation === "string" && isTextMap(item.title) && Array.isArray(item.creators) && item.creators.every((creator) => typeof creator === "string") && isYear(item.publishedYear) && typeof item.url === "string" && isSafeHttpUrl(item.url) && typeof item.accessedDate === "string" && isRights(item.rights));
@@ -187,25 +196,41 @@ function isYearOrNull(value: unknown): value is number | null {
 
 function isGeometry(value: unknown): value is Geometry {
   if (!isRecord(value) || typeof value.type !== "string") return false;
-  const depthByType: Readonly<Record<string, number>> = {
-    Point: 0,
-    MultiPoint: 1,
-    LineString: 1,
-    MultiLineString: 2,
-    Polygon: 2,
-    MultiPolygon: 3,
-  };
-  const depth = depthByType[value.type];
-  return depth !== undefined && isCoordinates(value.coordinates, depth);
+  let structurallyValid = false;
+  if (value.type === "Point") structurallyValid = isPosition(value.coordinates);
+  else if (value.type === "MultiPoint") structurallyValid = isPositionArray(value.coordinates, 1);
+  else if (value.type === "LineString") structurallyValid = isPositionArray(value.coordinates, 2);
+  else if (value.type === "MultiLineString") structurallyValid = Array.isArray(value.coordinates) && value.coordinates.length > 0 && value.coordinates.every((line) => isPositionArray(line, 2));
+  else if (value.type === "Polygon") structurallyValid = isPolygonCoordinates(value.coordinates);
+  else if (value.type === "MultiPolygon") structurallyValid = Array.isArray(value.coordinates) && value.coordinates.length > 0 && value.coordinates.every(isPolygonCoordinates);
+  return structurallyValid && geometryVertexCount(value.type, value.coordinates) <= MAX_PUBLIC_GEOMETRY_VERTICES;
 }
 
-function isCoordinates(value: unknown, depth: number): boolean {
-  if (depth === 0) {
-    return Array.isArray(value)
-      && value.length === 2
-      && value.every((coordinate) => typeof coordinate === "number" && Number.isFinite(coordinate));
-  }
-  return Array.isArray(value) && value.every((coordinate) => isCoordinates(coordinate, depth - 1));
+function geometryVertexCount(type: string, coordinates: unknown): number {
+  if (!Array.isArray(coordinates)) return Number.POSITIVE_INFINITY;
+  if (type === "Point") return 1;
+  if (type === "MultiPoint" || type === "LineString") return coordinates.length;
+  if (type === "MultiLineString") return coordinates.reduce((total, line) => total + (Array.isArray(line) ? line.length : Number.POSITIVE_INFINITY), 0);
+  if (type === "Polygon") return coordinates.reduce((total, ring) => total + (Array.isArray(ring) ? ring.length : Number.POSITIVE_INFINITY), 0);
+  if (type === "MultiPolygon") return coordinates.reduce((total, polygon) => total + geometryVertexCount("Polygon", polygon), 0);
+  return Number.POSITIVE_INFINITY;
+}
+
+function isPosition(value: unknown): value is readonly [number, number] {
+  return Array.isArray(value) && value.length === 2 && value.every((coordinate) => typeof coordinate === "number" && Number.isFinite(coordinate));
+}
+
+function isPositionArray(value: unknown, minimumLength: number): value is readonly (readonly [number, number])[] {
+  return Array.isArray(value) && value.length >= minimumLength && value.every(isPosition);
+}
+
+function isPolygonCoordinates(value: unknown): boolean {
+  return Array.isArray(value) && value.length > 0 && value.every((ring) => {
+    if (!isPositionArray(ring, 4)) return false;
+    const first = ring[0]!;
+    const last = ring.at(-1)!;
+    return first[0] === last[0] && first[1] === last[1];
+  });
 }
 
 function indexById<T extends { readonly id: string }>(records: readonly T[]): Readonly<Record<string, T>> {

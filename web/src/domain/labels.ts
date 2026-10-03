@@ -1,4 +1,24 @@
-import type { Dataset, FeatureVersion, TemporalBoundary } from "./types";
+import type { Dataset, EntityType, FeatureVersion, TemporalBoundary } from "./types";
+
+const ENTITY_TYPE_LABELS: Readonly<Record<EntityType, Readonly<Record<"ja" | "en", string>>>> = {
+  waterbody: { ja: "水域", en: "Waterbody" },
+  watercourse: { ja: "河川・水路", en: "Watercourse" },
+  coastline: { ja: "海岸線", en: "Coastline" },
+  fortification: { ja: "城郭・防御施設", en: "Fortification" },
+  settlement: { ja: "集落", en: "Settlement" },
+  port: { ja: "港", en: "Port" },
+  battlefield: { ja: "古戦場", en: "Battlefield" },
+  route: { ja: "交通路", en: "Route" },
+  boundary: { ja: "境界", en: "Boundary" },
+  polity: { ja: "政治主体", en: "Polity" },
+  "sphere-of-influence": { ja: "勢力圏", en: "Sphere of influence" },
+  "archaeological-site": { ja: "遺跡", en: "Archaeological site" },
+  other: { ja: "その他", en: "Other" },
+};
+
+export function entityTypeLabel(type: EntityType, language: "ja" | "en"): string {
+  return ENTITY_TYPE_LABELS[type]?.[language] ?? ENTITY_TYPE_LABELS.other[language];
+}
 
 export function displayYear(year: number): string {
   return year <= 0 ? `${1 - year} BCE` : `${year} CE`;

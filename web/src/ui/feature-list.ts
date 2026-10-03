@@ -1,7 +1,7 @@
 import { displayYear, displayYearLocalized } from "../domain/labels";
 import type { AppState } from "../app/state";
 import type { FeatureVersion, PublicBundle, TemporalExtent } from "../domain/types";
-import { uiCopy } from "./copy";
+import { entityTypeLabel, uiCopy } from "./copy";
 import { localizedText } from "../domain/labels";
 
 export interface FeatureListOptions {
@@ -45,13 +45,14 @@ export function renderFeatureList(container: HTMLElement, state: AppState, bundl
       const entity = bundle.entitiesById[feature.properties.entityId];
       const featureLabel = localizedText(feature.properties.labels, bundle.dataset.defaultLanguage);
       const entityLabel = entity ? localizedText(entity.labels, bundle.dataset.defaultLanguage) : copy.unknownEntity;
+      const entityType = entity ? entityTypeLabel(entity.type, copy.language) : null;
       const description = localizedText(feature.properties.description, bundle.dataset.defaultLanguage);
       const hypothesis = feature.properties.hypothesisLabel ? ` — ${localizedText(feature.properties.hypothesisLabel, bundle.dataset.defaultLanguage)}` : "";
       const period = periodText(feature.properties.temporal, bundle.dataset.defaultLanguage);
       const uncertainty = uncertaintySummary(feature, bundle.dataset.defaultLanguage);
       button.textContent = copy.language === "ja"
-        ? `${featureLabel}${hypothesis}。${description} ${period}。${copy.geometry}: ${copy.geometryType(feature.geometry.type)}。${copy.uncertainty}: ${uncertainty}`
-        : `${featureLabel} (${entityLabel})${feature.properties.hypothesisLabel ? `, ${localizedText(feature.properties.hypothesisLabel, bundle.dataset.defaultLanguage)}` : ""}. ${feature.geometry.type}; ${period}; uncertainty: ${uncertainty}.`;
+        ? `${featureLabel}${hypothesis}。${entityType ? `${entityLabel}（${entityType}）。` : ""}${description} ${period}。${copy.geometry}: ${copy.geometryType(feature.geometry.type)}。${copy.uncertainty}: ${uncertainty}`
+        : `${featureLabel} (${entityLabel}${entityType ? ` — ${entityType}` : ""})${feature.properties.hypothesisLabel ? `, ${localizedText(feature.properties.hypothesisLabel, bundle.dataset.defaultLanguage)}` : ""}. ${feature.geometry.type}; ${period}; uncertainty: ${uncertainty}.`;
       button.addEventListener("click", () => onSelect(feature.id, button)); member.append(button); members.append(member);
     }
     item.append(members); list.append(item);

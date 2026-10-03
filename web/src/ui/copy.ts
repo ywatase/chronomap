@@ -3,6 +3,8 @@ import type { LessonPackAudience, LessonPackBudgetIntent, LessonPackDelivery, Le
 import type { LessonPackNextFeature, LessonPackUtilization } from "../domain/lesson-pack-feedback";
 import type { GeometryType, RightsStatus, UncertaintyAssessment } from "../domain/types";
 
+export { entityTypeLabel } from "../domain/labels";
+
 export interface UiCopy {
   readonly language: "ja" | "en";
   readonly previousYear: string;
@@ -29,11 +31,13 @@ export interface UiCopy {
   readonly basemapOpacityLabel: string;
   readonly historicalOpacityLabel: string;
   readonly historicalVisibilityLabel: string;
+  readonly territoryVisibilityLabel: string;
   readonly mapOpacityValue: (value: number) => string;
   readonly mapLegend: string;
   readonly legendPoint: string;
   readonly legendLine: string;
   readonly legendPolygon: string;
+  readonly legendTerritory: string;
   readonly legendSelected: string;
   readonly reportView: string;
   readonly reportDialogLabel: string;
@@ -44,6 +48,7 @@ export interface UiCopy {
   readonly reportFeature: string;
   readonly reportFeatureId: string;
   readonly reportEntity: string;
+  readonly reportEntityType: string;
   readonly reportDescription: string;
   readonly reportPeriod: string;
   readonly reportGeometry: string;
@@ -348,11 +353,13 @@ const EN_COPY: UiCopy = {
   basemapOpacityLabel: "Basemap opacity",
   historicalOpacityLabel: "Historical features opacity",
   historicalVisibilityLabel: "Show historical features",
+  territoryVisibilityLabel: "Show territory and spheres of influence",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "Legend",
   legendPoint: "Historical point",
   legendLine: "Historical line",
   legendPolygon: "Historical area",
+  legendTerritory: "Territory / sphere of influence (approximate)",
   legendSelected: "Selected feature",
   reportView: "Print / save report",
   reportDialogLabel: "Historical map report",
@@ -363,6 +370,7 @@ const EN_COPY: UiCopy = {
   reportFeature: "Selected feature",
   reportFeatureId: "Feature ID",
   reportEntity: "Entity",
+  reportEntityType: "Entity type",
   reportDescription: "Description",
   reportPeriod: "Possible period",
   reportGeometry: "Geometry",
@@ -696,11 +704,13 @@ const JA_COPY: UiCopy = {
   basemapOpacityLabel: "背景地図の濃さ",
   historicalOpacityLabel: "歴史地物の濃さ",
   historicalVisibilityLabel: "歴史地物を表示",
+  territoryVisibilityLabel: "領域・勢力圏を表示",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "凡例",
   legendPoint: "歴史地物（点）",
   legendLine: "歴史地物（線）",
   legendPolygon: "歴史地物（面）",
+  legendTerritory: "領域・勢力圏（概略）",
   legendSelected: "選択中の地物",
   reportView: "レポートを出力",
   reportDialogLabel: "歴史地図レポート",
@@ -711,6 +721,7 @@ const JA_COPY: UiCopy = {
   reportFeature: "選択した地物",
   reportFeatureId: "地物ID",
   reportEntity: "歴史対象",
+  reportEntityType: "種別",
   reportDescription: "説明",
   reportPeriod: "可能期間",
   reportGeometry: "形状",

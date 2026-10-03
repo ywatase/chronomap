@@ -4,6 +4,7 @@ export interface MapDisplaySettings {
   readonly basemapOpacity: number;
   readonly historicalOpacity: number;
   readonly historicalVisible: boolean;
+  readonly territoryVisible: boolean;
 }
 
 export interface MapSettingsController {
@@ -12,7 +13,7 @@ export interface MapSettingsController {
 }
 
 export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplaySettings) => void): MapSettingsController {
-  let settings: MapDisplaySettings = { basemapOpacity: 1, historicalOpacity: 1, historicalVisible: true };
+  let settings: MapDisplaySettings = { basemapOpacity: 1, historicalOpacity: 1, historicalVisible: true, territoryVisible: true };
   const details = document.createElement("details");
   details.className = "map-tools";
   details.dataset.mapSettings = "";
@@ -42,13 +43,25 @@ export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplayS
   });
   visibilityLabel.append(visibility, document.createTextNode(copy.historicalVisibilityLabel));
   body.append(visibilityLabel);
+  const territoryVisibilityLabel = document.createElement("label");
+  territoryVisibilityLabel.className = "map-visibility-control";
+  const territoryVisibility = document.createElement("input");
+  territoryVisibility.type = "checkbox";
+  territoryVisibility.checked = settings.territoryVisible;
+  territoryVisibility.id = "territory-visibility";
+  territoryVisibility.addEventListener("change", () => {
+    settings = { ...settings, territoryVisible: territoryVisibility.checked };
+    onChange(settings);
+  });
+  territoryVisibilityLabel.append(territoryVisibility, document.createTextNode(copy.territoryVisibilityLabel));
+  body.append(territoryVisibilityLabel);
 
   const legend = document.createElement("section");
   legend.className = "map-legend";
   const heading = document.createElement("h4");
   heading.textContent = copy.mapLegend;
   legend.append(heading);
-  legend.append(legendItem("point", copy.legendPoint), legendItem("line", copy.legendLine), legendItem("polygon", copy.legendPolygon), legendItem("selected", copy.legendSelected));
+  legend.append(legendItem("point", copy.legendPoint), legendItem("line", copy.legendLine), legendItem("polygon", copy.legendPolygon), legendItem("territory", copy.legendTerritory), legendItem("selected", copy.legendSelected));
   body.append(legend);
   details.append(body);
 
@@ -80,7 +93,7 @@ function rangeControl(labelText: string, formatValue: (value: number) => string,
   return wrapper;
 }
 
-function legendItem(kind: "point" | "line" | "polygon" | "selected", label: string): HTMLElement {
+function legendItem(kind: "point" | "line" | "polygon" | "territory" | "selected", label: string): HTMLElement {
   const item = document.createElement("div");
   item.className = "legend-item";
   const swatch = document.createElement("span");

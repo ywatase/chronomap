@@ -33,7 +33,7 @@ import { readFileSync } from "node:fs";
 vi.mock("maplibre-gl", () => ({ Map: mocked.FakeMap, setWorkerUrl: vi.fn() }));
 
 import { MapAdapter } from "../src/map/map-adapter";
-import { createGsiStyle, geometryLayerDefinitions } from "../src/map/map-style";
+import { createGsiStyle, geometryLayerDefinitions, TERRITORY_LAYER_IDS } from "../src/map/map-style";
 import type { FeatureVersion } from "../src/domain/types";
 
 const point = (id: string, coordinates: readonly unknown[]): FeatureVersion => ({
@@ -55,6 +55,16 @@ describe("map style", () => {
     expect(layers.some((layer) => "line-dasharray" in (layer.layout ?? {}))).toBe(false);
     expect(layers.some((layer) => "line-dasharray" in (layer.paint ?? {}))).toBe(true);
     expect(layers.some((layer) => "line-width" in (layer.paint ?? {}) && layer.id.startsWith("selected-"))).toBe(true);
+  });
+
+  it("renders political territory separately from ordinary polygons", () => {
+    const layers = geometryLayerDefinitions();
+    const territory = layers.find((layer) => layer.id === "historical-territories");
+    const polygons = layers.find((layer) => layer.id === "historical-polygons");
+
+    expect(TERRITORY_LAYER_IDS).toEqual(["historical-territories", "selected-territory-outline"]);
+    expect(territory?.filter).toEqual(expect.arrayContaining([["in", ["get", "entityType"], ["literal", ["boundary", "polity", "sphere-of-influence"]]]]));
+    expect(polygons?.filter).toEqual(expect.arrayContaining([["!", ["in", ["get", "entityType"], ["literal", ["boundary", "polity", "sphere-of-influence"]]]]]));
   });
 
   it("loads MapLibre's stylesheet at the MapLibre boundary", () => {
@@ -130,16 +140,31 @@ describe("MapAdapter", () => {
     adapter.setBasemapOpacity(0.4);
     adapter.setHistoricalOpacity(0.5);
     adapter.setHistoricalVisibility(false);
+    adapter.setTerritoryVisibility(false);
     expect(firstMap.setPaintProperty).toHaveBeenCalledWith("gsi-base", "raster-opacity", 0.4);
     expect(firstMap.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.16);
     expect(firstMap.setPaintProperty).toHaveBeenCalledWith("historical-lines", "line-opacity", 0.5);
     expect(firstMap.setLayoutProperty).toHaveBeenCalledWith("historical-points", "visibility", "none");
+    expect(firstMap.setLayoutProperty).toHaveBeenCalledWith("historical-territories", "visibility", "none");
 
     adapter.retry();
     const retriedMap = mocked.maps.at(-1);
     expect(retriedMap.setPaintProperty).toHaveBeenCalledWith("gsi-base", "raster-opacity", 0.4);
     expect(retriedMap.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.16);
     expect(retriedMap.setLayoutProperty).toHaveBeenCalledWith("selected-lines", "visibility", "none");
+    expect(retriedMap.setLayoutProperty).toHaveBeenCalledWith("selected-territory-outline", "visibility", "none");
+  });
+
+  it("hides only territory layers while ordinary point and line layers stay visible", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+
+    adapter.setTerritoryVisibility(false);
+
+    expect(map.setLayoutProperty).toHaveBeenCalledWith("historical-territories", "visibility", "none");
+    expect(map.setLayoutProperty).toHaveBeenCalledWith("selected-territory-outline", "visibility", "none");
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith("historical-points", "visibility", "none");
+    expect(map.setLayoutProperty).not.toHaveBeenCalledWith("historical-lines", "visibility", "none");
   });
 
   it("recreates the map on retry and restores visible and selected features", () => {

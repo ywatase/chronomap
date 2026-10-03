@@ -51,6 +51,7 @@ export function renderPrintReport(container: HTMLElement, model: ReportModel, ac
   featureHeading.textContent = model.feature.label;
   featureSection.append(featureHeading);
   featureSection.append(detail(`${copy.reportEntity}: ${model.feature.entityLabel}`));
+  if (model.feature.entityType) featureSection.append(detail(`${copy.reportEntityType}: ${model.feature.entityType}`));
   if (model.feature.entityDescription) featureSection.append(detail(model.feature.entityDescription));
   featureSection.append(detail(`${copy.reportDescription}: ${model.feature.description}`));
   featureSection.append(detail(`${copy.reportPeriod}: ${model.feature.period}`));

@@ -126,6 +126,7 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .legend-point::before { position: absolute; top: .2rem; left: .4rem; width: .55rem; height: .55rem; border: 2px solid #fff; border-radius: 50%; background: #9c4e1c; box-shadow: 0 0 0 1px #9c4e1c; content: ""; }
 .legend-line::before { position: absolute; top: .45rem; left: .05rem; width: 1.25rem; border-top: 4px solid #693d86; content: ""; }
 .legend-polygon::before { position: absolute; inset: .1rem .15rem; border: 1px solid #193a56; background: rgb(64 106 144 / 55%); content: ""; }
+.legend-territory::before { position: absolute; inset: .1rem .15rem; border: 1px dashed #7c4a03; background: rgb(183 121 31 / 38%); content: ""; }
 .legend-selected::before { position: absolute; top: .35rem; left: .05rem; width: 1.25rem; border-top: 3px dashed #111827; content: ""; }
 
 .sidebar { display: flex; grid-column: 2; grid-row: 3; min-width: 0; min-height: 0; flex-direction: column; overflow: hidden; border: 1px solid #c4d0d9; border-radius: .7rem; background: #f9fbfc; box-shadow: 0 2px 8px rgb(21 52 75 / 8%); }

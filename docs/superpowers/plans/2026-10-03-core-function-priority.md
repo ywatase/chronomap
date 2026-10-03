@@ -74,27 +74,27 @@
 - Consumes: `Entity.type` の `boundary | polity | sphere-of-influence` と、Polygon/MultiPolygon FeatureVersion。
 - Produces: `entityTypeLabel(type: EntityType, language: "ja" | "en")`、領域レイヤーの表示切替、詳細・凡例・印刷での種別表示。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
   政治領域のEntity typeが日本語・英語で表示され、領域visibilityを切り替えても点・線の表示と根拠が残ること、重なる仮説と巨大／不正geometryがfail-closedになることを固定する。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
   Run: `cd web && npm run test -- --run tests/data-loader.test.ts tests/map-style.test.ts tests/metadata.test.ts` と対象Playwright。
 
   Expected: Entity type labelsまたは領域visibilityのassertionがFAILする。
 
-- [ ] **Step 3: Implement the minimal type-safe path**
+- [x] **Step 3: Implement the minimal type-safe path**
 
   Schema enumをTypeScriptのallow-listへ反映し、既存のgeometry layerへEntity type filterを追加する。領域は現在地図・歴史geometry・根拠と別の操作対象として表示するが、領域の優先順位や確定国境の推測は追加しない。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
   Run: `cd web && npm run test -- --run`、対象E2Eをdesktop/mobileで実行する。
 
   Expected: PASS。画面幅、reduced-motion、失敗復帰、印刷scopeに退行がない。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   `git add web/src web/tests` でコミットする。
 

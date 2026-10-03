@@ -4,6 +4,7 @@ import { renderFeatureList } from "../src/ui/feature-list";
 import { renderMetadataPanel } from "../src/ui/metadata-panel";
 import type { AppState } from "../src/app/state";
 import type { PublicBundle } from "../src/domain/types";
+import { entityTypeLabel } from "../src/ui/copy";
 
 const feature = {
   type: "Feature", id: "version:b", geometry: { type: "LineString", coordinates: [[0, 0], [1, 1]] },
@@ -26,6 +27,23 @@ const bundle: PublicBundle = {
 const state: AppState = { status: "ready", selectedYear: -1, visibleFeatures: [feature], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [feature] };
 
 describe("metadata and list rendering", () => {
+  it("labels political entity types in Japanese and English without implying certainty", () => {
+    expect(entityTypeLabel("boundary", "ja")).toBe("境界");
+    expect(entityTypeLabel("polity", "en")).toBe("Polity");
+    expect(entityTypeLabel("sphere-of-influence", "ja")).toBe("勢力圏");
+
+    const territoryBundle = {
+      ...bundle,
+      dataset: { ...bundle.dataset, defaultLanguage: "ja" },
+      entitiesById: { "entity:one": { ...bundle.entitiesById["entity:one"]!, type: "sphere-of-influence", labels: { ja: "勢力範囲A" }, description: { ja: "史料に基づく概略範囲です。" } } },
+    } as PublicBundle;
+    const container = document.createElement("div");
+    renderMetadataPanel(container, feature, territoryBundle, () => undefined);
+
+    expect(container.textContent).toContain("勢力範囲A（勢力圏）");
+    expect(container.textContent).toContain("形状: 概略・近似");
+  });
+
   it("separates entity/version metadata and renders uncertainty, evidence, source rights, and citation-only notice", () => {
     const container = document.createElement("div");
     renderMetadataPanel(container, feature, bundle, () => undefined);

@@ -18,13 +18,17 @@ const historicalSource = "historical-features";
 
 export const HISTORICAL_LAYER_IDS = [
   "historical-polygons",
+  "historical-territories",
   "historical-points",
   "historical-lines",
   "selected-polygon-outline",
+  "selected-territory-outline",
   "selected-point-halo",
   "selected-line-halo",
   "selected-lines",
 ] as const;
+
+export const TERRITORY_LAYER_IDS = ["historical-territories", "selected-territory-outline"] as const;
 
 export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const source = historicalSource;
@@ -33,12 +37,16 @@ export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const polygonFilter = ["==", ["geometry-type"], "Polygon"] as const;
   const selected = ["==", ["get", "selected"], true] as const;
   const unselected = ["!=", ["get", "selected"], true] as const;
+  const territory = ["in", ["get", "entityType"], ["literal", ["boundary", "polity", "sphere-of-influence"]]] as const;
+  const notTerritory = ["!", territory] as const;
 
   return [
-    { id: "historical-polygons", type: "fill", source, filter: ["all", polygonFilter, unselected], paint: { "fill-color": "#406a90", "fill-opacity": 0.32, "fill-outline-color": "#193a56" } },
+    { id: "historical-polygons", type: "fill", source, filter: ["all", polygonFilter, notTerritory, unselected], paint: { "fill-color": "#406a90", "fill-opacity": 0.32, "fill-outline-color": "#193a56" } },
+    { id: "historical-territories", type: "fill", source, filter: ["all", polygonFilter, territory, unselected], paint: { "fill-color": "#b7791f", "fill-opacity": 0.22, "fill-outline-color": "#7c4a03" } },
     { id: "historical-points", type: "circle", source, filter: ["all", pointFilter, unselected], paint: { "circle-radius": 7, "circle-color": "#9c4e1c", "circle-stroke-width": 2, "circle-stroke-color": "#ffffff" } },
     { id: "historical-lines", type: "line", source, filter: ["all", lineFilter, unselected], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#693d86", "line-width": 4, "line-dasharray": ["case", ["has", "hypothesisGroupId"], ["literal", [3, 2]], ["literal", [1, 0]]] } },
-    { id: "selected-polygon-outline", type: "line", source, filter: ["all", polygonFilter, selected], paint: { "line-color": "#111827", "line-width": 5, "line-dasharray": [2, 1] } },
+    { id: "selected-polygon-outline", type: "line", source, filter: ["all", polygonFilter, notTerritory, selected], paint: { "line-color": "#111827", "line-width": 5, "line-dasharray": [2, 1] } },
+    { id: "selected-territory-outline", type: "line", source, filter: ["all", polygonFilter, territory, selected], paint: { "line-color": "#7c4a03", "line-width": 5, "line-dasharray": [2, 1] } },
     { id: "selected-point-halo", type: "circle", source, filter: ["all", pointFilter, selected], paint: { "circle-radius": 12, "circle-color": "#ffffff", "circle-stroke-width": 4, "circle-stroke-color": "#111827" } },
     { id: "selected-line-halo", type: "line", source, filter: ["all", lineFilter, selected], paint: { "line-color": "#ffffff", "line-width": 9, "line-dasharray": [1, 0] } },
     { id: "selected-lines", type: "line", source, filter: ["all", lineFilter, selected], paint: { "line-color": "#111827", "line-width": 5, "line-dasharray": [2, 1] } },

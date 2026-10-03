@@ -2,7 +2,7 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Dataset, FeatureVersion } from "../domain/types";
-import { createGsiStyle, HISTORICAL_LAYER_IDS } from "./map-style";
+import { createGsiStyle, HISTORICAL_LAYER_IDS, TERRITORY_LAYER_IDS } from "./map-style";
 
 const sourceId = "historical-features";
 const interactiveLayerIds = [...HISTORICAL_LAYER_IDS];
@@ -31,6 +31,7 @@ export class MapAdapter {
   private basemapOpacity = 1;
   private historicalOpacity = 1;
   private historicalVisible = true;
+  private territoryVisible = true;
 
   mount(container: HTMLElement): void {
     this.container = container;
@@ -80,6 +81,7 @@ export class MapAdapter {
   setBasemapOpacity(value: number): void { this.basemapOpacity = clamp(value); this.applyDisplaySettings(); }
   setHistoricalOpacity(value: number): void { this.historicalOpacity = clamp(value); this.applyDisplaySettings(); }
   setHistoricalVisibility(visible: boolean): void { this.historicalVisible = visible; this.applyDisplaySettings(); }
+  setTerritoryVisibility(visible: boolean): void { this.territoryVisible = visible; this.applyDisplaySettings(); }
   getCamera(): MapCamera | null { return this.map ? this.readCamera() : this.camera; }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onCameraChange(handler: (camera: MapCamera) => void): void { this.cameraChangeHandler = handler; }
@@ -122,16 +124,18 @@ export class MapAdapter {
       if (this.map.getLayer("gsi-base")) this.map.setPaintProperty("gsi-base", "raster-opacity", this.basemapOpacity);
       const polygonOpacity = 0.32 * this.historicalOpacity;
       if (this.map.getLayer("historical-polygons")) this.map.setPaintProperty("historical-polygons", "fill-opacity", polygonOpacity);
+      if (this.map.getLayer("historical-territories")) this.map.setPaintProperty("historical-territories", "fill-opacity", 0.22 * this.historicalOpacity);
       for (const layerId of ["historical-points", "selected-point-halo"]) {
         if (this.map.getLayer(layerId)) {
           this.map.setPaintProperty(layerId, "circle-opacity", this.historicalOpacity);
           this.map.setPaintProperty(layerId, "circle-stroke-opacity", this.historicalOpacity);
         }
       }
-      for (const layerId of ["historical-lines", "selected-polygon-outline", "selected-line-halo", "selected-lines"]) {
+      for (const layerId of ["historical-lines", "selected-polygon-outline", "selected-territory-outline", "selected-line-halo", "selected-lines"]) {
         if (this.map.getLayer(layerId)) this.map.setPaintProperty(layerId, "line-opacity", this.historicalOpacity);
       }
       for (const layerId of HISTORICAL_LAYER_IDS) if (this.map.getLayer(layerId)) this.map.setLayoutProperty(layerId, "visibility", this.historicalVisible ? "visible" : "none");
+      if (this.historicalVisible) for (const layerId of TERRITORY_LAYER_IDS) if (this.map.getLayer(layerId)) this.map.setLayoutProperty(layerId, "visibility", this.territoryVisible ? "visible" : "none");
     } catch {
       // MapLibre can emit styledata before all layers exist; the next styledata retries.
     }

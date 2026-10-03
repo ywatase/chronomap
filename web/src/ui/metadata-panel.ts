@@ -1,6 +1,6 @@
 import { displayYear, displayYearLocalized, localizedText } from "../domain/labels";
 import type { FeatureVersion, PublicBundle, TemporalExtent } from "../domain/types";
-import { uiCopy } from "./copy";
+import { entityTypeLabel, uiCopy } from "./copy";
 
 export function renderMetadataPanel(container: HTMLElement, selectedFeature: FeatureVersion | null, bundle: PublicBundle, onClose: () => void): void {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
@@ -10,7 +10,7 @@ export function renderMetadataPanel(container: HTMLElement, selectedFeature: Fea
   const heading = document.createElement("h2"); heading.textContent = copy.featureDetails; container.append(heading);
   const close = document.createElement("button"); close.type = "button"; close.textContent = copy.closeDetails; close.addEventListener("click", onClose); container.append(close);
   section(container, copy.entity, entity
-    ? [`${localizedText(entity.labels, bundle.dataset.defaultLanguage)}${copy.language === "ja" ? "" : ` (${entity.type})`}`, localizedText(entity.description, bundle.dataset.defaultLanguage)]
+    ? [`${localizedText(entity.labels, bundle.dataset.defaultLanguage)}${copy.language === "ja" ? `（${entityTypeLabel(entity.type, copy.language)}）` : ` (${entityTypeLabel(entity.type, copy.language)})`}`, localizedText(entity.description, bundle.dataset.defaultLanguage)]
     : [copy.unknownEntity]);
   section(container, copy.version, [localizedText(selectedFeature.properties.labels, bundle.dataset.defaultLanguage), localizedText(selectedFeature.properties.description, bundle.dataset.defaultLanguage), `${copy.geometry}: ${copy.geometryType(selectedFeature.geometry.type)}`]);
   section(container, copy.time, [periodText(selectedFeature.properties.temporal, bundle.dataset.defaultLanguage)]);

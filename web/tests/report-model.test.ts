@@ -48,6 +48,7 @@ describe("report model", () => {
     const model = buildReportModel(bundle, state, "https://example.com/?year=1910", comparisonCandidates(bundle.features)[0]!);
     expect(model).not.toBeNull();
     expect(model?.feature.label).toBe("巨椋池");
+    expect(model?.feature.entityType).toBe("水域");
     expect(model?.feature.period).toContain("1910年");
     expect(model?.feature.geometry).toBe("面");
     expect(model?.feature.evidence[0]?.citationOnly).toBe(true);

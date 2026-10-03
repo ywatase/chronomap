@@ -68,6 +68,7 @@ describe("loadPublicBundle", () => {
     expect(bundle.sourcesById["synthetic:source:one"]).toEqual(sources[0]);
     expect(bundle.evidenceById["synthetic:evidence:one"]).toEqual(evidence[0]);
     expect(bundle.features.map((feature) => feature.id)).toEqual(["synthetic:version:public"]);
+    expect(bundle.features[0]?.properties.entityType).toBe("settlement");
     expect(Object.isFrozen(bundle.features)).toBe(true);
     expect(Object.isFrozen(bundle.entitiesById)).toBe(true);
   });
@@ -120,6 +121,36 @@ describe("loadPublicBundle", () => {
     const payloads = [dataset, [{ id: "synthetic:entity:one" }], sources, evidence, { type: "FeatureCollection", features: [publicFeature] }];
     vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
     await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "entities.json" } satisfies Partial<BundleLoadError>);
+  });
+
+  it("rejects an entity type outside the schema allow-list", async () => {
+    const invalidEntities = [{ ...entities[0], type: "kingdom-ish" }];
+    const payloads = [dataset, invalidEntities, sources, evidence, { type: "FeatureCollection", features: [publicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "entities.json" } satisfies Partial<BundleLoadError>);
+  });
+
+  it("rejects an unclosed polygon ring before it reaches the map", async () => {
+    const malformedPublicFeature = {
+      ...publicFeature,
+      geometry: { type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1]]] },
+    };
+    const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [malformedPublicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "feature-versions.geojson" } satisfies Partial<BundleLoadError>);
+  });
+
+  it("rejects a public geometry that exceeds the browser vertex budget", async () => {
+    const oversizedPublicFeature = {
+      ...publicFeature,
+      geometry: { type: "LineString", coordinates: Array.from({ length: 5_001 }, (_, index) => [index / 10_000, 0]) },
+    };
+    const payloads = [dataset, entities, sources, evidence, { type: "FeatureCollection", features: [oversizedPublicFeature] }];
+    vi.stubGlobal("fetch", async (input: string) => new Response(JSON.stringify(payloads[["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"].indexOf(input.split("/").at(-1)!)]), { status: 200 }));
+
+    await expect(loadPublicBundle("/data/synthetic")).rejects.toMatchObject({ resource: "feature-versions.geojson" } satisfies Partial<BundleLoadError>);
   });
 
   it("rejects a public feature with an incomplete hypothesis pair", async () => {

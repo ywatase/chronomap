@@ -1,4 +1,4 @@
-import { displayYearLocalized, localizedText } from "./labels";
+import { displayYearLocalized, entityTypeLabel, localizedText } from "./labels";
 import type { ComparisonCandidate } from "./comparison-candidates";
 import type { AppState } from "../app/state";
 import type { FeatureVersion, PublicBundle, Rights, TemporalExtent } from "./types";
@@ -26,6 +26,7 @@ export interface ReportVersion {
 export interface ReportFeature {
   readonly id: string;
   readonly entityLabel: string;
+  readonly entityType?: string;
   readonly entityDescription: string;
   readonly label: string;
   readonly description: string;
@@ -79,6 +80,7 @@ function projectFeature(feature: FeatureVersion, bundle: PublicBundle, language:
   return {
     id: feature.id,
     entityLabel: entity ? localizedText(entity.labels, bundle.dataset.defaultLanguage) : language === "ja" ? "同一性情報なし" : "Unknown entity",
+    ...(entity ? { entityType: entityTypeLabel(entity.type, language) } : {}),
     entityDescription: entity ? localizedText(entity.description, bundle.dataset.defaultLanguage) : "",
     label: localizedText(feature.properties.labels, bundle.dataset.defaultLanguage),
     description: localizedText(feature.properties.description, bundle.dataset.defaultLanguage),

@@ -14,6 +14,7 @@ const model: ReportModel = {
   feature: {
     id: "feature:1910",
     entityLabel: "巨椋池",
+    entityType: "水域",
     entityDescription: "歴史上の池",
     label: "巨椋池（1910年・概略）",
     description: "概略復元",
@@ -35,6 +36,7 @@ describe("print report", () => {
     expect(root.getAttribute("role")).toBe("dialog");
     expect(root.querySelector("h2")?.textContent).toContain("1910年");
     expect(root.textContent).toContain("図1");
+    expect(root.textContent).toContain("種別: 水域");
     expect(root.textContent).toContain("引用メタデータのみを収録しています");
     expect(root.querySelector("a[href='https://example.com/source']")?.textContent).toBe("出典を開く");
     expect(root.querySelector("[data-report-print]")).toBeTruthy();

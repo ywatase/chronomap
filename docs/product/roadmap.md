@@ -176,7 +176,7 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 ## 続く工程
 
-- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で4地域のEntity／Evidence／Source到達性と不足typeを固定済み。次は領域Entityの表示縦切りへ進む
+- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で4地域のEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）は実装済みで、次は実データ縦切りへ進む
 - 追加の実データセットと出典・不確実性の制作（今回の信頼性ゲートを各地域へ展開）
 - 領域Entity（`boundary`／`polity`／`sphere-of-influence`）の日本語・英語表現、凡例、表示切替、fail-closed geometryの検証
 - 権利・取得・georeference誤差を確認できる古地図アセットの安全な1地域縦切り（取得できない場合のフォールバックを含む）
