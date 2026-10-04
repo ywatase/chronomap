@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 13
+- 公開FeatureVersion: 14
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -22,6 +22,7 @@
 | `azuchijo:version:omi-sphere-1576-lakeshore` | 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:shizugatake-battlefield-1583` | 賤ヶ岳古戦場（1583年・代表点） | Point | 1583年 | open-license |
 | `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
+| `azuchijo:version:yogo-lake-1576` | 余呉湖（歴史文脈・1576〜1583年頃） | Polygon | 1576年以降 | open-license |
 
 ### `azuchijo:version:azuchi-settlement-1576`
 
@@ -376,6 +377,32 @@
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
   - `azuchijo:source:shiga-biwako-human`: 滋賀県『琵琶湖と人の長いつきあい』 — 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/biwakatsu/20521.html
 
+### `azuchijo:version:yogo-lake-1576`
+
+- 地物: 余呉湖（歴史文脈・1576〜1583年頃） (`azuchijo:entity:yogo-lake`)
+- geometry: `Polygon`
+- 年代: 1576年以降
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・写真・図版・地図画像は再現しない。歴史的な湖岸線・湖面積・水深・堤体・水位の精密な形状ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 現在の余呉湖を1576〜1583年頃の教材上の地理文脈へ置いています。余呉湖自体の形成・利用史や1583年の水面を確定しません。 (Evidence: `azuchijo:evidence:yogo-lake`)
+  - `location`: `approximate` — 余呉湖と賤ヶ岳古戦場の相対関係を読むための概略面です。 (Evidence: `azuchijo:evidence:yogo-lake`, `azuchijo:evidence:yogo-lake-shape`)
+  - `geometry`: `approximate` — 現在位置を少数頂点へ置いたPolygonで、歴史的な湖岸線・湖面積・水深・堤体・水位の精密な形状ではありません。 (Evidence: `azuchijo:evidence:yogo-lake-shape`)
+  - `identity`: `well-supported` — 滋賀県資料が説明する余呉湖の現在位置と周辺地形を示します。 (Evidence: `azuchijo:evidence:yogo-lake`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:yogo-lake` | citation | identity, location, temporal | 余呉湖の自然湖としての位置、賤ヶ岳によって琵琶湖と隔てられた地形、余呉川からの導水・放水路の説明 | `azuchijo:source:yogo-lake` |
+  - `azuchijo:evidence:yogo-lake` — 滋賀県資料が説明する現在の余呉湖と周辺地形・水利用。1576〜1583年頃という表示は教材上の地理文脈であり、1583年の水面や過去の湖岸線を特定する資料ではありません。
+| `azuchijo:evidence:yogo-lake-shape` | derived-geometry | geometry, location | 余呉湖歴史文脈Polygonの作成方法と限界 | `azuchijo:source:yogo-lake-shape` |
+  - `azuchijo:evidence:yogo-lake-shape` — 余呉湖の現在位置と賤ヶ岳・余呉川周辺の相対関係を、教材上の歴史文脈で読む低頂点Polygonへ置き換えたChronomap独自の概略復元。歴史的な湖岸線、湖面積、水深、堤体、水位、治水施設の精密な形状ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:yogo-lake`: 滋賀県『余呉湖（よごこ）』 — 余呉湖（よごこ）; 作成者: 滋賀県; 2026年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/ha04/1427.html
+  - `azuchijo:source:yogo-lake-shape`: Chronomap『余呉湖歴史文脈形状作成メモ』 — 余呉湖歴史文脈形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-yogo-lake-shape-notes.md
+
 ## Source一覧
 
 | Source | citation | metadata | rights | terms |
@@ -391,6 +418,8 @@
 | `azuchijo:source:shiga-castle` | 滋賀県『特別史跡安土城跡の調査と整備』 | 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/sd00/2591.html | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 | `azuchijo:source:shizugatake-battlefield` | 長浜市『長浜市歴史文化基本構想 第4章』 | 長浜市歴史文化基本構想 第4章; 作成者: 長浜市; 2019年; 参照日: 2026-10-04; https://www.city.nagahama.lg.jp/cmsfiles/contents/0000008/8691/4s2-1.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 | `azuchijo:source:shizugatake-shape` | Chronomap『賤ヶ岳古戦場代表点形状作成メモ』 | 賤ヶ岳古戦場代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shizugatake-battlefield-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
+| `azuchijo:source:yogo-lake` | 滋賀県『余呉湖（よごこ）』 | 余呉湖（よごこ）; 作成者: 滋賀県; 2026年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/ha04/1427.html | restricted | 引用メタデータのみ。本文・写真・地図画像は再現しない。 |
+| `azuchijo:source:yogo-lake-shape` | Chronomap『余呉湖歴史文脈形状作成メモ』 | 余呉湖歴史文脈形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-yogo-lake-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 
 ## 監査上の注意
 

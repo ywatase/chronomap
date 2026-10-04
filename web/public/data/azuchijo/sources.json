@@ -201,5 +201,42 @@
     },
     "type": "original-reconstruction-notes",
     "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shizugatake-battlefield-shape-notes.md"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "滋賀県『余呉湖（よごこ）』",
+    "creators": [
+      "滋賀県"
+    ],
+    "id": "azuchijo:source:yogo-lake",
+    "publishedYear": 2026,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・写真・地図画像は再現しない。"
+    },
+    "title": {
+      "ja": "余呉湖（よごこ）"
+    },
+    "type": "official-web-page",
+    "url": "https://www.pref.shiga.lg.jp/ha04/1427.html"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "Chronomap『余呉湖歴史文脈形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "azuchijo:source:yogo-lake-shape",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "独自の概略復元メモ。"
+    },
+    "title": {
+      "ja": "余呉湖歴史文脈形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-yogo-lake-shape-notes.md"
   }
 ]

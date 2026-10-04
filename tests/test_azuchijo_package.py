@@ -120,6 +120,28 @@ def test_azuchijo_has_a_source_backed_shizugatake_battlefield_point():
     assert "azuchijo:evidence:shizugatake-shape" in feature["properties"]["evidenceIds"]
 
 
+def test_azuchijo_has_a_source_backed_yogo_lake_waterbody_polygon():
+    package = load_package(PACKAGE)
+    entities = {entity["id"]: entity for entity in package.entities}
+    lake = entities["azuchijo:entity:yogo-lake"]
+    assert lake["type"] == "waterbody"
+
+    features = [
+        feature
+        for feature in package.feature_versions["features"]
+        if feature["properties"]["entityId"] == lake["id"]
+    ]
+    assert len(features) == 1
+    feature = features[0]
+    assert feature["geometry"]["type"] == "Polygon"
+    assert feature["id"] == "azuchijo:version:yogo-lake-1576"
+    assert feature["properties"]["uncertainty"]["temporal"]["assessment"] == "approximate"
+    assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
+    assert feature["properties"]["uncertainty"]["identity"]["assessment"] == "well-supported"
+    assert "azuchijo:evidence:yogo-lake" in feature["properties"]["evidenceIds"]
+    assert "azuchijo:evidence:yogo-lake-shape" in feature["properties"]["evidenceIds"]
+
+
 def test_azuchijo_territory_passes_public_validation():
     package = load_package(PACKAGE)
     assert validate_package(package, ValidationProfile.PUBLIC) == []

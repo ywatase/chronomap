@@ -192,9 +192,9 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 ## 続く工程
 
-- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で5地域、29 FeatureVersion、21 EntityのEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）、平城京の`boundary`仮説2案、安土城の`settlement`概略Polygon、`sphere-of-influence`仮説2案、`polity`仮説2案、`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Pointの実データ縦切りを検証済み。次は古地図アセット、または別地域の領域資料へ進む
+- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で5地域、30 FeatureVersion、22 EntityのEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）、平城京の`boundary`仮説2案、安土城の`waterbody`／`settlement`概略Polygon、`sphere-of-influence`仮説2案、`polity`仮説2案、`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Pointの実データ縦切りを検証済み。次は古地図アセット、または別地域の領域資料へ進む
 - 追加の実データセットと出典・不確実性の制作（鬼怒川・小貝川の縦切りを追加済み。今回の信頼性ゲートを各地域へ展開）
-- 3種の領域Entityについて、隣接／重複が異なる意味（境界、広域勢力圏、政治中枢）として読めるかを実データで検証した。`port`代表Pointと`battlefield`代表Pointも追加済みで、次は古地図アセットなど未収録題材へ進む
+- 3種の領域Entityについて、隣接／重複が異なる意味（境界、広域勢力圏、政治中枢）として読めるかを実データで検証した。`port`代表Point、`battlefield`代表Point、余呉湖の`waterbody`概略Polygonも追加済みで、次は古地図アセットなど未収録題材へ進む
 - 権利・取得・georeference誤差を確認できる古地図アセットの安全な1地域縦切り（取得できない場合のフォールバックを含む）
 - [古地図・歴史画像アセットの採用記録](historical-map-assets.md)で、国土地理院の候補範囲と権利境界を確認済み。対象範囲が一致する大阪地域bundleの追加後にのみUIへ有効化する
 - 静的公開品質、スクリーンショット確認、E2Eの拡充

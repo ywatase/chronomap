@@ -116,5 +116,22 @@
     "supports": ["geometry", "location"],
     "note": "公開資料が示す賤ヶ岳・余呉湖周辺の相対関係を、古戦場を読み始めるための代表Pointへ置き換えたChronomap独自の概略復元。戦場全体、陣地、砦、行軍路、交戦範囲の精密な位置ではありません。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:yogo-lake",
+    "sourceId": "azuchijo:source:yogo-lake",
+    "locator": "余呉湖の自然湖としての位置、賤ヶ岳によって琵琶湖と隔てられた地形、余呉川からの導水・放水路の説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "滋賀県資料が説明する現在の余呉湖と周辺地形・水利用。1576〜1583年頃という表示は教材上の地理文脈であり、1583年の水面や過去の湖岸線を特定する資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:yogo-lake-shape",
+    "sourceId": "azuchijo:source:yogo-lake-shape",
+    "locator": "余呉湖歴史文脈Polygonの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "余呉湖の現在位置と賤ヶ岳・余呉川周辺の相対関係を、教材上の歴史文脈で読む低頂点Polygonへ置き換えたChronomap独自の概略復元。歴史的な湖岸線、湖面積、水深、堤体、水位、治水施設の精密な形状ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

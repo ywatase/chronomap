@@ -261,6 +261,19 @@
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、Azuchi package test、battlefield E2Eを通過させ、監査・カバレッジ・ドキュメントを29 FeatureVersion／21 Entityへ同期する。
 - [x] **Step 5: Run the full quality gate** — 全Python 243件、Vitest 188件、asset sync 6件、production build、全Playwright 164件を通過させた。
 
+### Task 11: 実データの水域`waterbody`縦切り
+
+- **Goal:** 賤ヶ岳古戦場と安土城の地理関係を読むため、余呉湖を歴史的な湖岸線として断定せず、現在位置を教材上の水域コンテキストとして公開する。
+- **Source:** 滋賀県『余呉湖（よごこ）』が説明する自然湖としての位置、賤ヶ岳によって琵琶湖と隔てられた地形、余呉川の水利用。
+- **Modify:** `data/azuchijo/`, `web/public/data/azuchijo/`, `docs/data/azuchijo-yogo-lake-shape-notes.md`, `docs/data/azuchijo-audit.md`, `docs/product/japan-coverage-matrix.md`, `docs/product/core-acceptance.md`, `docs/product/overview.md`, `docs/product/roadmap.md`, `tests/test_azuchijo_package.py`, `tests/test_dataset_audits.py`, `web/tests/browser/azuchijo-data.spec.ts`。
+- **Boundary:** `waterbody` Entityは余呉湖の低頂点概略Polygonのみ。1583年の水面、過去の湖岸線、湖底、堤体、水位、治水施設を復元しない。現在地図・賤ヶ岳古戦場・安土城との相対関係を読む補助的な水域文脈として表示する。
+
+- [x] **Step 1: Write the failing test** — Python package testと1583年のdesktop／mobile E2Eで`waterbody` Entity、概略Polygon、年代文脈、根拠、不確実性を固定した。
+- [x] **Step 2: Run test to verify it fails** — 未収録EntityによるKeyErrorを確認した。
+- [x] **Step 3: Implement the minimal feature** — Entity、1576年頃からの教材文脈FeatureVersion、公式Source、独自形状メモ、Evidence、公開bundleを追加した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、Azuchi package／coverage tests、waterbody E2Eを通過させ、監査・カバレッジ・ドキュメントを30 FeatureVersion／22 Entityへ同期する。
+- [x] **Step 5: Run the full quality gate** — 全Python 244件、Vitest 188件、asset sync 6件、production build、全Playwright 166件を通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

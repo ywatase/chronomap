@@ -1135,6 +1135,104 @@
         }
       },
       "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              136.17,
+              35.49
+            ],
+            [
+              136.2,
+              35.48
+            ],
+            [
+              136.23,
+              35.5
+            ],
+            [
+              136.23,
+              35.53
+            ],
+            [
+              136.19,
+              35.54
+            ],
+            [
+              136.17,
+              35.52
+            ],
+            [
+              136.17,
+              35.49
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "azuchijo:version:yogo-lake-1576",
+      "properties": {
+        "description": {
+          "ja": "安土城・賤ヶ岳古戦場・余呉湖の位置関係を読むため、余呉湖の現在位置を教材上の歴史文脈に置いた概略面です。1583年の水面、過去の湖岸線、湖底、堤体、水位、治水施設の精密な復元ではありません。"
+        },
+        "entityId": "azuchijo:entity:yogo-lake",
+        "evidenceIds": [
+          "azuchijo:evidence:yogo-lake",
+          "azuchijo:evidence:yogo-lake-shape"
+        ],
+        "labels": {
+          "ja": "余呉湖（歴史文脈・1576〜1583年頃）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部本文・写真・図版・地図画像は再現しない。歴史的な湖岸線・湖面積・水深・堤体・水位の精密な形状ではない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 1576,
+            "latestYear": 1576,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:yogo-lake-shape"
+            ],
+            "note": "現在位置を少数頂点へ置いたPolygonで、歴史的な湖岸線・湖面積・水深・堤体・水位の精密な形状ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "azuchijo:evidence:yogo-lake"
+            ],
+            "note": "滋賀県資料が説明する余呉湖の現在位置と周辺地形を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:yogo-lake",
+              "azuchijo:evidence:yogo-lake-shape"
+            ],
+            "note": "余呉湖と賤ヶ岳古戦場の相対関係を読むための概略面です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:yogo-lake"
+            ],
+            "note": "現在の余呉湖を1576〜1583年頃の教材上の地理文脈へ置いています。余呉湖自体の形成・利用史や1583年の水面を確定しません。"
+          }
+        }
+      },
+      "type": "Feature"
     }
   ],
   "type": "FeatureCollection"

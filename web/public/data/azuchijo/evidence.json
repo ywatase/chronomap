@@ -164,5 +164,29 @@
       "identity"
     ],
     "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:yogo-lake",
+    "locator": "余呉湖の自然湖としての位置、賤ヶ岳によって琵琶湖と隔てられた地形、余呉川からの導水・放水路の説明",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:yogo-lake",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:yogo-lake-shape",
+    "locator": "余呉湖歴史文脈Polygonの作成方法と限界",
+    "note": "余呉湖の現在位置と賤ヶ岳・余呉川周辺の相対関係を、教材上の歴史文脈で読む低頂点Polygonへ置き換えたChronomap独自の概略復元。歴史的な湖岸線、湖面積、水深、堤体、水位、治水施設の精密な形状ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:yogo-lake-shape",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
   }
 ]
