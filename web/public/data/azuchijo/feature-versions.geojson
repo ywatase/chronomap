@@ -234,6 +234,81 @@
     {
       "geometry": {
         "coordinates": [
+          136.12,
+          35.16
+        ],
+        "type": "Point"
+      },
+      "id": "azuchijo:version:jyorakuji-port-1576",
+      "properties": {
+        "description": {
+          "ja": "安土城築城に伴う物資輸送・交易・軍事の拠点として説明される常楽寺湊を、安土城下との相対関係を見るための代表点で示します。港域・岸線・船着場・航路の精密な位置ではありません。"
+        },
+        "entityId": "azuchijo:entity:jyorakuji-port",
+        "evidenceIds": [
+          "azuchijo:evidence:omi-port",
+          "azuchijo:evidence:omi-port-shape"
+        ],
+        "labels": {
+          "ja": "常楽寺湊（安土城下の港・1576年頃）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。港域・岸線・船着場・航路の精密な位置ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1582,
+            "latestYear": 1582,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": 1576,
+            "latestYear": 1576,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:omi-port-shape"
+            ],
+            "note": "港域、岸線、船着場、航路の精密な位置ではない代表Pointです。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "azuchijo:evidence:omi-port"
+            ],
+            "note": "滋賀県資料が説明する安土城下の常楽寺湊を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:omi-port",
+              "azuchijo:evidence:omi-port-shape"
+            ],
+            "note": "安土城下と常楽寺湊の相対関係を示す代表点です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:omi-port"
+            ],
+            "note": "安土城築城開始から本能寺の変までの港の役割を概略期間で示します。常楽寺湊の全歴史期間ではありません。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
           [
             136.071,
             35.205

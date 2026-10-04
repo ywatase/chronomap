@@ -1,6 +1,43 @@
 [
   {
     "accessedDate": "2026-10-04",
+    "citation": "滋賀県（安土城跡周辺の城下町ゾーン資料）",
+    "creators": [
+      "滋賀県"
+    ],
+    "id": "azuchijo:source:jyorakuji-port",
+    "publishedYear": 2022,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・図版・地図画像は再現しない。"
+    },
+    "title": {
+      "ja": "安土城跡周辺の城下町ゾーン資料"
+    },
+    "type": "official-report",
+    "url": "https://www.pref.shiga.lg.jp/file/attachment/5310843.pdf"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "Chronomap『常楽寺湊代表点形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "azuchijo:source:jyorakuji-port-shape",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "独自の概略復元メモ。"
+    },
+    "title": {
+      "ja": "常楽寺湊代表点形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-jyorakuji-port-shape-notes.md"
+  },
+  {
+    "accessedDate": "2026-10-04",
     "citation": "滋賀県『近江戦国探訪ガイドブック』",
     "creators": [
       "滋賀県"

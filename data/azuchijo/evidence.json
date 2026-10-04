@@ -65,5 +65,22 @@
     "supports": ["geometry", "location"],
     "note": "安土城を中心とする政治中枢という解釈を、少数頂点の2案Polygonへ置き換えたChronomap独自の概略復元。近江全域の行政境界・国境・実効支配面ではありません。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:omi-port",
+    "sourceId": "azuchijo:source:jyorakuji-port",
+    "locator": "常楽寺湊の城下町・物資輸送・交易・軍事上の位置づけ",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "滋賀県資料が説明する、安土城築城に伴う常楽寺湊の物資輸送・交易・軍事の拠点性と、琵琶湖水運との結節関係。港域や船着場の正確な座標を示す資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:omi-port-shape",
+    "sourceId": "azuchijo:source:jyorakuji-port-shape",
+    "locator": "常楽寺湊代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "安土城・城下町・西の湖／常楽寺湊の相対関係を、港の代表Pointへ置き換えたChronomap独自の概略復元。港域、岸線、船着場、航路の精密な位置ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

@@ -56,6 +56,27 @@ def test_azuchijo_has_a_source_backed_omi_polity_center_hypotheses():
     assert all("azuchijo:evidence:omi-polity-shape" in feature["properties"]["evidenceIds"] for feature in features)
 
 
+def test_azuchijo_has_a_source_backed_jyorakuji_port_point():
+    package = load_package(PACKAGE)
+    entities = {entity["id"]: entity for entity in package.entities}
+    port = entities["azuchijo:entity:jyorakuji-port"]
+    assert port["type"] == "port"
+
+    features = [
+        feature
+        for feature in package.feature_versions["features"]
+        if feature["properties"]["entityId"] == port["id"]
+    ]
+    assert len(features) == 1
+    feature = features[0]
+    assert feature["geometry"]["type"] == "Point"
+    assert feature["id"] == "azuchijo:version:jyorakuji-port-1576"
+    assert feature["properties"]["uncertainty"]["location"]["assessment"] == "approximate"
+    assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
+    assert "azuchijo:evidence:omi-port" in feature["properties"]["evidenceIds"]
+    assert "azuchijo:evidence:omi-port-shape" in feature["properties"]["evidenceIds"]
+
+
 def test_azuchijo_territory_passes_public_validation():
     package = load_package(PACKAGE)
     assert validate_package(package, ValidationProfile.PUBLIC) == []

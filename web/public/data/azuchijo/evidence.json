@@ -47,6 +47,30 @@
     "usage": "derived-geometry"
   },
   {
+    "id": "azuchijo:evidence:omi-port",
+    "locator": "常楽寺湊の城下町・物資輸送・交易・軍事上の位置づけ",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:jyorakuji-port",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:omi-port-shape",
+    "locator": "常楽寺湊代表Pointの作成方法と限界",
+    "note": "安土城・城下町・西の湖／常楽寺湊の相対関係を、港の代表Pointへ置き換えたChronomap独自の概略復元。港域、岸線、船着場、航路の精密な位置ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:jyorakuji-port-shape",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
     "id": "azuchijo:evidence:omi-shape",
     "locator": "近江支配の拠点網 Polygon の作成方法と限界",
     "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",

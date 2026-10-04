@@ -11,6 +11,16 @@
   },
   {
     "description": {
+      "ja": "安土城築城に伴う物資輸送・交易・軍事の拠点として説明される港。表示位置は港の代表点で、港域・岸線・航路の精密な境界ではありません。"
+    },
+    "id": "azuchijo:entity:jyorakuji-port",
+    "labels": {
+      "ja": "常楽寺湊（安土城下の港）"
+    },
+    "type": "port"
+  },
+  {
+    "description": {
       "ja": "安土が琵琶湖東岸に位置することを示す概略線。現在・過去の正確な湖岸線ではありません。"
     },
     "id": "azuchijo:entity:lakeshore",

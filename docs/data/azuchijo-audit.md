@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 10
+- 公開FeatureVersion: 11
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -12,6 +12,7 @@
 | `azuchijo:version:castle-1576` | 安土城（1576年・築城開始） | Point | 1576年 | open-license |
 | `azuchijo:version:castle-1579` | 安土城（1579年・完成） | Point | 1579年 | open-license |
 | `azuchijo:version:castle-1582` | 安土城（1582年・主郭部焼失後） | Point | 1582年 | open-license |
+| `azuchijo:version:jyorakuji-port-1576` | 常楽寺湊（安土城下の港・1576年頃） | Point | 1576–1582年 | open-license |
 | `azuchijo:version:lakeshore-1576` | 琵琶湖東岸（安土付近・概略） | LineString | 1576年以降 | open-license |
 | `azuchijo:version:mountain-1576` | 安土山（1576年・代表点） | Point | 1576年以降 | open-license |
 | `azuchijo:version:omi-polity-1576-azuchi` | 織田信長の近江支配・安土政治中枢（1576〜1582年頃・安土城中心案） | Polygon | 1576–1582年 | open-license |
@@ -106,6 +107,32 @@
   - `azuchijo:source:omi8-castle`: 近江八幡市観光物産協会『安土城跡』 — 安土城跡; 作成者: 近江八幡市観光物産協会; 2026年; 参照日: 2026-10-02 — rights: `restricted` — https://www.omi8.com/spot/detail_1217.html
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
   - `azuchijo:source:shiga-castle`: 滋賀県『特別史跡安土城跡の調査と整備』 — 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/sd00/2591.html
+
+### `azuchijo:version:jyorakuji-port-1576`
+
+- 地物: 常楽寺湊（安土城下の港・1576年頃） (`azuchijo:entity:jyorakuji-port`)
+- geometry: `Point`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。港域・岸線・船着場・航路の精密な位置ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの港の役割を概略期間で示します。常楽寺湊の全歴史期間ではありません。 (Evidence: `azuchijo:evidence:omi-port`)
+  - `location`: `approximate` — 安土城下と常楽寺湊の相対関係を示す代表点です。 (Evidence: `azuchijo:evidence:omi-port`, `azuchijo:evidence:omi-port-shape`)
+  - `geometry`: `approximate` — 港域、岸線、船着場、航路の精密な位置ではない代表Pointです。 (Evidence: `azuchijo:evidence:omi-port-shape`)
+  - `identity`: `well-supported` — 滋賀県資料が説明する安土城下の常楽寺湊を示します。 (Evidence: `azuchijo:evidence:omi-port`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-port` | citation | identity, location, temporal | 常楽寺湊の城下町・物資輸送・交易・軍事上の位置づけ | `azuchijo:source:jyorakuji-port` |
+  - `azuchijo:evidence:omi-port` — 滋賀県資料が説明する、安土城築城に伴う常楽寺湊の物資輸送・交易・軍事の拠点性と、琵琶湖水運との結節関係。港域や船着場の正確な座標を示す資料ではありません。
+| `azuchijo:evidence:omi-port-shape` | derived-geometry | geometry, location | 常楽寺湊代表Pointの作成方法と限界 | `azuchijo:source:jyorakuji-port-shape` |
+  - `azuchijo:evidence:omi-port-shape` — 安土城・城下町・西の湖／常楽寺湊の相対関係を、港の代表Pointへ置き換えたChronomap独自の概略復元。港域、岸線、船着場、航路の精密な位置ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:jyorakuji-port`: 滋賀県（安土城跡周辺の城下町ゾーン資料） — 安土城跡周辺の城下町ゾーン資料; 作成者: 滋賀県; 2022年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/5310843.pdf
+  - `azuchijo:source:jyorakuji-port-shape`: Chronomap『常楽寺湊代表点形状作成メモ』 — 常楽寺湊代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-jyorakuji-port-shape-notes.md
 
 ### `azuchijo:version:lakeshore-1576`
 
@@ -299,6 +326,8 @@
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
+| `azuchijo:source:jyorakuji-port` | 滋賀県（安土城跡周辺の城下町ゾーン資料） | 安土城跡周辺の城下町ゾーン資料; 作成者: 滋賀県; 2022年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/file/attachment/5310843.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
+| `azuchijo:source:jyorakuji-port-shape` | Chronomap『常楽寺湊代表点形状作成メモ』 | 常楽寺湊代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-jyorakuji-port-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 | `azuchijo:source:omi-control` | 滋賀県『近江戦国探訪ガイドブック』 | 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 | `azuchijo:source:omi-polity-shape` | Chronomap『安土城・近江支配政治中枢形状作成メモ』 | 安土城・近江支配政治中枢形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-omi-polity-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 | `azuchijo:source:omi8-castle` | 近江八幡市観光物産協会『安土城跡』 | 安土城跡; 作成者: 近江八幡市観光物産協会; 2026年; 参照日: 2026-10-02; https://www.omi8.com/spot/detail_1217.html | restricted | 引用メタデータのみ。本文・写真・地図画像は再現しない。 |

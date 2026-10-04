@@ -40,8 +40,8 @@ def test_japan_coverage_matrix_is_deterministic_and_matches_checked_in_snapshot(
     assert snapshot.is_file()
     assert snapshot.read_text(encoding="utf-8") == render_coverage_matrix(report)
     assert [row.slug for row in report] == PUBLIC_SLUGS
-    assert sum(row.feature_count for row in report) == 26
-    assert sum(row.entity_count for row in report) == 18
+    assert sum(row.feature_count for row in report) == 27
+    assert sum(row.entity_count for row in report) == 19
     assert all(row.source_count > 0 and row.evidence_count > 0 for row in report)
     assert "polity" in render_coverage_matrix(report)
     assert "sphere-of-influence" in render_coverage_matrix(report)
