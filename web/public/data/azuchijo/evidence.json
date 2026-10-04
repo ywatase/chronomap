@@ -71,6 +71,30 @@
     "usage": "derived-geometry"
   },
   {
+    "id": "azuchijo:evidence:omi-settlement",
+    "locator": "安土城築城に伴う城下町跡（推定）の範囲と周辺集落の説明",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:jyorakuji-port",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:omi-settlement-shape",
+    "locator": "安土城下町推定Polygonの作成方法と限界",
+    "note": "安土山・城下町・常楽寺湊の相対関係と公開資料の推定範囲を、少数頂点のPolygonへ置き換えたChronomap独自の概略復元。行政境界、町割、屋敷地、道路、遺構の精密な範囲ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:azuchi-settlement-shape",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
     "id": "azuchijo:evidence:omi-shape",
     "locator": "近江支配の拠点網 Polygon の作成方法と限界",
     "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",

@@ -1,6 +1,25 @@
 [
   {
     "accessedDate": "2026-10-04",
+    "citation": "Chronomap『安土城下町推定範囲形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "azuchijo:source:azuchi-settlement-shape",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "独自の概略復元メモ。"
+    },
+    "title": {
+      "ja": "安土城下町推定範囲形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-settlement-shape-notes.md"
+  },
+  {
+    "accessedDate": "2026-10-04",
     "citation": "滋賀県（安土城跡周辺の城下町ゾーン資料）",
     "creators": [
       "滋賀県"

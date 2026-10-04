@@ -82,5 +82,22 @@
     "supports": ["geometry", "location"],
     "note": "安土城・城下町・西の湖／常楽寺湊の相対関係を、港の代表Pointへ置き換えたChronomap独自の概略復元。港域、岸線、船着場、航路の精密な位置ではありません。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:omi-settlement",
+    "sourceId": "azuchijo:source:jyorakuji-port",
+    "locator": "安土城築城に伴う城下町跡（推定）の範囲と周辺集落の説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "滋賀県資料が説明する安土城下町跡（推定）の範囲と、安土山西麓・常楽寺・下豊浦の関係。城下町の街区や集落境界の精密な面を示す資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:omi-settlement-shape",
+    "sourceId": "azuchijo:source:azuchi-settlement-shape",
+    "locator": "安土城下町推定Polygonの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "安土山・城下町・常楽寺湊の相対関係と公開資料の推定範囲を、少数頂点のPolygonへ置き換えたChronomap独自の概略復元。行政境界、町割、屋敷地、道路、遺構の精密な範囲ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

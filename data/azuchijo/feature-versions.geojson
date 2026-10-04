@@ -255,6 +255,32 @@
         "publicationStatus": "public",
         "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。港域・岸線・船着場・航路の精密な位置ではない。" }
       }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:azuchi-settlement-1576",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.09, 35.13], [136.16, 35.13], [136.17, 35.18], [136.11, 35.19], [136.09, 35.13]]]
+      },
+      "properties": {
+        "entityId": "azuchijo:entity:azuchi-settlement",
+        "labels": { "ja": "安土城下町（推定範囲・1576〜1582年頃）" },
+        "description": { "ja": "安土城築城に伴い整備された城下町の推定範囲を、安土山・城下町・常楽寺湊の相対関係を見るための概略面で示します。城下町の街区・屋敷・道路・集落境界を精密に復元したものではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "period", "qualifier": "circa" },
+          "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "period", "qualifier": "circa" }
+        },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城築城開始から本能寺の変までの城下町形成を概略期間で示します。前史・廃城後・現在の市街地は含めません。", "evidenceIds": ["azuchijo:evidence:omi-settlement"] },
+          "location": { "assessment": "approximate", "note": "安土山西麓、城下町、常楽寺湊の相対関係を示す概略面です。", "evidenceIds": ["azuchijo:evidence:omi-settlement", "azuchijo:evidence:omi-settlement-shape"] },
+          "geometry": { "assessment": "approximate", "note": "城下町の街区・屋敷・道路・集落境界や遺構の精密な面ではなく、Chronomap独自の低頂点Polygonです。", "evidenceIds": ["azuchijo:evidence:omi-settlement-shape"] },
+          "identity": { "assessment": "well-supported", "note": "滋賀県資料が説明する安土城下町跡（推定）の関係を示します。", "evidenceIds": ["azuchijo:evidence:omi-settlement"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:omi-settlement", "azuchijo:evidence:omi-settlement-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。城下町の街区・屋敷・道路・集落境界の精密な面ではない。" }
+      }
     }
   ]
 }

@@ -86,5 +86,16 @@
     "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-jyorakuji-port-shape-notes.md",
     "accessedDate": "2026-10-04",
     "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "独自の概略復元メモ。" }
+  },
+  {
+    "id": "azuchijo:source:azuchi-settlement-shape",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『安土城下町推定範囲形状作成メモ』",
+    "title": { "ja": "安土城下町推定範囲形状作成メモ" },
+    "creators": ["Chronomap contributors"],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-settlement-shape-notes.md",
+    "accessedDate": "2026-10-04",
+    "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "独自の概略復元メモ。" }
   }
 ]

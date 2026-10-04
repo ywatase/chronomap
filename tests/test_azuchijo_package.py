@@ -77,6 +77,27 @@ def test_azuchijo_has_a_source_backed_jyorakuji_port_point():
     assert "azuchijo:evidence:omi-port-shape" in feature["properties"]["evidenceIds"]
 
 
+def test_azuchijo_has_a_source_backed_azuchi_settlement_polygon():
+    package = load_package(PACKAGE)
+    entities = {entity["id"]: entity for entity in package.entities}
+    settlement = entities["azuchijo:entity:azuchi-settlement"]
+    assert settlement["type"] == "settlement"
+
+    features = [
+        feature
+        for feature in package.feature_versions["features"]
+        if feature["properties"]["entityId"] == settlement["id"]
+    ]
+    assert len(features) == 1
+    feature = features[0]
+    assert feature["geometry"]["type"] == "Polygon"
+    assert feature["id"] == "azuchijo:version:azuchi-settlement-1576"
+    assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
+    assert feature["properties"]["uncertainty"]["identity"]["assessment"] == "well-supported"
+    assert "azuchijo:evidence:omi-settlement" in feature["properties"]["evidenceIds"]
+    assert "azuchijo:evidence:omi-settlement-shape" in feature["properties"]["evidenceIds"]
+
+
 def test_azuchijo_territory_passes_public_validation():
     package = load_package(PACKAGE)
     assert validate_package(package, ValidationProfile.PUBLIC) == []

@@ -232,6 +232,22 @@
 - [x] **Step 3: Add only source-backed public records** — 滋賀県資料の常楽寺湊に関する引用メタデータと独自形状メモを登録し、Pointは港域・岸線・船着場・航路の精密復元ではないと明示した。
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Azuchi package test、port mobile E2Eを通過させ、監査・カバレッジ・ドキュメントを27 FeatureVersion／19 Entityへ同期した。
 
+### Task 9: 実データの城下町`settlement`縦切り
+
+**Files:**
+- Modify: `data/azuchijo/dataset.json`, `entities.json`, `sources.json`, `evidence.json`, `feature-versions.geojson`
+- Create: `docs/data/azuchijo-settlement-shape-notes.md`, `tests/test_azuchijo_package.py`
+- Modify: `web/public/data/azuchijo/`, `web/tests/browser/azuchijo-data.spec.ts`, `docs/data/azuchijo-audit.md`, `docs/product/core-acceptance.md`, `docs/product/japan-coverage-matrix.md`, `docs/product/overview.md`, `docs/product/roadmap.md`
+
+**Interfaces:**
+- Consumes: 安土城の点・線・領域・港表示契約と、滋賀県の安土城跡周辺城下町ゾーン資料にある城下町跡（推定）の引用メタデータ。
+- Produces: `settlement` Entity、安土城下町の概略Polygon、1576〜1582年頃の時代境界、集住域の推定であって政治領域・港域・街区実測面ではない不確実性と出典付き公開bundle。
+
+- [x] **Step 1: Write the failing test** — Python package testと安土城mobile E2Eで、`settlement` Entity、城下町概略Polygon、根拠、通常Polygonとしての表示を固定した。
+- [x] **Step 2: Run test to verify it fails** — Entity参照のKeyErrorと、公開地物に城下町FeatureVersionがないE2E失敗を確認した。
+- [x] **Step 3: Add only source-backed public records** — 滋賀県資料の城下町跡（推定）引用メタデータと独自形状メモを登録し、街区・屋敷・道路・集落境界・遺構の精密な都市面ではないと明示した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Azuchi package test、settlement mobile E2Eを通過させ、監査・カバレッジ・ドキュメントを28 FeatureVersion／20 Entityへ同期した。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古戦場、古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古戦場、古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

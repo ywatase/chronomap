@@ -1,6 +1,16 @@
 [
   {
     "description": {
+      "ja": "安土城築城に伴い整備された城下町の推定範囲。城下町の街区・屋敷・道路・集落境界を精密に復元したものではありません。"
+    },
+    "id": "azuchijo:entity:azuchi-settlement",
+    "labels": {
+      "ja": "安土城下町（推定範囲）"
+    },
+    "type": "settlement"
+  },
+  {
+    "description": {
       "ja": "安土山に築かれた織田信長の居城。表示位置は代表点で、城郭全体の境界ではありません。"
     },
     "id": "azuchijo:entity:castle",

@@ -2,13 +2,14 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 11
+- 公開FeatureVersion: 12
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
 
 | FeatureVersion | 地物 | geometry | 年代 | 権利 |
 |---|---|---|---|---|
+| `azuchijo:version:azuchi-settlement-1576` | 安土城下町（推定範囲・1576〜1582年頃） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:castle-1576` | 安土城（1576年・築城開始） | Point | 1576年 | open-license |
 | `azuchijo:version:castle-1579` | 安土城（1579年・完成） | Point | 1579年 | open-license |
 | `azuchijo:version:castle-1582` | 安土城（1582年・主郭部焼失後） | Point | 1582年 | open-license |
@@ -20,6 +21,32 @@
 | `azuchijo:version:omi-sphere-1576-broad` | 織田信長の近江支配の拠点網（1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:omi-sphere-1576-lakeshore` | 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
+
+### `azuchijo:version:azuchi-settlement-1576`
+
+- 地物: 安土城下町（推定範囲・1576〜1582年頃） (`azuchijo:entity:azuchi-settlement`)
+- geometry: `Polygon`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。城下町の街区・屋敷・道路・集落境界の精密な面ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの城下町形成を概略期間で示します。前史・廃城後・現在の市街地は含めません。 (Evidence: `azuchijo:evidence:omi-settlement`)
+  - `location`: `approximate` — 安土山西麓、城下町、常楽寺湊の相対関係を示す概略面です。 (Evidence: `azuchijo:evidence:omi-settlement`, `azuchijo:evidence:omi-settlement-shape`)
+  - `geometry`: `approximate` — 城下町の街区・屋敷・道路・集落境界や遺構の精密な面ではなく、Chronomap独自の低頂点Polygonです。 (Evidence: `azuchijo:evidence:omi-settlement-shape`)
+  - `identity`: `well-supported` — 滋賀県資料が説明する安土城下町跡（推定）の関係を示します。 (Evidence: `azuchijo:evidence:omi-settlement`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-settlement` | citation | identity, location, temporal | 安土城築城に伴う城下町跡（推定）の範囲と周辺集落の説明 | `azuchijo:source:jyorakuji-port` |
+  - `azuchijo:evidence:omi-settlement` — 滋賀県資料が説明する安土城下町跡（推定）の範囲と、安土山西麓・常楽寺・下豊浦の関係。城下町の街区や集落境界の精密な面を示す資料ではありません。
+| `azuchijo:evidence:omi-settlement-shape` | derived-geometry | geometry, location | 安土城下町推定Polygonの作成方法と限界 | `azuchijo:source:azuchi-settlement-shape` |
+  - `azuchijo:evidence:omi-settlement-shape` — 安土山・城下町・常楽寺湊の相対関係と公開資料の推定範囲を、少数頂点のPolygonへ置き換えたChronomap独自の概略復元。行政境界、町割、屋敷地、道路、遺構の精密な範囲ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:azuchi-settlement-shape`: Chronomap『安土城下町推定範囲形状作成メモ』 — 安土城下町推定範囲形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-settlement-shape-notes.md
+  - `azuchijo:source:jyorakuji-port`: 滋賀県（安土城跡周辺の城下町ゾーン資料） — 安土城跡周辺の城下町ゾーン資料; 作成者: 滋賀県; 2022年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/5310843.pdf
 
 ### `azuchijo:version:castle-1576`
 
@@ -326,6 +353,7 @@
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
+| `azuchijo:source:azuchi-settlement-shape` | Chronomap『安土城下町推定範囲形状作成メモ』 | 安土城下町推定範囲形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-settlement-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 | `azuchijo:source:jyorakuji-port` | 滋賀県（安土城跡周辺の城下町ゾーン資料） | 安土城跡周辺の城下町ゾーン資料; 作成者: 滋賀県; 2022年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/file/attachment/5310843.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
 | `azuchijo:source:jyorakuji-port-shape` | Chronomap『常楽寺湊代表点形状作成メモ』 | 常楽寺湊代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-jyorakuji-port-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 | `azuchijo:source:omi-control` | 滋賀県『近江戦国探訪ガイドブック』 | 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |

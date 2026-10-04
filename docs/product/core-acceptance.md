@@ -35,7 +35,7 @@
 | 城・史跡・集落・街・港・古戦場 | `fortification`, `archaeological-site`, `settlement`, `port`, `battlefield` | 代表点または範囲を、精度の限界とともに表示する |
 | 国・勢力圏 | `polity`, `sphere-of-influence` | Polygon/MultiPolygon、時代境界、仮説ラベル、凡例と表示切替を持つ |
 
-現時点の公開データは5地域、27 FeatureVersion、19 Entity、6 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、石山本願寺、小氷期の海進、古大阪湾、および原要求に照らして不足している古戦場である。
+現時点の公開データは5地域、28 FeatureVersion、20 Entity、6 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、石山本願寺、小氷期の海進、古大阪湾、および原要求に照らして不足している古戦場である。
 
 新しい地域を「完了」と呼ぶ条件は、次をすべて満たすこととする。
 
@@ -72,9 +72,9 @@
 | --- | --- | --- |
 | P0地図・年代・詳細・根拠 | 実装済み | `web/src/map/`, `web/src/domain/temporal-filter.ts`, `web/src/ui/metadata-panel.ts` |
 | P0比較・共有・レポート | 実装済み | `web/src/domain/comparison-candidates.ts`, `share-state.ts`, `report-model.ts` |
-| P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`, 241 Python / 188 Vitest / 160 browser tests |
+| P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`, 242 Python / 188 Vitest / 162 browser tests |
 | P1 5地域パイロット | 一部実装 | `data/{ogurike,tonegawa,heijokyo,azuchijo,kinugawa}`。日本全体の網羅ではない |
-| P1 港・古戦場・国・勢力圏 | 一部検証 | 平城京に奈良市の内京・外京説明をもとにした2案の`boundary`概略Polygon、安土城・琵琶湖東岸に2案の`sphere-of-influence`、2案の`polity`、常楽寺湊の`port`代表Pointを追加。古戦場は未収録 |
+| P1 港・古戦場・国・勢力圏 | 一部検証 | 平城京に奈良市の内京・外京説明をもとにした2案の`boundary`概略Polygon、安土城・琵琶湖東岸に安土城下町の`settlement`概略Polygon、2案の`sphere-of-influence`、2案の`polity`、常楽寺湊の`port`代表Pointを追加。古戦場は未収録 |
 | P2 領域レイヤー | `boundary`／`polity`／`sphere-of-influence`縦切り済み | 3種のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。平城京と安土城で重なる仮説2案、時代境界、出典・4次元不確実性、desktop／mobile E2Eを検証済み。安土城の`polity`は行政境界ではない政治中枢の概略表示として限定している |
 | P2 古地図画像／タイル | 未着手 | 現在地図＋概略geometryのみ |
 | 中国史・世界史 | 対象外 | 現在のJapan-first MVPの非目標 |
