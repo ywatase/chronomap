@@ -164,5 +164,42 @@
     },
     "type": "official-web-page",
     "url": "https://www.pref.shiga.lg.jp/sd00/2591.html"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "長浜市『長浜市歴史文化基本構想 第4章』",
+    "creators": [
+      "長浜市"
+    ],
+    "id": "azuchijo:source:shizugatake-battlefield",
+    "publishedYear": 2019,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・図版・地図画像は再現しない。"
+    },
+    "title": {
+      "ja": "長浜市歴史文化基本構想 第4章"
+    },
+    "type": "official-report",
+    "url": "https://www.city.nagahama.lg.jp/cmsfiles/contents/0000008/8691/4s2-1.pdf"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "Chronomap『賤ヶ岳古戦場代表点形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "azuchijo:source:shizugatake-shape",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "独自の概略復元メモ。"
+    },
+    "title": {
+      "ja": "賤ヶ岳古戦場代表点形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shizugatake-battlefield-shape-notes.md"
   }
 ]

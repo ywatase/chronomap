@@ -988,6 +988,81 @@
     {
       "geometry": {
         "coordinates": [
+          136.205,
+          35.524
+        ],
+        "type": "Point"
+      },
+      "id": "azuchijo:version:shizugatake-battlefield-1583",
+      "properties": {
+        "description": {
+          "ja": "天正11年（1583年）の賤ヶ岳の戦いの舞台を、余呉湖周辺の賤ヶ岳付近に置いた代表点で示します。余呉湖周辺から木之本・柳ヶ瀬に及ぶ戦場全体、陣地、戦線の精密な範囲ではありません。"
+        },
+        "entityId": "azuchijo:entity:shizugatake-battlefield",
+        "evidenceIds": [
+          "azuchijo:evidence:shizugatake",
+          "azuchijo:evidence:shizugatake-shape"
+        ],
+        "labels": {
+          "ja": "賤ヶ岳古戦場（1583年・代表点）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、長浜市（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。戦場全体・陣地・戦線の精密な位置ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1583,
+            "latestYear": 1583,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1583,
+            "latestYear": 1583,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:shizugatake-shape"
+            ],
+            "note": "余呉湖周辺の賤ヶ岳付近へ置いた代表Pointで、戦線・陣地・交戦範囲の精密な形状ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "azuchijo:evidence:shizugatake"
+            ],
+            "note": "長浜市資料が説明する賤ヶ岳古戦場を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "azuchijo:evidence:shizugatake",
+              "azuchijo:evidence:shizugatake-shape"
+            ],
+            "note": "賤ヶ岳古戦場の広域コンテキストを読み始める代表点で、戦場全体や各砦の位置ではありません。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "azuchijo:evidence:shizugatake"
+            ],
+            "note": "長浜市資料が説明する天正11年（1583年）の合戦を単年で表示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
           [
             136.139,
             35.155

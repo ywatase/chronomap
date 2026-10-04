@@ -71,6 +71,16 @@
   },
   {
     "description": {
+      "ja": "1583年の賤ヶ岳の戦いの舞台を示す代表点。余呉湖周辺から木之本・柳ヶ瀬に及ぶ戦場全体、陣地、戦線の精密な範囲ではありません。"
+    },
+    "id": "azuchijo:entity:shizugatake-battlefield",
+    "labels": {
+      "ja": "賤ヶ岳古戦場（代表点）"
+    },
+    "type": "battlefield"
+  },
+  {
+    "description": {
       "ja": "安土城と琵琶湖東岸を結ぶ水運の文脈を考えるための概略接続線。実際の航路・港・船着場の位置ではありません。"
     },
     "id": "azuchijo:entity:water-transport",

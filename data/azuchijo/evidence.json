@@ -99,5 +99,22 @@
     "supports": ["geometry", "location"],
     "note": "安土山・城下町・常楽寺湊の相対関係と公開資料の推定範囲を、少数頂点のPolygonへ置き換えたChronomap独自の概略復元。行政境界、町割、屋敷地、道路、遺構の精密な範囲ではありません。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:shizugatake",
+    "sourceId": "azuchijo:source:shizugatake-battlefield",
+    "locator": "余呉湖周辺の賤ヶ岳城塞群と古戦場、天正11年（1583年）の羽柴秀吉・柴田勝家の合戦",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "長浜市資料が説明する、余呉湖周辺から木之本・柳ヶ瀬に広がる賤ヶ岳古戦場と1583年の合戦。単一の戦線・陣地配置・戦場境界の精密な位置を示す資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:shizugatake-shape",
+    "sourceId": "azuchijo:source:shizugatake-shape",
+    "locator": "賤ヶ岳古戦場代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "公開資料が示す賤ヶ岳・余呉湖周辺の相対関係を、古戦場を読み始めるための代表Pointへ置き換えたChronomap独自の概略復元。戦場全体、陣地、砦、行軍路、交戦範囲の精密な位置ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

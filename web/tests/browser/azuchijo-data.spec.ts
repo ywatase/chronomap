@@ -7,7 +7,7 @@ test("opens the Azuchi Castle pilot from the catalog and compares its dated cast
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog.locator('[data-dataset-catalog-card="azuchijo"]')).toContainText(/安土城・琵琶湖東岸|Azuchi Castle/);
   const card = catalog.locator('[data-dataset-catalog-card="azuchijo"]');
-  await expect(card).toContainText(/12件|12/);
+  await expect(card).toContainText(/13件|13/);
   await expect(card).toContainText(/12分|12 min/);
   await expect(card.locator("[data-dataset-catalog-audit]")).toContainText(/公開監査済み|Public audit ready/);
   await card.locator('[data-dataset-catalog-lesson-row="azuchijo-intro"] [data-dataset-catalog-lesson]').click();
@@ -107,4 +107,18 @@ test("shows the estimated Azuchi castle-town settlement separately from territor
   await expect(detail).toContainText(/推定|approximate/);
   await expect(detail).toContainText("azuchijo:evidence:omi-settlement");
   await expect(detail).toContainText("azuchijo:evidence:omi-settlement-shape");
+});
+
+test("shows the Shizugatake battlefield as an approximate historical point", async ({ page }) => {
+  await page.goto("/?dataset=azuchijo&year=1583");
+  const battlefield = page.locator('[data-feature-id="azuchijo:version:shizugatake-battlefield-1583"]');
+  await expect(battlefield).toBeVisible();
+  await expect(battlefield).toContainText(/賤ヶ岳古戦場|Shizugatake battlefield/);
+  await battlefield.click();
+  const detail = page.locator("#panel-detail");
+  await expect(detail).toContainText(/古戦場|Battlefield/);
+  await expect(detail).toContainText(/1583/);
+  await expect(detail).toContainText(/概略|approximate/);
+  await expect(detail).toContainText("azuchijo:evidence:shizugatake");
+  await expect(detail).toContainText("azuchijo:evidence:shizugatake-shape");
 });

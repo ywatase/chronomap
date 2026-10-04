@@ -46,5 +46,11 @@
     "type": "settlement",
     "labels": { "ja": "安土城下町（推定範囲）" },
     "description": { "ja": "安土城築城に伴い整備された城下町の推定範囲。城下町の街区・屋敷・道路・集落境界を精密に復元したものではありません。" }
+  },
+  {
+    "id": "azuchijo:entity:shizugatake-battlefield",
+    "type": "battlefield",
+    "labels": { "ja": "賤ヶ岳古戦場（代表点）" },
+    "description": { "ja": "1583年の賤ヶ岳の戦いの舞台を示す代表点。余呉湖周辺から木之本・柳ヶ瀬に及ぶ戦場全体、陣地、戦線の精密な範囲ではありません。" }
   }
 ]

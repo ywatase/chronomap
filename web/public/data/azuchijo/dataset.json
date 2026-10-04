@@ -3,11 +3,11 @@
     135.74,
     34.92,
     136.46,
-    35.52
+    35.55
   ],
   "defaultLanguage": "ja",
   "description": {
-    "ja": "1576年の築城開始と1582年の焼失を、安土山・安土城下町・琵琶湖東岸・常楽寺湊・湖上交通、織田信長の近江支配の拠点網と安土政治中枢（いずれも概略）とともに比べる小規模データです。"
+    "ja": "1576年の築城開始と1582年の焼失を、安土山・安土城下町・琵琶湖東岸・常楽寺湊・湖上交通、織田信長の近江支配の拠点網、安土政治中枢、1583年の賤ヶ岳古戦場（いずれも概略）とともに比べる小規模データです。"
   },
   "files": {
     "entities": "entities.json",
@@ -17,15 +17,15 @@
   },
   "id": "azuchijo:dataset:pilot",
   "rights": {
-    "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市（引用メタデータ）",
+    "attribution": "Chronomap（概略復元）、滋賀県・近江八幡市・長浜市（引用メタデータ）",
     "status": "open-license",
     "terms": "外部資料の本文・図版・地図画像は再現しない。"
   },
   "schemaVersion": "1.0.0",
   "temporalExtent": {
     "end": {
-      "earliestYear": 1582,
-      "latestYear": 1582,
+      "earliestYear": 1583,
+      "latestYear": 1583,
       "precision": "year",
       "qualifier": "exact"
     },

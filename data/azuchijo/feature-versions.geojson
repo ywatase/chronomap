@@ -281,6 +281,29 @@
         "publicationStatus": "public",
         "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。城下町の街区・屋敷・道路・集落境界の精密な面ではない。" }
       }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:shizugatake-battlefield-1583",
+      "geometry": { "type": "Point", "coordinates": [136.205, 35.524] },
+      "properties": {
+        "entityId": "azuchijo:entity:shizugatake-battlefield",
+        "labels": { "ja": "賤ヶ岳古戦場（1583年・代表点）" },
+        "description": { "ja": "天正11年（1583年）の賤ヶ岳の戦いの舞台を、余呉湖周辺の賤ヶ岳付近に置いた代表点で示します。余呉湖周辺から木之本・柳ヶ瀬に及ぶ戦場全体、陣地、戦線の精密な範囲ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1583, "latestYear": 1583, "precision": "year", "qualifier": "exact" },
+          "end": { "earliestYear": 1583, "latestYear": 1583, "precision": "year", "qualifier": "exact" }
+        },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "長浜市資料が説明する天正11年（1583年）の合戦を単年で表示します。", "evidenceIds": ["azuchijo:evidence:shizugatake"] },
+          "location": { "assessment": "approximate", "note": "賤ヶ岳古戦場の広域コンテキストを読み始める代表点で、戦場全体や各砦の位置ではありません。", "evidenceIds": ["azuchijo:evidence:shizugatake", "azuchijo:evidence:shizugatake-shape"] },
+          "geometry": { "assessment": "approximate", "note": "余呉湖周辺の賤ヶ岳付近へ置いた代表Pointで、戦線・陣地・交戦範囲の精密な形状ではありません。", "evidenceIds": ["azuchijo:evidence:shizugatake-shape"] },
+          "identity": { "assessment": "well-supported", "note": "長浜市資料が説明する賤ヶ岳古戦場を示します。", "evidenceIds": ["azuchijo:evidence:shizugatake"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:shizugatake", "azuchijo:evidence:shizugatake-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、長浜市（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。戦場全体・陣地・戦線の精密な位置ではない。" }
+      }
     }
   ]
 }

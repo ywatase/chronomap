@@ -248,6 +248,19 @@
 - [x] **Step 3: Add only source-backed public records** — 滋賀県資料の城下町跡（推定）引用メタデータと独自形状メモを登録し、街区・屋敷・道路・集落境界・遺構の精密な都市面ではないと明示した。
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Azuchi package test、settlement mobile E2Eを通過させ、監査・カバレッジ・ドキュメントを28 FeatureVersion／20 Entityへ同期した。
 
+### Task 10: 実データの古戦場`battlefield`縦切り
+
+- **Goal:** 原要求に含まれる古戦場を、戦場全体を確定したように見せず、代表Pointと広域コンテキストの境界付きで公開する。
+- **Source:** 長浜市『長浜市歴史文化基本構想 第4章』が説明する余呉湖周辺から木之本・柳ヶ瀬に広がる1583年の賤ヶ岳城塞群・古戦場。
+- **Modify:** `data/azuchijo/`, `web/public/data/azuchijo/`, `docs/data/azuchijo-shizugatake-battlefield-shape-notes.md`, `docs/data/azuchijo-audit.md`, `docs/product/japan-coverage-matrix.md`, `docs/product/core-acceptance.md`, `docs/product/overview.md`, `docs/product/roadmap.md`, `tests/test_azuchijo_package.py`, `tests/test_dataset_audits.py`, `web/tests/browser/azuchijo-data.spec.ts`。
+- **Boundary:** `battlefield` Entityは賤ヶ岳付近の代表Pointのみ。余呉湖周辺から木之本・柳ヶ瀬に及ぶ戦場全体、各砦、陣地、戦線、行軍路、史跡の個別位置を復元しない。安土城下町、常楽寺湊、`polity`、`sphere-of-influence`とは別の意味として表示する。
+
+- [x] **Step 1: Write the failing test** — Python package testと1583年のdesktop／mobile E2Eで`battlefield` Entity、代表Point、年代、根拠、不確実性を固定した。
+- [x] **Step 2: Run test to verify it fails** — 未収録EntityによるKeyErrorを確認した。
+- [x] **Step 3: Implement the minimal feature** — Entity、1583年FeatureVersion、公式Source、独自形状メモ、Evidence、公開bundleを追加した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、Azuchi package test、battlefield E2Eを通過させ、監査・カバレッジ・ドキュメントを29 FeatureVersion／21 Entityへ同期する。
+- [x] **Step 5: Run the full quality gate** — 全Python 243件、Vitest 188件、asset sync 6件、production build、全Playwright 164件を通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古戦場、古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

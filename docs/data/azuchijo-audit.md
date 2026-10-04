@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 12
+- 公開FeatureVersion: 13
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -20,6 +20,7 @@
 | `azuchijo:version:omi-polity-1576-townshore` | 織田信長の近江支配・安土政治中枢（1576〜1582年頃・城下町・湖岸を含む案） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:omi-sphere-1576-broad` | 織田信長の近江支配の拠点網（1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:omi-sphere-1576-lakeshore` | 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
+| `azuchijo:version:shizugatake-battlefield-1583` | 賤ヶ岳古戦場（1583年・代表点） | Point | 1583年 | open-license |
 | `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
 
 ### `azuchijo:version:azuchi-settlement-1576`
@@ -323,6 +324,32 @@
   - `azuchijo:source:omi-control`: 滋賀県『近江戦国探訪ガイドブック』 — 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
 
+### `azuchijo:version:shizugatake-battlefield-1583`
+
+- 地物: 賤ヶ岳古戦場（1583年・代表点） (`azuchijo:entity:shizugatake-battlefield`)
+- geometry: `Point`
+- 年代: 1583年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、長浜市（引用メタデータ） — 外部本文・図版・地図画像は再現しない。戦場全体・陣地・戦線の精密な位置ではない。
+- 不確実性:
+  - `temporal`: `well-supported` — 長浜市資料が説明する天正11年（1583年）の合戦を単年で表示します。 (Evidence: `azuchijo:evidence:shizugatake`)
+  - `location`: `approximate` — 賤ヶ岳古戦場の広域コンテキストを読み始める代表点で、戦場全体や各砦の位置ではありません。 (Evidence: `azuchijo:evidence:shizugatake`, `azuchijo:evidence:shizugatake-shape`)
+  - `geometry`: `approximate` — 余呉湖周辺の賤ヶ岳付近へ置いた代表Pointで、戦線・陣地・交戦範囲の精密な形状ではありません。 (Evidence: `azuchijo:evidence:shizugatake-shape`)
+  - `identity`: `well-supported` — 長浜市資料が説明する賤ヶ岳古戦場を示します。 (Evidence: `azuchijo:evidence:shizugatake`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:shizugatake` | citation | identity, location, temporal | 余呉湖周辺の賤ヶ岳城塞群と古戦場、天正11年（1583年）の羽柴秀吉・柴田勝家の合戦 | `azuchijo:source:shizugatake-battlefield` |
+  - `azuchijo:evidence:shizugatake` — 長浜市資料が説明する、余呉湖周辺から木之本・柳ヶ瀬に広がる賤ヶ岳古戦場と1583年の合戦。単一の戦線・陣地配置・戦場境界の精密な位置を示す資料ではありません。
+| `azuchijo:evidence:shizugatake-shape` | derived-geometry | geometry, location | 賤ヶ岳古戦場代表Pointの作成方法と限界 | `azuchijo:source:shizugatake-shape` |
+  - `azuchijo:evidence:shizugatake-shape` — 公開資料が示す賤ヶ岳・余呉湖周辺の相対関係を、古戦場を読み始めるための代表Pointへ置き換えたChronomap独自の概略復元。戦場全体、陣地、砦、行軍路、交戦範囲の精密な位置ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:shizugatake-battlefield`: 長浜市『長浜市歴史文化基本構想 第4章』 — 長浜市歴史文化基本構想 第4章; 作成者: 長浜市; 2019年; 参照日: 2026-10-04 — rights: `restricted` — https://www.city.nagahama.lg.jp/cmsfiles/contents/0000008/8691/4s2-1.pdf
+  - `azuchijo:source:shizugatake-shape`: Chronomap『賤ヶ岳古戦場代表点形状作成メモ』 — 賤ヶ岳古戦場代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shizugatake-battlefield-shape-notes.md
+
 ### `azuchijo:version:water-transport-1576`
 
 - 地物: 安土城と湖上交通の関係（1576年頃・概略） (`azuchijo:entity:water-transport`)
@@ -362,6 +389,8 @@
 | `azuchijo:source:shape-notes` | Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 | 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md | open-license; 表示: Chronomap contributors | 公開メタデータから作成した概略復元メモ。 |
 | `azuchijo:source:shiga-biwako-human` | 滋賀県『琵琶湖と人の長いつきあい』 | 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/biwakatsu/20521.html | restricted | 引用メタデータのみ。本文・写真・図版は再現しない。 |
 | `azuchijo:source:shiga-castle` | 滋賀県『特別史跡安土城跡の調査と整備』 | 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/sd00/2591.html | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
+| `azuchijo:source:shizugatake-battlefield` | 長浜市『長浜市歴史文化基本構想 第4章』 | 長浜市歴史文化基本構想 第4章; 作成者: 長浜市; 2019年; 参照日: 2026-10-04; https://www.city.nagahama.lg.jp/cmsfiles/contents/0000008/8691/4s2-1.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
+| `azuchijo:source:shizugatake-shape` | Chronomap『賤ヶ岳古戦場代表点形状作成メモ』 | 賤ヶ岳古戦場代表点形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shizugatake-battlefield-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 
 ## 監査上の注意
 
