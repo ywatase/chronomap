@@ -1,14 +1,14 @@
 {
   "id": "osaka-intro",
   "dataset": "osaka",
-  "title": { "ja": "大坂・石山本願寺と海岸線・水運を読む", "en": "Read Osaka, Ishiyama Honganji, shorelines, and water routes" },
-  "description": { "ja": "河内湾・古代海岸線・石山本願寺・寺内町・渡辺津・淀川水運の位置と年代を、約15分で順に観察します。形状は概略復元で、古地図タイルは後世の地理コンテキストです。", "en": "Observe the locations and dates of Kawachi Bay, its approximate ancient shoreline, Ishiyama Honganji, its temple town, Watanabe port, and Yodo water transport in about 15 minutes. Shapes are approximate reconstructions, and the historical tile is later geographic context." },
-  "durationMinutes": 15,
+  "title": { "ja": "大坂・石山本願寺・合戦と海岸線を読む", "en": "Read Osaka, Ishiyama Honganji, its battle, and shorelines" },
+  "description": { "ja": "河内湾・古代海岸線・石山本願寺・石山合戦・寺内町・渡辺津・淀川水運の位置と年代を、約17分で順に観察します。形状は概略復元で、古地図タイルは後世の地理コンテキストです。", "en": "Observe the locations and dates of Kawachi Bay, its approximate ancient shoreline, Ishiyama Honganji, the Ishiyama battle, its temple town, Watanabe port, and Yodo water transport in about 17 minutes. Shapes are approximate reconstructions, and the historical tile is later geographic context." },
+  "durationMinutes": 17,
   "teachingGuide": {
     "recommendedFor": { "ja": "中学校の日本史・地域史で、地形・寺内町・水運の関係を読む導入に", "en": "A middle-school history introduction to reading relationships among terrain, a temple town, and water transport" },
-    "learningGoal": { "ja": "年代を変えながら、面・境界線・点・線が示す歴史的関係と、概略復元の限界を根拠付きで説明する。", "en": "Explain the historical relationships shown by areas, shoreline cues, points, and lines across dates, together with the limits of approximate reconstruction." },
+    "learningGoal": { "ja": "年代を変えながら、面・境界線・城郭・古戦場の代表点・線が示す歴史的関係と、概略復元の限界を根拠付きで説明する。", "en": "Explain the historical relationships shown by areas, shoreline cues, a fortification, a battlefield point, and lines across dates, together with the limits of approximate reconstruction." },
     "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }],
-    "assessment": { "ja": "河内湾・海岸線・石山本願寺・水運の位置関係を、表示の年代と資料の根拠、形状の限界を含めて一文で説明できるか。", "en": "Can learners explain the relationships among Kawachi Bay, the shoreline cue, Ishiyama Honganji, and water transport with the displayed dates, source basis, and geometric limits?" },
+    "assessment": { "ja": "河内湾・海岸線・石山本願寺・石山合戦・水運の位置関係を、表示の年代と資料の根拠、形状の限界を含めて一文で説明できるか。", "en": "Can learners explain the relationships among Kawachi Bay, the shoreline cue, Ishiyama Honganji, the Ishiyama battle, and water transport with the displayed dates, source basis, and geometric limits?" },
     "usageNote": { "ja": "古代・中世の形状は概略復元であり、1936〜1942年頃の空中写真タイルは当時の境界を示さないことを先に確認します。", "en": "First clarify that ancient and medieval shapes are approximate reconstructions and that the 1936–1942 aerial-photo tile does not show period boundaries." }
   },
   "steps": [
@@ -32,6 +32,13 @@
       "featureId": "osaka:version:ishiyama-honganji-1533",
       "prompt": { "ja": "1533年の石山本願寺の代表点は、どの歴史的出来事の始まりを示しますか。点から寺域の境界を推測しないでください。", "en": "What historical beginning does the 1533 Ishiyama Honganji point mark? Do not infer the precinct boundary from the point." },
       "teacherNote": { "ja": "大阪市中央区の説明にある開山を示します。代表点は現在の大阪城付近の位置目安で、寺域・濠・土居の精密境界ではありません。", "en": "It marks the founding described by Osaka's Chuo Ward. The point is a location cue near today's Osaka Castle, not a precise precinct, moat, or earthwork boundary." }
+    },
+    {
+      "id": "ishiyama-battle-1570",
+      "year": 1570,
+      "featureId": "osaka:version:ishiyama-battlefield-1570",
+      "prompt": { "ja": "1570年の石山合戦の代表点を、本願寺の城郭・寺内町の表示と比べてください。戦場全体を点から推測できない理由を説明します。", "en": "Compare the 1570 Ishiyama battle point with the fortification and temple-town displays. Explain why the entire battlefield cannot be inferred from this point." },
+      "teacherNote": { "ja": "大阪市中央区の説明にある1570年開始から1580年退去までの戦争文脈を示す代表点です。砦、陣地、戦線、行軍路や戦場全体の精密位置ではありません。", "en": "It is a representative point for the war context from the 1570 start to the 1580 withdrawal described by Osaka's Chuo Ward. It is not a precise position of forts, camps, lines, marches, or the entire battlefield." }
     },
     {
       "id": "teramachi-1533",

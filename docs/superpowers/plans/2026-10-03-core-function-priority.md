@@ -304,6 +304,18 @@ Task 3単体の実装時点ではPython 245件、Vitest 193件、focused asset E
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、coastline desktop／mobile E2Eを通過させた。
 - [x] **Step 5: Run the full quality gate** — 全Python 250件、Vitest 194件、Playwright 174件、production build、`git diff --check`を通過させた。
 
+### Task 14: 石山合戦の`battlefield`意味分離縦切り
+
+- **Goal:** 大坂本願寺の`fortification`と同じ代表位置を、1570〜1580年の石山合戦を読む`battlefield`コンテキストとして別Entityにする。戦場全体を点で表すのではなく、城郭・寺内町・戦争文脈の意味を詳細・lesson・監査で分離し、別の古戦場追加へ再利用できる受け入れ境界を固定する。
+- **Source:** 大阪市中央区「石山（大坂）本願寺推定地」。本文・写真・図版は複製せず、引用メタデータとURL・locatorだけを保持する。
+- **Boundary:** 本願寺推定地の代表Pointを戦場コンテキストへ再利用する。戦場全体、砦、陣地、戦線、行軍路の精密な位置・範囲は復元せず、`fortification`の本願寺代表点とは歴史的意味を分けて表示する。
+
+- [x] **Step 1: Write the failing test** — `battlefield` Entity／1570〜1580年のFeatureVersion、根拠・不確実性、lesson、desktop／mobile E2Eの到達性を固定した。
+- [x] **Step 2: Run test to verify it fails** — 新しいEntity／FeatureVersion／Evidence未登録によるPython／Playwrightの失敗を確認した。
+- [x] **Step 3: Implement the minimal feature** — `data/osaka/`へ石山合戦の代表PointとEvidenceを追加し、公開bundle・7ステップlesson・詳細表示・監査へ同期した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、battlefield desktop／mobile E2Eを通過させた。
+- [x] **Step 5: Run the full quality gate** — 全Python 250件、Vitest 194件、Playwright 176件、production build、`git diff --check`を通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイル、Task 13で古大阪湾の`coastline`の縦切りを完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は別地域の領域資料または不足する古戦場の公開根拠を調査する。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイル、Task 13で古大阪湾の`coastline`、Task 14で石山合戦の`battlefield`意味分離を完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は別地域の領域資料または不足する古戦場の公開根拠を調査する。

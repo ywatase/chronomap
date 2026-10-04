@@ -11,6 +11,16 @@
   },
   {
     "description": {
+      "ja": "1570〜1580年の石山合戦を、本願寺推定地を中心に読む代表点で示します。戦場全体、砦、陣地、戦線、行軍路の精密な位置や範囲ではありません。"
+    },
+    "id": "osaka:entity:ishiyama-battlefield",
+    "labels": {
+      "ja": "石山合戦（代表点）"
+    },
+    "type": "battlefield"
+  },
+  {
+    "description": {
       "ja": "1533年に開山され1580年に退去した石山（大坂）本願寺を、現在の大阪城付近の代表点で示します。寺域・濠・土居の精密な境界ではありません。"
     },
     "id": "osaka:entity:ishiyama-honganji",

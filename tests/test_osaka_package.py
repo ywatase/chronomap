@@ -29,6 +29,7 @@ def test_osaka_has_source_backed_core_historical_contexts():
         "osaka:entity:kawachi-bay": ("waterbody", "Polygon"),
         "osaka:entity:ancient-coastline": ("coastline", "LineString"),
         "osaka:entity:ishiyama-honganji": ("fortification", "Point"),
+        "osaka:entity:ishiyama-battlefield": ("battlefield", "Point"),
         "osaka:entity:ishiyama-teramachi": ("settlement", "Polygon"),
         "osaka:entity:watanabe-port": ("port", "Point"),
         "osaka:entity:yodo-watercourse": ("watercourse", "LineString"),

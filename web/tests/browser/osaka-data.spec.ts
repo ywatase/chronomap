@@ -43,4 +43,15 @@ test.describe("Osaka Ishiyama and Kawachi Bay pilot", () => {
     await expect(detail).toContainText(/正確な古代海岸線|exact ancient shoreline/);
     await expect(detail).toContainText("osaka:evidence:ancient-coastline-shape");
   });
+
+  test("shows the Ishiyama battlefield as a separate approximate context", async ({ page }) => {
+    await page.goto("/?dataset=osaka&year=1570");
+    const battlefield = page.locator('[data-feature-id="osaka:version:ishiyama-battlefield-1570"]');
+    await expect(battlefield).toBeVisible();
+    await battlefield.click();
+    const detail = page.locator("#panel-detail");
+    await expect(detail).toContainText(/石山合戦|Ishiyama battle/);
+    await expect(detail).toContainText(/戦場全体|entire battlefield/);
+    await expect(detail).toContainText("osaka:evidence:ishiyama-battlefield-shape");
+  });
 });

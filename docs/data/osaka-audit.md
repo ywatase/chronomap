@@ -2,7 +2,7 @@
 
 - データセットID: `osaka:dataset:ishiyama-pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 6
+- 公開FeatureVersion: 7
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -10,6 +10,7 @@
 | FeatureVersion | 地物 | geometry | 年代 | 権利 |
 |---|---|---|---|---|
 | `osaka:version:ancient-coastline-300` | 河内湾・古代海岸線（概略線） | LineString | -1000–300年 | open-license |
+| `osaka:version:ishiyama-battlefield-1570` | 石山合戦（1570〜1580年・代表点） | Point | 1570–1580年 | open-license |
 | `osaka:version:ishiyama-honganji-1533` | 石山（大坂）本願寺（1533〜1580年・代表点） | Point | 1533–1580年 | open-license |
 | `osaka:version:ishiyama-teramachi-1533` | 石山本願寺寺内町（1533〜1580年・概略） | Polygon | 1533–1580年 | open-license |
 | `osaka:version:kawachi-bay-300` | 河内湾・河内湖（古代・概略面） | Polygon | -1000–300年 | open-license |
@@ -40,6 +41,32 @@
 - Source:
 
   - `osaka:source:port-history`: 大阪市『大阪港の景観特性をとらえる要素・歴史』 — 大阪港の景観特性をとらえる要素・歴史; 作成者: 大阪市港湾局; 2018年; 参照日: 2026-10-05 — rights: `restricted` — https://www.city.osaka.lg.jp/port/page/0000432129.html
+  - `osaka:source:shape-notes`: Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 — 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md
+
+### `osaka:version:ishiyama-battlefield-1570`
+
+- 地物: 石山合戦（1570〜1580年・代表点） (`osaka:entity:ishiyama-battlefield`)
+- geometry: `Point`
+- 年代: 1570–1580年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、大阪市中央区（引用メタデータ） — 外部資料の本文・写真・図版は再現しない。代表点は戦場全体や各陣地の精密位置ではない。
+- 不確実性:
+  - `temporal`: `well-supported` — 大阪市中央区の公式説明にある1570年開始と1580年退去までの石山合戦を表示します。 (Evidence: `osaka:evidence:ishiyama-battlefield`)
+  - `location`: `approximate` — 本願寺推定地を中心に石山合戦を読むための代表位置です。戦場全体の範囲ではありません。 (Evidence: `osaka:evidence:ishiyama-battlefield`, `osaka:evidence:ishiyama-battlefield-shape`)
+  - `geometry`: `approximate` — 代表Pointであり、戦場全体、砦、陣地、戦線、行軍路の精密な位置や範囲ではありません。 (Evidence: `osaka:evidence:ishiyama-battlefield-shape`)
+  - `identity`: `well-supported` — 大阪市中央区が説明する石山合戦という戦争文脈を示します。 (Evidence: `osaka:evidence:ishiyama-battlefield`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `osaka:evidence:ishiyama-battlefield` | citation | identity, location, temporal | 元亀元年（1570年）から天正8年（1580年）までの石山合戦と本願寺退去の説明 | `osaka:source:ishiyama-site` |
+  - `osaka:evidence:ishiyama-battlefield` — 大阪市中央区の公式説明を引用メタデータとして使用します。石山本願寺を中心とする戦争の期間を示す資料であり、戦場全体の座標や各陣地の配置を示すものではありません。
+| `osaka:evidence:ishiyama-battlefield-shape` | derived-geometry | geometry, location | 石山合戦代表Pointの作成方法と限界 | `osaka:source:shape-notes` |
+  - `osaka:evidence:ishiyama-battlefield-shape` — 本願寺推定地の代表点を、石山合戦の戦場文脈を読む代表Pointへ再利用しました。戦場全体、砦、陣地、戦線、行軍路の精密位置や範囲ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `osaka:source:ishiyama-site`: 大阪市中央区『石山（大坂）本願寺推定地』 — 石山（大坂）本願寺推定地; 作成者: 大阪市中央区; 2026年; 参照日: 2026-10-04 — rights: `restricted` — https://www.city.osaka.lg.jp/chuo/page/0000641506.html
   - `osaka:source:shape-notes`: Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 — 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md
 
 ### `osaka:version:ishiyama-honganji-1533`

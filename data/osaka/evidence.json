@@ -51,6 +51,23 @@
     "publicationBasis": "original-reconstruction"
   },
   {
+    "id": "osaka:evidence:ishiyama-battlefield",
+    "sourceId": "osaka:source:ishiyama-site",
+    "locator": "元亀元年（1570年）から天正8年（1580年）までの石山合戦と本願寺退去の説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪市中央区の公式説明を引用メタデータとして使用します。石山本願寺を中心とする戦争の期間を示す資料であり、戦場全体の座標や各陣地の配置を示すものではありません。"
+  },
+  {
+    "id": "osaka:evidence:ishiyama-battlefield-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "石山合戦代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "本願寺推定地の代表点を、石山合戦の戦場文脈を読む代表Pointへ再利用しました。戦場全体、砦、陣地、戦線、行軍路の精密位置や範囲ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
     "id": "osaka:evidence:watanabe",
     "sourceId": "osaka:source:city-history",
     "locator": "天満橋から北浜南岸にあった渡辺津と、熊野詣・水運の説明",

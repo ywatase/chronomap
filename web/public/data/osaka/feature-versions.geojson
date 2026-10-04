@@ -93,6 +93,81 @@
         ],
         "type": "Point"
       },
+      "id": "osaka:version:ishiyama-battlefield-1570",
+      "properties": {
+        "description": {
+          "ja": "元亀元年（1570年）から天正8年（1580年）までの石山合戦を、本願寺推定地を中心に読む代表点で示します。戦場全体、砦、陣地、戦線、行軍路の精密な位置や範囲ではありません。"
+        },
+        "entityId": "osaka:entity:ishiyama-battlefield",
+        "evidenceIds": [
+          "osaka:evidence:ishiyama-battlefield",
+          "osaka:evidence:ishiyama-battlefield-shape"
+        ],
+        "labels": {
+          "ja": "石山合戦（1570〜1580年・代表点）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市中央区（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。代表点は戦場全体や各陣地の精密位置ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1580,
+            "latestYear": 1580,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1570,
+            "latestYear": 1570,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-battlefield-shape"
+            ],
+            "note": "代表Pointであり、戦場全体、砦、陣地、戦線、行軍路の精密な位置や範囲ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-battlefield"
+            ],
+            "note": "大阪市中央区が説明する石山合戦という戦争文脈を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-battlefield",
+              "osaka:evidence:ishiyama-battlefield-shape"
+            ],
+            "note": "本願寺推定地を中心に石山合戦を読むための代表位置です。戦場全体の範囲ではありません。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-battlefield"
+            ],
+            "note": "大阪市中央区の公式説明にある1570年開始と1580年退去までの石山合戦を表示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          135.525,
+          34.687
+        ],
+        "type": "Point"
+      },
       "id": "osaka:version:ishiyama-honganji-1533",
       "properties": {
         "description": {

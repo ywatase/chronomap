@@ -36,6 +36,30 @@
     "usage": "citation"
   },
   {
+    "id": "osaka:evidence:ishiyama-battlefield",
+    "locator": "元亀元年（1570年）から天正8年（1580年）までの石山合戦と本願寺退去の説明",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "osaka:source:ishiyama-site",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "osaka:evidence:ishiyama-battlefield-shape",
+    "locator": "石山合戦代表Pointの作成方法と限界",
+    "note": "本願寺推定地の代表点を、石山合戦の戦場文脈を読む代表Pointへ再利用しました。戦場全体、砦、陣地、戦線、行軍路の精密位置や範囲ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "osaka:source:shape-notes",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
     "id": "osaka:evidence:ishiyama-shape",
     "locator": "石山本願寺代表点・寺内町Polygonの作成方法と限界",
     "note": "公式ページの現在地住所と上町台地の説明を、代表点と低頂点Polygonへ置き換えました。寺域、濠、土居、町割の精密な範囲ではありません。",
