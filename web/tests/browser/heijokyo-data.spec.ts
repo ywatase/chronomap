@@ -145,7 +145,7 @@ test("loads the checked-in Heijokyo bundle and completes its single-year lesson"
   await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
   await expect(page.getByRole("heading", { name: /平城京パイロットデータ|Heijokyo pilot dataset/ })).toBeVisible();
   await expect(page.getByLabel(/収録時点|Recorded snapshots/).locator("option")).toHaveCount(1);
-  await expect(page.locator("[data-feature-id]")).toHaveCount(3);
+  await expect(page.locator("[data-feature-id]")).toHaveCount(5);
   await expect(page.locator("[data-comparison-cta]")).toHaveCount(0);
 
   await page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ }).click();
@@ -181,4 +181,27 @@ test("shows evidence, uncertainty, citation, and rights for Heijokyo polygon poi
   await expect(detail).toContainText("精密な道路線形");
 
   await page.screenshot({ path: testInfo.outputPath("heijokyo-evidence.png"), fullPage: true });
+});
+
+test("shows the source-backed Heijokyo boundary hypotheses as approximate territory", async ({ page }) => {
+  await page.goto("/?dataset=heijokyo&year=710");
+  await expect(page.locator("[data-feature-id]")).toHaveCount(5);
+
+  const inner = page.getByRole("button", { name: /平城京の内京域|Heijokyo inner/ });
+  await expect(inner).toBeVisible();
+  await inner.click();
+  const detail = page.locator("#panel-detail");
+  await expect(detail).toContainText(/境界|Boundary/);
+  await expect(detail).toContainText(/内京中心案|Inner capital/);
+  await expect(detail).toContainText(/仮説グループ|Hypothesis group/);
+  await expect(detail).toContainText(/概略|approximate/);
+  await expect(detail).toContainText("heijokyo:evidence:capital-extent");
+  await expect(detail).toContainText("heijokyo:evidence:boundary-shape");
+
+  const settings = page.locator("[data-map-settings]");
+  await settings.locator("summary").click();
+  const territoryToggle = page.getByLabel(/領域・勢力圏を表示|Show territory and spheres of influence/);
+  await expect(territoryToggle).toBeChecked();
+  await territoryToggle.uncheck();
+  await expect(territoryToggle).not.toBeChecked();
 });

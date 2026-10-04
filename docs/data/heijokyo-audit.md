@@ -2,7 +2,7 @@
 
 - データセットID: `heijokyo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 3
+- 公開FeatureVersion: 5
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -10,6 +10,8 @@
 | FeatureVersion | 地物 | geometry | 年代 | 権利 |
 |---|---|---|---|---|
 | `heijokyo:version:capital-710` | 平城京（710年・概略範囲） | Polygon | 710年以降 | open-license |
+| `heijokyo:version:capital-boundary-inner-710` | 平城京の内京域（710年・概略境界） | Polygon | 710年以降 | open-license |
+| `heijokyo:version:capital-boundary-outer-710` | 平城京の外京を含む案（710年・概略境界） | Polygon | 710年以降 | open-license |
 | `heijokyo:version:palace-710` | 平城宮（710年・代表点） | Point | 710年以降 | open-license |
 | `heijokyo:version:suzaku-avenue-710` | 朱雀大路（710年・概略軸） | LineString | 710年以降 | open-license |
 
@@ -33,6 +35,58 @@
   - `heijokyo:evidence:nara` — 710年の遷都、平城京の都城計画、平城宮と朱雀大路に関する引用メタデータ。本文・図版は再現しない。
 | `heijokyo:evidence:shape` | derived-geometry | geometry, location | 作成方法と限界 | `heijokyo:source:shape-notes` |
   - `heijokyo:evidence:shape` — 奈良市の説明に示された相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `heijokyo:source:nara-heijokyo`: 奈良市『奈良のあゆみ－明治以前－』 — 奈良のあゆみ－明治以前－; 作成者: 奈良市; 2019年; 参照日: 2026-09-18 — rights: `restricted` — https://www.city.nara.lg.jp/soshiki/3/148230.html
+  - `heijokyo:source:shape-notes`: Chronomap『平城京パイロット形状作成メモ』 — 平城京パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-09-18 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/heijokyo-shape-notes.md
+
+### `heijokyo:version:capital-boundary-inner-710`
+
+- 地物: 平城京の内京域（710年・概略境界） (`heijokyo:entity:capital-boundary`)
+- geometry: `Polygon`
+- 年代: 710年以降
+- 権利: `open-license` — 表示: Chronomap（概略復元）、奈良市（引用メタデータ） — 外部本文・図版・地図画像は再現しない。境界は羅城・行政区域の確定図ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 710年の遷都と都域の存続を、単一の確定年へ丸めず概略期間として示します。 (Evidence: `heijokyo:evidence:capital-extent`)
+  - `location`: `approximate` — 東西約4.3km・南北約4.8kmという説明を少数の頂点へ置き換えた概略位置です。 (Evidence: `heijokyo:evidence:boundary-shape`, `heijokyo:evidence:capital-extent`)
+  - `geometry`: `approximate` — 条坊の実測線、羅城、行政境界ではないChronomap独自の低頂点Polygonです。 (Evidence: `heijokyo:evidence:boundary-shape`)
+  - `identity`: `approximate` — 平城京の都市域を考えるための仮説境界であり、確定した遺跡範囲を主張しません。 (Evidence: `heijokyo:evidence:capital-extent`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `heijokyo:evidence:boundary-shape` | derived-geometry | geometry, location | 条坊都市域の仮説境界の作成方法と限界 | `heijokyo:source:shape-notes` |
+  - `heijokyo:evidence:boundary-shape` — 内京の規模と外京の東側拡張という説明を少数の頂点へ置き換えたChronomap独自の概略境界。羅城・行政境界・現代の規制区域を再現しません。 (publicationBasis: `original-reconstruction`)
+| `heijokyo:evidence:capital-extent` | citation | identity, location, temporal | 平城京の規模と外京に関する解説 | `heijokyo:source:nara-heijokyo` |
+  - `heijokyo:evidence:capital-extent` — 奈良市が説明する平城京の内京規模と、東側へ加えられた外京の関係に関する引用メタデータ。発掘で確定した境界線や行政区域を示す資料ではありません。
+
+- Source:
+
+  - `heijokyo:source:nara-heijokyo`: 奈良市『奈良のあゆみ－明治以前－』 — 奈良のあゆみ－明治以前－; 作成者: 奈良市; 2019年; 参照日: 2026-09-18 — rights: `restricted` — https://www.city.nara.lg.jp/soshiki/3/148230.html
+  - `heijokyo:source:shape-notes`: Chronomap『平城京パイロット形状作成メモ』 — 平城京パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-09-18 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/heijokyo-shape-notes.md
+
+### `heijokyo:version:capital-boundary-outer-710`
+
+- 地物: 平城京の外京を含む案（710年・概略境界） (`heijokyo:entity:capital-boundary`)
+- geometry: `Polygon`
+- 年代: 710年以降
+- 権利: `open-license` — 表示: Chronomap（概略復元）、奈良市（引用メタデータ） — 外部本文・図版・地図画像は再現しない。境界は羅城・行政区域の確定図ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 710年の遷都と都域の存続を、単一の確定年へ丸めず概略期間として示します。 (Evidence: `heijokyo:evidence:capital-extent`)
+  - `location`: `approximate` — 内京の東側へ外京を加えたという説明を少数の頂点へ置き換えた概略位置です。 (Evidence: `heijokyo:evidence:boundary-shape`, `heijokyo:evidence:capital-extent`)
+  - `geometry`: `approximate` — 条坊の実測線、羅城、行政境界ではないChronomap独自の低頂点Polygonです。 (Evidence: `heijokyo:evidence:boundary-shape`)
+  - `identity`: `approximate` — 外京を含む平城京の都市域を考える別仮説であり、確定した遺跡範囲を主張しません。 (Evidence: `heijokyo:evidence:capital-extent`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `heijokyo:evidence:boundary-shape` | derived-geometry | geometry, location | 条坊都市域の仮説境界の作成方法と限界 | `heijokyo:source:shape-notes` |
+  - `heijokyo:evidence:boundary-shape` — 内京の規模と外京の東側拡張という説明を少数の頂点へ置き換えたChronomap独自の概略境界。羅城・行政境界・現代の規制区域を再現しません。 (publicationBasis: `original-reconstruction`)
+| `heijokyo:evidence:capital-extent` | citation | identity, location, temporal | 平城京の規模と外京に関する解説 | `heijokyo:source:nara-heijokyo` |
+  - `heijokyo:evidence:capital-extent` — 奈良市が説明する平城京の内京規模と、東側へ加えられた外京の関係に関する引用メタデータ。発掘で確定した境界線や行政区域を示す資料ではありません。
 
 - Source:
 

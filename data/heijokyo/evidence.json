@@ -23,5 +23,22 @@
     "supports": ["geometry", "location"],
     "note": "奈良市の説明に示された相対関係を少数の頂点へ置き換えたChronomap独自の概略復元。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "heijokyo:evidence:capital-extent",
+    "sourceId": "heijokyo:source:nara-heijokyo",
+    "locator": "平城京の規模と外京に関する解説",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "奈良市が説明する平城京の内京規模と、東側へ加えられた外京の関係に関する引用メタデータ。発掘で確定した境界線や行政区域を示す資料ではありません。"
+  },
+  {
+    "id": "heijokyo:evidence:boundary-shape",
+    "sourceId": "heijokyo:source:shape-notes",
+    "locator": "条坊都市域の仮説境界の作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "内京の規模と外京の東側拡張という説明を少数の頂点へ置き換えたChronomap独自の概略境界。羅城・行政境界・現代の規制区域を再現しません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

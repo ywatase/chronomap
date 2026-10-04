@@ -15,14 +15,17 @@ def test_heijokyo_public_bundle_contains_reachable_records(tmp_path: Path):
     build_public_bundle(load_package(DATA), output)
 
     features = json.loads((output / "feature-versions.geojson").read_text(encoding="utf-8"))
-    assert len(features["features"]) == 3
+    assert len(features["features"]) == 5
     assert {feature["id"] for feature in features["features"]} == {
         "heijokyo:version:capital-710",
+        "heijokyo:version:capital-boundary-inner-710",
+        "heijokyo:version:capital-boundary-outer-710",
         "heijokyo:version:palace-710",
         "heijokyo:version:suzaku-avenue-710",
     }
     assert {feature["properties"]["entityId"] for feature in features["features"]} == {
         "heijokyo:entity:capital",
+        "heijokyo:entity:capital-boundary",
         "heijokyo:entity:palace",
         "heijokyo:entity:suzaku-avenue",
     }

@@ -184,6 +184,22 @@
 - [x] **Step 3: Add only source-backed public records** — 滋賀県資料の引用メタデータのみを収録し、2案とも行政境界・確定国境ではない独自概略復元として公開した。
 - [x] **Step 4: Run the quality gate** — `validate --profile public`、公開bundle生成、Python監査・カバレッジ・安土城packageテスト、安土城desktop／mobile E2Eを通過させた。
 
+### Task 6: 実データの境界縦切り
+
+**Files:**
+- Modify: `data/heijokyo/dataset.json`, `entities.json`, `evidence.json`, `feature-versions.geojson`
+- Create: `tests/test_heijokyo_package.py`
+- Modify: `data/heijokyo/`, `web/public/data/heijokyo/`, `web/tests/browser/heijokyo-data.spec.ts`, `docs/data/heijokyo-audit.md`, `docs/data/heijokyo-shape-notes.md`, `docs/product/japan-coverage-matrix.md`
+
+**Interfaces:**
+- Consumes: Task 2の領域Entity表示契約と、奈良市『奈良のあゆみ－明治以前－』の平城京・外京説明。
+- Produces: `boundary` Entity、内京中心／外京を含む2案のPolygon、仮説グループ・時代・4次元不確実性・出典到達性を持つ平城京公開bundle。
+
+- [x] **Step 1: Write the failing test** — Python監査テストと平城京mobile E2Eで、boundary Entity、2案、仮説ラベル、根拠、領域切替を固定した。
+- [x] **Step 2: Run test to verify it fails** — 境界Entity未収録によるKeyErrorと、公開地物3件に対する5件期待の失敗を確認した。
+- [x] **Step 3: Add only source-backed public records** — 奈良市の規模・外京説明を引用メタデータに限定し、Polygonは独自概略復元、確定した羅城・行政境界ではないと明示した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Python packageテスト、平城京mobile E2Eを通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は`boundary`／`polity`または別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は`polity`または別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

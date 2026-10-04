@@ -92,6 +92,202 @@
     {
       "geometry": {
         "coordinates": [
+          [
+            [
+              135.765,
+              34.668
+            ],
+            [
+              135.812,
+              34.668
+            ],
+            [
+              135.812,
+              34.712
+            ],
+            [
+              135.765,
+              34.712
+            ],
+            [
+              135.765,
+              34.668
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "heijokyo:version:capital-boundary-inner-710",
+      "properties": {
+        "description": {
+          "ja": "奈良市が示す平城京の内京規模を囲むための概略境界です。条坊の実測線、羅城、行政境界ではありません。"
+        },
+        "entityId": "heijokyo:entity:capital-boundary",
+        "evidenceIds": [
+          "heijokyo:evidence:boundary-shape",
+          "heijokyo:evidence:capital-extent"
+        ],
+        "hypothesisGroupId": "heijokyo:hypothesis:capital-boundary-710",
+        "hypothesisLabel": {
+          "ja": "内京中心案"
+        },
+        "labels": {
+          "ja": "平城京の内京域（710年・概略境界）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、奈良市（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。境界は羅城・行政区域の確定図ではない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 710,
+            "latestYear": 710,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:boundary-shape"
+            ],
+            "note": "条坊の実測線、羅城、行政境界ではないChronomap独自の低頂点Polygonです。"
+          },
+          "identity": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "平城京の都市域を考えるための仮説境界であり、確定した遺跡範囲を主張しません。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:boundary-shape",
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "東西約4.3km・南北約4.8kmという説明を少数の頂点へ置き換えた概略位置です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "710年の遷都と都域の存続を、単一の確定年へ丸めず概略期間として示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.765,
+              34.668
+            ],
+            [
+              135.812,
+              34.668
+            ],
+            [
+              135.833,
+              34.683
+            ],
+            [
+              135.833,
+              34.707
+            ],
+            [
+              135.812,
+              34.712
+            ],
+            [
+              135.765,
+              34.712
+            ],
+            [
+              135.765,
+              34.668
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "heijokyo:version:capital-boundary-outer-710",
+      "properties": {
+        "description": {
+          "ja": "内京の東側へ外京を加えたという説明を強調する別の概略境界です。条坊の実測線、羅城、行政境界ではありません。"
+        },
+        "entityId": "heijokyo:entity:capital-boundary",
+        "evidenceIds": [
+          "heijokyo:evidence:boundary-shape",
+          "heijokyo:evidence:capital-extent"
+        ],
+        "hypothesisGroupId": "heijokyo:hypothesis:capital-boundary-710",
+        "hypothesisLabel": {
+          "ja": "外京を含む案"
+        },
+        "labels": {
+          "ja": "平城京の外京を含む案（710年・概略境界）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、奈良市（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部本文・図版・地図画像は再現しない。境界は羅城・行政区域の確定図ではない。"
+        },
+        "temporal": {
+          "end": null,
+          "start": {
+            "earliestYear": 710,
+            "latestYear": 710,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:boundary-shape"
+            ],
+            "note": "条坊の実測線、羅城、行政境界ではないChronomap独自の低頂点Polygonです。"
+          },
+          "identity": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "外京を含む平城京の都市域を考える別仮説であり、確定した遺跡範囲を主張しません。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:boundary-shape",
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "内京の東側へ外京を加えたという説明を少数の頂点へ置き換えた概略位置です。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "heijokyo:evidence:capital-extent"
+            ],
+            "note": "710年の遷都と都域の存続を、単一の確定年へ丸めず概略期間として示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
           135.79,
           34.69
         ],

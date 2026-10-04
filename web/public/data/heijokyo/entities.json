@@ -11,6 +11,16 @@
   },
   {
     "description": {
+      "ja": "奈良市の説明する内京と外京の関係を、都市域の仮説境界として示します。発掘で確定した羅城・行政境界・現代の規制区域ではありません。"
+    },
+    "id": "heijokyo:entity:capital-boundary",
+    "labels": {
+      "ja": "平城京の条坊都市域（概略境界）"
+    },
+    "type": "boundary"
+  },
+  {
+    "description": {
       "ja": "平城京の中心部に置かれた宮。表示位置は代表点です。"
     },
     "id": "heijokyo:entity:palace",
