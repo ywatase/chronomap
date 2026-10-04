@@ -137,6 +137,8 @@
 
 `HistoricalMapAsset`の型、Datasetスキーマ、HTTPS／権利／bbox／取得日／georeferenceの検証、無効要素だけを除外するローダー、XYZタイルのMapLibre source/layer、個別表示／透明度設定を実装した。実アセットを現行5地域へ登録することと、対象範囲が一致する大阪地域bundleのPlaywright表示確認は未完了のまま保留している。したがってTask 3全体は未完了とし、既存UIはアセットなしのフォールバックを既定とする。
 
+このコミット時点の回帰ゲートは、Python 245件、Vitest 193件、focused asset E2E 6件、全Playwright 168件、production build成功である。
+
 ### Task 4: 最初の不足題材を公開データ化
 
 **Files:**
