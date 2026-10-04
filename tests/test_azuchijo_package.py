@@ -31,6 +31,31 @@ def test_azuchijo_has_a_source_backed_omi_sphere_of_influence_polygon():
     assert "azuchijo:evidence:omi-shape" in feature["properties"]["evidenceIds"]
 
 
+def test_azuchijo_has_a_source_backed_omi_polity_center_hypotheses():
+    package = load_package(PACKAGE)
+    entities = {entity["id"]: entity for entity in package.entities}
+    polity = entities["azuchijo:entity:omi-polity"]
+    assert polity["type"] == "polity"
+
+    features = [
+        feature
+        for feature in package.feature_versions["features"]
+        if feature["properties"]["entityId"] == polity["id"]
+    ]
+    assert len(features) == 2
+    assert {feature["geometry"]["type"] for feature in features} == {"Polygon"}
+    assert {feature["properties"]["hypothesisGroupId"] for feature in features} == {
+        "azuchijo:hypothesis:omi-polity-center-1576"
+    }
+    assert {feature["properties"]["hypothesisLabel"]["ja"] for feature in features} == {
+        "安土城中心案",
+        "安土城下町・湖岸を含む案",
+    }
+    assert all(feature["properties"]["uncertainty"]["identity"]["assessment"] == "approximate" for feature in features)
+    assert all("azuchijo:evidence:omi-polity" in feature["properties"]["evidenceIds"] for feature in features)
+    assert all("azuchijo:evidence:omi-polity-shape" in feature["properties"]["evidenceIds"] for feature in features)
+
+
 def test_azuchijo_territory_passes_public_validation():
     package = load_package(PACKAGE)
     assert validate_package(package, ValidationProfile.PUBLIC) == []

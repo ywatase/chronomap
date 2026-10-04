@@ -48,5 +48,22 @@
     "supports": ["geometry", "location"],
     "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",
     "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "azuchijo:evidence:omi-polity",
+    "sourceId": "azuchijo:source:omi-control",
+    "locator": "信長による近江支配と安土城・拠点城郭に関する解説",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "滋賀県資料が説明する信長による近江支配、1576年の安土城、近江全体の支配を目的とした拠点城郭。政治中枢の正確な範囲や行政境界を示す資料ではありません。"
+  },
+  {
+    "id": "azuchijo:evidence:omi-polity-shape",
+    "sourceId": "azuchijo:source:omi-polity-shape",
+    "locator": "政治中枢Polygonの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "安土城を中心とする政治中枢という解釈を、少数頂点の2案Polygonへ置き換えたChronomap独自の概略復元。近江全域の行政境界・国境・実効支配面ではありません。",
+    "publicationBasis": "original-reconstruction"
   }
 ]

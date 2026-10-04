@@ -7,12 +7,12 @@ test("opens the Azuchi Castle pilot from the catalog and compares its dated cast
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog.locator('[data-dataset-catalog-card="azuchijo"]')).toContainText(/安土城・琵琶湖東岸|Azuchi Castle/);
   const card = catalog.locator('[data-dataset-catalog-card="azuchijo"]');
-  await expect(card).toContainText(/8件|8/);
+  await expect(card).toContainText(/10件|10/);
   await expect(card).toContainText(/12分|12 min/);
   await expect(card.locator("[data-dataset-catalog-audit]")).toContainText(/公開監査済み|Public audit ready/);
   await card.locator('[data-dataset-catalog-lesson-row="azuchijo-intro"] [data-dataset-catalog-lesson]').click();
   await expect(page).toHaveURL(/dataset=azuchijo&lesson=azuchijo-intro&step=castle-start-1576/);
-  await expect(page.locator("[data-feature-id]")).toHaveCount(6);
+  await expect(page.locator("[data-feature-id]")).toHaveCount(8);
   await expect(page.locator("[data-lesson-progress]")).toContainText(/1\/5|1 of 5/);
   await page.getByRole("button", { name: /詳細を閉じる|Close details/ }).click();
   const featureSearch = page.getByLabel(/表示中の地物を検索|Search visible features/);
@@ -21,20 +21,20 @@ test("opens the Azuchi Castle pilot from the catalog and compares its dated cast
   await expect(page).toHaveURL(urlBeforeSearch);
   await expect(page.locator("[data-feature-id]")).toHaveCount(1);
   await expect(page.locator("[data-feature-id]")).toContainText(/水運|water transport/);
-  await expect(page.locator(".feature-count")).toContainText(/6件中1件|1 of 6/);
+  await expect(page.locator(".feature-count")).toContainText(/8件中1件|1 of 8/);
   await featureSearch.fill("存在しない地物");
   await expect(page.locator("#panel-list [role=status]")).toContainText(/一致する地物はありません|No visible features match/);
   await featureSearch.fill("");
-  await expect(page.locator("[data-feature-id]")).toHaveCount(6);
+  await expect(page.locator("[data-feature-id]")).toHaveCount(8);
   await page.screenshot({ path: testInfo.outputPath("azuchijo-1576.png"), fullPage: true });
 
   await page.locator("[data-lesson-next]").click();
   await expect(page).toHaveURL(/step=castle-complete-1579/);
-  await expect(page.locator("[data-feature-id]")).toHaveCount(6);
+  await expect(page.locator("[data-feature-id]")).toHaveCount(8);
   await page.screenshot({ path: testInfo.outputPath("azuchijo-1579.png"), fullPage: true });
 
   await page.goto("/?dataset=azuchijo&year=1582&feature=azuchijo%3Aversion%3Acastle-1582");
-  await expect(page.locator("[data-feature-id]")).toHaveCount(6);
+  await expect(page.locator("[data-feature-id]")).toHaveCount(8);
   const detail = page.locator("#panel-detail");
   await expect(detail).toContainText("azuchijo:evidence:timeline");
   await expect(detail).toContainText(/主郭部焼失|main enclosure/);
@@ -66,4 +66,19 @@ test("shows the source-backed Omi sphere as a labeled, approximate territory", a
   await expect(territoryToggle).toBeChecked();
   await territoryToggle.uncheck();
   await expect(territoryToggle).not.toBeChecked();
+});
+
+test("shows the source-backed Omi polity center as an approximate territory", async ({ page }) => {
+  await page.goto("/?dataset=azuchijo&year=1576");
+  const polity = page.locator('[data-feature-id="azuchijo:version:omi-polity-1576-azuchi"]');
+  await expect(polity).toBeVisible();
+  await expect(polity).toContainText(/政治主体|Polity/);
+  await polity.click();
+  const detail = page.locator("#panel-detail");
+  await expect(detail).toContainText(/政治主体|Polity/);
+  await expect(detail).toContainText(/安土城中心案|Azuchi center/);
+  await expect(detail).toContainText(/仮説グループ|Hypothesis group/);
+  await expect(detail).toContainText(/政治中枢|political center/);
+  await expect(detail).toContainText("azuchijo:evidence:omi-polity");
+  await expect(detail).toContainText("azuchijo:evidence:omi-polity-shape");
 });

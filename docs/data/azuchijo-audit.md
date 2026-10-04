@@ -2,7 +2,7 @@
 
 - データセットID: `azuchijo:dataset:pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 8
+- 公開FeatureVersion: 10
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -14,6 +14,8 @@
 | `azuchijo:version:castle-1582` | 安土城（1582年・主郭部焼失後） | Point | 1582年 | open-license |
 | `azuchijo:version:lakeshore-1576` | 琵琶湖東岸（安土付近・概略） | LineString | 1576年以降 | open-license |
 | `azuchijo:version:mountain-1576` | 安土山（1576年・代表点） | Point | 1576年以降 | open-license |
+| `azuchijo:version:omi-polity-1576-azuchi` | 織田信長の近江支配・安土政治中枢（1576〜1582年頃・安土城中心案） | Polygon | 1576–1582年 | open-license |
+| `azuchijo:version:omi-polity-1576-townshore` | 織田信長の近江支配・安土政治中枢（1576〜1582年頃・城下町・湖岸を含む案） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:omi-sphere-1576-broad` | 織田信長の近江支配の拠点網（1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:omi-sphere-1576-lakeshore` | 織田信長の近江支配の拠点網（湖岸拠点案・1576〜1582年頃・概略） | Polygon | 1576–1582年 | open-license |
 | `azuchijo:version:water-transport-1576` | 安土城と湖上交通の関係（1576年頃・概略） | LineString | 1576年以降 | open-license |
@@ -163,6 +165,58 @@
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
   - `azuchijo:source:shiga-castle`: 滋賀県『特別史跡安土城跡の調査と整備』 — 特別史跡安土城跡の調査と整備; 作成者: 滋賀県; 2026年; 参照日: 2026-10-02 — rights: `restricted` — https://www.pref.shiga.lg.jp/sd00/2591.html
 
+### `azuchijo:version:omi-polity-1576-azuchi`
+
+- 地物: 織田信長の近江支配・安土政治中枢（1576〜1582年頃・安土城中心案） (`azuchijo:entity:omi-polity`)
+- geometry: `Polygon`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。政治中枢の概略であり、行政境界・国境・実効支配面ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの政治中枢という資料上の文脈を概略期間で示します。 (Evidence: `azuchijo:evidence:omi-polity`)
+  - `location`: `approximate` — 安土城を中心とする政治中枢の相対位置を示す概略面です。 (Evidence: `azuchijo:evidence:omi-polity`, `azuchijo:evidence:omi-polity-shape`)
+  - `geometry`: `approximate` — 行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点Polygonです。 (Evidence: `azuchijo:evidence:omi-polity-shape`)
+  - `identity`: `approximate` — 政治中枢の仮説表示であり、近江全域の行政主体・支配領域を確定しません。 (Evidence: `azuchijo:evidence:omi-polity`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-polity` | citation | identity, location, temporal | 信長による近江支配と安土城・拠点城郭に関する解説 | `azuchijo:source:omi-control` |
+  - `azuchijo:evidence:omi-polity` — 滋賀県資料が説明する信長による近江支配、1576年の安土城、近江全体の支配を目的とした拠点城郭。政治中枢の正確な範囲や行政境界を示す資料ではありません。
+| `azuchijo:evidence:omi-polity-shape` | derived-geometry | geometry, location | 政治中枢Polygonの作成方法と限界 | `azuchijo:source:omi-polity-shape` |
+  - `azuchijo:evidence:omi-polity-shape` — 安土城を中心とする政治中枢という解釈を、少数頂点の2案Polygonへ置き換えたChronomap独自の概略復元。近江全域の行政境界・国境・実効支配面ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:omi-control`: 滋賀県『近江戦国探訪ガイドブック』 — 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf
+  - `azuchijo:source:omi-polity-shape`: Chronomap『安土城・近江支配政治中枢形状作成メモ』 — 安土城・近江支配政治中枢形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-omi-polity-shape-notes.md
+
+### `azuchijo:version:omi-polity-1576-townshore`
+
+- 地物: 織田信長の近江支配・安土政治中枢（1576〜1582年頃・城下町・湖岸を含む案） (`azuchijo:entity:omi-polity`)
+- geometry: `Polygon`
+- 年代: 1576–1582年
+- 権利: `open-license` — 表示: Chronomap（概略復元）、滋賀県（引用メタデータ） — 外部本文・図版・地図画像は再現しない。政治中枢の概略であり、行政境界・国境・実効支配面ではない。
+- 不確実性:
+  - `temporal`: `approximate` — 安土城築城開始から本能寺の変までの政治中枢という資料上の文脈を概略期間で示します。 (Evidence: `azuchijo:evidence:omi-polity`)
+  - `location`: `approximate` — 安土城、城下町、琵琶湖東岸の相対関係を含める概略面です。 (Evidence: `azuchijo:evidence:omi-polity`, `azuchijo:evidence:omi-polity-shape`)
+  - `geometry`: `approximate` — 行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点Polygonです。 (Evidence: `azuchijo:evidence:omi-polity-shape`)
+  - `identity`: `approximate` — 政治中枢の仮説表示であり、近江全域の行政主体・支配領域を確定しません。 (Evidence: `azuchijo:evidence:omi-polity`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `azuchijo:evidence:omi-polity` | citation | identity, location, temporal | 信長による近江支配と安土城・拠点城郭に関する解説 | `azuchijo:source:omi-control` |
+  - `azuchijo:evidence:omi-polity` — 滋賀県資料が説明する信長による近江支配、1576年の安土城、近江全体の支配を目的とした拠点城郭。政治中枢の正確な範囲や行政境界を示す資料ではありません。
+| `azuchijo:evidence:omi-polity-shape` | derived-geometry | geometry, location | 政治中枢Polygonの作成方法と限界 | `azuchijo:source:omi-polity-shape` |
+  - `azuchijo:evidence:omi-polity-shape` — 安土城を中心とする政治中枢という解釈を、少数頂点の2案Polygonへ置き換えたChronomap独自の概略復元。近江全域の行政境界・国境・実効支配面ではありません。 (publicationBasis: `original-reconstruction`)
+
+- Source:
+
+  - `azuchijo:source:omi-control`: 滋賀県『近江戦国探訪ガイドブック』 — 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf
+  - `azuchijo:source:omi-polity-shape`: Chronomap『安土城・近江支配政治中枢形状作成メモ』 — 安土城・近江支配政治中枢形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-omi-polity-shape-notes.md
+
 ### `azuchijo:version:omi-sphere-1576-broad`
 
 - 地物: 織田信長の近江支配の拠点網（1576〜1582年頃・概略） (`azuchijo:entity:omi-sphere`)
@@ -186,7 +240,7 @@
 
 - Source:
 
-  - `azuchijo:source:omi-control`: 滋賀県『信長の城と戦国近江』 — 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf
+  - `azuchijo:source:omi-control`: 滋賀県『近江戦国探訪ガイドブック』 — 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
 
 ### `azuchijo:version:omi-sphere-1576-lakeshore`
@@ -212,7 +266,7 @@
 
 - Source:
 
-  - `azuchijo:source:omi-control`: 滋賀県『信長の城と戦国近江』 — 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf
+  - `azuchijo:source:omi-control`: 滋賀県『近江戦国探訪ガイドブック』 — 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf
   - `azuchijo:source:shape-notes`: Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 — 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md
 
 ### `azuchijo:version:water-transport-1576`
@@ -245,7 +299,8 @@
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
-| `azuchijo:source:omi-control` | 滋賀県『信長の城と戦国近江』 | 信長の城と戦国近江; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
+| `azuchijo:source:omi-control` | 滋賀県『近江戦国探訪ガイドブック』 | 近江戦国探訪ガイドブック; 作成者: 滋賀県; 2018年; 参照日: 2026-10-04; https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf | restricted | 引用メタデータのみ。本文・図版・地図画像は再現しない。 |
+| `azuchijo:source:omi-polity-shape` | Chronomap『安土城・近江支配政治中枢形状作成メモ』 | 安土城・近江支配政治中枢形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-omi-polity-shape-notes.md | open-license; 表示: Chronomap contributors | 独自の概略復元メモ。 |
 | `azuchijo:source:omi8-castle` | 近江八幡市観光物産協会『安土城跡』 | 安土城跡; 作成者: 近江八幡市観光物産協会; 2026年; 参照日: 2026-10-02; https://www.omi8.com/spot/detail_1217.html | restricted | 引用メタデータのみ。本文・写真・地図画像は再現しない。 |
 | `azuchijo:source:shape-notes` | Chronomap『安土城・琵琶湖東岸パイロット形状作成メモ』 | 安土城・琵琶湖東岸パイロット形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-02; https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-shape-notes.md | open-license; 表示: Chronomap contributors | 公開メタデータから作成した概略復元メモ。 |
 | `azuchijo:source:shiga-biwako-human` | 滋賀県『琵琶湖と人の長いつきあい』 | 琵琶湖と人の長いつきあい; 作成者: 滋賀県; 2018年; 参照日: 2026-10-02; https://www.pref.shiga.lg.jp/biwakatsu/20521.html | restricted | 引用メタデータのみ。本文・写真・図版は再現しない。 |

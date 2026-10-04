@@ -176,6 +176,62 @@
         "publicationStatus": "public",
         "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。領域は行政境界・国境の確定図ではない。" }
       }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:omi-polity-1576-azuchi",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.10, 35.12], [136.18, 35.12], [136.18, 35.19], [136.10, 35.19], [136.10, 35.12]]]
+      },
+      "properties": {
+        "entityId": "azuchijo:entity:omi-polity",
+        "labels": { "ja": "織田信長の近江支配・安土政治中枢（1576〜1582年頃・安土城中心案）" },
+        "description": { "ja": "安土城を中心に近江支配を担った政治中枢を考えるための概略面です。近江全域の行政境界・国境・実効支配の精密な面ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "period", "qualifier": "circa" },
+          "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "period", "qualifier": "circa" }
+        },
+        "hypothesisGroupId": "azuchijo:hypothesis:omi-polity-center-1576",
+        "hypothesisLabel": { "ja": "安土城中心案" },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城築城開始から本能寺の変までの政治中枢という資料上の文脈を概略期間で示します。", "evidenceIds": ["azuchijo:evidence:omi-polity"] },
+          "location": { "assessment": "approximate", "note": "安土城を中心とする政治中枢の相対位置を示す概略面です。", "evidenceIds": ["azuchijo:evidence:omi-polity", "azuchijo:evidence:omi-polity-shape"] },
+          "geometry": { "assessment": "approximate", "note": "行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点Polygonです。", "evidenceIds": ["azuchijo:evidence:omi-polity-shape"] },
+          "identity": { "assessment": "approximate", "note": "政治中枢の仮説表示であり、近江全域の行政主体・支配領域を確定しません。", "evidenceIds": ["azuchijo:evidence:omi-polity"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:omi-polity", "azuchijo:evidence:omi-polity-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。政治中枢の概略であり、行政境界・国境・実効支配面ではない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "azuchijo:version:omi-polity-1576-townshore",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[136.05, 35.09], [136.21, 35.09], [136.23, 35.15], [136.20, 35.22], [136.08, 35.22], [136.05, 35.09]]]
+      },
+      "properties": {
+        "entityId": "azuchijo:entity:omi-polity",
+        "labels": { "ja": "織田信長の近江支配・安土政治中枢（1576〜1582年頃・城下町・湖岸を含む案）" },
+        "description": { "ja": "安土城を中心に、城下町と琵琶湖東岸との関係を含めて近江支配の政治中枢を考えるための概略面です。近江全域の行政境界・国境・実効支配の精密な面ではありません。" },
+        "temporal": {
+          "start": { "earliestYear": 1576, "latestYear": 1576, "precision": "period", "qualifier": "circa" },
+          "end": { "earliestYear": 1582, "latestYear": 1582, "precision": "period", "qualifier": "circa" }
+        },
+        "hypothesisGroupId": "azuchijo:hypothesis:omi-polity-center-1576",
+        "hypothesisLabel": { "ja": "安土城下町・湖岸を含む案" },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "安土城築城開始から本能寺の変までの政治中枢という資料上の文脈を概略期間で示します。", "evidenceIds": ["azuchijo:evidence:omi-polity"] },
+          "location": { "assessment": "approximate", "note": "安土城、城下町、琵琶湖東岸の相対関係を含める概略面です。", "evidenceIds": ["azuchijo:evidence:omi-polity", "azuchijo:evidence:omi-polity-shape"] },
+          "geometry": { "assessment": "approximate", "note": "行政境界・国境・実効支配の精密な面ではなく、Chronomap独自の低頂点Polygonです。", "evidenceIds": ["azuchijo:evidence:omi-polity-shape"] },
+          "identity": { "assessment": "approximate", "note": "政治中枢の仮説表示であり、近江全域の行政主体・支配領域を確定しません。", "evidenceIds": ["azuchijo:evidence:omi-polity"] }
+        },
+        "evidenceIds": ["azuchijo:evidence:omi-polity", "azuchijo:evidence:omi-polity-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、滋賀県（引用メタデータ）", "terms": "外部本文・図版・地図画像は再現しない。政治中枢の概略であり、行政境界・国境・実効支配面ではない。" }
+      }
     }
   ]
 }

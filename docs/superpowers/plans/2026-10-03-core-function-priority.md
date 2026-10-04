@@ -176,7 +176,7 @@
 - Modify: `web/public/data/azuchijo/`, `web/tests/browser/azuchijo-data.spec.ts`, `docs/data/azuchijo-audit.md`, `docs/product/japan-coverage-matrix.md`
 
 **Interfaces:**
-- Consumes: Task 2の領域Entity表示契約と、滋賀県『信長の城と戦国近江』の引用メタデータ。
+- Consumes: Task 2の領域Entity表示契約と、滋賀県『近江戦国探訪ガイドブック』の引用メタデータ。
 - Produces: `sphere-of-influence` Entity、重なる2案のPolygon、時代境界・仮説ラベル・4次元不確実性・出典到達性を持つ安土城公開bundle。
 
 - [x] **Step 1: Write the failing test** — `tests/test_azuchijo_package.py` と安土城desktop／mobile E2Eで、勢力圏Entity、2案のPolygon、仮説ラベル、証拠、UI表示を固定した。
@@ -200,6 +200,22 @@
 - [x] **Step 3: Add only source-backed public records** — 奈良市の規模・外京説明を引用メタデータに限定し、Polygonは独自概略復元、確定した羅城・行政境界ではないと明示した。
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Python packageテスト、平城京mobile E2Eを通過させた。
 
+### Task 7: 実データの政治中枢`polity`縦切り
+
+**Files:**
+- Modify: `data/azuchijo/dataset.json`, `entities.json`, `sources.json`, `evidence.json`, `feature-versions.geojson`
+- Create: `docs/data/azuchijo-omi-polity-shape-notes.md`, `tests/test_azuchijo_package.py`
+- Modify: `web/public/data/azuchijo/`, `web/tests/browser/azuchijo-data.spec.ts`, `docs/data/azuchijo-audit.md`, `docs/product/core-acceptance.md`, `docs/product/japan-coverage-matrix.md`, `docs/product/overview.md`, `docs/product/roadmap.md`
+
+**Interfaces:**
+- Consumes: Task 2の領域Entity表示契約と、滋賀県『近江戦国探訪ガイドブック』の近江支配・安土城・拠点城郭の引用メタデータ。
+- Produces: `polity` Entity、安土城中心／城下町・湖岸を含む2案のPolygon、`sphere-of-influence`と意味を分けた時代境界・仮説ラベル・4次元不確実性・出典到達性を持つ安土城公開bundle。
+
+- [x] **Step 1: Write the failing test** — Python package testと安土城mobile E2Eで、`polity` Entity、2案のPolygon、仮説ラベル、政治中枢の注意書き、根拠を固定した。
+- [x] **Step 2: Run test to verify it fails** — Entity参照のKeyErrorと、公開地物に政治中枢FeatureVersionがないE2E失敗を確認した。
+- [x] **Step 3: Add only source-backed public records** — 公式ガイドブックの引用メタデータと独自形状メモを登録し、政治中枢は行政境界・近江全域の実効支配面ではないと明示した。既存の広域`sphere-of-influence`は変更せず意味を分離した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、Azuchi package test、polity mobile E2Eを通過させ、監査・カバレッジ・ドキュメントを26 FeatureVersion／18 Entityへ同期した。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は`polity`または別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は港・古戦場または別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。

@@ -23,6 +23,30 @@
     "usage": "citation"
   },
   {
+    "id": "azuchijo:evidence:omi-polity",
+    "locator": "信長による近江支配と安土城・拠点城郭に関する解説",
+    "note": "Citation-only metadata; no authored source content is reproduced.",
+    "sourceId": "azuchijo:source:omi-control",
+    "supports": [
+      "temporal",
+      "location",
+      "identity"
+    ],
+    "usage": "citation"
+  },
+  {
+    "id": "azuchijo:evidence:omi-polity-shape",
+    "locator": "政治中枢Polygonの作成方法と限界",
+    "note": "安土城を中心とする政治中枢という解釈を、少数頂点の2案Polygonへ置き換えたChronomap独自の概略復元。近江全域の行政境界・国境・実効支配面ではありません。",
+    "publicationBasis": "original-reconstruction",
+    "sourceId": "azuchijo:source:omi-polity-shape",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "usage": "derived-geometry"
+  },
+  {
     "id": "azuchijo:evidence:omi-shape",
     "locator": "近江支配の拠点網 Polygon の作成方法と限界",
     "note": "滋賀県の拠点城郭・近江全体という説明を、琵琶湖岸の拠点網を囲む少数の頂点へ置き換えたChronomap独自の概略復元。行政境界・国境・実効支配の精密な面ではありません。",

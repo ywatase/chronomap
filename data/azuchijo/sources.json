@@ -46,12 +46,23 @@
   {
     "id": "azuchijo:source:omi-control",
     "type": "official-report",
-    "citation": "滋賀県『信長の城と戦国近江』",
-    "title": { "ja": "信長の城と戦国近江" },
+    "citation": "滋賀県『近江戦国探訪ガイドブック』",
+    "title": { "ja": "近江戦国探訪ガイドブック" },
     "creators": ["滋賀県"],
     "publishedYear": 2018,
-    "url": "https://www.pref.shiga.lg.jp/file/attachment/4035617.pdf",
+    "url": "https://www.pref.shiga.lg.jp/documents/2540/5161509_1.pdf",
     "accessedDate": "2026-10-04",
     "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文・図版・地図画像は再現しない。" }
+  },
+  {
+    "id": "azuchijo:source:omi-polity-shape",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『安土城・近江支配政治中枢形状作成メモ』",
+    "title": { "ja": "安土城・近江支配政治中枢形状作成メモ" },
+    "creators": ["Chronomap contributors"],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/azuchijo-omi-polity-shape-notes.md",
+    "accessedDate": "2026-10-04",
+    "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "独自の概略復元メモ。" }
   }
 ]
