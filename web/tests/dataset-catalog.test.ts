@@ -3,7 +3,7 @@ import { DATASET_CATALOG, datasetFromSearch } from "../src/domain/dataset-catalo
 
 describe("dataset catalog", () => {
   it("allow-lists all public bundles and lesson entries", () => {
-    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa"]);
+    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka"]);
     expect(DATASET_CATALOG.find((entry) => entry.slug === "ogurike")?.lessons).toEqual([
       { id: "ogurike-intro", path: "/lessons/ogurike-intro.json", featured: true },
       { id: "ogurike-river-compare", path: "/lessons/ogurike-river-compare.json", featured: false },

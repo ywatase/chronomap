@@ -55,4 +55,8 @@ describe("public demo assets", () => {
   it("checked-in Kinugawa assets equal the public builder output", async () => {
     await expectPublicAssetsMatch("data/kinugawa", "public/data/kinugawa");
   });
+
+  it("checked-in Osaka assets equal the public builder output", async () => {
+    await expectPublicAssetsMatch("data/osaka", "public/data/osaka");
+  });
 });

@@ -9,6 +9,7 @@ const lessonFiles = [
   "heijokyo-intro.json",
   "azuchijo-intro.json",
   "kinugawa-history.json",
+  "osaka-intro.json",
 ] as const;
 
 const guideKeys = ["recommendedFor", "learningGoal", "preparation", "assessment"] as const;

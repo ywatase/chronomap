@@ -41,7 +41,7 @@
 
 - [x] **Step 1: Write the failing test**
 
-  5地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
+  6地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
 
 - [x] **Step 2: Run test to verify it fails**
 
@@ -55,7 +55,7 @@
 
 - [x] **Step 4: Run test to verify it passes**
 
-  Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q` と `uv run chronomap-data validate data/<dataset> --profile public`（5地域）。
+  Run: `uv run pytest tests/test_dataset_audits.py tests/test_audit.py -q` と `uv run chronomap-data validate data/<dataset> --profile public`（6地域）。
 
   Expected: PASS。監査表と公開bundleの件数が一致する。
 
@@ -109,35 +109,35 @@
 - Consumes: 出典・権利・取得日・georeference情報付きの1地域1アセット。
 - Produces: `HistoricalMapAsset` の検証済み表現、個別toggle/opacity、asset unavailable時のfallback。
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
   許可済みアセットが表示設定へ現れ、無効URL・権利不明・取得失敗では非表示のまま現在地図と歴史geometryが利用できることを固定する。
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
   Run: `cd web && npm run test -- --run tests/data-loader.test.ts` と `npm run test:browser -- tests/browser/map-display.spec.ts --workers=1`。
 
   Expected: `HistoricalMapAsset` が未実装でFAILする。
 
-- [ ] **Step 3: Implement the asset contract and fallback**
+- [x] **Step 3: Implement the asset contract and fallback**
 
   まず外部画像を無検証で配信せず、公開bundleの任意manifestから安全なHTTP(S) assetだけを検証する。失敗時は既存のMapLibre source/layerを変更せず、出典と理由をテキスト表示する。
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
   Run: `cd web && npm run test -- --run`、build、対象E2E、スクリーンショット。
 
   Expected: PASS。現在地図・歴史geometry・根拠の既存導線を維持する。
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   `git add docs/product/historical-map-assets.md web/src web/tests` でコミットする。
 
 #### Task 3 contract checkpoint (2026-10-04)
 
-`HistoricalMapAsset`の型、Datasetスキーマ、HTTPS／権利／bbox／取得日／georeferenceの検証、無効要素だけを除外するローダー、XYZタイルのMapLibre source/layer、個別表示／透明度設定を実装した。実アセットを現行5地域へ登録することと、対象範囲が一致する大阪地域bundleのPlaywright表示確認は未完了のまま保留している。したがってTask 3全体は未完了とし、既存UIはアセットなしのフォールバックを既定とする。
+`HistoricalMapAsset`の型、Datasetスキーマ、HTTPS／権利／bbox／取得日／georeferenceの検証、無効要素だけを除外するローダー、XYZタイルのMapLibre source/layer、個別表示／透明度設定を実装した。対象範囲が一致する`data/osaka`へ国土地理院`ort_riku10`を登録し、出典・権利・後世の地理コンテキストであることをUIへ表示する。大阪bundleのdesktop／mobile Playwright、タイル取得失敗時のfallback、公開アセット同期まで通過したためTask 3を完了とする。
 
-このコミット時点の回帰ゲートは、Python 245件、Vitest 193件、focused asset E2E 6件、全Playwright 168件、production build成功である。
+Task 3単体の実装時点ではPython 245件、Vitest 193件、focused asset E2E 6件、全Playwright 168件、production build成功だった。その後の大阪縦切りで、同じ契約を実データへ適用した。
 
 ### Task 4: 最初の不足題材を公開データ化
 
@@ -166,9 +166,9 @@
 
 - [x] **Step 4: Run the full quality gate**
 
-  Run: 5地域の `validate --profile public`、`uv run pytest -q`、`cd web && npm run test -- --run`、`npm run build`、`npm run test:browser -- --workers=2 --trace=off`。
+  Run: 6地域の `validate --profile public`、`uv run pytest -q`、`cd web && npm run test -- --run`、`npm run build`、`npm run test:browser -- --workers=2 --trace=off`。
 
-  Expected: 既存5地域を含む全テストがPASSする。
+  Expected: 既存6地域を含む全テストがPASSする。
 
 - [x] **Step 5: Commit**
 
@@ -280,6 +280,18 @@
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、Azuchi package／coverage tests、waterbody E2Eを通過させ、監査・カバレッジ・ドキュメントを30 FeatureVersion／22 Entityへ同期する。
 - [x] **Step 5: Run the full quality gate** — 全Python 244件、Vitest 188件、asset sync 6件、production build、全Playwright 166件を通過させた。
 
+### Task 12: 大坂・石山本願寺と古地図アセットの実データ縦切り
+
+- **Goal:** 日本のデータ網羅を一地域増やし、古代・中世の水域・寺内町・港・水運・城郭を出典付きの概略表現として検証する。同じ大阪bboxに適用できる国土地理院の後世空中写真タイルを、歴史geometryと混同しない別レイヤーで有効化する。
+- **Source:** 大阪府「大阪広域ベイエリアまちづくりビジョン（素案）」、大阪市「大阪市の歴史－タイムトリップ20,000年」、大阪市中央区「石山（大坂）本願寺推定地」、国土地理院「地理院地図タイル一覧」。本文・写真・図版は複製せず、引用メタデータとURL・locatorだけを保持する。
+- **Boundary:** 河内湾・河内湖は概略Polygon、石山本願寺と渡辺津は代表Point、寺内町は概略Polygon、淀川水運は概略LineStringである。古代の正確な海岸線、寺域・町割、港域・岸線、歴史河道中心線・航路を復元しない。`ort_riku10`は1936〜1942年頃の後世コンテキストであり、古代・中世geometryや当時の境界を示さない。
+
+- [x] **Step 1: Write the failing test** — `tests/test_osaka_package.py`、カタログ／公開アセット同期、desktop／mobile E2Eで、5 Entity、5 FeatureVersion、出典・不確実性、asset source、年代切替を固定した。
+- [x] **Step 2: Run test to verify it fails** — Osaka slug、Entity、asset、lesson未登録によるPython／Vitest／Playwrightの失敗を確認した。
+- [x] **Step 3: Implement the minimal feature** — `data/osaka/`の5ファイル、形状メモ、5ステップlesson、catalog allow-list、公開bundle、GSI `ort_riku10` assetを追加し、後世タイルと歴史geometryを分離した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、Vitest、Osaka desktop／mobile E2Eを通過させた。
+- [x] **Step 5: Run the full quality gate** — 全6地域のPython 250件、Vitest 194件、Playwright 172件、production build、`git diff --check`を通過した。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`縦切りを完了した。Task 3（古地図アセット）は対象範囲と権利が一致するbundleが揃うまで保留し、次は古地図アセットまたは別地域の領域資料へ進む。価格・相談導線の追加はコア監査継続中のため再開しない。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイルの縦切りを完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は古大阪湾など別題材の公開根拠を調査する。

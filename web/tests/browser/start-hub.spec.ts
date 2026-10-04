@@ -65,8 +65,8 @@ test("surfaces the public evidence audit before opening a region map", async ({ 
   await page.goto("/");
   await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const cards = page.locator("[data-dataset-catalog-card]");
-  await expect(cards).toHaveCount(5);
-  for (const slug of ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa"]) {
+  await expect(cards).toHaveCount(6);
+  for (const slug of ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka"]) {
     const card = page.locator(`[data-dataset-catalog-card="${slug}"]`);
     await expect(card.locator("[data-dataset-catalog-audit]")).toBeVisible();
     await expect(card.locator("[data-dataset-catalog-audit]")).toContainText(/公開監査済み|Public audit ready/);

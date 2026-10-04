@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "osaka:dataset:ishiyama-pilot",
+  "title": { "ja": "大坂・石山本願寺と河内湾パイロット" },
+  "description": { "ja": "古代の河内湾、石山（大坂）本願寺、寺内町、渡辺津と水運の関係を、現在の大阪市域に重ねて読む小規模な公開データです。形状は概略復元で、1936〜1942年頃の空中写真タイルは歴史geometryとは別の後世の地理コンテキストです。" },
+  "defaultLanguage": "ja",
+  "bbox": [135.44, 34.59, 135.57, 34.78],
+  "temporalExtent": {
+    "start": { "earliestYear": -1000, "latestYear": 1533, "precision": "period", "qualifier": "circa" },
+    "end": { "earliestYear": 1580, "latestYear": 1580, "precision": "period", "qualifier": "circa" }
+  },
+  "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、大阪市・大阪府（引用メタデータ）、国土地理院（空中写真タイル）", "terms": "外部資料の本文・写真・図版は再現しない。タイルは国土地理院の利用規約と出典表示に従う。" },
+  "historicalMapAssets": [
+    {
+      "id": "osaka:historical-map:ort-riku10",
+      "title": { "ja": "陸地測量部空中写真（1936〜1942年頃）" },
+      "description": { "ja": "大阪市と周辺を対象とする後世の空中写真タイル。当時の古代・中世geometryを示すものではないため、歴史geometryや当時の境界を示す資料としては使いません。" },
+      "tileTemplate": "https://cyberjapandata.gsi.go.jp/xyz/ort_riku10/{z}/{x}/{y}.png",
+      "bbox": [135.44, 34.59, 135.57, 34.78],
+      "date": "1936〜1942年頃",
+      "accessedDate": "2026-10-04",
+      "georeference": { "method": "国土地理院XYZタイルの提供座標", "error": "提供元の測位誤差と歴史geometryとの時代差は未評価" },
+      "sourceUrl": "https://maps.gsi.go.jp/development/ichiran.html",
+      "attribution": "国土地理院",
+      "rights": { "status": "open-license", "attribution": "国土地理院", "terms": "国土地理院コンテンツ利用規約・地理院地図利用規約に従う。" },
+      "minZoom": 13,
+      "maxZoom": 18
+    }
+  ],
+  "files": { "entities": "entities.json", "sources": "sources.json", "evidence": "evidence.json", "featureVersions": "feature-versions.geojson" }
+}

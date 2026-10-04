@@ -1,0 +1,70 @@
+[
+  {
+    "id": "osaka:evidence:kawachi-bay",
+    "sourceId": "osaka:source:bay-vision",
+    "locator": "大阪湾・河内湾・河内湖の形成と古代の海岸線に関する歴史説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪府資料が説明する、海水面変化と河内湾・河内湖の地形変化を引用メタデータとして使用します。正確な古代海岸線や水深を示す資料ではありません。"
+  },
+  {
+    "id": "osaka:evidence:kawachi-bay-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "河内湾・河内湖Polygonの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "大阪府の地形説明と上町台地・東部大阪の相対関係を、少数頂点の概略面へ置き換えました。古代の正確な海岸線・水深・水面ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka:evidence:ishiyama",
+    "sourceId": "osaka:source:ishiyama-site",
+    "locator": "石山（大坂）本願寺の1533年開山、濠・土居に囲まれた寺内町、1580年退去の説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪市中央区の公式説明を引用メタデータとして使用します。現在の大阪城周辺で地形が改変され、当時の精密な境界が残らないことも含みます。"
+  },
+  {
+    "id": "osaka:evidence:ishiyama-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "石山本願寺代表点・寺内町Polygonの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "公式ページの現在地住所と上町台地の説明を、代表点と低頂点Polygonへ置き換えました。寺域、濠、土居、町割の精密な範囲ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka:evidence:watanabe",
+    "sourceId": "osaka:source:city-history",
+    "locator": "天満橋から北浜南岸にあった渡辺津と、熊野詣・水運の説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪市の歴史説明にある渡辺津の位置関係と交通上の役割を引用メタデータとして使用します。港域や船着場の正確な位置は示しません。"
+  },
+  {
+    "id": "osaka:evidence:watanabe-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "渡辺津代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "天満橋・北浜南岸という説明の相対位置を代表Pointへ置き換えました。港域、岸線、船着場、航路の精密な位置ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka:evidence:yodo",
+    "sourceId": "osaka:source:city-history",
+    "locator": "淀川・大和川による水運と、京都へつながる交通の要所という説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪市の歴史説明を引用メタデータとして使用します。表示線は実際の河道中心線・航路・距離を示しません。"
+  },
+  {
+    "id": "osaka:evidence:yodo-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "淀川水運概略LineStringの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "大阪市の交通説明を上町台地北端と淀川の相対関係に置き換えた概略線です。歴史的な河道中心線・航路ではありません。",
+    "publicationBasis": "original-reconstruction"
+  }
+]

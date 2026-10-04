@@ -124,7 +124,7 @@ test("opens the Heijokyo lesson from the three-entry catalog using a bundle fixt
 
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog).toBeVisible();
-  await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(5);
+  await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(6);
   const heijokyo = catalog.locator('[data-dataset-catalog-card="heijokyo"]');
   await expect(heijokyo).toContainText(/平城京|Heijokyo/);
   await expect(heijokyo).toContainText(/10分|10 min/);

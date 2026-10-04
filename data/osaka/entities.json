@@ -1,0 +1,32 @@
+[
+  {
+    "id": "osaka:entity:kawachi-bay",
+    "type": "waterbody",
+    "labels": { "ja": "河内湾・河内湖（古代の概略）" },
+    "description": { "ja": "大阪湾から上町台地の東側へ入り込んだ古代の水域を、資料の地形説明を読むための概略面で示します。古代の正確な海岸線・水深・水面ではありません。" }
+  },
+  {
+    "id": "osaka:entity:ishiyama-honganji",
+    "type": "fortification",
+    "labels": { "ja": "石山（大坂）本願寺（代表点）" },
+    "description": { "ja": "1533年に開山され1580年に退去した石山（大坂）本願寺を、現在の大阪城付近の代表点で示します。寺域・濠・土居の精密な境界ではありません。" }
+  },
+  {
+    "id": "osaka:entity:ishiyama-teramachi",
+    "type": "settlement",
+    "labels": { "ja": "石山本願寺寺内町（概略）" },
+    "description": { "ja": "濠や土居に囲まれた寺内町を、上町台地北端の集住・活動域として概略表示します。町割・屋敷・道路・境界の精密復元ではありません。" }
+  },
+  {
+    "id": "osaka:entity:watanabe-port",
+    "type": "port",
+    "labels": { "ja": "渡辺津（代表点）" },
+    "description": { "ja": "天満橋から北浜南岸付近にあったと説明される渡辺津を、古代・中世の水運文脈を読む代表点で示します。港域・岸線・船着場・航路の精密な位置ではありません。" }
+  },
+  {
+    "id": "osaka:entity:yodo-watercourse",
+    "type": "watercourse",
+    "labels": { "ja": "淀川水運（概略）" },
+    "description": { "ja": "淀川を上ることで京都へつながる水運の関係を、現在地図上の概略線で示します。歴史的な河道中心線・航路・距離ではありません。" }
+  }
+]

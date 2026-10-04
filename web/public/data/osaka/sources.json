@@ -1,0 +1,75 @@
+[
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "大阪府『大阪広域ベイエリアまちづくりビジョン（素案）』",
+    "creators": [
+      "大阪府"
+    ],
+    "id": "osaka:source:bay-vision",
+    "publishedYear": 2021,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。PDF本文・図版・地図画像は再現しない。"
+    },
+    "title": {
+      "ja": "大阪広域ベイエリアまちづくりビジョン（素案）"
+    },
+    "type": "official-report",
+    "url": "https://www.pref.osaka.lg.jp/documents/2275/0520shiryou1-2_2.pdf"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "大阪市『大阪市の歴史－タイムトリップ20,000年（飛鳥・奈良時代以降）』",
+    "creators": [
+      "大阪市"
+    ],
+    "id": "osaka:source:city-history",
+    "publishedYear": 2026,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。ページ本文・写真・図版は再現しない。"
+    },
+    "title": {
+      "ja": "大阪市の歴史－タイムトリップ20,000年（飛鳥・奈良時代以降）"
+    },
+    "type": "official-web-page",
+    "url": "https://www.city.osaka.lg.jp/seisakukikakushitsu/page/0000010252.html"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "大阪市中央区『石山（大坂）本願寺推定地』",
+    "creators": [
+      "大阪市中央区"
+    ],
+    "id": "osaka:source:ishiyama-site",
+    "publishedYear": 2026,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・写真・説明板画像は再現しない。"
+    },
+    "title": {
+      "ja": "石山（大坂）本願寺推定地"
+    },
+    "type": "official-web-page",
+    "url": "https://www.city.osaka.lg.jp/chuo/page/0000641506.html"
+  },
+  {
+    "accessedDate": "2026-10-04",
+    "citation": "Chronomap『大坂・石山本願寺と河内湾形状作成メモ』",
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "id": "osaka:source:shape-notes",
+    "publishedYear": 2026,
+    "rights": {
+      "attribution": "Chronomap contributors",
+      "status": "open-license",
+      "terms": "公開メタデータから作成した概略復元メモ。"
+    },
+    "title": {
+      "ja": "大坂・石山本願寺と河内湾形状作成メモ"
+    },
+    "type": "original-reconstruction-notes",
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md"
+  }
+]

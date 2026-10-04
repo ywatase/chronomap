@@ -1,0 +1,434 @@
+{
+  "features": [
+    {
+      "geometry": {
+        "coordinates": [
+          135.525,
+          34.687
+        ],
+        "type": "Point"
+      },
+      "id": "osaka:version:ishiyama-honganji-1533",
+      "properties": {
+        "description": {
+          "ja": "1533年に開山され1580年に退去した石山（大坂）本願寺を、現在の大阪城付近の代表点で示します。寺域・濠・土居の精密な境界ではありません。"
+        },
+        "entityId": "osaka:entity:ishiyama-honganji",
+        "evidenceIds": [
+          "osaka:evidence:ishiyama",
+          "osaka:evidence:ishiyama-shape"
+        ],
+        "labels": {
+          "ja": "石山（大坂）本願寺（1533〜1580年・代表点）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市中央区（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。代表点は精密な寺域境界ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1580,
+            "latestYear": 1580,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1533,
+            "latestYear": 1533,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-shape"
+            ],
+            "note": "代表Pointであり、寺域・濠・土居の精密な境界ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama"
+            ],
+            "note": "公式説明が扱う石山（大坂）本願寺を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama",
+              "osaka:evidence:ishiyama-shape"
+            ],
+            "note": "現在の大阪城周辺にあたる石山の代表点です。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama"
+            ],
+            "note": "大阪市中央区の公式説明にある1533年開山と1580年退去を表示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.51,
+              34.675
+            ],
+            [
+              135.54,
+              34.675
+            ],
+            [
+              135.545,
+              34.705
+            ],
+            [
+              135.515,
+              34.71
+            ],
+            [
+              135.51,
+              34.675
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "osaka:version:ishiyama-teramachi-1533",
+      "properties": {
+        "description": {
+          "ja": "濠や土居に囲まれた寺内町を、上町台地北端の集住・活動域として概略表示します。町割・屋敷・道路・境界の精密復元ではありません。"
+        },
+        "entityId": "osaka:entity:ishiyama-teramachi",
+        "evidenceIds": [
+          "osaka:evidence:ishiyama",
+          "osaka:evidence:ishiyama-shape"
+        ],
+        "labels": {
+          "ja": "石山本願寺寺内町（1533〜1580年・概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市中央区（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。Polygonは寺内町の精密境界ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1580,
+            "latestYear": 1580,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1533,
+            "latestYear": 1533,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama-shape"
+            ],
+            "note": "低頂点Polygonで、寺内町の町割・屋敷・道路・境界を精密復元しません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama"
+            ],
+            "note": "石山本願寺に付随する寺内町という歴史文脈を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama",
+              "osaka:evidence:ishiyama-shape"
+            ],
+            "note": "上町台地北端の寺内町という相対位置を概略面で示します。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ishiyama"
+            ],
+            "note": "本願寺の開山から退去までの寺内町の活動時期を、同じ概略期間で示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.47,
+              34.64
+            ],
+            [
+              135.55,
+              34.64
+            ],
+            [
+              135.56,
+              34.73
+            ],
+            [
+              135.5,
+              34.76
+            ],
+            [
+              135.46,
+              34.71
+            ],
+            [
+              135.47,
+              34.64
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "osaka:version:kawachi-bay-300",
+      "properties": {
+        "description": {
+          "ja": "上町台地の東側へ入り込んだ古代の水域を、地形説明を読むための概略面で示します。古代の正確な海岸線・水深・水面ではありません。"
+        },
+        "entityId": "osaka:entity:kawachi-bay",
+        "evidenceIds": [
+          "osaka:evidence:kawachi-bay",
+          "osaka:evidence:kawachi-bay-shape"
+        ],
+        "labels": {
+          "ja": "河内湾・河内湖（古代・概略面）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪府（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・図版・地図画像は再現しない。概略面は正確な古代海岸線ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 300,
+            "latestYear": 300,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": -1000,
+            "latestYear": -1000,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:kawachi-bay-shape"
+            ],
+            "note": "少数頂点で作った概略面で、古代の正確な海岸線・水深・水面ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:kawachi-bay"
+            ],
+            "note": "大阪府資料が説明する河内湾・河内湖の地形文脈を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:kawachi-bay",
+              "osaka:evidence:kawachi-bay-shape"
+            ],
+            "note": "上町台地東側の水域という相対位置を概略面で示します。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:kawachi-bay"
+            ],
+            "note": "河内湾・河内湖の形成と縮小を、古代の広い時期を代表する表示年で示します。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          135.515,
+          34.69
+        ],
+        "type": "Point"
+      },
+      "id": "osaka:version:watanabe-port-1496",
+      "properties": {
+        "description": {
+          "ja": "天満橋から北浜南岸付近にあったと説明される渡辺津を、古代・中世の水運文脈を読む代表点で示します。港域・岸線・船着場・航路の精密な位置ではありません。"
+        },
+        "entityId": "osaka:entity:watanabe-port",
+        "evidenceIds": [
+          "osaka:evidence:watanabe",
+          "osaka:evidence:watanabe-shape"
+        ],
+        "labels": {
+          "ja": "渡辺津（中世・代表点）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。代表点は港域や岸線の精密位置ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1580,
+            "latestYear": 1580,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": 1400,
+            "latestYear": 1400,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:watanabe-shape"
+            ],
+            "note": "代表Pointであり、港域・岸線・船着場・航路の精密な位置ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:watanabe"
+            ],
+            "note": "大阪市の歴史説明が扱う渡辺津を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:watanabe",
+              "osaka:evidence:watanabe-shape"
+            ],
+            "note": "天満橋から北浜南岸という公式説明の相対位置を代表点で示します。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:watanabe"
+            ],
+            "note": "中世の水運拠点を1496年前後の表示年で読むための代表期間です。港の全歴史期間を確定しません。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            135.52,
+            34.72
+          ],
+          [
+            135.55,
+            34.76
+          ],
+          [
+            135.57,
+            34.78
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "osaka:version:yodo-watercourse-1533",
+      "properties": {
+        "description": {
+          "ja": "淀川を上ることで京都へつながる水運の関係を、現在地図上の概略線で示します。歴史的な河道中心線・航路・距離ではありません。"
+        },
+        "entityId": "osaka:entity:yodo-watercourse",
+        "evidenceIds": [
+          "osaka:evidence:yodo",
+          "osaka:evidence:yodo-shape"
+        ],
+        "labels": {
+          "ja": "淀川水運（1533年頃・概略線）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。LineStringは歴史河道・航路の精密復元ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1580,
+            "latestYear": 1580,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": 1533,
+            "latestYear": 1533,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:yodo-shape"
+            ],
+            "note": "少数頂点の概略線で、歴史的な河道中心線・航路・距離ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:yodo"
+            ],
+            "note": "大阪市の歴史説明が扱う淀川水運と京都への交通関係を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:yodo",
+              "osaka:evidence:yodo-shape"
+            ],
+            "note": "大阪から淀川上流へ向かう相対関係を概略線で示します。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:yodo"
+            ],
+            "note": "石山本願寺期の大阪と京都をつなぐ水運文脈を、1533年頃の表示年に置きます。"
+          }
+        }
+      },
+      "type": "Feature"
+    }
+  ],
+  "type": "FeatureCollection"
+}

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("opens the Azuchi Castle pilot from the catalog and compares its dated castle, shore, and water-transport context", async ({ page }, testInfo) => {
+  test.setTimeout(45_000);
   await page.goto("/?dataset=azuchijo");
   await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
   await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();

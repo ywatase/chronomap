@@ -77,6 +77,17 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     region: { ja: "鬼怒川・小貝川流域", en: "Kinugawa–Kokaigawa basin" },
     failureMessage: { ja: "鬼怒川・小貝川の公開データを読み込めませんでした。再試行してください。", en: "The Kinugawa–Kokaigawa public dataset could not be loaded. Please retry." },
   },
+  {
+    slug: "osaka",
+    bundlePath: "/data/osaka/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "osaka-intro", path: "/lessons/osaka-intro.json", featured: true }),
+    ]),
+    lessonPath: "/lessons/osaka-intro.json",
+    label: { ja: "大坂・石山本願寺", en: "Osaka and Ishiyama Honganji" },
+    region: { ja: "大阪市・上町台地", en: "Osaka City and Uemachi Plateau" },
+    failureMessage: { ja: "大坂・石山本願寺の公開データを読み込めませんでした。再試行してください。", en: "The Osaka and Ishiyama Honganji public dataset could not be loaded. Please retry." },
+  },
 ]);
 
 const DEFAULT_DATASET = DATASET_CATALOG[0]!;
