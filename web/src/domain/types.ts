@@ -23,6 +23,30 @@ export interface TemporalExtent {
   readonly end: TemporalBoundary | null;
 }
 
+/**
+ * Metadata for an optional historical raster overlay.
+ *
+ * The overlay is deliberately separate from FeatureVersion geometry: it is a
+ * visual context layer and never substitutes for evidence or a reconstructed
+ * boundary. Exactly one of tileTemplate and imageUrl is expected at runtime.
+ */
+export interface HistoricalMapAsset {
+  readonly id: string;
+  readonly title: LocalizedText;
+  readonly description: LocalizedText;
+  readonly tileTemplate?: string;
+  readonly imageUrl?: string;
+  readonly bbox: readonly [number, number, number, number];
+  readonly date: string;
+  readonly accessedDate: string;
+  readonly georeference: Readonly<{ method: string; error: string }>;
+  readonly sourceUrl: string;
+  readonly attribution: string;
+  readonly rights: Rights;
+  readonly minZoom: number;
+  readonly maxZoom: number;
+}
+
 export interface Dataset {
   readonly id: string;
   readonly schemaVersion: "1.0.0";
@@ -33,6 +57,7 @@ export interface Dataset {
   readonly temporalExtent: TemporalExtent;
   readonly rights: Rights;
   readonly files: Readonly<{ entities: "entities.json"; sources: "sources.json"; evidence: "evidence.json"; featureVersions: "feature-versions.geojson" }>;
+  readonly historicalMapAssets?: readonly HistoricalMapAsset[];
 }
 
 export interface Entity {

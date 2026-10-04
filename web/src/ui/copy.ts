@@ -32,6 +32,9 @@ export interface UiCopy {
   readonly historicalOpacityLabel: string;
   readonly historicalVisibilityLabel: string;
   readonly territoryVisibilityLabel: string;
+  readonly historicalMapAssetOpacityLabel: string;
+  readonly historicalMapAssetVisibilityLabel: string;
+  readonly historicalMapAssetUnavailable: string;
   readonly mapOpacityValue: (value: number) => string;
   readonly mapLegend: string;
   readonly legendPoint: string;
@@ -356,6 +359,9 @@ const EN_COPY: UiCopy = {
   historicalOpacityLabel: "Historical features opacity",
   historicalVisibilityLabel: "Show historical features",
   territoryVisibilityLabel: "Show territory and spheres of influence",
+  historicalMapAssetOpacityLabel: "Historical map opacity",
+  historicalMapAssetVisibilityLabel: "Show historical map",
+  historicalMapAssetUnavailable: "Historical map context is unavailable; current map and historical features remain available.",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "Legend",
   legendPoint: "Historical point",
@@ -709,6 +715,9 @@ const JA_COPY: UiCopy = {
   historicalOpacityLabel: "歴史地物の濃さ",
   historicalVisibilityLabel: "歴史地物を表示",
   territoryVisibilityLabel: "領域・勢力圏を表示",
+  historicalMapAssetOpacityLabel: "古地図の濃さ",
+  historicalMapAssetVisibilityLabel: "古地図を表示",
+  historicalMapAssetUnavailable: "古地図コンテキストを利用できません。現在地図と歴史地物は引き続き利用できます。",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "凡例",
   legendPoint: "歴史地物（点）",

@@ -89,6 +89,35 @@ def test_complete_synthetic_package_is_structurally_valid():
     assert package_errors(ROOT / "tests/fixtures/valid/synthetic-package") == []
 
 
+def test_historical_map_asset_contract_requires_one_https_resource_and_provenance():
+    dataset = valid_instance("dataset.json")
+    dataset["historicalMapAssets"] = [{
+        "id": "synthetic:historical-map:sample",
+        "title": {"en": "Sample historical raster"},
+        "description": {"en": "A dated context layer."},
+        "tileTemplate": "https://tiles.example.invalid/ort/{z}/{x}/{y}.png",
+        "bbox": [-1, -1, 1, 1],
+        "date": "1936-1942",
+        "accessedDate": "2026-10-04",
+        "georeference": {"method": "provider XYZ tile georeference", "error": "not evaluated"},
+        "sourceUrl": "https://example.invalid/source",
+        "attribution": "Example archive",
+        "rights": {"status": "open-license"},
+        "minZoom": 13,
+        "maxZoom": 18,
+    }]
+    assert list(validator_for("dataset.schema.json").iter_errors(dataset)) == []
+
+    dataset["historicalMapAssets"][0]["tileTemplate"] = "http://tiles.example.invalid/{z}/{x}/{y}.png"
+    dataset["historicalMapAssets"][0]["imageUrl"] = "https://example.invalid/image.png"
+    assert list(validator_for("dataset.schema.json").iter_errors(dataset))
+
+    dataset["historicalMapAssets"][0].pop("imageUrl")
+    dataset["historicalMapAssets"][0]["tileTemplate"] = "https://tiles.example.invalid/{z}/{x}/{y}.png"
+    dataset["historicalMapAssets"][0]["rights"]["status"] = "unknown"
+    assert list(validator_for("dataset.schema.json").iter_errors(dataset))
+
+
 @pytest.mark.parametrize(
     ("fixture_name", "schema_filename"),
     [

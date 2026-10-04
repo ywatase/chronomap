@@ -1,3 +1,5 @@
+import { localizedText } from "../domain/labels";
+import type { HistoricalMapAsset } from "../domain/types";
 import type { UiCopy } from "./copy";
 
 export interface MapDisplaySettings {
@@ -5,6 +7,8 @@ export interface MapDisplaySettings {
   readonly historicalOpacity: number;
   readonly historicalVisible: boolean;
   readonly territoryVisible: boolean;
+  readonly historicalMapAssetOpacity?: number;
+  readonly historicalMapAssetVisible?: boolean;
 }
 
 export interface MapSettingsController {
@@ -12,7 +16,7 @@ export interface MapSettingsController {
   getSettings(): MapDisplaySettings;
 }
 
-export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplaySettings) => void): MapSettingsController {
+export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplaySettings) => void, asset: HistoricalMapAsset | null = null): MapSettingsController {
   let settings: MapDisplaySettings = { basemapOpacity: 1, historicalOpacity: 1, historicalVisible: true, territoryVisible: true };
   const details = document.createElement("details");
   details.className = "map-tools";
@@ -55,6 +59,46 @@ export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplayS
   });
   territoryVisibilityLabel.append(territoryVisibility, document.createTextNode(copy.territoryVisibilityLabel));
   body.append(territoryVisibilityLabel);
+
+  if (asset) {
+    settings = { ...settings, historicalMapAssetOpacity: 1, historicalMapAssetVisible: true };
+    const assetSection = document.createElement("section");
+    assetSection.className = "historical-map-asset-control";
+    const assetTitle = document.createElement("h4");
+    assetTitle.textContent = localizedText(asset.title, copy.language);
+    assetSection.append(assetTitle);
+    const assetDescription = document.createElement("p");
+    assetDescription.textContent = asset.description[copy.language] ?? asset.description["en"] ?? Object.values(asset.description)[0] ?? "";
+    assetSection.append(assetDescription);
+    const assetProvenance = document.createElement("p");
+    assetProvenance.className = "historical-map-asset-provenance";
+    assetProvenance.textContent = `${asset.date} · ${asset.georeference.method} (${asset.georeference.error}) · ${asset.attribution} · ${asset.rights.status}`;
+    assetSection.append(assetProvenance);
+    const assetSource = document.createElement("a");
+    assetSource.href = asset.sourceUrl;
+    assetSource.target = "_blank";
+    assetSource.rel = "noreferrer";
+    assetSource.textContent = copy.sourceLink;
+    assetSource.dataset.historicalMapAssetSource = "";
+    assetSection.append(assetSource);
+    assetSection.append(rangeControl(copy.historicalMapAssetOpacityLabel, copy.mapOpacityValue, 1, "historical-map-asset-opacity", (value) => {
+      settings = { ...settings, historicalMapAssetOpacity: value };
+      onChange(settings);
+    }));
+    const assetVisibilityLabel = document.createElement("label");
+    assetVisibilityLabel.className = "map-visibility-control";
+    const assetVisibility = document.createElement("input");
+    assetVisibility.type = "checkbox";
+    assetVisibility.checked = true;
+    assetVisibility.id = "historical-map-asset-visibility";
+    assetVisibility.addEventListener("change", () => {
+      settings = { ...settings, historicalMapAssetVisible: assetVisibility.checked };
+      onChange(settings);
+    });
+    assetVisibilityLabel.append(assetVisibility, document.createTextNode(copy.historicalMapAssetVisibilityLabel));
+    assetSection.append(assetVisibilityLabel);
+    body.append(assetSection);
+  }
 
   const legend = document.createElement("section");
   legend.className = "map-legend";

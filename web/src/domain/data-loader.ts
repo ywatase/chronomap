@@ -1,6 +1,7 @@
 import { ENTITY_TYPES, type Dataset, type Entity, type Evidence, type FeatureVersion, type Geometry, type PublicBundle, type Source, type TemporalBoundary, type TemporalExtent } from "./types";
 import { parseLesson, type Lesson } from "./lesson";
 import type { DatasetCatalogLessonEntry } from "./dataset-catalog";
+import { filterHistoricalMapAssets } from "./historical-map-assets";
 
 const resources = ["dataset.json", "entities.json", "sources.json", "evidence.json", "feature-versions.geojson"] as const;
 
@@ -40,8 +41,11 @@ export async function loadPublicBundle(baseUrl: string): Promise<PublicBundle> {
     if (!entity) throw new BundleLoadError("feature-versions.geojson");
     return { ...feature, properties: { ...feature.properties, entityType: entity.type } };
   });
+  const safeDataset: Dataset = dataset.historicalMapAssets === undefined
+    ? dataset
+    : { ...dataset, historicalMapAssets: filterHistoricalMapAssets(dataset.historicalMapAssets) };
   return Object.freeze({
-    dataset: freeze(dataset),
+    dataset: freeze(safeDataset),
     entitiesById,
     sourcesById: indexById(sources),
     evidenceById: indexById(evidence),
@@ -97,7 +101,8 @@ function isDataset(value: unknown): value is Dataset {
     && isTextMap(value.title) && isTextMap(value.description) && typeof value.defaultLanguage === "string"
     && isBbox(value.bbox) && isTemporalExtent(value.temporalExtent) && isRights(value.rights)
     && isRecord(value.files) && value.files.entities === "entities.json" && value.files.sources === "sources.json"
-    && value.files.evidence === "evidence.json" && value.files.featureVersions === "feature-versions.geojson";
+    && value.files.evidence === "evidence.json" && value.files.featureVersions === "feature-versions.geojson"
+    && (value.historicalMapAssets === undefined || Array.isArray(value.historicalMapAssets));
 }
 
 function isEntityArray(value: unknown): value is Entity[] {

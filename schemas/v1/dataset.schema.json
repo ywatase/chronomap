@@ -17,6 +17,10 @@
     },
     "temporalExtent": { "$ref": "common.schema.json#/$defs/temporal" },
     "rights": { "$ref": "common.schema.json#/$defs/rights" },
+    "historicalMapAssets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/historicalMapAsset" }
+    },
     "files": {
       "type": "object",
       "required": ["entities", "sources", "evidence", "featureVersions"],
@@ -26,6 +30,38 @@
         "evidence": { "const": "evidence.json" },
         "featureVersions": { "const": "feature-versions.geojson" }
       },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "historicalMapAsset": {
+      "type": "object",
+      "required": ["id", "title", "description", "bbox", "date", "accessedDate", "georeference", "sourceUrl", "attribution", "rights", "minZoom", "maxZoom"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "$ref": "common.schema.json#/$defs/textMap" },
+        "description": { "$ref": "common.schema.json#/$defs/textMap" },
+        "tileTemplate": { "type": "string", "pattern": "^https://[^\\s]+\\{z\\}[^\\s]+\\{x\\}[^\\s]+\\{y\\}[^\\s]*$" },
+        "imageUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "bbox": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 },
+        "date": { "type": "string", "minLength": 1 },
+        "accessedDate": { "type": "string", "format": "date" },
+        "georeference": {
+          "type": "object",
+          "required": ["method", "error"],
+          "properties": { "method": { "type": "string", "minLength": 1 }, "error": { "type": "string", "minLength": 1 } },
+          "additionalProperties": false
+        },
+        "sourceUrl": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "attribution": { "type": "string", "minLength": 1 },
+        "rights": { "allOf": [{ "$ref": "common.schema.json#/$defs/rights" }, { "not": { "properties": { "status": { "const": "unknown" } }, "required": ["status"] } }] },
+        "minZoom": { "type": "integer", "minimum": 0, "maximum": 24 },
+        "maxZoom": { "type": "integer", "minimum": 0, "maximum": 24 }
+      },
+      "oneOf": [
+        { "required": ["tileTemplate"], "not": { "required": ["imageUrl"] } },
+        { "required": ["imageUrl"], "not": { "required": ["tileTemplate"] } }
+      ],
       "additionalProperties": false
     }
   },

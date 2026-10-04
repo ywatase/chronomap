@@ -24,3 +24,41 @@ for (const viewport of ["desktop", "mobile"] as const) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
   });
 }
+
+test("renders a validated historical-map asset with independent controls", async ({ page }) => {
+  await page.route("**/data/ogurike/dataset.json", async (route) => {
+    const response = await route.fetch();
+    const dataset = await response.json() as Record<string, unknown>;
+    dataset.historicalMapAssets = [{
+      id: "synthetic:historical-map:browser",
+      title: { ja: "試験古地図" },
+      description: { ja: "測位誤差を明示したコンテキストタイル" },
+      tileTemplate: "https://tiles.example.invalid/ort/{z}/{x}/{y}.png",
+      bbox: [135, 34, 136, 35],
+      date: "1936–1942",
+      accessedDate: "2026-10-04",
+      georeference: { method: "提供元XYZタイル", error: "未評価" },
+      sourceUrl: "https://example.invalid/source",
+      attribution: "試験アーカイブ",
+      rights: { status: "open-license" },
+      minZoom: 13,
+      maxZoom: 18,
+    }];
+    await route.fulfill({ response, json: dataset });
+  });
+  await page.route("https://tiles.example.invalid/**", (route) => route.abort());
+  await page.goto("/?dataset=ogurike");
+  await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
+
+  const tools = page.locator("[data-map-settings]");
+  await tools.locator("summary").click();
+  await expect(tools).toContainText("試験古地図");
+  await expect(tools.locator("[data-historical-map-asset-source]")).toHaveAttribute("href", "https://example.invalid/source");
+  const assetOpacity = tools.getByRole("slider", { name: /古地図の濃さ|Historical map opacity/ });
+  await assetOpacity.fill("0.4");
+  await expect(tools.locator("#historical-map-asset-opacity")).toHaveValue("0.4");
+  const assetVisibility = tools.getByLabel(/古地図を表示|Show historical map/);
+  await assetVisibility.uncheck();
+  await expect(assetVisibility).not.toBeChecked();
+  await expect(page.locator(".feature-list")).toBeVisible();
+});

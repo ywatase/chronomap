@@ -44,6 +44,22 @@ const privateFeature = {
   properties: { ...publicFeature.properties, publicationStatus: "private" },
 };
 
+const historicalMapAsset = {
+  id: "synthetic:historical-map:sample",
+  title: { en: "Sample historical raster" },
+  description: { en: "A dated, georeferenced context layer." },
+  tileTemplate: "https://tiles.example.invalid/ort/{z}/{x}/{y}.png",
+  bbox: [-1, -1, 1, 1],
+  date: "1936–1942",
+  accessedDate: "2026-10-04",
+  georeference: { method: "provider XYZ tile georeference", error: "not evaluated" },
+  sourceUrl: "https://example.invalid/source",
+  attribution: "Example archive",
+  rights: { status: "open-license", attribution: "Example archive" },
+  minZoom: 13,
+  maxZoom: 18,
+};
+
 afterEach(() => vi.unstubAllGlobals());
 
 describe("loadPublicBundle", () => {
@@ -71,6 +87,38 @@ describe("loadPublicBundle", () => {
     expect(bundle.features[0]?.properties.entityType).toBe("settlement");
     expect(Object.isFrozen(bundle.features)).toBe(true);
     expect(Object.isFrozen(bundle.entitiesById)).toBe(true);
+  });
+
+  it("accepts and freezes a fully attributed historical map asset manifest", async () => {
+    const payloads: Record<string, unknown> = {
+      "dataset.json": { ...dataset, historicalMapAssets: [historicalMapAsset] },
+      "entities.json": entities,
+      "sources.json": sources,
+      "evidence.json": evidence,
+      "feature-versions.geojson": { type: "FeatureCollection", features: [publicFeature] },
+    };
+    vi.stubGlobal("fetch", vi.fn(async (input: string) => new Response(JSON.stringify(payloads[input.split("/").at(-1)!]), { status: 200 })));
+
+    const bundle = await loadPublicBundle("/data/synthetic/");
+
+    expect(bundle.dataset.historicalMapAssets).toEqual([historicalMapAsset]);
+    expect(Object.isFrozen(bundle.dataset.historicalMapAssets)).toBe(true);
+    expect(Object.isFrozen(bundle.dataset.historicalMapAssets?.[0])).toBe(true);
+  });
+
+  it("fails closed for an unsafe asset while keeping the current bundle usable", async () => {
+    const payloads: Record<string, unknown> = {
+      "dataset.json": { ...dataset, historicalMapAssets: [{ ...historicalMapAsset, tileTemplate: "http://tiles.example.invalid/{z}/{x}/{y}.png", imageUrl: "https://example.invalid/image.png" }] },
+      "entities.json": entities,
+      "sources.json": sources,
+      "evidence.json": evidence,
+      "feature-versions.geojson": { type: "FeatureCollection", features: [publicFeature] },
+    };
+    vi.stubGlobal("fetch", vi.fn(async (input: string) => new Response(JSON.stringify(payloads[input.split("/").at(-1)!]), { status: 200 })));
+
+    const bundle = await loadPublicBundle("/data/synthetic/");
+    expect(bundle.dataset.historicalMapAssets).toEqual([]);
+    expect(bundle.features).toHaveLength(1);
   });
 
   it("surfaces an HTTP failure as a user-safe resource error", async () => {

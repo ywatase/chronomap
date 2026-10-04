@@ -33,7 +33,7 @@ import { readFileSync } from "node:fs";
 vi.mock("maplibre-gl", () => ({ Map: mocked.FakeMap, setWorkerUrl: vi.fn() }));
 
 import { MapAdapter } from "../src/map/map-adapter";
-import { createGsiStyle, geometryLayerDefinitions, TERRITORY_LAYER_IDS } from "../src/map/map-style";
+import { createGsiStyle, geometryLayerDefinitions, HISTORICAL_MAP_ASSET_LAYER_ID, HISTORICAL_MAP_ASSET_SOURCE_ID, TERRITORY_LAYER_IDS } from "../src/map/map-style";
 import type { FeatureVersion } from "../src/domain/types";
 
 const point = (id: string, coordinates: readonly unknown[]): FeatureVersion => ({
@@ -69,6 +69,27 @@ describe("map style", () => {
 
   it("loads MapLibre's stylesheet at the MapLibre boundary", () => {
     expect(readFileSync("src/map/map-adapter.ts", "utf8")).toContain('import "maplibre-gl/dist/maplibre-gl.css"');
+  });
+
+  it("adds an attributed, bounded XYZ raster layer only for a validated tile asset", () => {
+    const style = createGsiStyle({
+      id: "synthetic:historical-map:sample",
+      title: { en: "Sample" },
+      description: { en: "Sample" },
+      tileTemplate: "https://tiles.example.invalid/ort/{z}/{x}/{y}.png",
+      bbox: [135, 34, 136, 35],
+      date: "1936–1942",
+      accessedDate: "2026-10-04",
+      georeference: { method: "provider XYZ tile georeference", error: "not evaluated" },
+      sourceUrl: "https://example.invalid/source",
+      attribution: "Example archive",
+      rights: { status: "open-license" },
+      minZoom: 13,
+      maxZoom: 18,
+    });
+
+    expect(style.sources[HISTORICAL_MAP_ASSET_SOURCE_ID]).toMatchObject({ type: "raster", tiles: ["https://tiles.example.invalid/ort/{z}/{x}/{y}.png"], bounds: [135, 34, 136, 35], minzoom: 13, maxzoom: 18 });
+    expect(style.layers.find((layer) => layer.id === HISTORICAL_MAP_ASSET_LAYER_ID)).toMatchObject({ type: "raster", source: HISTORICAL_MAP_ASSET_SOURCE_ID });
   });
 });
 
@@ -153,6 +174,34 @@ describe("MapAdapter", () => {
     expect(retriedMap.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.16);
     expect(retriedMap.setLayoutProperty).toHaveBeenCalledWith("selected-lines", "visibility", "none");
     expect(retriedMap.setLayoutProperty).toHaveBeenCalledWith("selected-territory-outline", "visibility", "none");
+  });
+
+  it("keeps the historical raster overlay independent from feature opacity", () => {
+    const adapter = new MapAdapter();
+    adapter.mount(document.createElement("div"), {
+      id: "synthetic:historical-map:sample",
+      title: { en: "Sample" },
+      description: { en: "Sample" },
+      tileTemplate: "https://tiles.example.invalid/ort/{z}/{x}/{y}.png",
+      bbox: [135, 34, 136, 35],
+      date: "1936–1942",
+      accessedDate: "2026-10-04",
+      georeference: { method: "provider XYZ tile georeference", error: "not evaluated" },
+      sourceUrl: "https://example.invalid/source",
+      attribution: "Example archive",
+      rights: { status: "open-license" },
+      minZoom: 13,
+      maxZoom: 18,
+    });
+    const map = mocked.maps.at(-1);
+
+    adapter.setHistoricalMapAssetOpacity(0.5);
+    adapter.setHistoricalOpacity(0.25);
+    adapter.setHistoricalMapAssetVisibility(false);
+
+    expect(map.setPaintProperty).toHaveBeenCalledWith("historical-map-asset", "raster-opacity", 0.36);
+    expect(map.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.08);
+    expect(map.setLayoutProperty).toHaveBeenCalledWith("historical-map-asset", "visibility", "none");
   });
 
   it("hides only territory layers while ordinary point and line layers stay visible", () => {

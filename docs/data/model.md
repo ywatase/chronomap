@@ -44,6 +44,9 @@
 | `temporalExtent` | `Temporal` | データセット全体の可能な時間範囲 |
 | `rights` | `Rights` | 公開データセットではpublishableであること |
 | `files` | オブジェクト | `entities`、`sources`、`evidence`、`featureVersions`を持ち、それぞれ固定ファイル名を値にする |
+| `historicalMapAssets` | `HistoricalMapAsset[]` | 任意。出典・権利・対象範囲・測位限界を持つ古地図／歴史画像コンテキスト |
+
+`historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。クライアントは不正なアセットだけを除外し、現在地図・歴史geometry・詳細・根拠を維持する。
 
 ### HistoricalEntity
 

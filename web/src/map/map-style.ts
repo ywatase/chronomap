@@ -1,3 +1,6 @@
+import type { HistoricalMapAsset } from "../domain/types";
+import { isTileHistoricalMapAsset } from "../domain/historical-map-assets";
+
 /** A structural subset of the MapLibre style schema, kept runtime-independent. */
 export interface LayerSpecification {
   readonly id: string;
@@ -15,6 +18,8 @@ export interface GsiStyleSpecification {
 }
 
 const historicalSource = "historical-features";
+export const HISTORICAL_MAP_ASSET_SOURCE_ID = "historical-map-asset";
+export const HISTORICAL_MAP_ASSET_LAYER_ID = "historical-map-asset";
 
 export const HISTORICAL_LAYER_IDS = [
   "historical-polygons",
@@ -53,15 +58,30 @@ export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   ];
 }
 
-export function createGsiStyle(): GsiStyleSpecification {
+export function createGsiStyle(asset: HistoricalMapAsset | null = null): GsiStyleSpecification {
+  const sources: Record<string, Readonly<Record<string, unknown>>> = {
+    gsi: { type: "raster", tiles: ["https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"], tileSize: 256, attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">GSI Maps</a>' },
+    [historicalSource]: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+  };
+  const assetLayer: LayerSpecification[] = [];
+  if (asset && isTileHistoricalMapAsset(asset)) {
+    sources[HISTORICAL_MAP_ASSET_SOURCE_ID] = {
+      type: "raster",
+      tiles: [asset.tileTemplate],
+      tileSize: 256,
+      minzoom: asset.minZoom,
+      maxzoom: asset.maxZoom,
+      bounds: asset.bbox,
+      attribution: asset.attribution,
+    };
+    assetLayer.push({ id: HISTORICAL_MAP_ASSET_LAYER_ID, type: "raster", source: HISTORICAL_MAP_ASSET_SOURCE_ID, paint: { "raster-opacity": 0.72 } });
+  }
   return {
     version: 8,
-    sources: {
-      gsi: { type: "raster", tiles: ["https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"], tileSize: 256, attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">GSI Maps</a>' },
-      [historicalSource]: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
-    },
+    sources,
     layers: [
       { id: "gsi-base", type: "raster", source: "gsi" },
+      ...assetLayer,
       ...geometryLayerDefinitions(),
     ],
   };

@@ -1,8 +1,8 @@
 import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import type { Dataset, FeatureVersion } from "../domain/types";
-import { createGsiStyle, HISTORICAL_LAYER_IDS, TERRITORY_LAYER_IDS } from "./map-style";
+import type { Dataset, FeatureVersion, HistoricalMapAsset } from "../domain/types";
+import { createGsiStyle, HISTORICAL_LAYER_IDS, HISTORICAL_MAP_ASSET_LAYER_ID, TERRITORY_LAYER_IDS } from "./map-style";
 
 const sourceId = "historical-features";
 const interactiveLayerIds = [...HISTORICAL_LAYER_IDS];
@@ -32,9 +32,13 @@ export class MapAdapter {
   private historicalOpacity = 1;
   private historicalVisible = true;
   private territoryVisible = true;
+  private historicalMapAsset: HistoricalMapAsset | null = null;
+  private historicalMapAssetOpacity = 1;
+  private historicalMapAssetVisible = true;
 
-  mount(container: HTMLElement): void {
+  mount(container: HTMLElement, asset: HistoricalMapAsset | null = null): void {
     this.container = container;
+    this.historicalMapAsset = asset;
     this.createMap();
   }
 
@@ -50,7 +54,7 @@ export class MapAdapter {
     this.map?.remove();
     this.viewportApplied = false;
     this.sourceReady = false;
-    this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle() as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
+    this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle(this.historicalMapAsset) as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => { this.updateSource(); this.applyRequestedCameraOrViewport(); });
     this.map.on("styledata", () => { this.updateSource(); this.applyDisplaySettings(); });
     this.map.on("moveend", (event: maplibregl.MapMovementEvent) => {
@@ -82,6 +86,15 @@ export class MapAdapter {
   setHistoricalOpacity(value: number): void { this.historicalOpacity = clamp(value); this.applyDisplaySettings(); }
   setHistoricalVisibility(visible: boolean): void { this.historicalVisible = visible; this.applyDisplaySettings(); }
   setTerritoryVisibility(visible: boolean): void { this.territoryVisible = visible; this.applyDisplaySettings(); }
+  setHistoricalMapAsset(asset: HistoricalMapAsset | null): void {
+    if (this.historicalMapAsset?.id === asset?.id) return;
+    const current = this.readCamera();
+    if (current) { this.camera = current; this.requestedCamera = current; }
+    this.historicalMapAsset = asset;
+    if (this.map && this.container) this.createMap();
+  }
+  setHistoricalMapAssetOpacity(value: number): void { this.historicalMapAssetOpacity = clamp(value); this.applyDisplaySettings(); }
+  setHistoricalMapAssetVisibility(visible: boolean): void { this.historicalMapAssetVisible = visible; this.applyDisplaySettings(); }
   getCamera(): MapCamera | null { return this.map ? this.readCamera() : this.camera; }
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onCameraChange(handler: (camera: MapCamera) => void): void { this.cameraChangeHandler = handler; }
@@ -122,6 +135,10 @@ export class MapAdapter {
     if (!this.map) return;
     try {
       if (this.map.getLayer("gsi-base")) this.map.setPaintProperty("gsi-base", "raster-opacity", this.basemapOpacity);
+      if (this.map.getLayer(HISTORICAL_MAP_ASSET_LAYER_ID)) {
+        this.map.setPaintProperty(HISTORICAL_MAP_ASSET_LAYER_ID, "raster-opacity", 0.72 * this.historicalMapAssetOpacity);
+        this.map.setLayoutProperty(HISTORICAL_MAP_ASSET_LAYER_ID, "visibility", this.historicalMapAssetVisible ? "visible" : "none");
+      }
       const polygonOpacity = 0.32 * this.historicalOpacity;
       if (this.map.getLayer("historical-polygons")) this.map.setPaintProperty("historical-polygons", "fill-opacity", polygonOpacity);
       if (this.map.getLayer("historical-territories")) this.map.setPaintProperty("historical-territories", "fill-opacity", 0.22 * this.historicalOpacity);

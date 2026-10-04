@@ -76,7 +76,7 @@
 | P1 5地域パイロット | 一部実装 | `data/{ogurike,tonegawa,heijokyo,azuchijo,kinugawa}`。日本全体の網羅ではない |
 | P1 港・古戦場・国・勢力圏 | 一部検証 | 平城京に奈良市の内京・外京説明をもとにした2案の`boundary`概略Polygon、安土城・琵琶湖東岸に余呉湖の`waterbody`概略Polygon、安土城下町の`settlement`概略Polygon、2案の`sphere-of-influence`、2案の`polity`、常楽寺湊の`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Pointを追加。複数の水域・古戦場を網羅したものではない |
 | P2 領域レイヤー | `boundary`／`polity`／`sphere-of-influence`縦切り済み | 3種のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。平城京と安土城で重なる仮説2案、時代境界、出典・4次元不確実性、desktop／mobile E2Eを検証済み。安土城の`polity`は行政境界ではない政治中枢の概略表示として限定している |
-| P2 古地図画像／タイル | 未着手 | 現在地図＋概略geometryのみ |
+| P2 古地図画像／タイル | 契約・fail-closed経路を実装、実データ有効化は保留 | `HistoricalMapAsset`のURL・権利・bbox・取得日・georeference検証、XYZタイルの個別表示／透明度、無効要素の除外まで実装。対象範囲が一致する大阪地域bundleと実アセットが未登録のため、本番UIでは現在地図＋概略geometryのみ |
 | 中国史・世界史 | 対象外 | 現在のJapan-first MVPの非目標 |
 | 課金・相談導線 | 凍結 | コア受け入れ基準の外。現行UIは維持するが、追加実装しない |
 
