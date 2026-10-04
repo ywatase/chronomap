@@ -3,6 +3,91 @@
     {
       "geometry": {
         "coordinates": [
+          [
+            135.46,
+            34.64
+          ],
+          [
+            135.46,
+            34.71
+          ],
+          [
+            135.5,
+            34.76
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "osaka:version:ancient-coastline-300",
+      "properties": {
+        "description": {
+          "ja": "上町台地が半島のように突き出し、その東側に河内湾・河内湖が広がったという関係を読むための概略線です。古代の正確な海岸線・潮間帯・水深を復元しません。"
+        },
+        "entityId": "osaka:entity:ancient-coastline",
+        "evidenceIds": [
+          "osaka:evidence:ancient-coastline",
+          "osaka:evidence:ancient-coastline-shape"
+        ],
+        "labels": {
+          "ja": "河内湾・古代海岸線（概略線）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "Chronomap（概略復元）、大阪市港湾局（引用メタデータ）",
+          "status": "open-license",
+          "terms": "外部資料の本文・写真・図版は再現しない。LineStringは正確な古代海岸線ではない。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 300,
+            "latestYear": 300,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "start": {
+            "earliestYear": -1000,
+            "latestYear": -1000,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ancient-coastline-shape"
+            ],
+            "note": "少数頂点の概略線で、古代の正確な海岸線、潮間帯、水深、河口、時期ごとの変化ではありません。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "osaka:evidence:ancient-coastline"
+            ],
+            "note": "大阪市港湾局が説明する古代大阪の上町台地と河内湖の地形関係を示します。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ancient-coastline",
+              "osaka:evidence:ancient-coastline-shape"
+            ],
+            "note": "上町台地の半島状の地形と東側水域という相対関係を概略線で示します。"
+          },
+          "temporal": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "osaka:evidence:ancient-coastline"
+            ],
+            "note": "河内湾から河内湖への水域変化を含む古代の広い時期を代表する表示年です。線の存続期間や変化を確定しません。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
           135.525,
           34.687
         ],

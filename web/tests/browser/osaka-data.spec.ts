@@ -32,4 +32,15 @@ test.describe("Osaka Ishiyama and Kawachi Bay pilot", () => {
     await expect(detail).toContainText(/古代の海岸線|ancient shoreline/);
     await expect(detail).toContainText("osaka:evidence:kawachi-bay-shape");
   });
+
+  test("keeps the approximate ancient coastline distinct from the waterbody area", async ({ page }) => {
+    await page.goto("/?dataset=osaka&year=-300");
+    const coastline = page.locator('[data-feature-id="osaka:version:ancient-coastline-300"]');
+    await expect(coastline).toBeVisible();
+    await coastline.click();
+    const detail = page.locator("#panel-detail");
+    await expect(detail).toContainText(/古代海岸線|ancient coastline/);
+    await expect(detail).toContainText(/正確な古代海岸線|exact ancient shoreline/);
+    await expect(detail).toContainText("osaka:evidence:ancient-coastline-shape");
+  });
 });

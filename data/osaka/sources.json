@@ -22,6 +22,17 @@
     "rights": { "status": "restricted", "terms": "引用メタデータのみ。ページ本文・写真・図版は再現しない。" }
   },
   {
+    "id": "osaka:source:port-history",
+    "type": "official-web-page",
+    "citation": "大阪市『大阪港の景観特性をとらえる要素・歴史』",
+    "title": { "ja": "大阪港の景観特性をとらえる要素・歴史" },
+    "creators": ["大阪市港湾局"],
+    "publishedYear": 2018,
+    "url": "https://www.city.osaka.lg.jp/port/page/0000432129.html",
+    "accessedDate": "2026-10-05",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。ページ本文・写真・図版は再現しない。" }
+  },
+  {
     "id": "osaka:source:ishiyama-site",
     "type": "official-web-page",
     "citation": "大阪市中央区『石山（大坂）本願寺推定地』",

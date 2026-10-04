@@ -292,6 +292,18 @@ Task 3単体の実装時点ではPython 245件、Vitest 193件、focused asset E
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、Vitest、Osaka desktop／mobile E2Eを通過させた。
 - [x] **Step 5: Run the full quality gate** — 全6地域のPython 250件、Vitest 194件、Playwright 172件、production build、`git diff --check`を通過した。
 
+### Task 13: 古大阪湾の海岸線意味づけ縦切り
+
+- **Goal:** 大阪の`waterbody`面と混同しない`coastline`線を、古代大阪の上町台地・河内湾の相対関係を読む概略表現として追加する。正確な海岸線測量を装わず、P1の水域・海岸データ種別と線／面の意味分離を実データで確認する。
+- **Source:** 大阪市港湾局「大阪港の景観特性をとらえる要素・歴史」、大阪府「大阪広域ベイエリアまちづくりビジョン（素案）」、Chronomap形状作成メモ。本文・写真・図版は複製せず、引用メタデータとURL・locatorだけを保持する。
+- **Boundary:** 上町台地が半島状に突き出し東側に河内湾・河内湖が広がったという相対関係を、少数頂点の`LineString`で示す。古代の正確な海岸線、潮間帯、水深、河口、時期ごとの変化を復元せず、河内湾の`Polygon`とは異なる「境界を読む手がかり」として表示する。
+
+- [x] **Step 1: Write the failing test** — coastline Entity／LineString、公式Source／Evidence、公開監査、lesson、desktop／mobile E2Eの到達性を固定した。
+- [x] **Step 2: Run test to verify it fails** — 新しいEntity／FeatureVersion／Source／lesson未登録によるPython／Vitest／Playwrightの失敗を確認した。
+- [x] **Step 3: Implement the minimal feature** — `data/osaka/`へcoastline Entity／FeatureVersion／Evidence／Sourceと形状メモを追加し、公開bundle・6ステップlesson・詳細表示へ同期した。
+- [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、coastline desktop／mobile E2Eを通過させた。
+- [x] **Step 5: Run the full quality gate** — 全Python 250件、Vitest 194件、Playwright 174件、production build、`git diff --check`を通過させた。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイルの縦切りを完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は古大阪湾など別題材の公開根拠を調査する。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイル、Task 13で古大阪湾の`coastline`の縦切りを完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は別地域の領域資料または不足する古戦場の公開根拠を調査する。

@@ -6,6 +6,12 @@
     "description": { "ja": "大阪湾から上町台地の東側へ入り込んだ古代の水域を、資料の地形説明を読むための概略面で示します。古代の正確な海岸線・水深・水面ではありません。" }
   },
   {
+    "id": "osaka:entity:ancient-coastline",
+    "type": "coastline",
+    "labels": { "ja": "河内湾・古代海岸線（概略）" },
+    "description": { "ja": "上町台地が半島のように突き出し、その東側に河内湾・河内湖が広がったという関係を読むための概略線です。古代の正確な海岸線・潮間帯・水深を復元しません。" }
+  },
+  {
     "id": "osaka:entity:ishiyama-honganji",
     "type": "fortification",
     "labels": { "ja": "石山（大坂）本願寺（代表点）" },

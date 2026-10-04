@@ -3,10 +3,10 @@
 この表は、公開FeatureVersionから到達できる正規化メタデータだけを決定的に集計する。Source本文・画像・碑文などの第三者コンテンツは複製しない。
 
 - 対象地域: 6
-- 公開Entity: 27
-- 公開FeatureVersion: 35
-- 到達可能Evidence: 51
-- 到達可能Source: 32
+- 公開Entity: 28
+- 公開FeatureVersion: 36
+- 到達可能Evidence: 53
+- 到達可能Source: 33
 - 不足型の扱い: 資料・権利・不確実性を確認できるまで推測で補完しない
 
 ## 地域別集計
@@ -18,7 +18,7 @@
 | 平城京パイロットデータ | `heijokyo:dataset:pilot` | 4 | 5 | 5 | 3 | 3/3 | `settlement` × 1, `route` × 1, `boundary` × 1, `archaeological-site` × 1 |
 | 安土城・琵琶湖東岸パイロット | `azuchijo:dataset:pilot` | 10 | 14 | 16 | 13 | 13/13 | `waterbody` × 1, `coastline` × 1, `fortification` × 1, `settlement` × 1, `port` × 1, `battlefield` × 1, `route` × 1, `polity` × 1, `sphere-of-influence` × 1, `archaeological-site` × 1 |
 | 鬼怒川・小貝川の河道変遷パイロット | `kinugawa:dataset:river-history` | 3 | 4 | 7 | 4 | 4/4 | `watercourse` × 2, `other` × 1 |
-| 大坂・石山本願寺と河内湾パイロット | `osaka:dataset:ishiyama-pilot` | 5 | 5 | 8 | 4 | 4/4 | `waterbody` × 1, `watercourse` × 1, `fortification` × 1, `settlement` × 1, `port` × 1 |
+| 大坂・石山本願寺と河内湾パイロット | `osaka:dataset:ishiyama-pilot` | 6 | 6 | 10 | 5 | 5/5 | `waterbody` × 1, `watercourse` × 1, `coastline` × 1, `fortification` × 1, `settlement` × 1, `port` × 1 |
 
 ## 不足する許可Entity type
 
@@ -49,7 +49,7 @@
 
 ### 大坂・石山本願寺と河内湾パイロット (`osaka`)
 
-- 未収録: `coastline`, `battlefield`, `route`, `boundary`, `polity`, `sphere-of-influence`, `archaeological-site`, `other`
+- 未収録: `battlefield`, `route`, `boundary`, `polity`, `sphere-of-influence`, `archaeological-site`, `other`
 - 欠落理由: 現行の公開bundleに、公開可能な根拠・権利・4次元不確実性を備えた該当Entityがないため。未確認資料から推測して追加しない。
 
 ## 許可Entity type

@@ -1,6 +1,16 @@
 [
   {
     "description": {
+      "ja": "上町台地が半島のように突き出し、その東側に河内湾・河内湖が広がったという関係を読むための概略線です。古代の正確な海岸線・潮間帯・水深を復元しません。"
+    },
+    "id": "osaka:entity:ancient-coastline",
+    "labels": {
+      "ja": "河内湾・古代海岸線（概略）"
+    },
+    "type": "coastline"
+  },
+  {
+    "description": {
       "ja": "1533年に開山され1580年に退去した石山（大坂）本願寺を、現在の大阪城付近の代表点で示します。寺域・濠・土居の精密な境界ではありません。"
     },
     "id": "osaka:entity:ishiyama-honganji",

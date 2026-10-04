@@ -17,6 +17,23 @@
     "publicationBasis": "original-reconstruction"
   },
   {
+    "id": "osaka:evidence:ancient-coastline",
+    "sourceId": "osaka:source:port-history",
+    "locator": "古代大阪の河内湖と、半島のように突き出た上町台地に関する地形説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "大阪市港湾局の歴史説明を引用メタデータとして使用します。上町台地と水域の相対関係を示す資料であり、座標付きの古代海岸線測量ではありません。"
+  },
+  {
+    "id": "osaka:evidence:ancient-coastline-shape",
+    "sourceId": "osaka:source:shape-notes",
+    "locator": "河内湾・古代海岸線概略LineStringの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "上町台地の西側と河内湾・河内湖の相対関係を、少数頂点の概略線へ置き換えました。正確な古代海岸線、潮間帯、水深、河口を復元しません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
     "id": "osaka:evidence:ishiyama",
     "sourceId": "osaka:source:ishiyama-site",
     "locator": "石山（大坂）本願寺の1533年開山、濠・土居に囲まれた寺内町、1580年退去の説明",

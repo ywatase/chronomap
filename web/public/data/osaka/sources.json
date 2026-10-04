@@ -54,6 +54,24 @@
     "url": "https://www.city.osaka.lg.jp/chuo/page/0000641506.html"
   },
   {
+    "accessedDate": "2026-10-05",
+    "citation": "大阪市『大阪港の景観特性をとらえる要素・歴史』",
+    "creators": [
+      "大阪市港湾局"
+    ],
+    "id": "osaka:source:port-history",
+    "publishedYear": 2018,
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。ページ本文・写真・図版は再現しない。"
+    },
+    "title": {
+      "ja": "大阪港の景観特性をとらえる要素・歴史"
+    },
+    "type": "official-web-page",
+    "url": "https://www.city.osaka.lg.jp/port/page/0000432129.html"
+  },
+  {
     "accessedDate": "2026-10-04",
     "citation": "Chronomap『大坂・石山本願寺と河内湾形状作成メモ』",
     "creators": [

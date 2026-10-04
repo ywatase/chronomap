@@ -35,7 +35,7 @@
 | 城・史跡・集落・街・港・古戦場 | `fortification`, `archaeological-site`, `settlement`, `port`, `battlefield` | 代表点または範囲を、精度の限界とともに表示する |
 | 国・勢力圏 | `polity`, `sphere-of-influence` | Polygon/MultiPolygon、時代境界、仮説ラベル、凡例と表示切替を持つ |
 
-現時点の公開データは6地域、35 FeatureVersion、27 Entity、7 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川、大坂・石山本願寺はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、小氷期の海進、別の古大阪湾資料、および不足している別の古戦場である。
+現時点の公開データは6地域、36 FeatureVersion、28 Entity、7 lessonである。巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川、大坂・石山本願寺はいずれもパイロットであり、日本全体の網羅ではない。地域ごとの公開到達性と不足するEntity typeは、[日本公開データ・カバレッジ監査](japan-coverage-matrix.md)を正本のスナップショットとする。次に候補とする題材は、小氷期の海進、別地域の境界資料、および不足している別の古戦場である。
 
 新しい地域を「完了」と呼ぶ条件は、次をすべて満たすこととする。
 
@@ -74,7 +74,7 @@
 | P0比較・共有・レポート | 実装済み | `web/src/domain/comparison-candidates.ts`, `share-state.ts`, `report-model.ts` |
 | P0日本語・レスポンシブ・E2E | 実装済み | `web/src/ui/copy.ts`, `web/tests/browser/`。件数は検証ゲートの実行結果を正とする |
 | P1 6地域パイロット | 一部実装 | `data/{ogurike,tonegawa,heijokyo,azuchijo,kinugawa,osaka}`。日本全体の網羅ではない |
-| P1 港・古戦場・国・勢力圏 | 一部検証 | 平城京に奈良市の内京・外京説明をもとにした2案の`boundary`概略Polygon、安土城・琵琶湖東岸に余呉湖の`waterbody`概略Polygon、安土城下町の`settlement`概略Polygon、2案の`sphere-of-influence`、2案の`polity`、常楽寺湊の`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Pointを追加。複数の水域・古戦場を網羅したものではない |
+| P1 港・古戦場・国・勢力圏 | 一部検証 | 平城京に奈良市の内京・外京説明をもとにした2案の`boundary`概略Polygon、安土城・琵琶湖東岸に余呉湖の`waterbody`概略Polygon、安土城下町の`settlement`概略Polygon、2案の`sphere-of-influence`、2案の`polity`、常楽寺湊の`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Point、大坂に河内湾の`waterbody`と古代海岸線の`coastline`概略LineStringを追加。複数の水域・海岸線・古戦場を網羅したものではない |
 | P2 領域レイヤー | `boundary`／`polity`／`sphere-of-influence`縦切り済み | 3種のallow-list、種別ラベル、概略凡例、領域だけの表示切替、Polygon/MultiPolygonのfail-closedを実装。平城京と安土城で重なる仮説2案、時代境界、出典・4次元不確実性、desktop／mobile E2Eを検証済み。安土城の`polity`は行政境界ではない政治中枢の概略表示として限定している |
 | P2 古地図画像／タイル | 大阪で実データ縦切り済み | `HistoricalMapAsset`のURL・権利・bbox・取得日・georeference検証、XYZタイルの個別表示／透明度、無効要素の除外、取得失敗時のfallbackを実装。`data/osaka`の`ort_riku10`は1936〜1942年頃の後世コンテキストであり、古代・中世の境界・geometryを代替しない |
 | 中国史・世界史 | 対象外 | 現在のJapan-first MVPの非目標 |
