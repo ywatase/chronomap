@@ -1,0 +1,37 @@
+{
+  "id": "sekigahara-intro",
+  "dataset": "sekigahara",
+  "title": { "ja": "関ケ原古戦場と中山道を読む", "en": "Read the Sekigahara Battlefield and Nakasendo" },
+  "description": { "ja": "1600年の古戦場、東西交通の要衝としての中山道、関ケ原宿の関係を約10分で観察します。点と線は概略復元で、戦場全体や街道・宿場町の精密な境界を示しません。", "en": "Observe the relationship among the 1600 battlefield, Nakasendo as an east–west traffic hub, and Sekigahara-juku in about 10 minutes. Points and lines are approximate reconstructions, not precise battlefield, road, or town boundaries." },
+  "durationMinutes": 10,
+  "teachingGuide": {
+    "recommendedFor": { "ja": "中学校の日本史・地域史で、古戦場と交通・宿場の関係を読む導入に", "en": "A middle-school history introduction to reading relationships among a battlefield, transport, and a post station" },
+    "learningGoal": { "ja": "古戦場の代表点・中山道の概略線・宿場の代表点を年代と根拠に結び付け、概略復元の限界を説明する。", "en": "Connect the battlefield point, approximate Nakasendo line, and post-station point to dates and evidence, and explain the limits of approximate reconstruction." },
+    "preparation": [{ "ja": "投影または印刷したワークシート", "en": "Projected or printed worksheet" }],
+    "assessment": { "ja": "1600年頃の3つの表示を、交通の要衝という地域の特徴、出典、形状の限界を含めて一文で説明できるか。", "en": "Can learners explain the three circa-1600 displays in one sentence including the traffic-hub context, sources, and geometric limits?" },
+    "usageNote": { "ja": "戦場全体・各陣地・街道中心線・宿場町の町域を、代表点や概略線から推測しないことを先に確認します。", "en": "First clarify that the representative points and approximate line do not establish the entire battlefield, individual camps, a road centerline, or the post station's town boundary." }
+  },
+  "steps": [
+    {
+      "id": "battlefield-1600",
+      "year": 1600,
+      "featureId": "sekigahara:version:battlefield-1600",
+      "prompt": { "ja": "1600年の関ケ原古戦場の代表点は、何を示し、何を示しませんか。戦場全体や布陣を点から推測しない理由を説明してください。", "en": "What does the 1600 Sekigahara battlefield point show, and what does it not show? Explain why the entire battlefield or troop formations cannot be inferred from it." },
+      "teacherNote": { "ja": "岐阜県の公式説明にある1600年の合戦を読む代表位置です。陣地・戦線・行軍路・戦場全体の精密位置ではありません。", "en": "It is a representative location for the 1600 battle described by Gifu's official source. It is not a precise position for camps, lines, marches, or the entire battlefield." }
+    },
+    {
+      "id": "nakasendo-1600",
+      "year": 1600,
+      "featureId": "sekigahara:version:nakasendo-1600",
+      "prompt": { "ja": "中山道・関ケ原越えの概略線から、関ケ原が東西交通の要衝であることをどのように読み取れますか。街道中心線ではない理由も確認してください。", "en": "How can the approximate Nakasendo crossing suggest that Sekigahara was an east–west traffic hub? Confirm why the line is not a historical road centerline." },
+      "teacherNote": { "ja": "関ケ原町の公式計画にある山間の交通軸と中山道の関係を読む線です。道幅・宿駅間距離・実際の中心線の復元ではありません。", "en": "It is a line for reading the mountain-pass and Nakasendo relationship described in the town's official plan. It does not reconstruct road width, station-to-station distance, or the actual centerline." }
+    },
+    {
+      "id": "sekigahara-juku-1600",
+      "year": 1600,
+      "featureId": "sekigahara:version:sekigahara-juku-1600",
+      "prompt": { "ja": "関ケ原宿の代表点を中山道の概略線と比べ、点が宿場町の何を読む手がかりになるか説明してください。町域境界を点から推測してはいけない理由も話します。", "en": "Compare the Sekigahara-juku point with the approximate Nakasendo line. Explain what the point helps you read about the post station and why its town boundary cannot be inferred from it." },
+      "teacherNote": { "ja": "関ケ原町の中山道・宿場の説明と現在の駅周辺の相対位置を結び付ける代表点です。街区・屋敷・道幅・町域境界の精密図ではありません。", "en": "It connects the town's description of the Nakasendo post station with the relative location around today's station. It is not a precise map of blocks, residences, road width, or town boundary." }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "sekigahara:source:memorial-about",
+    "type": "official-web-page",
+    "citation": "岐阜関ケ原古戦場記念館『岐阜関ケ原古戦場記念館について』",
+    "title": { "ja": "岐阜関ケ原古戦場記念館について" },
+    "creators": ["岐阜県・岐阜関ケ原古戦場記念館"],
+    "publishedYear": 2020,
+    "url": "https://sekigahara.pref.gifu.lg.jp/about/",
+    "accessedDate": "2026-10-05",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。ページ本文・写真・展示映像は再現しない。" }
+  },
+  {
+    "id": "sekigahara:source:ishida-course",
+    "type": "official-web-page",
+    "citation": "岐阜関ケ原古戦場記念館『石田三成コース』",
+    "title": { "ja": "石田三成コース｜古戦場・史跡巡り" },
+    "creators": ["岐阜県・岐阜関ケ原古戦場記念館"],
+    "publishedYear": 2020,
+    "url": "https://sekigahara.pref.gifu.lg.jp/ishida-mitsunari/",
+    "accessedDate": "2026-10-05",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。本文・写真・ダウンロード地図は再現しない。" }
+  },
+  {
+    "id": "sekigahara:source:town-plan",
+    "type": "official-report",
+    "citation": "関ケ原町『関ケ原町過疎地域持続的発展計画』",
+    "title": { "ja": "関ケ原町過疎地域持続的発展計画" },
+    "creators": ["関ケ原町"],
+    "publishedYear": 2021,
+    "url": "https://www.town.sekigahara.gifu.jp/secure/6543/R7keikaku.pdf",
+    "accessedDate": "2026-10-05",
+    "rights": { "status": "restricted", "terms": "引用メタデータのみ。PDF本文・図版・地図画像は再現しない。" }
+  },
+  {
+    "id": "sekigahara:source:shape-notes",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『関ケ原古戦場・中山道形状作成メモ』",
+    "title": { "ja": "関ケ原古戦場・中山道形状作成メモ" },
+    "creators": ["Chronomap contributors"],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/sekigahara-shape-notes.md",
+    "accessedDate": "2026-10-05",
+    "rights": { "status": "open-license", "attribution": "Chronomap contributors", "terms": "公開メタデータから作成した概略復元メモ。" }
+  }
+]

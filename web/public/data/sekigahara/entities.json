@@ -1,0 +1,32 @@
+[
+  {
+    "description": {
+      "ja": "1600年の関ケ原の戦いを、関ケ原盆地の代表点で示します。戦場全体、布陣、陣跡、戦線、行軍路の精密な位置や範囲ではありません。"
+    },
+    "id": "sekigahara:entity:battlefield",
+    "labels": {
+      "ja": "関ケ原古戦場（代表点）"
+    },
+    "type": "battlefield"
+  },
+  {
+    "description": {
+      "ja": "関ケ原が東西交通の要衝で、中山道が通ったという関係を読むための概略線です。歴史的な街道中心線、道幅、宿駅間距離を復元しません。"
+    },
+    "id": "sekigahara:entity:nakasendo-route",
+    "labels": {
+      "ja": "中山道・関ケ原越え（概略）"
+    },
+    "type": "route"
+  },
+  {
+    "description": {
+      "ja": "中山道の宿場としての関ケ原宿を、現在の関ケ原駅周辺を読む代表点で示します。宿場町の街区、屋敷、道幅、町域境界の精密復元ではありません。"
+    },
+    "id": "sekigahara:entity:sekigahara-juku",
+    "labels": {
+      "ja": "関ケ原宿（代表点）"
+    },
+    "type": "settlement"
+  }
+]

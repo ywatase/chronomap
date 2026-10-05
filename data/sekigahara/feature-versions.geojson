@@ -1,0 +1,65 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "sekigahara:version:battlefield-1600",
+      "geometry": { "type": "Point", "coordinates": [136.47, 35.366] },
+      "properties": {
+        "entityId": "sekigahara:entity:battlefield",
+        "labels": { "ja": "関ケ原古戦場（1600年・代表点）" },
+        "description": { "ja": "慶長5年（1600年）の関ケ原の戦いを、関ケ原盆地の代表点で示します。戦場全体、布陣、陣跡、戦線、行軍路の精密な位置や範囲ではありません。" },
+        "temporal": { "start": { "earliestYear": 1600, "latestYear": 1600, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1600, "latestYear": 1600, "precision": "year", "qualifier": "exact" } },
+        "uncertainty": {
+          "temporal": { "assessment": "well-supported", "note": "公式説明にある慶長5年（1600年）の合戦を表示します。", "evidenceIds": ["sekigahara:evidence:battlefield"] },
+          "location": { "assessment": "approximate", "note": "関ケ原盆地の古戦場を読む代表位置で、戦場全体の範囲ではありません。", "evidenceIds": ["sekigahara:evidence:battlefield", "sekigahara:evidence:battlefield-course", "sekigahara:evidence:battlefield-shape"] },
+          "geometry": { "assessment": "approximate", "note": "代表Pointであり、布陣、陣跡、戦線、行軍路の精密な位置や範囲ではありません。", "evidenceIds": ["sekigahara:evidence:battlefield-shape"] },
+          "identity": { "assessment": "well-supported", "note": "岐阜県が説明する関ケ原の戦いを示します。", "evidenceIds": ["sekigahara:evidence:battlefield", "sekigahara:evidence:battlefield-course"] }
+        },
+        "evidenceIds": ["sekigahara:evidence:battlefield", "sekigahara:evidence:battlefield-course", "sekigahara:evidence:battlefield-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、岐阜県（引用メタデータ）", "terms": "外部資料の本文・写真・展示映像は再現しない。代表点は戦場全体や各陣地の精密位置ではない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sekigahara:version:nakasendo-1600",
+      "geometry": { "type": "LineString", "coordinates": [[136.41, 35.35], [136.45, 35.36], [136.48, 35.37], [136.53, 35.38]] },
+      "properties": {
+        "entityId": "sekigahara:entity:nakasendo-route",
+        "labels": { "ja": "中山道・関ケ原越え（1600年頃・概略線）" },
+        "description": { "ja": "関ケ原が南北の山の隙間を通る東西交通の要衝で、中山道が通ったという関係を概略線で示します。歴史的な街道中心線、道幅、宿駅間距離ではありません。" },
+        "temporal": { "start": { "earliestYear": 1600, "latestYear": 1600, "precision": "period", "qualifier": "circa" }, "end": { "earliestYear": 1868, "latestYear": 1868, "precision": "period", "qualifier": "circa" } },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "中山道整備後の近世交通を1600年頃から明治初期までの比較用期間で示します。", "evidenceIds": ["sekigahara:evidence:route"] },
+          "location": { "assessment": "approximate", "note": "東西の交通軸と関ケ原の峠越えを概略線で示します。", "evidenceIds": ["sekigahara:evidence:route", "sekigahara:evidence:route-shape"] },
+          "geometry": { "assessment": "approximate", "note": "少数頂点の概略線で、歴史的な街道中心線、道幅、宿駅間距離ではありません。", "evidenceIds": ["sekigahara:evidence:route-shape"] },
+          "identity": { "assessment": "well-supported", "note": "関ケ原町が説明する中山道・東西交通の関係を示します。", "evidenceIds": ["sekigahara:evidence:route"] }
+        },
+        "evidenceIds": ["sekigahara:evidence:route", "sekigahara:evidence:route-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、関ケ原町（引用メタデータ）", "terms": "外部資料の本文・図版・地図画像は再現しない。LineStringは街道中心線ではない。" }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sekigahara:version:sekigahara-juku-1600",
+      "geometry": { "type": "Point", "coordinates": [136.473, 35.366] },
+      "properties": {
+        "entityId": "sekigahara:entity:sekigahara-juku",
+        "labels": { "ja": "関ケ原宿（1600年頃・代表点）" },
+        "description": { "ja": "中山道の宿場としての関ケ原宿を、現在の関ケ原駅周辺を読む代表点で示します。宿場町の街区、屋敷、道幅、町域境界の精密復元ではありません。" },
+        "temporal": { "start": { "earliestYear": 1600, "latestYear": 1600, "precision": "period", "qualifier": "circa" }, "end": { "earliestYear": 1868, "latestYear": 1868, "precision": "period", "qualifier": "circa" } },
+        "uncertainty": {
+          "temporal": { "assessment": "approximate", "note": "中山道の宿場としての近世関ケ原宿を1600年頃から明治初期までの比較用期間で示します。", "evidenceIds": ["sekigahara:evidence:settlement"] },
+          "location": { "assessment": "approximate", "note": "現在の関ケ原駅周辺を宿場の相対位置を読む代表点へ置き換えています。", "evidenceIds": ["sekigahara:evidence:settlement", "sekigahara:evidence:settlement-shape"] },
+          "geometry": { "assessment": "approximate", "note": "代表Pointであり、宿場町の街区、屋敷、道幅、町域境界の精密な位置ではありません。", "evidenceIds": ["sekigahara:evidence:settlement-shape"] },
+          "identity": { "assessment": "well-supported", "note": "関ケ原町が説明する中山道の関ケ原宿を示します。", "evidenceIds": ["sekigahara:evidence:settlement"] }
+        },
+        "evidenceIds": ["sekigahara:evidence:settlement", "sekigahara:evidence:settlement-shape"],
+        "publicationStatus": "public",
+        "rights": { "status": "open-license", "attribution": "Chronomap（概略復元）、関ケ原町（引用メタデータ）", "terms": "外部資料の本文・図版・地図画像は再現しない。代表点は宿場町の精密範囲ではない。" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "sekigahara:evidence:battlefield",
+    "sourceId": "sekigahara:source:memorial-about",
+    "locator": "慶長5年（1600年）の関ケ原の戦いと、関ケ原古戦場の歴史説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "岐阜関ケ原古戦場記念館の公式説明を引用メタデータとして使用します。戦場全体の座標付き境界を示す資料ではありません。"
+  },
+  {
+    "id": "sekigahara:evidence:battlefield-shape",
+    "sourceId": "sekigahara:source:shape-notes",
+    "locator": "関ケ原古戦場代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "関ケ原盆地の古戦場を読むための代表Pointへ置き換えました。戦場全体、布陣、陣跡、戦線、行軍路の精密な位置や範囲ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "sekigahara:evidence:battlefield-course",
+    "sourceId": "sekigahara:source:ishida-course",
+    "locator": "石田三成コースに示される古戦場・史跡巡りの案内",
+    "usage": "citation",
+    "supports": ["location", "identity"],
+    "note": "岐阜関ケ原古戦場記念館の公式コース案内を引用メタデータとして使用します。個別陣跡の座標や戦場全体の境界を示す資料ではありません。"
+  },
+  {
+    "id": "sekigahara:evidence:route",
+    "sourceId": "sekigahara:source:town-plan",
+    "locator": "南北の山の隙間を通る街道と、中山道・関ケ原宿が東西交通をつないだという歴史説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "関ケ原町の公式計画を引用メタデータとして使用します。街道の現地測量線や当時の道幅を示す資料ではありません。"
+  },
+  {
+    "id": "sekigahara:evidence:route-shape",
+    "sourceId": "sekigahara:source:shape-notes",
+    "locator": "中山道・関ケ原越え概略LineStringの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "東西の交通軸と関ケ原の峠越えを少数頂点の概略線へ置き換えました。歴史的な街道中心線、道幅、宿駅間距離ではありません。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "sekigahara:evidence:settlement",
+    "sourceId": "sekigahara:source:town-plan",
+    "locator": "中山道の58番目の関ケ原宿と、今須宿が東西をつなぐ宿場だったという説明",
+    "usage": "citation",
+    "supports": ["temporal", "location", "identity"],
+    "note": "関ケ原町の公式計画を引用メタデータとして使用します。宿場町の街区・屋敷・町域境界を示す資料ではありません。"
+  },
+  {
+    "id": "sekigahara:evidence:settlement-shape",
+    "sourceId": "sekigahara:source:shape-notes",
+    "locator": "関ケ原宿代表Pointの作成方法と限界",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "関ケ原駅周辺を宿場の相対位置を読む代表Pointへ置き換えました。街区、屋敷、道幅、町域境界の精密な位置ではありません。",
+    "publicationBasis": "original-reconstruction"
+  }
+]

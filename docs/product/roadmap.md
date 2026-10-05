@@ -130,9 +130,9 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 各カードには、購入判断の前提となる「この選択肢で扱う内容」も3項目ずつ表示する。無料で試す場合は、地図・根拠・不確実性、共有リンクとレポート、1つの教材パックの完成見本をその場で確認できる。授業パイロットでは1クラス向けの授業パック案、生徒用ワークシート＋教員用参照資料、出典・権利・開始QRの整理を扱う。地域教材の個別制作では、希望地域・題材の出典整理、範囲に合わせた授業設計、生徒用・教員用PDFの納品範囲を相談する。価格はβ版の目安であり、納品・決済を確約しない。日英カードと390×844／1440×900の導入プラン→相談文引き継ぎをunit／Playwright E2Eで確認する。
 
-## 実装済みデータ信頼性ゲート: 6地域の出典・不確実性監査
+## 実装済みデータ信頼性ゲート: 7地域の出典・不確実性監査
 
-巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川、大坂・石山本願寺の公開データは、それぞれ`chronomap-data validate data/<dataset> --profile public`を通過したうえで、`chronomap-data audit data/<dataset>`から決定的なMarkdown監査資料を生成できる。監査資料は公開FeatureVersionごとに、年代、4次元の不確実性、Evidenceのlocatorと用途、到達可能なSource、Feature／Sourceの権利条件を列挙する。チェックイン済みの[巨椋池](../data/ogurike-audit.md)、[利根川東遷](../data/tonegawa-audit.md)、[平城京](../data/heijokyo-audit.md)、[安土城・琵琶湖東岸](../data/azuchijo-audit.md)、[鬼怒川・小貝川](../data/kinugawa-audit.md)、[大坂・石山本願寺](../data/osaka-audit.md)のスナップショットは、教員が授業準備中に地図の詳細と出典を照合するための再現可能な基準とする。
+巨椋池、利根川東遷、平城京、安土城・琵琶湖東岸、鬼怒川・小貝川、大坂・石山本願寺、関ケ原古戦場の公開データは、それぞれ`chronomap-data validate data/<dataset> --profile public`を通過したうえで、`chronomap-data audit data/<dataset>`から決定的なMarkdown監査資料を生成できる。監査資料は公開FeatureVersionごとに、年代、4次元の不確実性、Evidenceのlocatorと用途、到達可能なSource、Feature／Sourceの権利条件を列挙する。チェックイン済みの[巨椋池](../data/ogurike-audit.md)、[利根川東遷](../data/tonegawa-audit.md)、[平城京](../data/heijokyo-audit.md)、[安土城・琵琶湖東岸](../data/azuchijo-audit.md)、[鬼怒川・小貝川](../data/kinugawa-audit.md)、[大坂・石山本願寺](../data/osaka-audit.md)、[関ケ原古戦場](../data/sekigahara-audit.md)のスナップショットは、教員が授業準備中に地図の詳細と出典を照合するための再現可能な基準とする。
 
 監査の対象は正規化されたメタデータだけであり、restricted Sourceの本文・画像・碑文全文、URLの到達性確認、原資料の再配布、認証・保存・送信・課金は行わない。点・線・面の詳細パネルとlocator／権利表示は、390×844と1440×900のPlaywright E2Eおよびスクリーンショットで確認する。
 
@@ -156,7 +156,7 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 ## 実装済み導線改善: カタログの公開監査ステータス
 
-地域・教材カタログで、読み込み済みの公開バンドルについて全FeatureVersionが4次元（年代・位置・形状・同一性）の不確実性とEvidence／Sourceへ到達できる場合だけ、「公開監査済み」と地物・根拠・出典の件数を表示する。監査条件を満たさないfixture、空バンドル、読み込み失敗カードではバッジを出さず、fail-closedで地図・詳細へ導く。表示はブラウザ内の公開メタデータだけから生成し、監査スナップショットやSource本文を追加取得しない。390×844／1440×900のカタログスクリーンショットとPlaywright E2Eで、6地域の表示・横overflowなしを確認した。
+地域・教材カタログで、読み込み済みの公開バンドルについて全FeatureVersionが4次元（年代・位置・形状・同一性）の不確実性とEvidence／Sourceへ到達できる場合だけ、「公開監査済み」と地物・根拠・出典の件数を表示する。監査条件を満たさないfixture、空バンドル、読み込み失敗カードではバッジを出さず、fail-closedで地図・詳細へ導く。表示はブラウザ内の公開メタデータだけから生成し、監査スナップショットやSource本文を追加取得しない。390×844／1440×900のカタログスクリーンショットとPlaywright E2Eで、7地域の表示・横overflowなしを確認した。
 
 ## 実装済みデータ拡張: 大坂・石山本願寺パイロット
 
@@ -196,9 +196,13 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 有料相談フォームの導入プラン、相談意向、対象、授業時間、希望納品を、デスクトップでは比較しやすい複数列、スマートフォンでは2列のラジオ選択面へ再配置した。各項目の意味、必須条件、未定／相談で決めたいというallow-list、44px以上の操作領域は維持し、任意条件を縦に読み続けるスクロール量だけを減らした。相談文の生成内容、価格・納期非確約、送信・決済なし、個人情報非漏洩境界は変更していない。390×844／1440×900のスクリーンショットで折返し・横overflowを確認し、グリッド列数をdesktop／mobileのPlaywright E2Eで固定した。
 
+## 実装済みデータ拡張: 関ケ原古戦場・中山道パイロット
+
+岐阜県・関ケ原町の公式説明を引用メタデータとして、1600年の関ケ原古戦場、東西交通の要衝としての中山道、関ケ原宿を3 FeatureVersion／3 Entityで追加した。古戦場は関ケ原盆地の代表Point、中山道は峠越えを読む概略LineString、関ケ原宿は現在の駅周辺を読む代表Pointである。戦場全体、布陣、陣跡、街道中心線、宿場町の街区・屋敷・町域境界は復元しない。東軍・西軍などの説明はあるが、行政的な勢力圏・確定境界を示す公式Polygon根拠がないため、`polity`／`sphere-of-influence`／`boundary`は追加せず、形状メモ・公開監査・日英3ステップlesson・catalog・desktop／mobile E2Eで判断を固定した。
+
 ## 続く工程
 
-- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で6地域、37 FeatureVersion、29 EntityのEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）、平城京の`boundary`仮説2案、安土城の`waterbody`／`settlement`概略Polygon、`sphere-of-influence`仮説2案、`polity`仮説2案、`port`代表Point、賤ヶ岳古戦場の`battlefield`代表Point、大坂の`waterbody`／`coastline`／`fortification`／`battlefield`／`settlement`／`port`／`watercourse`縦切りを検証済み。次は別地域の領域資料または不足する古戦場へ進む
+- [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で7地域、40 FeatureVersion、32 EntityのEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）、平城京の`boundary`仮説2案、安土城の`waterbody`／`settlement`概略Polygon、`sphere-of-influence`仮説2案、`polity`仮説2案、`port`代表Point、賤ヶ岳・石山合戦・関ケ原の`battlefield`代表Point、大坂の`waterbody`／`coastline`／`fortification`／`settlement`／`port`／`watercourse`、関ケ原の`route`／`settlement`縦切りを検証済み。次は別地域の領域資料または不足する古戦場へ進む
 - 追加の実データセットと出典・不確実性の制作（鬼怒川・小貝川の縦切りを追加済み。今回の信頼性ゲートを各地域へ展開）
 - 3種の領域Entityについて、隣接／重複が異なる意味（境界、広域勢力圏、政治中枢）として読めるかを実データで検証した。`port`代表Point、賤ヶ岳と石山合戦の`battlefield`代表Point、余呉湖と河内湾の`waterbody`概略Polygon、大坂の`coastline`／`settlement`／`watercourse`も追加済みで、次は別地域の根拠または不足する古戦場へ進む
 - [古地図・歴史画像アセットの採用記録](historical-map-assets.md)で、国土地理院の候補範囲と権利境界を確認済み、`HistoricalMapAsset`の検証・XYZタイルの個別表示／透明度・fail-closed経路まで実装済み。大阪`ort_riku10`で対象範囲・出典・後世コンテキストの分離・フォールバックを実データ縦切りした

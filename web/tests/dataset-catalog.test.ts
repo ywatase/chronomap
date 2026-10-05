@@ -3,7 +3,7 @@ import { DATASET_CATALOG, datasetFromSearch } from "../src/domain/dataset-catalo
 
 describe("dataset catalog", () => {
   it("allow-lists all public bundles and lesson entries", () => {
-    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka"]);
+    expect(DATASET_CATALOG.map((entry) => entry.slug)).toEqual(["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka", "sekigahara"]);
     expect(DATASET_CATALOG.find((entry) => entry.slug === "ogurike")?.lessons).toEqual([
       { id: "ogurike-intro", path: "/lessons/ogurike-intro.json", featured: true },
       { id: "ogurike-river-compare", path: "/lessons/ogurike-river-compare.json", featured: false },
@@ -18,6 +18,9 @@ describe("dataset catalog", () => {
     expect(datasetFromSearch("?dataset=kinugawa").bundlePath).toBe("/data/kinugawa/");
     expect(datasetFromSearch("?dataset=kinugawa").lessons[0]?.path).toContain("kinugawa-history");
     expect(datasetFromSearch("?dataset=kinugawa").region.ja).toBe("鬼怒川・小貝川流域");
+    expect(datasetFromSearch("?dataset=sekigahara").bundlePath).toBe("/data/sekigahara/");
+    expect(datasetFromSearch("?dataset=sekigahara").lessons[0]?.path).toContain("sekigahara-intro");
+    expect(datasetFromSearch("?dataset=sekigahara").region.ja).toBe("岐阜県関ケ原町");
   });
 
   it("falls back to the default bundle for unknown or absent values", () => {

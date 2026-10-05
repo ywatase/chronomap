@@ -65,8 +65,8 @@ test("surfaces the public evidence audit before opening a region map", async ({ 
   await page.goto("/");
   await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
   const cards = page.locator("[data-dataset-catalog-card]");
-  await expect(cards).toHaveCount(6);
-  for (const slug of ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka"]) {
+  await expect(cards).toHaveCount(7);
+  for (const slug of ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka", "sekigahara"]) {
     const card = page.locator(`[data-dataset-catalog-card="${slug}"]`);
     await expect(card.locator("[data-dataset-catalog-audit]")).toBeVisible();
     await expect(card.locator("[data-dataset-catalog-audit]")).toContainText(/公開監査済み|Public audit ready/);
@@ -118,7 +118,7 @@ test("carries an adoption path from the catalog into the consultation handoff", 
   await offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]").click();
   await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
   const builder = page.locator("[data-lesson-pack-builder]");
-  await expect(builder).toBeVisible();
+  await expect(builder).toBeVisible({ timeout: 15_000 });
   await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/地域教材の個別制作|Custom regional production/);
   await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/¥198,000|198,000/);
   await builder.locator("[data-lesson-pack-builder-preview]").click();

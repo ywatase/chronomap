@@ -1,0 +1,42 @@
+{
+  "bbox": [
+    136.4,
+    35.3,
+    136.55,
+    35.42
+  ],
+  "defaultLanguage": "ja",
+  "description": {
+    "ja": "1600年の関ケ原古戦場と、東西交通の要衝・中山道・関ケ原宿の関係を現在地図上で読む小規模な公開データです。点と線は概略復元で、戦場全体・街道中心線・宿場町の精密な境界を示しません。"
+  },
+  "files": {
+    "entities": "entities.json",
+    "evidence": "evidence.json",
+    "featureVersions": "feature-versions.geojson",
+    "sources": "sources.json"
+  },
+  "id": "sekigahara:dataset:battlefield-pilot",
+  "rights": {
+    "attribution": "Chronomap（概略復元）、岐阜県・関ケ原町（引用メタデータ）",
+    "status": "open-license",
+    "terms": "外部資料の本文・写真・図版・地図画像は再現せず、個別Sourceの権利条件と出典表示を併せて適用します。"
+  },
+  "schemaVersion": "1.0.0",
+  "temporalExtent": {
+    "end": {
+      "earliestYear": 1868,
+      "latestYear": 1868,
+      "precision": "period",
+      "qualifier": "circa"
+    },
+    "start": {
+      "earliestYear": 1600,
+      "latestYear": 1600,
+      "precision": "year",
+      "qualifier": "exact"
+    }
+  },
+  "title": {
+    "ja": "関ケ原古戦場・中山道パイロット"
+  }
+}

@@ -88,6 +88,17 @@ export const DATASET_CATALOG: readonly DatasetCatalogEntry[] = Object.freeze([
     region: { ja: "大阪市・上町台地", en: "Osaka City and Uemachi Plateau" },
     failureMessage: { ja: "大坂・石山本願寺の公開データを読み込めませんでした。再試行してください。", en: "The Osaka and Ishiyama Honganji public dataset could not be loaded. Please retry." },
   },
+  {
+    slug: "sekigahara",
+    bundlePath: "/data/sekigahara/",
+    lessons: Object.freeze([
+      Object.freeze({ id: "sekigahara-intro", path: "/lessons/sekigahara-intro.json", featured: true }),
+    ]),
+    lessonPath: "/lessons/sekigahara-intro.json",
+    label: { ja: "関ケ原古戦場・中山道", en: "Sekigahara Battlefield and Nakasendo" },
+    region: { ja: "岐阜県関ケ原町", en: "Sekigahara, Gifu" },
+    failureMessage: { ja: "関ケ原古戦場の公開データを読み込めませんでした。再試行してください。", en: "The Sekigahara Battlefield public dataset could not be loaded. Please retry." },
+  },
 ]);
 
 const DEFAULT_DATASET = DATASET_CATALOG[0]!;

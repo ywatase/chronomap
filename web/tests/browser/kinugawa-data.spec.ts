@@ -10,7 +10,7 @@ test.describe("Kinugawa and Kokaigawa river-history dataset", () => {
 
     await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
     const catalog = page.locator("[data-dataset-catalog-dialog]");
-    await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(6);
+    await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(7);
     const card = catalog.locator('[data-dataset-catalog-card="kinugawa"]');
     await expect(card).toContainText(/鬼怒川・小貝川|Kinugawa/);
     await expect(card).toContainText(/4件|4/);

@@ -41,7 +41,7 @@
 
 - [x] **Step 1: Write the failing test**
 
-  6地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
+  7地域の公開bundleについて、全FeatureVersionのEntity typeが許可enumにあり、EvidenceからSourceとRightsへ到達できること、カバレッジ行が実数と一致することを検証するテスト名を追加する。
 
 - [x] **Step 2: Run test to verify it fails**
 
@@ -316,6 +316,18 @@ Task 3単体の実装時点ではPython 245件、Vitest 193件、focused asset E
 - [x] **Step 4: Run the focused quality gate** — `validate --profile public`、公開bundle生成、監査、coverage、Osaka package／asset sync、battlefield desktop／mobile E2Eを通過させた。
 - [x] **Step 5: Run the full quality gate** — 全Python 250件、Vitest 194件、Playwright 176件、production build、`git diff --check`を通過させた。
 
+### Task 15: 関ケ原古戦場・中山道の実データ縦切り
+
+- **Goal:** 不足していた古戦場の実データを、交通・宿場との関係まで含む小さな地域縦切りとして公開する。1600年の関ケ原古戦場、東西交通の要衝としての中山道、関ケ原宿を、代表点・概略線・代表点の意味に分けて表示する。
+- **Source:** [岐阜関ケ原古戦場記念館](https://sekigahara.pref.gifu.lg.jp/about/)、[石田三成コース](https://sekigahara.pref.gifu.lg.jp/ishida-mitsunari/)、[関ケ原町過疎地域持続的発展計画](https://www.town.sekigahara.gifu.jp/secure/6543/R7keikaku.pdf)。本文・写真・図版は複製せず、引用メタデータとURL・locatorだけを保持する。
+- **Boundary:** 古戦場は盆地の代表Point、中山道は峠越えを読む概略LineString、関ケ原宿は駅周辺を読む代表Pointである。戦場全体、布陣、陣跡、街道中心線、宿場町の街区・屋敷・町域境界は復元しない。公式資料に行政的な勢力圏・確定境界の根拠がないため、`polity`／`sphere-of-influence`／`boundary`は追加しない。
+
+- [x] **Step 1: Write the failing test** — `tests/test_sekigahara_package.py`、catalog／公開アセット同期、日英lessonガイド、desktop／mobile E2Eで、3 Entity、3 FeatureVersion、出典・不確実性、境界非採用を固定した。
+- [x] **Step 2: Run test to verify it fails** — 関ケ原slug、Entity、lesson、公開監査未登録によるPython／Vitest／Playwrightの失敗を確認した。
+- [x] **Step 3: Implement the minimal feature** — `data/sekigahara/`、形状メモ、公開bundle、3ステップlesson、catalog allow-list、監査・カバレッジ、専用E2Eを追加した。
+- [x] **Step 4: Run the full quality gate** — 7地域の`validate --profile public`、Python 255件、Vitest 195件、production build、Playwright 182件（desktop／mobile）、`git diff --check`を通過させた。カタログ追加による既存相談E2Eの待機ゆらぎは15秒の明示待機で固定した。
+- [x] **Step 5: Commit** — `feat: add Sekigahara battlefield pilot`として一つの縦切りコミットへ保存した（`0dcbea8`）。
+
 ## Execution order
 
-Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイル、Task 13で古大阪湾の`coastline`、Task 14で石山合戦の`battlefield`意味分離を完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は別地域の領域資料または不足する古戦場の公開根拠を調査する。
+Task 1で欠落を数値化し、Task 2で領域の意味をUIに固定する。Task 4で5地域目を追加し、Task 5で安土城の`sphere-of-influence`、Task 6で平城京の`boundary`、Task 7で安土城の政治中枢`polity`、Task 8で常楽寺湊の`port`、Task 9で安土城下町の`settlement`、Task 10で賤ヶ岳古戦場の`battlefield`、Task 11で余呉湖の`waterbody`、Task 12で大坂・石山本願寺と後世空中写真タイル、Task 13で古大阪湾の`coastline`、Task 14で石山合戦の`battlefield`意味分離、Task 15で関ケ原古戦場・中山道の`battlefield`／`route`／`settlement`縦切りを完了した。価格・相談導線の追加はコア監査継続中のため再開せず、次は別地域の領域資料または不足する古戦場の公開根拠を調査する。
