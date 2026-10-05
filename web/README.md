@@ -2,8 +2,9 @@
 
 This is Chronomap's static, responsive historical-map pilot. It reads the
 Japanese public bundle at `/data/ogurike/` by default, which contains a small,
-approximate set of cited 巨椋池 snapshots for 1590, 1596, 1910, and 1942. The
-allow-listed `tonegawa` bundle adds a three-snapshot Tone River eastward-shift
+approximate set of cited 巨椋池 snapshots for 1590, 1596, 1885, 1910, 1933,
+and 1942. The allow-listed `tonegawa` bundle adds a three-snapshot Tone River
+eastward-shift
 pilot, `heijokyo` adds a single-year pilot for the Heijokyo capital and Suzaku
 Avenue, and `azuchijo` adds a five-step Azuchi Castle/Lake Biwa east-shore and
 water-transport context comparison. Restricted source pages are represented by
@@ -57,7 +58,7 @@ automatically when it is present, and otherwise fall back to a `chronomap-data`
 executable on `PATH`. If both are missing, run `uv sync --dev` from the
 repository root before running the tests.
 
-### Optional consultation mailbox
+### Optional consultation mailbox (legacy teacher flow)
 
 The consultation handoff is copy/share/download-only by default. To add a reviewable
 email-draft action at build time, copy `.env.example` to `.env.local` and set
@@ -80,6 +81,21 @@ directly, for example:
 Only public bundle records are restored from URL parameters. Invalid or
 out-of-range parameters fall back to the safe default view. Camera links use
 the Web Mercator-safe latitude range and MapLibre's default zoom ceiling.
+
+## Viewer-first entry and change timeline
+
+The public entry point (`/` or `/?dataset=ogurike`) is a free map viewer. It
+opens on authored geography, shows the historical-change timeline, and keeps
+layer opacity, feature details, evidence, uncertainty, sharing, and reports
+available without opening a lesson. The Ogurike timeline contains the authored
+1590, 1596, 1885, 1910, 1933, and 1942 snapshots; it does not invent
+intermediate shapes. The 1910 waterbody is the baseline viewer frame. Its
+waterbody polygons are relative, approximate reconstructions, not precise
+historical shorelines.
+
+Guided education is optional and explicit: add an allow-listed `lesson` query,
+for example `/?dataset=ogurike&lesson=ogurike-intro&step=uji-1590`. Opening a
+dataset without `lesson` never starts lesson progress or displays pricing.
 
 ## Start hub
 
@@ -223,7 +239,7 @@ reload.
 
 The same completion card also offers `地域教材パックの相談文を作る` / `Create
 a regional lesson-pack consultation message`. This route keeps the two feedback answers and
-requires one of four allow-listed paid-interest choices, with an optional
+requires one of four allow-listed adoption-intent choices, with an optional
 200-character region/topic hint. `相談文を確認する` / `Review consultation
 text` shows the entire handoff before any copy or share action. It includes only
 the allow-listed answers, length-limited free text, public lesson metadata, and
@@ -241,20 +257,11 @@ and the file is created in memory after the user clicks the save action. A real
 public `mailto:` recipient can be configured later, at which point the CTA opens
 a reviewable email draft and still does not send automatically. Scope changes and
 reloads discard the review text, and print CSS hides the entire completion card.
-For consultation routes, the reviewed text also states the requested deliverables
-for the current print scope (student material, QR/start links, sources/rights,
-the observation figure, and teacher reference when selected) and a short checklist
-for the operator to confirm: regional scope, source curation, delivery format,
-schedule, and final quote. These are discussion prompts, not a price or delivery
-promise. The plan choices in this form repeat the catalog's beta price proposals
-so the comparison context is not lost; the proposals are not copied into the
-handoff and do not enable checkout.
-
-When a paid adoption path is active, the finished example also exposes a
-`相談文を作る` / `Create a consultation brief` shortcut before printing. It
-opens the same review-only handoff with the selected offer path intact; the
-student/teacher print actions remain available, and the free exploration path
-does not show this shortcut.
+For this legacy consultation route, the reviewed text may state requested
+deliverables for the current print scope and a checklist for the operator to
+confirm. These are discussion prompts, not a price, contract, or delivery
+promise. The current viewer and catalog do not display paid adoption cards or
+price proposals.
 
 ## Dataset catalog
 
@@ -277,45 +284,19 @@ The visible feature list also has a Japanese/English search field for feature
 names, descriptions, entity labels, and IDs. Search only filters the list; the
 map, selected year, and share URL remain unchanged.
 The catalog itself can be opened directly and restored with `?view=catalog`, for
-example `/?dataset=tonegawa&view=catalog`. The page distinguishes current free
-pilot functions from future teacher-workflow candidates and shows β版 price
-proposals (`¥49,800〜` for one classroom pilot and `¥198,000〜` for one custom
-region) next to their deliverables. These are consultation starting points, not
-a contract or billing state; checkout is not enabled. The Tone River and
-Heijokyo geometries are explicitly approximate reconstructions; external source
-text and images remain citation-only.
-
-The adoption cards also make the output boundary explicit. Free exploration
-covers the map/evidence/uncertainty view, shareable reports and links, and one
-finished classroom-pack example. A classroom pilot covers a one-class pack
-draft, student worksheet plus teacher reference, and a source/rights/start-QR
-checklist. Custom regional production covers region/topic source curation,
-scope-matched lesson design, and the intended student/teacher PDF delivery
-scope. The latter two use β版 price proposals as consultation starting points,
-not delivery guarantees; their CTA only carries an allow-listed `offer` value
-into the browser-only consultation handoff.
-The catalog also shows the three-step adoption path: try the cited free example,
-preview a class-ready pack and choose a path, then confirm scope, price, and
-delivery in consultation. This site does not take payment or promise a delivery
-date.
-When a paid-path CTA opens the browser-only builder, the selected path and beta
-price remain visible above the editor so the user can verify the context before
-previewing and generating the consultation handoff.
-Each paid card also offers a finished-example preview while preserving the same
-allow-listed `offer` value, so a buyer can inspect the output before starting
-the consultation path.
-The paid primary CTA states that sequence explicitly: preview the finished
-example, then create the consultation message. It opens the browser-only builder
-first; the consultation handoff still appears after the print/PDF attempt.
-When a paid path is selected, the same plan and beta price proposal remain visible
-in the finished-pack toolbar before printing. The toolbar is hidden by print CSS,
-so the proposal is not part of the classroom PDF.
+example `/?dataset=tonegawa&view=catalog`. It presents map-only routes first
+and labels guided lessons as optional. It does not show price cards, paid
+adoption proposals, checkout, or consultation CTAs. Existing classroom-pack
+and local-draft tools remain available after an explicit lesson URL. The Tone
+River and Heijokyo geometries are explicitly approximate reconstructions;
+external source text and images remain citation-only.
 
 ## Teacher quick start
 
 Opening `/` shows the historical map first with a compact welcome card. It
-explains the free Ogurike 1590/1596 comparison and offers one primary action to
-see the change plus one secondary action to choose a region. The map and its
+explains the free Ogurike timeline (including the 1590/1596 river change) and
+offers one primary action to see the change plus one secondary action to choose
+a region. The map and its
 evidence, uncertainty, sharing, report, and display-setting controls remain the
 work surface; the longer three-step classroom welcome and purpose hub open only
 after choosing a region. The finished example uses an allow-listed deep link:

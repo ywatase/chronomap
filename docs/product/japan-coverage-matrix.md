@@ -4,8 +4,8 @@
 
 - 対象地域: 7
 - 公開Entity: 32
-- 公開FeatureVersion: 40
-- 到達可能Evidence: 62
+- 公開FeatureVersion: 44
+- 到達可能Evidence: 70
 - 到達可能Source: 37
 - 不足型の扱い: 資料・権利・不確実性を確認できるまで推測で補完しない
 
@@ -13,7 +13,7 @@
 
 | 地域 | dataset ID | Entity | FeatureVersion | Evidence | Source | Source Rights | 収録Entity type |
 |---|---|---:|---:|---:|---:|---:|---|
-| 巨椋池パイロットデータ | `ogurike:dataset:pilot-2026` | 3 | 4 | 9 | 4 | 4/4 | `waterbody` × 1, `watercourse` × 1, `other` × 1 |
+| 巨椋池パイロットデータ | `ogurike:dataset:pilot-2026` | 3 | 8 | 17 | 4 | 4/4 | `waterbody` × 1, `watercourse` × 1, `other` × 1 |
 | 利根川東遷パイロットデータ | `tonegawa:dataset:eastward-pilot` | 2 | 3 | 6 | 4 | 4/4 | `watercourse` × 1, `other` × 1 |
 | 平城京パイロットデータ | `heijokyo:dataset:pilot` | 4 | 5 | 5 | 3 | 3/3 | `settlement` × 1, `route` × 1, `boundary` × 1, `archaeological-site` × 1 |
 | 安土城・琵琶湖東岸パイロット | `azuchijo:dataset:pilot` | 10 | 14 | 16 | 13 | 13/13 | `waterbody` × 1, `coastline` × 1, `fortification` × 1, `settlement` × 1, `port` × 1, `battlefield` × 1, `route` × 1, `polity` × 1, `sphere-of-influence` × 1, `archaeological-site` × 1 |

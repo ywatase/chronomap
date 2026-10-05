@@ -1,9 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
 async function completeLesson(page: Page): Promise<void> {
-  await page.goto("/");
+  await page.goto("/?dataset=ogurike&lesson=ogurike-intro&step=uji-1590");
   await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
-  await page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ }).click();
   for (let index = 0; index < 3; index += 1) await page.locator("[data-lesson-next]").click();
   await expect(page.locator("[data-lesson-pack-open]")).toBeVisible();
 }

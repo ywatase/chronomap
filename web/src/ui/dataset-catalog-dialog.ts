@@ -1,6 +1,5 @@
 import type { DatasetCatalogCardModel, DatasetCatalogViewModel } from "../domain/dataset-catalog-view-model";
 import { LESSON_PACK_DRAFT_MAX_BYTES } from "../domain/lesson-pack-draft";
-import { LESSON_PACK_OFFER_PLANS, type LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 import type { UiCopy } from "./copy";
 
 export interface DatasetCatalogDialogActions {
@@ -82,7 +81,7 @@ function renderWelcome(model: DatasetCatalogViewModel, copy: UiCopy, isRoot: boo
   if (isRoot && model.featured) welcome.append(renderHero(model, copy));
 
   if (isRoot) welcome.append(renderPurposeHub(model, copy, actions));
-  welcome.append(renderOfferHub(model, copy));
+  welcome.append(renderLessonModeNote(copy));
 
   const steps = document.createElement("ol");
   steps.className = "dataset-catalog-steps";
@@ -141,110 +140,16 @@ function renderHero(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
   return hero;
 }
 
-function renderOfferHub(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {
+function renderLessonModeNote(copy: UiCopy): HTMLElement {
   const section = document.createElement("section");
-  section.className = "dataset-catalog-offers";
-  section.dataset.datasetCatalogOffers = "";
+  section.className = "dataset-catalog-lesson-mode";
+  section.dataset.datasetCatalogLessonMode = "";
   const heading = document.createElement("h3");
-  heading.textContent = copy.datasetCatalogOfferHeading;
+  heading.textContent = copy.datasetCatalogLessonMode;
   const lead = document.createElement("p");
-  lead.className = "dataset-catalog-offers-lead";
-  lead.textContent = copy.datasetCatalogOfferLead;
+  lead.textContent = copy.datasetCatalogLessonModeLead;
   section.append(heading, lead);
-
-  const cards = document.createElement("div");
-  cards.className = "dataset-catalog-offer-cards";
-  const freeUrl = model.featured?.packUrl ?? model.cards.find((card) => card.lessonUrl)?.lessonUrl ?? model.cards.find((card) => card.status === "available")?.mapUrl;
-  const builderUrl = model.featured?.builderUrl ?? model.cards.find((card) => card.builderUrl)?.builderUrl;
-  for (const plan of LESSON_PACK_OFFER_PLANS) {
-    const card = document.createElement("article");
-    card.className = `dataset-catalog-offer dataset-catalog-offer-${plan}`;
-    card.dataset.datasetCatalogOffer = plan;
-    const badgeText = copy.datasetCatalogOfferBadges[plan];
-    if (badgeText) {
-      const badge = document.createElement("p");
-      badge.className = "dataset-catalog-offer-badge";
-      badge.dataset.datasetCatalogOfferBadge = plan;
-      badge.textContent = badgeText;
-      card.append(badge);
-    }
-    const title = document.createElement("h4");
-    title.textContent = copy.datasetCatalogOfferTitles[plan];
-    const price = document.createElement("p");
-    price.className = "dataset-catalog-offer-price";
-    price.dataset.datasetCatalogOfferPrice = plan;
-    price.textContent = copy.datasetCatalogOfferPrices[plan];
-    const description = document.createElement("p");
-    description.textContent = copy.datasetCatalogOfferLeads[plan];
-    const benefit = document.createElement("p");
-    benefit.className = "dataset-catalog-offer-benefit";
-    benefit.textContent = copy.datasetCatalogOfferBenefits[plan];
-    const nextStep = document.createElement("p");
-    nextStep.className = "dataset-catalog-offer-next";
-    nextStep.dataset.datasetCatalogOfferNext = plan;
-    nextStep.textContent = copy.datasetCatalogOfferNextSteps[plan];
-    const outputs = document.createElement("div");
-    outputs.className = "dataset-catalog-offer-outputs";
-    outputs.dataset.datasetCatalogOfferOutputs = plan;
-    const outputsHeading = document.createElement("h5");
-    outputsHeading.textContent = copy.datasetCatalogOfferOutputsHeading;
-    const outputList = document.createElement("ul");
-    for (const outputText of copy.datasetCatalogOfferOutputs[plan]) {
-      const output = document.createElement("li");
-      output.className = "dataset-catalog-offer-output";
-      output.dataset.datasetCatalogOfferOutput = "";
-      output.textContent = outputText;
-      outputList.append(output);
-    }
-    outputs.append(outputsHeading, outputList);
-    card.append(title, price, description, benefit, nextStep, outputs);
-    const target = plan === "free-explore" ? freeUrl : builderUrl ? addOffer(builderUrl, plan) : undefined;
-    if (target) card.append(link(target, copy.datasetCatalogOfferActions[plan], "dataset-catalog-offer-link", plan !== "free-explore"));
-    else card.append(disabledPurposeAction(copy.datasetCatalogOfferActions[plan]));
-    if (plan !== "free-explore" && freeUrl) {
-      const preview = link(addOffer(model.featured?.packUrl ?? freeUrl, plan), copy.datasetCatalogOfferPreview, "dataset-catalog-offer-preview", false);
-      card.append(preview);
-    }
-    cards.append(card);
-  }
-  section.append(cards);
-  const pricing = document.createElement("p");
-  pricing.className = "dataset-catalog-offer-pricing";
-  pricing.textContent = copy.datasetCatalogOfferPricing;
-  section.append(pricing, renderAdoptionProcess(copy));
   return section;
-}
-
-function renderAdoptionProcess(copy: UiCopy): HTMLElement {
-  const process = document.createElement("section");
-  process.className = "dataset-catalog-process";
-  process.dataset.datasetCatalogProcess = "";
-  const heading = document.createElement("h4");
-  heading.textContent = copy.datasetCatalogProcessHeading;
-  const lead = document.createElement("p");
-  lead.className = "dataset-catalog-process-lead";
-  lead.textContent = copy.datasetCatalogProcessLead;
-  const steps = document.createElement("ol");
-  steps.className = "dataset-catalog-process-steps";
-  for (const text of copy.datasetCatalogProcessSteps) {
-    const step = document.createElement("li");
-    step.dataset.datasetCatalogProcessStep = "";
-    step.textContent = text;
-    steps.append(step);
-  }
-  process.append(heading, lead, steps);
-  return process;
-}
-
-function addOffer(url: string, plan: LessonPackOfferPlan): string {
-  try {
-    const base = typeof window === "undefined" ? "https://chronomap.invalid" : window.location.href;
-    const parsed = new URL(url, base);
-    parsed.searchParams.set("offer", plan);
-    return parsed.href.startsWith("https://chronomap.invalid") ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.href;
-  } catch {
-    return url;
-  }
 }
 
 function renderFeatured(model: DatasetCatalogViewModel, copy: UiCopy): HTMLElement {

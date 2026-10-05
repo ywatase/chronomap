@@ -11,12 +11,12 @@ ROOT = Path(__file__).parents[1]
 PACKAGE = ROOT / "data" / "ogurike"
 
 
-def test_ogurike_package_has_three_entities_and_four_public_versions():
+def test_ogurike_package_has_three_entities_and_eight_public_versions():
     package = load_package(PACKAGE)
     assert package.dataset["defaultLanguage"] == "ja"
     assert len(package.entities) == 3
     features = package.feature_versions["features"]
-    assert len(features) == 4
+    assert len(features) == 8
     assert {feature["geometry"]["type"] for feature in features} == {"Point", "LineString", "Polygon"}
     assert all(feature["properties"]["publicationStatus"] == "public" for feature in features)
 
@@ -44,7 +44,7 @@ def test_ogurike_restricted_sources_are_citation_only():
 def test_ogurike_audit_reaches_all_public_versions_and_source_rights():
     report = audit_package(load_package(PACKAGE))
 
-    assert report.feature_count == 4
+    assert report.feature_count == 8
     assert {feature.geometry_type for feature in report.features} == {"Point", "LineString", "Polygon"}
     assert all(len(feature.uncertainty) == 4 for feature in report.features)
     assert all(feature.evidence for feature in report.features)

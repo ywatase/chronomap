@@ -2,12 +2,9 @@ import { expect, test } from "@playwright/test";
 
 test.describe("guided Ogurike lesson", () => {
   test("moves through the four steps and keeps the lesson share URL restorable", async ({ page }, testInfo) => {
-    await page.goto("/");
+    await page.goto("/?dataset=ogurike&lesson=ogurike-intro&step=uji-1590");
     await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
 
-    const launch = page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ });
-    await expect(launch).toBeVisible();
-    await launch.click();
     await expect(page.locator("[data-lesson-progress]")).toHaveText(/1\/4|1 of 4/);
     await expect(page.getByLabel(/表示年|Year/)).toHaveValue("1590");
     expect(page.url()).toContain("lesson=ogurike-intro");

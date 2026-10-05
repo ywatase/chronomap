@@ -66,8 +66,11 @@ async function loadDataset(retrying = false): Promise<void> {
   if (currentRequest !== requestId) return;
   if (!loaded) { renderFailure(); return; }
   const requestedLessonId = parseRequestedLessonId();
-  const defaultLessonId = requestedLessonId ?? featuredLessonCatalogEntry(entry)?.id;
-  const lesson = selectAllowedLesson(entry, loaded.lessons, defaultLessonId);
+  // The public entry point is the map viewer. A guided lesson is an explicit
+  // mode selected through a lesson URL, never an implicit default.
+  const lesson = requestedLessonId
+    ? selectAllowedLesson(entry, loaded.lessons, requestedLessonId)
+    : null;
   canonicalizeDatasetUrl(entry.slug, requestedLessonId ? Boolean(lesson) : false, requestedLessonId);
   mountLoadedDataset(entry, loaded.bundle, loaded.lessons, lesson, currentRequest);
 }

@@ -15,7 +15,7 @@ def test_ogurike_public_bundle_has_only_reachable_public_records(tmp_path: Path)
     build_public_bundle(load_package(DATA), output)
 
     features = json.loads((output / "feature-versions.geojson").read_text(encoding="utf-8"))
-    assert len(features["features"]) == 4
+    assert len(features["features"]) == 8
     assert {feature["properties"]["entityId"] for feature in features["features"]} == {
         "ogurike:entity:waterbody",
         "ogurike:entity:ujigawa",

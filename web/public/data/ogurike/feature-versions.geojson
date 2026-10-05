@@ -259,6 +259,336 @@
         "coordinates": [
           [
             [
+              135.742,
+              34.934
+            ],
+            [
+              135.769,
+              34.938
+            ],
+            [
+              135.799,
+              34.936
+            ],
+            [
+              135.818,
+              34.913
+            ],
+            [
+              135.809,
+              34.89
+            ],
+            [
+              135.785,
+              34.876
+            ],
+            [
+              135.752,
+              34.883
+            ],
+            [
+              135.735,
+              34.906
+            ],
+            [
+              135.742,
+              34.934
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ogurike:version:waterbody-1590",
+      "properties": {
+        "description": {
+          "ja": "国土交通省近畿地方整備局の変遷図①（秀吉による河川工事前）をもとに、巨椋池周辺の相対的な水域範囲を現在の地図上へ置いた概略面です。原図の湖岸線・面積・水深を再現しません。"
+        },
+        "entityId": "ogurike:entity:waterbody",
+        "evidenceIds": [
+          "ogurike:evidence:waterbody-1590-geometry",
+          "ogurike:evidence:waterbody-1590-temporal"
+        ],
+        "labels": {
+          "ja": "巨椋池（1590年・工事前の概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1590,
+            "latestYear": 1590,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1590,
+            "latestYear": 1590,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1590-geometry"
+            ],
+            "note": "少数頂点の概略面であり、精密な湖岸線ではない。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1590-temporal"
+            ],
+            "note": "資料図①の巨椋池として扱う。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1590-geometry"
+            ],
+            "note": "資料図の相対位置を現在の地図へ概略配置した。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1590-temporal"
+            ],
+            "note": "資料図①の年代区分に基づく。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.748,
+              34.931
+            ],
+            [
+              135.775,
+              34.938
+            ],
+            [
+              135.803,
+              34.929
+            ],
+            [
+              135.814,
+              34.909
+            ],
+            [
+              135.805,
+              34.888
+            ],
+            [
+              135.779,
+              34.88
+            ],
+            [
+              135.752,
+              34.889
+            ],
+            [
+              135.741,
+              34.91
+            ],
+            [
+              135.748,
+              34.931
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ogurike:version:waterbody-1596",
+      "properties": {
+        "description": {
+          "ja": "国土交通省近畿地方整備局の変遷図②（秀吉による河川工事後）をもとにした概略面です。工事後の正確な湖岸線や太閤堤の線形を示しません。"
+        },
+        "entityId": "ogurike:entity:waterbody",
+        "evidenceIds": [
+          "ogurike:evidence:waterbody-1596-geometry",
+          "ogurike:evidence:waterbody-1596-temporal"
+        ],
+        "labels": {
+          "ja": "巨椋池（1596年・工事後の概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1596,
+            "latestYear": 1596,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1596,
+            "latestYear": 1596,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1596-geometry"
+            ],
+            "note": "少数頂点の概略面であり、精密な湖岸線ではない。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1596-temporal"
+            ],
+            "note": "資料図②の巨椋池として扱う。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1596-geometry"
+            ],
+            "note": "資料図の相対位置を現在の地図へ概略配置した。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1596-temporal"
+            ],
+            "note": "資料図②の年代区分に基づく。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.754,
+              34.926
+            ],
+            [
+              135.773,
+              34.934
+            ],
+            [
+              135.798,
+              34.929
+            ],
+            [
+              135.811,
+              34.91
+            ],
+            [
+              135.803,
+              34.89
+            ],
+            [
+              135.778,
+              34.882
+            ],
+            [
+              135.754,
+              34.889
+            ],
+            [
+              135.744,
+              34.909
+            ],
+            [
+              135.754,
+              34.926
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ogurike:version:waterbody-1885",
+      "properties": {
+        "description": {
+          "ja": "国土交通省近畿地方整備局の変遷図③（淀川改良工事前）をもとにした概略面です。1885年の精密な湖岸線・測量図ではありません。"
+        },
+        "entityId": "ogurike:entity:waterbody",
+        "evidenceIds": [
+          "ogurike:evidence:waterbody-1885-geometry",
+          "ogurike:evidence:waterbody-1885-temporal"
+        ],
+        "labels": {
+          "ja": "巨椋池（1885年・工事前の概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1885,
+            "latestYear": 1885,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1885,
+            "latestYear": 1885,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1885-geometry"
+            ],
+            "note": "少数頂点の概略面であり、精密な湖岸線ではない。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1885-temporal"
+            ],
+            "note": "資料図③の巨椋池として扱う。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1885-geometry"
+            ],
+            "note": "資料図の相対位置を現在の地図へ概略配置した。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1885-temporal"
+            ],
+            "note": "資料図③の年代区分に基づく。"
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
               135.758,
               34.92
             ],
@@ -361,6 +691,116 @@
               "ogurike:evidence:waterbody-temporal"
             ],
             "note": ""
+          }
+        }
+      },
+      "type": "Feature"
+    },
+    {
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              135.763,
+              34.919
+            ],
+            [
+              135.777,
+              34.926
+            ],
+            [
+              135.795,
+              34.922
+            ],
+            [
+              135.803,
+              34.908
+            ],
+            [
+              135.796,
+              34.895
+            ],
+            [
+              135.778,
+              34.89
+            ],
+            [
+              135.762,
+              34.898
+            ],
+            [
+              135.756,
+              34.91
+            ],
+            [
+              135.763,
+              34.919
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ogurike:version:waterbody-1933",
+      "properties": {
+        "description": {
+          "ja": "国土交通省近畿地方整備局の変遷図⑤（淀川改良工事増補完成時）をもとにした残存水域の概略面です。干拓前後の精密な境界ではありません。"
+        },
+        "entityId": "ogurike:entity:waterbody",
+        "evidenceIds": [
+          "ogurike:evidence:waterbody-1933-geometry",
+          "ogurike:evidence:waterbody-1933-temporal"
+        ],
+        "labels": {
+          "ja": "巨椋池（1933年・残存水域の概略）"
+        },
+        "publicationStatus": "public",
+        "rights": {
+          "attribution": "国土交通省近畿地方整備局（原資料）、Chronomap（概略加工）",
+          "status": "open-license",
+          "terms": "PDL1.0の出典表示と編集・加工表示を含みます。"
+        },
+        "temporal": {
+          "end": {
+            "earliestYear": 1933,
+            "latestYear": 1933,
+            "precision": "year",
+            "qualifier": "exact"
+          },
+          "start": {
+            "earliestYear": 1933,
+            "latestYear": 1933,
+            "precision": "year",
+            "qualifier": "exact"
+          }
+        },
+        "uncertainty": {
+          "geometry": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1933-geometry"
+            ],
+            "note": "少数頂点の概略面であり、精密な湖岸線ではない。"
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1933-temporal"
+            ],
+            "note": "資料図⑤の残存水域として扱う。"
+          },
+          "location": {
+            "assessment": "approximate",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1933-geometry"
+            ],
+            "note": "資料図の相対位置を現在の地図へ概略配置した。"
+          },
+          "temporal": {
+            "assessment": "well-supported",
+            "evidenceIds": [
+              "ogurike:evidence:waterbody-1933-temporal"
+            ],
+            "note": "資料図⑤の年代区分に基づく。"
           }
         }
       },

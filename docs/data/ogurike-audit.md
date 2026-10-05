@@ -2,7 +2,7 @@
 
 - データセットID: `ogurike:dataset:pilot-2026`
 - 既定言語: `ja`
-- 公開FeatureVersion: 4
+- 公開FeatureVersion: 8
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
@@ -12,7 +12,11 @@
 | `ogurike:version:reclamation-monument-1942` | 巨椋池干拓之碑（1942年） | Point | 1942年以降 | open-license |
 | `ogurike:version:ujigawa-1590` | 宇治川（1590年・工事前） | LineString | 1590年 | open-license |
 | `ogurike:version:ujigawa-1596` | 宇治川（1596年・工事後） | LineString | 1596年 | open-license |
+| `ogurike:version:waterbody-1590` | 巨椋池（1590年・工事前の概略） | Polygon | 1590年 | open-license |
+| `ogurike:version:waterbody-1596` | 巨椋池（1596年・工事後の概略） | Polygon | 1596年 | open-license |
+| `ogurike:version:waterbody-1885` | 巨椋池（1885年・工事前の概略） | Polygon | 1885年 | open-license |
 | `ogurike:version:waterbody-1910` | 巨椋池（1910年・概略） | Polygon | 1910年 | open-license |
+| `ogurike:version:waterbody-1933` | 巨椋池（1933年・残存水域の概略） | Polygon | 1933年 | open-license |
 
 ### `ogurike:version:reclamation-monument-1942`
 
@@ -90,6 +94,81 @@
 
   - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
 
+### `ogurike:version:waterbody-1590`
+
+- 地物: 巨椋池（1590年・工事前の概略） (`ogurike:entity:waterbody`)
+- geometry: `Polygon`
+- 年代: 1590年
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
+- 不確実性:
+  - `temporal`: `well-supported` — 資料図①の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
+  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
+  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
+  - `identity`: `well-supported` — 資料図①の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `ogurike:evidence:waterbody-1590-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1590-geometry` — 変遷図①に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。原図の境界・面積・水深を再現しない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:waterbody-1590-temporal` | citation | identity, temporal | PDF p.2-21末尾–p.2-22 図2.2-1① | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1590-temporal` — 資料図が河川工事前の1590年スナップショットとして示すことを確認する。
+
+- Source:
+
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+
+### `ogurike:version:waterbody-1596`
+
+- 地物: 巨椋池（1596年・工事後の概略） (`ogurike:entity:waterbody`)
+- geometry: `Polygon`
+- 年代: 1596年
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
+- 不確実性:
+  - `temporal`: `well-supported` — 資料図②の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1596-temporal`)
+  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1596-geometry`)
+  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1596-geometry`)
+  - `identity`: `well-supported` — 資料図②の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1596-temporal`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `ogurike:evidence:waterbody-1596-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1596-geometry` — 変遷図②に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。工事後の正確な湖岸線ではない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:waterbody-1596-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1② | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1596-temporal` — 資料図が河川工事後の1596年スナップショットとして示すことを確認する。
+
+- Source:
+
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+
+### `ogurike:version:waterbody-1885`
+
+- 地物: 巨椋池（1885年・工事前の概略） (`ogurike:entity:waterbody`)
+- geometry: `Polygon`
+- 年代: 1885年
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
+- 不確実性:
+  - `temporal`: `well-supported` — 資料図③の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
+  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
+  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
+  - `identity`: `well-supported` — 資料図③の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `ogurike:evidence:waterbody-1885-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1885-geometry` — 変遷図③の相対的な水域範囲を少数頂点の概略面へ加工した。1885年の精密な湖岸線・測量図ではない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:waterbody-1885-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1③ | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1885-temporal` — 資料図が淀川改良工事前の1885年スナップショットとして示すことを確認する。
+
+- Source:
+
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+
 ### `ogurike:version:waterbody-1910`
 
 - 地物: 巨椋池（1910年・概略） (`ogurike:entity:waterbody`)
@@ -116,6 +195,31 @@
 - Source:
 
   - `ogurike:source:kyoto-prefecture-rdb`: 京都府レッドデータブック2015『巨椋池』 — 巨椋池（京都府レッドデータブック）; 作成者: 京都府; 2015年; 参照日: 2026-09-17 — rights: `restricted` — https://www.pref.kyoto.jp/kankyo/rdb/geo/db/sur0005.html
+  - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
+
+### `ogurike:version:waterbody-1933`
+
+- 地物: 巨椋池（1933年・残存水域の概略） (`ogurike:entity:waterbody`)
+- geometry: `Polygon`
+- 年代: 1933年
+- 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
+- 不確実性:
+  - `temporal`: `well-supported` — 資料図⑤の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
+  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
+  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
+  - `identity`: `well-supported` — 資料図⑤の残存水域として扱う。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
+
+- Evidence:
+
+| Evidence | 用途 | supports | locator | source |
+|---|---|---|---|---|
+| `ogurike:evidence:waterbody-1933-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1933-geometry` — 変遷図⑤の残存水域の相対的な範囲を少数頂点の概略面へ加工した。干拓前後の精密な境界ではない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:waterbody-1933-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1⑤ | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:waterbody-1933-temporal` — 資料図が淀川改良工事増補完成時の1933年スナップショットとして示すことを確認する。
+
+- Source:
+
   - `ogurike:source:mlit-ogurike-transition`: 国土交通省近畿地方整備局『流域及び河川の概要について』図2.2-1 巨椋池周辺の変遷 — 巨椋池周辺の変遷（国土交通省近畿地方整備局）; 作成者: 国土交通省近畿地方整備局; 2012年; 参照日: 2026-09-17 — rights: `open-license`; 表示: 国土交通省近畿地方整備局 — https://www.kkr.mlit.go.jp/river/iinkaikatsudou/kensyou/qgl8vl0000008nhe-att/houkokusyos_02.pdf
 
 ## Source一覧

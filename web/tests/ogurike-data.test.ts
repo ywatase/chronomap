@@ -21,7 +21,7 @@ describe("ogurike public bundle", () => {
     expect(fetch).toHaveBeenCalledTimes(resources.length);
     expect(bundle.dataset.defaultLanguage).toBe("ja");
     expect(bundle.dataset.title.ja).toBe("巨椋池パイロットデータ");
-    expect(bundle.features).toHaveLength(4);
+    expect(bundle.features).toHaveLength(8);
     expect(Object.keys(bundle.entitiesById)).toHaveLength(3);
   });
 });

@@ -51,6 +51,57 @@
     "note": "資料図が河川工事後の1596年スナップショットとして示すことを確認する。"
   },
   {
+    "id": "ogurike:evidence:waterbody-1590-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "変遷図①に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。原図の境界・面積・水深を再現しない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1590-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-21末尾–p.2-22 図2.2-1①",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "資料図が河川工事前の1590年スナップショットとして示すことを確認する。"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1596-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "変遷図②に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。工事後の正確な湖岸線ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1596-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1②",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "資料図が河川工事後の1596年スナップショットとして示すことを確認する。"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1885-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "変遷図③の相対的な水域範囲を少数頂点の概略面へ加工した。1885年の精密な湖岸線・測量図ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1885-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1③",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "資料図が淀川改良工事前の1885年スナップショットとして示すことを確認する。"
+  },
+  {
     "id": "ogurike:evidence:waterbody-geometry",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "locator": "PDF p.2-22 図2.2-1④『淀川改良工事完成時（1910年）』",
@@ -74,5 +125,22 @@
     "usage": "citation",
     "supports": ["temporal", "identity"],
     "note": "資料図が淀川改良工事完成時の1910年スナップショットとして示すことを確認する。"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1933-geometry",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』",
+    "usage": "derived-geometry",
+    "supports": ["geometry", "location"],
+    "note": "変遷図⑤の残存水域の相対的な範囲を少数頂点の概略面へ加工した。干拓前後の精密な境界ではない。",
+    "publicationBasis": "open-license"
+  },
+  {
+    "id": "ogurike:evidence:waterbody-1933-temporal",
+    "sourceId": "ogurike:source:mlit-ogurike-transition",
+    "locator": "PDF p.2-22 図2.2-1⑤",
+    "usage": "citation",
+    "supports": ["temporal", "identity"],
+    "note": "資料図が淀川改良工事増補完成時の1933年スナップショットとして示すことを確認する。"
   }
 ]

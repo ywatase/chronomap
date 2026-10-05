@@ -86,92 +86,21 @@ test("keeps the root hub when a malformed draft is selected", async ({ page }) =
   expect(page.url()).not.toContain("invalid.json");
 });
 
-test("carries an adoption path from the catalog into the consultation handoff", async ({ page }, testInfo) => {
-  await page.addInitScript(() => {
-    window.print = () => { document.body.dataset.printCalled = "true"; };
-  });
+test("keeps education optional and prices out of the catalog", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
-  const offers = page.locator("[data-dataset-catalog-offers]");
-  await expect(offers).toBeVisible();
-  await expect(offers.locator("[data-dataset-catalog-offer]")).toHaveCount(3);
-  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-price]")).toContainText(/¥49,800|49,800/);
-  await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-price]")).toContainText(/¥198,000|198,000/);
-  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-badge]")).toContainText(/最初の有料パイロットにおすすめ|Recommended first paid pilot/);
-  await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/地域教材の個別制作|Custom regional production/);
-  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);
-  await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]")).toContainText(/完成見本を確認して|Preview the finished example/);
-  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-next]")).toContainText(/次の一歩: 授業条件を選び|Next: choose class conditions/);
-  await expect(offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-next]")).toContainText(/次の一歩: 地域条件を選び|Next: choose region conditions/);
-  await expect(offers.locator("[data-dataset-catalog-offer=free-explore] [data-dataset-catalog-offer-output]")).toHaveCount(3);
-  await expect(offers.locator("[data-dataset-catalog-offer=classroom-pilot] [data-dataset-catalog-offer-output]")).toHaveCount(3);
-  await expect(offers.locator("[data-dataset-catalog-offer=custom-region]")).toContainText(/希望地域・題材の出典整理|Region\/topic source curation/);
-  const preview = offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-preview]");
-  await expect(preview).toHaveCount(1);
-  await expect(preview).toContainText(/完成見本|finished example/);
-  await expect(preview).toHaveAttribute("href", /offer=custom-region/);
-  const process = offers.locator("[data-dataset-catalog-process]");
-  await expect(process).toBeVisible();
-  await expect(process.locator("[data-dataset-catalog-process-step]")).toHaveCount(3);
-  await expect(process).toContainText(/範囲・価格・納期|scope, price, and delivery/);
-  await page.screenshot({ path: testInfo.outputPath("catalog-offers.png"), fullPage: true });
-  await offers.locator("[data-dataset-catalog-offer=custom-region] [data-dataset-catalog-offer-link]").click();
-  await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("custom-region");
-  const builder = page.locator("[data-lesson-pack-builder]");
-  await expect(builder).toBeVisible({ timeout: 15_000 });
-  await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/地域教材の個別制作|Custom regional production/);
-  await expect(builder.locator("[data-lesson-pack-builder-offer]")).toContainText(/¥198,000|198,000/);
-  await builder.locator("[data-lesson-pack-builder-preview]").click();
-  const pack = page.locator("[data-lesson-pack-dialog]");
-  await pack.locator("[data-lesson-pack-print-student]").click();
-  const feedback = pack.locator("[data-lesson-pack-feedback-host]");
-  await feedback.locator('input[name="utilization"][value="近いうちに使いたい"]').check();
-  await feedback.locator('input[name="nextFeature"][value="自分の地域・題材を追加"]').check();
-  await feedback.locator('input[name="pilot-route"][value="consult"]').check();
-  await expect(feedback.locator('input[name="pilot-plan"][value="custom-region"]').locator("..")).toContainText(/¥198,000|198,000/);
-  await expect(feedback.locator("[data-lesson-pack-pilot-plan-note]")).toContainText(/価格案|Beta price proposal/);
-  await feedback.locator('input[name="pilot-budget"][value="地域・内容・条件が合えば検討したい"]').check();
-  await feedback.locator("[data-lesson-pack-pilot-form]").locator("button[type=submit]").click();
-  await expect(feedback.locator("[data-lesson-pack-pilot-answer]")).toHaveValue(/導入プラン: 地域教材の個別制作|Offer path: Custom regional lesson production/);
+  await expect(page.locator("[data-dataset-catalog-offers]")).toHaveCount(0);
+  await expect(page.locator("[data-dataset-catalog-lesson-mode]")).toContainText(/教材モード（任意）|Optional guided lesson/);
+  await expect(page.locator("body")).not.toContainText("¥198,000");
+  await expect(page.locator("body")).not.toContainText("¥49,800");
+  await page.screenshot({ path: testInfo.outputPath("catalog-viewer-first.png"), fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
 });
 
-test("lets a paid path preview the finished example before editing", async ({ page }, testInfo) => {
-  await page.goto("/");
-  await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();
-  const preview = page.locator('[data-dataset-catalog-offer="classroom-pilot"] [data-dataset-catalog-offer-preview]');
-  await expect(preview).toHaveAttribute("href", /offer=classroom-pilot/);
-  await preview.click();
-  const pack = page.locator("[data-lesson-pack-dialog]");
-  await expect(pack).toBeVisible();
-  await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/授業パイロット|Classroom pilot/);
-  await expect(pack.locator("[data-lesson-pack-offer]")).toContainText(/¥49,800|49,800/);
-  const consultation = pack.locator("[data-lesson-pack-consult]");
-  await expect(consultation).toContainText(/相談文を作る|Create a consultation brief/);
-  await consultation.click();
-  const consultationFeedback = pack.locator("[data-lesson-pack-feedback-host]");
-  await expect(consultationFeedback).toBeVisible();
-  await expect(consultationFeedback.locator('input[name="pilot-route"][value="consult"]')).toBeChecked();
-  const choiceGridColumns = async (selector: string): Promise<number> => {
-    return consultationFeedback.locator(selector).evaluate((element) => {
-      const leftEdges = new Set(Array.from(element.querySelectorAll<HTMLElement>(":scope > label")).map((label) => Math.round(label.getBoundingClientRect().left)));
-      return leftEdges.size;
-    });
-  };
-  expect(await choiceGridColumns("[data-lesson-pack-pilot-plan]")).toBe(testInfo.project.name === "mobile-chromium" ? 2 : 3);
-  expect(await choiceGridColumns("[data-lesson-pack-pilot-budget]")).toBe(2);
-  for (const selector of ["[data-lesson-pack-pilot-audience]", "[data-lesson-pack-pilot-duration]", "[data-lesson-pack-pilot-delivery]"]) {
-    expect(await choiceGridColumns(selector)).toBe(2);
-  }
-  await page.screenshot({ path: testInfo.outputPath("paid-preview-consult-shortcut.png"), fullPage: true });
-  await page.emulateMedia({ media: "print" });
-  await page.evaluate(() => { document.body.dataset.printDocument = "lesson-pack"; });
-  await expect(pack.locator("[data-lesson-pack-offer]")).toBeHidden();
-  await page.evaluate(() => { delete document.body.dataset.printDocument; });
-  await page.emulateMedia({ media: "screen" });
-  await expect.poll(() => new URL(page.url()).searchParams.get("offer")).toBe("classroom-pilot");
-  await expect.poll(() => new URL(page.url()).searchParams.get("view")).toBe("pack");
-  await page.locator("[data-lesson-pack-back]").click();
-  await expect(page.locator("[data-lesson-pack-builder]")).toBeVisible();
-  await expect(page.locator("[data-lesson-pack-builder-offer]")).toContainText(/授業パイロット|Classroom pilot/);
+test("opens a guided lesson only from an explicit lesson URL", async ({ page }) => {
+  await page.goto("/?dataset=ogurike&lesson=ogurike-intro&step=uji-1590");
+  await expect(page.locator("[data-lesson-progress]")).toContainText(/1\/4|1 of 4/);
+  await expect(page.locator("[data-viewer-mode]")).toContainText(/ビューアー|Viewer/);
+  await expect(page.locator("body")).not.toContainText("¥198,000");
+  await expect(page.locator("body")).not.toContainText("¥49,800");
 });

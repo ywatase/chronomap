@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Chronomap UI MVP", () => {
   test("territory visibility is independent from the feature list and details", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/?year=1590");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
     const settings = page.locator("[data-map-settings]");
     await settings.locator("summary").click();
@@ -19,7 +19,7 @@ test.describe("Chronomap UI MVP", () => {
   });
 
   test("loads the Ogurike data and exposes point metadata", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/?year=1590");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
     await expect(page.getByRole("heading", { name: "巨椋池パイロットデータ" })).toBeVisible();
     await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toBeVisible();
@@ -46,7 +46,7 @@ test.describe("Chronomap UI MVP", () => {
   });
 
   test("keyboard flow selects and closes a detail panel", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/?year=1590");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
     await page.getByLabel(/Year|年/).press("Tab");
     const river = page.getByRole("button", { name: /宇治川（1590年・工事前）/ });
@@ -74,7 +74,7 @@ test.describe("Chronomap UI MVP", () => {
   test("a blocked GSI basemap can retry without losing the selected detail", async ({ page }) => {
     let blockBasemap = true;
     await page.route(/(?:cyberjapandata|maps)\.gsi\.go\.jp/, (route) => blockBasemap ? route.abort() : route.continue());
-    await page.goto("/");
+    await page.goto("/?year=1590");
     const river = page.getByRole("button", { name: /宇治川（1590年・工事前）/ });
     await expect(river).toBeVisible();
     const failure = page.getByRole("alert");

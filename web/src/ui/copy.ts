@@ -13,6 +13,10 @@ export interface UiCopy {
   readonly directYearLabel: string;
   readonly recordedLabel: string;
   readonly recordedHint: string;
+  readonly viewerMode: string;
+  readonly timelineLabel: string;
+  readonly timelineHint: string;
+  readonly timelineSnapshot: (year: number, count: number) => string;
   readonly showingYear: (year: number) => string;
   readonly mapLabel: string;
   readonly mapFallback: string;
@@ -275,6 +279,8 @@ export interface UiCopy {
   readonly datasetCatalogPackBeta: string;
   readonly datasetCatalogStartLesson: string;
   readonly datasetCatalogViewMap: string;
+  readonly datasetCatalogLessonMode: string;
+  readonly datasetCatalogLessonModeLead: string;
   readonly datasetCatalogUnavailable: string;
   readonly datasetCatalogLessonUnavailable: string;
   readonly datasetCatalogFreeHeading: string;
@@ -340,6 +346,10 @@ const EN_COPY: UiCopy = {
   directYearLabel: "Enter a year",
   recordedLabel: "Recorded snapshots",
   recordedHint: "Choose a recorded snapshot to skip years without authored data.",
+  viewerMode: "Map viewer · explore freely",
+  timelineLabel: "Historical change timeline",
+  timelineHint: "Only authored snapshots are shown. Select a year to compare the visible geography.",
+  timelineSnapshot: (year, count) => `${formatYear(year, "en")} · ${count} feature${count === 1 ? "" : "s"}`,
   showingYear: (year) => `Showing possible activity overlapping ${formatYear(year, "en")}.`,
   mapLabel: "Map area",
   mapFallback: "Map is loading. The feature list remains available while the basemap starts.",
@@ -639,6 +649,8 @@ const EN_COPY: UiCopy = {
   datasetCatalogPackBeta: "Classroom pack: free beta",
   datasetCatalogStartLesson: "Start free lesson",
   datasetCatalogViewMap: "View map only",
+  datasetCatalogLessonMode: "Optional guided lesson",
+  datasetCatalogLessonModeLead: "Lessons are an optional layer after exploring the map. Open one only when you want prompts and classroom materials; this viewer has no pricing or checkout flow.",
   datasetCatalogUnavailable: "This public dataset is temporarily unavailable.",
   datasetCatalogLessonUnavailable: "The map is available; a guided lesson is not published yet.",
   datasetCatalogFreeHeading: "Free to explore now",
@@ -696,6 +708,10 @@ const JA_COPY: UiCopy = {
   directYearLabel: "年を直接指定",
   recordedLabel: "収録時点",
   recordedHint: "収録時点を選ぶと、データのない年を飛ばして移動できます。",
+  viewerMode: "地図ビューアー・自由に調べる",
+  timelineLabel: "地形の変遷タイムライン",
+  timelineHint: "実際に作成したスナップショットだけを表示しています。年を選ぶと、その時点の地物を比較できます。",
+  timelineSnapshot: (year, count) => `${formatYear(year, "ja")}・${count}件`,
   showingYear: (year) => `${formatYear(year, "ja")}の可能な活動を表示しています。`,
   mapLabel: "地図",
   mapFallback: "地図を読み込んでいます。背景地図の準備中も地物一覧を利用できます。",
@@ -995,6 +1011,8 @@ const JA_COPY: UiCopy = {
   datasetCatalogPackBeta: "教材パックはβ版無料",
   datasetCatalogStartLesson: "無料教材を始める",
   datasetCatalogViewMap: "地図だけ見る",
+  datasetCatalogLessonMode: "教材モード（任意）",
+  datasetCatalogLessonModeLead: "地図を調べた後、問いや授業用資料が必要なときだけ教材を開けます。このビューアーには価格表示・決済導線はありません。",
   datasetCatalogUnavailable: "この公開データセットは現在利用できません。",
   datasetCatalogLessonUnavailable: "地図は利用できますが、ガイド教材はまだ公開されていません。",
   datasetCatalogFreeHeading: "今すぐ無料で試せること",

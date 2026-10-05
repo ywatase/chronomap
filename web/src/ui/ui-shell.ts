@@ -1,4 +1,5 @@
 import { displayYearLocalized, initialYear, localizedText, recordedYears } from "../domain/labels";
+import { filterFeaturesByYear } from "../domain/temporal-filter";
 import type { AppEvent, AppState } from "../app/state";
 import { reduce } from "../app/state";
 import type { Dataset, HistoricalMapAsset, PublicBundle } from "../domain/types";
@@ -39,7 +40,8 @@ export interface UiShellOptions {
 
 export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: (event: AppEvent) => void, lesson: Lesson | null = null, catalogLoader: DatasetCatalogLoader | null = null, options: UiShellOptions = {}): AppController {
   const copy = uiCopy(bundle.dataset.defaultLanguage);
-  const years = authoredYears(bundle, initialYear(bundle.dataset));
+  const defaultYear = viewerDefaultYear(bundle);
+  const years = authoredYears(bundle, defaultYear);
   const shared = typeof window === "undefined" ? {} : parseSharedState(window.location.search);
   const datasetSlug = datasetKey(bundle.dataset.id);
   const sharedMatchesDataset = !shared.dataset || shared.dataset === datasetSlug;
@@ -63,7 +65,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let workshopPreviewOpen = false;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
-  let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? initialYear(bundle.dataset), visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
+  let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? defaultYear, visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
   let adapter: MapAdapterLike | null = null;
   let lastFeatureId: string | null = null;
   const historicalMapAsset = bundle.dataset.historicalMapAssets?.find(isTileHistoricalMapAsset) ?? null;
@@ -107,6 +109,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const shareUrl = document.createElement("input"); shareUrl.type = "url"; shareUrl.readOnly = true; shareUrl.hidden = true; shareUrl.className = "share-url"; shareUrl.setAttribute("aria-label", copy.shareUrlLabel); shareUrl.dataset.shareUrl = "";
   const shareNotice = document.createElement("p"); shareNotice.className = "share-notice"; shareNotice.hidden = true; shareNotice.setAttribute("role", "status"); shareNotice.setAttribute("aria-live", "polite"); shareNotice.dataset.shareFeedback = "";
   controls.append(previous, yearField, recordedField, next, shareButton, reportButton, hint, shownYear, shareUrl, shareNotice); header.append(controls);
+  const viewerMode = document.createElement("p"); viewerMode.className = "viewer-mode"; viewerMode.dataset.viewerMode = ""; viewerMode.textContent = copy.viewerMode; header.insertBefore(viewerMode, controls);
+  const timeline = renderViewerTimeline(copy, bundle, years, (year) => { leaveLesson(); emit({ type: "yearChanged", year }); });
+  header.append(timeline);
   const lessonHost = document.createElement("section"); lessonHost.className = "lesson-host"; lessonHost.hidden = !lesson; lessonHost.setAttribute("aria-label", copy.language === "ja" ? "ガイド教材" : "Guided lesson"); header.append(lessonHost);
 
   const reportDialog = document.createElement("section");
@@ -158,7 +163,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback;
   const mapSettings = createMapSettings(copy, (settings) => { adapter?.setBasemapOpacity?.(settings.basemapOpacity); adapter?.setHistoricalOpacity?.(settings.historicalOpacity); adapter?.setHistoricalVisibility?.(settings.historicalVisible); adapter?.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter?.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter?.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); }, historicalMapAsset);
   mapFrame.append(map, mapSettings.element); content.append(mapFrame);
-  const rootQuickStart = rootQuickStartOpen ? renderRootQuickStart(copy, bundle, lesson, datasetSlug) : null;
+  const rootQuickStart = rootQuickStartOpen ? renderRootQuickStart(copy, bundle, datasetSlug) : null;
   if (rootQuickStart) mapFrame.append(rootQuickStart);
   const sidebar = document.createElement("section"); sidebar.className = "sidebar";
   const comparison = document.createElement("section"); comparison.className = "comparison"; sidebar.append(comparison);
@@ -475,6 +480,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     const previousYear = adjacentYear(years, state.selectedYear, -1); const nextYear = adjacentYear(years, state.selectedYear, 1);
     previous.disabled = disabled || previousYear === null; next.disabled = disabled || nextYear === null; input.disabled = disabled; snapshotSelect.disabled = disabled;
     shownYear.textContent = copy.showingYear(state.selectedYear); shownYear.dataset.currentYear = String(state.selectedYear);
+    updateViewerTimeline(timeline, state.selectedYear, disabled);
     live.textContent = statusText(state, copy);
     basemapAlert.hidden = !state.basemapError; basemapAlert.textContent = state.basemapError ? copy.basemapFailure(state.basemapError) : ""; basemapRetry.hidden = !state.basemapError || !adapter?.retry; retry.hidden = state.status !== "failed";
     reportButton.hidden = state.status === "loading" || state.status === "retrying" || state.status === "failed" || state.selectedFeatureId === null;
@@ -525,11 +531,25 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
 }
 
 function authoredYears(bundle: PublicBundle, fallback: number): readonly number[] { const years = [...recordedYears(bundle.features)]; if (!years.includes(fallback)) years.push(fallback); return years.sort((a, b) => a - b); }
+function viewerDefaultYear(bundle: PublicBundle): number {
+  const fallback = initialYear(bundle.dataset);
+  const areaYears = bundle.features
+    .filter((feature) => feature.properties.publicationStatus === "public" && (feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"))
+    .flatMap((feature) => [feature.properties.temporal.start?.latestYear, feature.properties.temporal.end?.latestYear])
+    .filter((year): year is number => typeof year === "number" && Number.isFinite(year));
+  // The public viewer should open on the canonical modern comparison frame
+  // when a dataset authors one. Ogurike has later reclamation snapshots, but
+  // 1910 is the useful baseline for seeing the lake before the present-day
+  // disappearance. Other datasets retain their dataset-authored initial frame
+  // so a period with several overlapping entities does not silently change.
+  if (areaYears.includes(1910)) return 1910;
+  return fallback;
+}
 function adjacentYear(years: readonly number[], current: number, direction: -1 | 1): number | null { if (!years.length) return null; const index = years.indexOf(current); if (index >= 0) return years[index + direction] ?? null; if (direction < 0) return [...years].reverse().find((year) => year < current) ?? null; return years.find((year) => year > current) ?? null; }
 function datasetKey(id: string): string { return id.split(":", 1)[0] ?? id; }
 function yearWithinDataset(year: number, dataset: Dataset): boolean { const minimum = dataset.temporalExtent.start?.earliestYear; const maximum = dataset.temporalExtent.end?.latestYear; return (minimum === null || minimum === undefined || year >= minimum) && (maximum === null || maximum === undefined || year <= maximum); }
 function cameraFromSharedState(state: ReturnType<typeof parseSharedState>): MapCamera | null { return state.longitude !== undefined && state.latitude !== undefined && state.zoom !== undefined ? { longitude: state.longitude, latitude: state.latitude, zoom: state.zoom } : null; }
-function renderRootQuickStart(copy: UiCopy, bundle: PublicBundle, lesson: Lesson | null, datasetSlug: string): HTMLElement {
+function renderRootQuickStart(copy: UiCopy, bundle: PublicBundle, datasetSlug: string): HTMLElement {
   const aside = document.createElement("aside");
   aside.className = "root-quickstart";
   aside.dataset.rootQuickstart = "";
@@ -544,14 +564,13 @@ function renderRootQuickStart(copy: UiCopy, bundle: PublicBundle, lesson: Lesson
   lead.textContent = copy.datasetCatalogRootQuickStartLead;
   const actions = document.createElement("div");
   actions.className = "root-quickstart-actions";
-  const firstStep = lesson?.steps[0] ?? null;
   const query = sharedQuery({
     dataset: datasetSlug,
     view: null,
-    lessonId: lesson?.id ?? null,
-    lessonStepId: firstStep?.id ?? null,
-    year: firstStep?.year ?? initialYear(bundle.dataset),
-    featureId: firstStep?.featureId ?? null,
+    lessonId: null,
+    lessonStepId: null,
+    year: viewerDefaultYear(bundle),
+    featureId: null,
   });
   const primary = document.createElement("a");
   primary.className = "root-quickstart-primary";
@@ -569,6 +588,37 @@ function renderRootQuickStart(copy: UiCopy, bundle: PublicBundle, lesson: Lesson
   note.textContent = copy.datasetCatalogRootQuickStartNote;
   aside.append(kicker, heading, lead, actions, note);
   return aside;
+}
+function renderViewerTimeline(copy: UiCopy, bundle: PublicBundle, years: readonly number[], onSelect: (year: number) => void): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "viewer-timeline";
+  section.dataset.viewerTimeline = "";
+  section.setAttribute("aria-label", copy.timelineLabel);
+  const heading = document.createElement("h2");
+  heading.textContent = copy.timelineLabel;
+  const hint = document.createElement("p");
+  hint.className = "viewer-timeline-hint";
+  hint.textContent = copy.timelineHint;
+  const track = document.createElement("div");
+  track.className = "viewer-timeline-track";
+  for (const year of years) {
+    const snapshot = button(copy.timelineSnapshot(year, filterFeaturesByYear(bundle.features, year).length));
+    snapshot.dataset.viewerSnapshot = String(year);
+    snapshot.dataset.viewerSnapshotYear = String(year);
+    snapshot.title = copy.timelineSnapshot(year, filterFeaturesByYear(bundle.features, year).length);
+    snapshot.addEventListener("click", () => onSelect(year));
+    track.append(snapshot);
+  }
+  section.append(heading, hint, track);
+  return section;
+}
+function updateViewerTimeline(timeline: HTMLElement, currentYear: number, disabled: boolean): void {
+  for (const snapshot of timeline.querySelectorAll<HTMLButtonElement>("[data-viewer-snapshot]")) {
+    const isCurrent = snapshot.dataset.viewerSnapshot === String(currentYear);
+    snapshot.disabled = disabled;
+    if (isCurrent) snapshot.setAttribute("aria-current", "step");
+    else snapshot.removeAttribute("aria-current");
+  }
 }
 function button(text: string): HTMLButtonElement { const element = document.createElement("button"); element.type = "button"; element.textContent = text; return element; }
 function isLessonPackPrintScope(value: unknown): value is LessonPackPrintScope { return value === "student" || value === "teacher" || value === "full"; }

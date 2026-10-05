@@ -141,14 +141,13 @@ test("opens the Heijokyo lesson from the three-entry catalog using a bundle fixt
 });
 
 test("loads the checked-in Heijokyo bundle and completes its single-year lesson", async ({ page }) => {
-  await page.goto("/?dataset=heijokyo");
+  await page.goto("/?dataset=heijokyo&lesson=heijokyo-intro&step=capital-710");
   await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
   await expect(page.getByRole("heading", { name: /平城京パイロットデータ|Heijokyo pilot dataset/ })).toBeVisible();
   await expect(page.getByLabel(/収録時点|Recorded snapshots/).locator("option")).toHaveCount(1);
   await expect(page.locator("[data-feature-id]")).toHaveCount(5);
   await expect(page.locator("[data-comparison-cta]")).toHaveCount(0);
 
-  await page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ }).click();
   await expect(page.locator("[data-lesson-progress]")).toContainText(/1\/3|1 of 3/);
   await page.locator("[data-lesson-next]").click();
   await page.locator("[data-lesson-next]").click();

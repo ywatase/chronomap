@@ -41,8 +41,6 @@ button:disabled, input:disabled, select:disabled { cursor: not-allowed; opacity:
 .app-shell[data-root-quickstart] .app-header { padding-block: .65rem; }
 .app-shell[data-root-quickstart] .dataset-description { display: none; }
 .app-shell[data-root-quickstart] .dataset-switcher { margin: .35rem 0 0; }
-.app-shell[data-root-quickstart] .year-hint,
-.app-shell[data-root-quickstart] .shown-year { display: none; }
 .app-shell[data-root-quickstart] .lesson-launch { padding: .45rem .6rem; }
 .app-shell[data-root-quickstart] .lesson-launch .lesson-description,
 .app-shell[data-root-quickstart] .lesson-launch .lesson-meta { display: none; }
@@ -53,6 +51,7 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .dataset-switcher { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: -.35rem; margin-bottom: .7rem; }
 .dataset-switcher button { display: inline-flex; align-items: center; min-height: 2.5rem; padding: .35rem .7rem; border: 1px solid #155e8a; border-radius: .45rem; background: #155e8a; color: #fff; font-weight: 700; }
 .dataset-switcher button:hover, .dataset-switcher button:focus-visible { background: #0f4f75; }
+.viewer-mode { display: inline-flex; width: fit-content; margin: .25rem 0 .45rem; padding: .22rem .5rem; border: 1px solid #9bb3c2; border-radius: 999px; background: #edf6fb; color: #155e8a; font-size: .74rem; font-weight: 800; letter-spacing: .02em; }
 
 .year-controls { display: flex; align-items: end; flex-wrap: wrap; gap: .6rem; max-width: 78rem; }
 .year-controls > button { padding: .55rem .8rem; border: 1px solid #8297a8; border-radius: .55rem; background: #fff; color: #17324d; font-weight: 700; }
@@ -69,6 +68,13 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .shown-year { flex-basis: 100%; margin: .1rem 0 0; color: #304b60; font-size: .87rem; font-weight: 600; }
 .share-url { flex: 1 1 20rem; min-height: 2.75rem; min-width: 14rem; padding: .45rem .6rem; border: 1px solid #8297a8; border-radius: .5rem; background: #fff; color: #172331; }
 .share-notice { flex-basis: 100%; margin: .1rem 0 0; color: #155e8a; font-size: .82rem; font-weight: 700; }
+.viewer-timeline { display: grid; gap: .35rem; max-width: 78rem; margin-top: .7rem; padding: .65rem .75rem .7rem; border: 1px solid #c4d0d9; border-radius: .65rem; background: rgb(238 246 251 / 76%); }
+.viewer-timeline h2 { margin: 0; color: #17324d; font-size: .84rem; letter-spacing: .01em; }
+.viewer-timeline-hint { margin: 0; color: #536b7e; font-size: .75rem; line-height: 1.35; }
+.viewer-timeline-track { display: flex; gap: .35rem; overflow-x: auto; padding: .1rem 0 .15rem; scrollbar-width: thin; }
+.viewer-timeline-track button { flex: 0 0 auto; min-height: 2.3rem; padding: .35rem .65rem; border: 1px solid #8297a8; border-radius: .45rem; background: #fff; color: #17324d; font-size: .78rem; font-weight: 750; white-space: nowrap; }
+.viewer-timeline-track button:hover:not(:disabled), .viewer-timeline-track button:focus-visible { border-color: #155e8a; background: #e8f2fb; }
+.viewer-timeline-track button[aria-current="step"] { border-color: #155e8a; background: #155e8a; color: #fff; box-shadow: 0 3px 8px rgb(15 79 117 / 22%); }
 .lesson-host { max-width: 78rem; margin-top: .75rem; }
 .lesson-host[hidden] { display: none; }
 .lesson-launch, .lesson-panel { padding: .75rem .85rem; border: 1px solid #9bb3c2; border-radius: .65rem; background: #edf6fb; box-shadow: 0 2px 7px rgb(21 52 75 / 8%); }
@@ -432,6 +438,9 @@ footer a { color: #155e8a; }
 .dataset-catalog-purpose-status { min-height: 1.3rem; margin: 0; color: #155e8a; font-size: .78rem; font-weight: 700; line-height: 1.35; }
 .dataset-catalog-purpose-status[data-valid="false"] { padding: .35rem .45rem; border-left: 4px solid #b45309; background: #fff4e5; color: #713f12; }
 .dataset-catalog-cta-disabled { color: #536b7e; cursor: not-allowed; }
+.dataset-catalog-lesson-mode { display: grid; gap: .3rem; padding: .7rem .75rem; border: 1px solid #c4d0d9; border-radius: .55rem; background: #f7fafc; }
+.dataset-catalog-lesson-mode h3 { margin: 0; color: #17324d; font-size: .92rem; }
+.dataset-catalog-lesson-mode p { max-width: 62rem; margin: 0; color: #40566a; font-size: .8rem; line-height: 1.45; }
 .dataset-catalog-offers { display: grid; gap: .6rem; padding: .8rem; border: 1px solid #9bb3c2; border-radius: .6rem; background: #fff; box-shadow: 0 4px 14px rgb(16 42 67 / 6%); }
 .dataset-catalog-offers h3 { margin: 0; color: #17324d; font-size: .98rem; }
 .dataset-catalog-offers-lead { max-width: 62rem; margin: 0; color: #40566a; font-size: .82rem; line-height: 1.45; }
@@ -592,6 +601,12 @@ footer a { color: #155e8a; }
   .year-controls > button { flex: 1 1 8rem; }
   .year-field, .recorded-field { flex: 1 1 8.5rem; }
   .year-hint { flex-basis: 100%; }
+  .viewer-timeline { margin-top: .45rem; }
+  .viewer-timeline-hint { font-size: .72rem; }
+  .app-shell[data-root-quickstart] .viewer-mode { margin-block: .1rem .25rem; font-size: .68rem; }
+  .app-shell[data-root-quickstart] .viewer-timeline { gap: .2rem; margin-top: .25rem; padding: .4rem .5rem .45rem; }
+  .app-shell[data-root-quickstart] .viewer-timeline-hint { display: none; }
+  .app-shell[data-root-quickstart] .viewer-timeline-track button { min-height: 2.1rem; padding: .25rem .5rem; font-size: .72rem; }
   .shell-content { display: flex; flex-direction: column; gap: .55rem; padding: .65rem .75rem .9rem; }
   .live-status, .basemap-alert, .shell-content > button { flex: 0 0 auto; }
   .map-frame { order: 1; width: 100%; min-height: 45svh; height: 46svh; }

@@ -50,7 +50,7 @@ test.describe("Tone River eastward-shift dataset", () => {
     await expect(page).toHaveURL(/\?dataset=ogurike(?:&|$)/);
     await expect(page).not.toHaveURL(/tonegawa|kawamata|river-1654/);
     await expect(page.getByRole("heading", { name: "巨椋池パイロットデータ" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /宇治川（1590年・工事前）/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /巨椋池（1910年・概略）/ })).toBeVisible();
   });
 
   test("opens the catalog from a reloadable view parameter and isolates a failed card", async ({ page }, testInfo) => {
@@ -77,9 +77,8 @@ test.describe("Tone River eastward-shift dataset", () => {
   });
 
   test("creates the classroom pack from the Tone River lesson", async ({ page }) => {
-    await page.goto("/?dataset=tonegawa");
+    await page.goto("/?dataset=tonegawa&lesson=tonegawa-eastward&step=river-1590");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
-    await page.getByRole("button", { name: /ガイド教材を始める|Start guided lesson/ }).click();
     await page.locator("[data-lesson-next]").click();
     await page.locator("[data-lesson-next]").click();
     await expect(page.locator("[data-lesson-pack-open]")).toBeVisible();
