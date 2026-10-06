@@ -72,7 +72,7 @@
   {
     "id": "ogurike:evidence:waterbody-1590-geometry",
     "locator": "PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』",
-    "note": "変遷図①に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。原図の境界・面積・水深を再現しない。",
+    "note": "変遷図①に示される巨椋池周辺の相対的な水域範囲と湾入を、現在の地図上へ手動加工した概略面である。原図の境界・面積・水深を再現しない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
@@ -95,7 +95,7 @@
   {
     "id": "ogurike:evidence:waterbody-1596-geometry",
     "locator": "PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』",
-    "note": "変遷図②に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。工事後の正確な湖岸線ではない。",
+    "note": "変遷図②に示される巨椋池周辺の相対的な水域範囲と湾入を、現在の地図上へ手動加工した概略面である。工事後の正確な湖岸線ではない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
@@ -118,7 +118,7 @@
   {
     "id": "ogurike:evidence:waterbody-1885-geometry",
     "locator": "PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』",
-    "note": "変遷図③の相対的な水域範囲を少数頂点の概略面へ加工した。1885年の精密な湖岸線・測量図ではない。",
+    "note": "変遷図③の相対的な水域範囲と湾入を手動加工した概略面である。1885年の精密な湖岸線・測量図ではない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
@@ -141,7 +141,7 @@
   {
     "id": "ogurike:evidence:waterbody-1933-geometry",
     "locator": "PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』",
-    "note": "変遷図⑤の残存水域の相対的な範囲を少数頂点の概略面へ加工した。干拓前後の精密な境界ではない。",
+    "note": "変遷図⑤の残存水域の相対的な範囲と湾入を手動加工した概略面である。干拓前後の精密な境界ではない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [

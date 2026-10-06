@@ -103,7 +103,7 @@
 - 不確実性:
   - `temporal`: `well-supported` — 資料図①の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
   - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
-  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
+  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
   - `identity`: `well-supported` — 資料図①の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
 
 - Evidence:
@@ -111,7 +111,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1590-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1590-geometry` — 変遷図①に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。原図の境界・面積・水深を再現しない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1590-geometry` — 変遷図①に示される巨椋池周辺の相対的な水域範囲と湾入を、現在の地図上へ手動加工した概略面である。原図の境界・面積・水深を再現しない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1590-temporal` | citation | identity, temporal | PDF p.2-21末尾–p.2-22 図2.2-1① | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1590-temporal` — 資料図が河川工事前の1590年スナップショットとして示すことを確認する。
 
@@ -128,7 +128,7 @@
 - 不確実性:
   - `temporal`: `well-supported` — 資料図②の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1596-temporal`)
   - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1596-geometry`)
-  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1596-geometry`)
+  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1596-geometry`)
   - `identity`: `well-supported` — 資料図②の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1596-temporal`)
 
 - Evidence:
@@ -136,7 +136,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1596-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1596-geometry` — 変遷図②に示される巨椋池周辺の相対的な水域範囲を、現在の地図上へ少数頂点の概略面として加工した。工事後の正確な湖岸線ではない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1596-geometry` — 変遷図②に示される巨椋池周辺の相対的な水域範囲と湾入を、現在の地図上へ手動加工した概略面である。工事後の正確な湖岸線ではない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1596-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1② | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1596-temporal` — 資料図が河川工事後の1596年スナップショットとして示すことを確認する。
 
@@ -153,7 +153,7 @@
 - 不確実性:
   - `temporal`: `well-supported` — 資料図③の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
   - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
-  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
+  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
   - `identity`: `well-supported` — 資料図③の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
 
 - Evidence:
@@ -161,7 +161,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1885-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1885-geometry` — 変遷図③の相対的な水域範囲を少数頂点の概略面へ加工した。1885年の精密な湖岸線・測量図ではない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1885-geometry` — 変遷図③の相対的な水域範囲と湾入を手動加工した概略面である。1885年の精密な湖岸線・測量図ではない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1885-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1③ | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1885-temporal` — 資料図が淀川改良工事前の1885年スナップショットとして示すことを確認する。
 
@@ -178,7 +178,7 @@
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:waterbody-temporal`)
   - `location`: `approximate` — 京都府RDBの地域情報と資料図の相対位置をもとにした概略です。 (Evidence: `ogurike:evidence:waterbody-region`)
-  - `geometry`: `approximate` — 資料図④の湖岸外縁を手動トレースした概略面です。座標の桁数と補助点は輪郭の可読性を保つためで、精密な境界や測量精度を意味しません。 (Evidence: `ogurike:evidence:waterbody-geometry`)
+  - `geometry`: `approximate` — 資料図④の外縁・周辺配置と関連図の湾入を参照した手動加工の概略面です。座標の桁数と補助点は輪郭の可読性を保つためで、精密な境界や測量精度を意味しません。 (Evidence: `ogurike:evidence:waterbody-geometry`)
   - `identity`: `well-supported` (Evidence: `ogurike:evidence:waterbody-region`, `ogurike:evidence:waterbody-temporal`)
 
 - Evidence:
@@ -206,7 +206,7 @@
 - 不確実性:
   - `temporal`: `well-supported` — 資料図⑤の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
   - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
-  - `geometry`: `approximate` — 少数頂点の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
+  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な境界ではない。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
   - `identity`: `well-supported` — 資料図⑤の残存水域として扱う。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
 
 - Evidence:
@@ -214,7 +214,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1933-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1933-geometry` — 変遷図⑤の残存水域の相対的な範囲を少数頂点の概略面へ加工した。干拓前後の精密な境界ではない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1933-geometry` — 変遷図⑤の残存水域の相対的な範囲と湾入を手動加工した概略面である。干拓前後の精密な境界ではない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1933-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1⑤ | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1933-temporal` — 資料図が淀川改良工事増補完成時の1933年スナップショットとして示すことを確認する。
 
