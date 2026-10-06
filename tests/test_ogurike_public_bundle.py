@@ -1,4 +1,5 @@
 import json
+import math
 from pathlib import Path
 
 from chronomap_data.loader import load_package
@@ -47,8 +48,23 @@ def test_ogurike_1910_waterbody_keeps_a_readable_historical_outline():
     feature = next(item for item in package.feature_versions["features"] if item["id"] == "ogurike:version:waterbody-1910")
 
     # The outline is still explicitly approximate, but it must retain the
-    # bends read from the cited transition figure instead of regressing to a
-    # generic octagon that cannot communicate the former shoreline.
+    # source-figure shoreline bends instead of regressing to a generic
+    # octagon that cannot communicate the former shoreline.
     assert feature["geometry"]["type"] == "Polygon"
-    assert len(feature["geometry"]["coordinates"][0]) >= 15
+    ring = feature["geometry"]["coordinates"][0]
+    assert len(ring) >= 90
+    assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.002
+    assert (round(min(point[0] for point in ring), 3), round(max(point[0] for point in ring), 3)) == (135.763, 135.79)
+    assert (round(min(point[1] for point in ring), 3), round(max(point[1] for point in ring), 3)) == (34.898, 34.923)
+    assert any(point[0] < 135.764 and 34.906 <= point[1] <= 34.909 for point in ring)  # west inlet
+    assert any(point[0] > 135.789 and 34.907 <= point[1] <= 34.91 for point in ring)  # east shoulder
+    assert any(point[1] < 34.899 and 135.777 <= point[0] <= 135.781 for point in ring)  # south bay
+    assert any(point[1] > 34.922 and 135.781 <= point[0] <= 135.784 for point in ring)  # north lobe
+    turns = []
+    unique_count = len(ring) - 1
+    for index in range(unique_count):
+        previous, current, following = ring[(index - 1) % unique_count], ring[index], ring[(index + 1) % unique_count]
+        turns.append((current[0] - previous[0]) * (following[1] - current[1]) - (current[1] - previous[1]) * (following[0] - current[0]))
+    assert sum(turn > 0 for turn in turns) > 8
+    assert sum(turn < 0 for turn in turns) > 8
     assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
