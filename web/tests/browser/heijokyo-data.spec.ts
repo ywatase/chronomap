@@ -120,7 +120,7 @@ test("opens the Heijokyo lesson from the three-entry catalog using a bundle fixt
   await routeHeijokyoFixture(page);
   await page.goto("/");
   await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
-  await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+  await page.locator("[data-dataset-catalog-open]").click();
 
   const catalog = page.locator("[data-dataset-catalog-dialog]");
   await expect(catalog).toBeVisible();

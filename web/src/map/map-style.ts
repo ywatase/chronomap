@@ -18,6 +18,7 @@ export interface GsiStyleSpecification {
 }
 
 const historicalSource = "historical-features";
+export const HISTORICAL_COMPARISON_SOURCE_ID = "historical-comparison";
 export const HISTORICAL_MAP_ASSET_SOURCE_ID = "historical-map-asset";
 export const HISTORICAL_MAP_ASSET_LAYER_ID = "historical-map-asset";
 
@@ -37,6 +38,7 @@ export const TERRITORY_LAYER_IDS = ["historical-territories", "selected-territor
 
 export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const source = historicalSource;
+  const comparisonSource = HISTORICAL_COMPARISON_SOURCE_ID;
   const pointFilter = ["==", ["geometry-type"], "Point"] as const;
   const lineFilter = ["==", ["geometry-type"], "LineString"] as const;
   const polygonFilter = ["==", ["geometry-type"], "Polygon"] as const;
@@ -46,6 +48,12 @@ export function geometryLayerDefinitions(): readonly LayerSpecification[] {
   const notTerritory = ["!", territory] as const;
 
   return [
+    // Comparison is deliberately drawn first: the selected/current snapshot
+    // remains the visual foreground and the prior snapshot reads as a quiet
+    // dashed reference rather than a second dominant map.
+    { id: "comparison-polygons", type: "fill", source: comparisonSource, filter: polygonFilter, paint: { "fill-color": "#52758f", "fill-opacity": 0.08, "fill-outline-color": "#52758f" } },
+    { id: "comparison-lines", type: "line", source: comparisonSource, filter: lineFilter, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#52758f", "line-width": 2, "line-dasharray": [2, 2] } },
+    { id: "comparison-points", type: "circle", source: comparisonSource, filter: pointFilter, paint: { "circle-radius": 5, "circle-color": "#52758f", "circle-opacity": 0.35, "circle-stroke-width": 1, "circle-stroke-color": "#ffffff", "circle-stroke-opacity": 0.7 } },
     { id: "historical-polygons", type: "fill", source, filter: ["all", polygonFilter, notTerritory, unselected], paint: { "fill-color": "#406a90", "fill-opacity": 0.32, "fill-outline-color": "#193a56" } },
     { id: "historical-territories", type: "fill", source, filter: ["all", polygonFilter, territory, unselected], paint: { "fill-color": "#b7791f", "fill-opacity": 0.22, "fill-outline-color": "#7c4a03" } },
     { id: "historical-points", type: "circle", source, filter: ["all", pointFilter, unselected], paint: { "circle-radius": 7, "circle-color": "#9c4e1c", "circle-stroke-width": 2, "circle-stroke-color": "#ffffff" } },
@@ -62,6 +70,7 @@ export function createGsiStyle(asset: HistoricalMapAsset | null = null): GsiStyl
   const sources: Record<string, Readonly<Record<string, unknown>>> = {
     gsi: { type: "raster", tiles: ["https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"], tileSize: 256, attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html">GSI Maps</a>' },
     [historicalSource]: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
+    [HISTORICAL_COMPARISON_SOURCE_ID]: { type: "geojson", data: { type: "FeatureCollection", features: [] } },
   };
   const assetLayer: LayerSpecification[] = [];
   if (asset && isTileHistoricalMapAsset(asset)) {

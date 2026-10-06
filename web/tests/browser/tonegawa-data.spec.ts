@@ -15,7 +15,7 @@ test.describe("Tone River eastward-shift dataset", () => {
     await page.goto("/?dataset=tonegawa");
     await expect(page.locator("main [role=status]")).toContainText(/available|利用できます/i);
     await expect(page.getByRole("heading", { name: "利根川東遷パイロットデータ" })).toBeVisible();
-    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await page.locator("[data-dataset-catalog-open]").click();
     const catalog = page.locator("[data-dataset-catalog-dialog]");
     await expect(catalog).toBeVisible();
     await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(7);
@@ -45,7 +45,7 @@ test.describe("Tone River eastward-shift dataset", () => {
   test("switches back to the Ogurike dataset with a clean URL", async ({ page }) => {
     await page.goto("/?dataset=tonegawa&year=1654&feature=tonegawa%3Aversion%3Ariver-1654");
     await expect(page.getByRole("heading", { name: "利根川東遷パイロットデータ" })).toBeVisible();
-    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await page.locator("[data-dataset-catalog-open]").click();
     await page.locator('[data-dataset-catalog-card="ogurike"] [data-dataset-catalog-map]').click();
     await expect(page).toHaveURL(/\?dataset=ogurike(?:&|$)/);
     await expect(page).not.toHaveURL(/tonegawa|kawamata|river-1654/);
@@ -69,8 +69,8 @@ test.describe("Tone River eastward-shift dataset", () => {
     await expect(catalog.locator('[data-dataset-catalog-card="sekigahara"] [data-dataset-catalog-map]')).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(catalog).toBeHidden();
-    await expect(page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ })).toBeFocused();
-    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await expect(page.locator("[data-dataset-catalog-open]")).toBeFocused();
+    await page.locator("[data-dataset-catalog-open]").click();
     await expect(catalog).toBeVisible();
     await catalog.locator("[data-dataset-catalog-close]").click();
     await expect(catalog).toBeHidden();

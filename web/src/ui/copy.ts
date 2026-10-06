@@ -17,6 +17,11 @@ export interface UiCopy {
   readonly timelineLabel: string;
   readonly timelineHint: string;
   readonly timelineSnapshot: (year: number, count: number) => string;
+  readonly temporalComparePrevious: (year: number) => string;
+  readonly temporalCompareClear: string;
+  readonly temporalCompareUnavailable: string;
+  readonly temporalComparisonLegend: string;
+  readonly approximationNote: string;
   readonly showingYear: (year: number) => string;
   readonly mapLabel: string;
   readonly mapFallback: string;
@@ -348,9 +353,14 @@ const EN_COPY: UiCopy = {
   recordedHint: "Choose a recorded snapshot to skip years without authored data.",
   viewerMode: "Map viewer · explore freely",
   timelineLabel: "Historical change timeline",
-  timelineHint: "Only authored snapshots are shown. Select a year to compare the visible geography.",
-  timelineSnapshot: (year, count) => `${formatYear(year, "en")} · ${count} feature${count === 1 ? "" : "s"}`,
-  showingYear: (year) => `Showing possible activity overlapping ${formatYear(year, "en")}.`,
+  timelineHint: "Select an authored snapshot to see its geography. You can overlay the previous snapshot for a direct shape comparison.",
+  timelineSnapshot: (year, count) => `${formatYear(year, "en")} · ${count} mapped feature${count === 1 ? "" : "s"}`,
+  temporalComparePrevious: (year) => `Overlay previous snapshot (${formatYear(year, "en")})`,
+  temporalCompareClear: "Hide previous snapshot",
+  temporalCompareUnavailable: "No previous snapshot",
+  temporalComparisonLegend: "Previous snapshot",
+  approximationNote: "Historical geometries are approximate reconstructions from cited sources.",
+  showingYear: (year) => `Showing public mapped features for ${formatYear(year, "en")}.`,
   mapLabel: "Map area",
   mapFallback: "Map is loading. The feature list remains available while the basemap starts.",
   featureInformation: "Feature information",
@@ -573,7 +583,7 @@ const EN_COPY: UiCopy = {
   lessonPackPilotDownloadFailed: "Could not save the file. Select the review text and save it manually.",
   lessonPackPilotMailOpened: "Email app opened. The message has not been sent.",
   lessonPackPilotSubject: "Chronomap regional lesson-pack consultation",
-  datasetCatalogOpen: "Choose a region or lesson · plans",
+  datasetCatalogOpen: "Choose a region",
   datasetCatalogDialogLabel: "Region and lesson catalog",
   datasetCatalogHeading: "Choose a region or lesson",
   datasetCatalogLead: "Start with a free historical map pilot, or open a guided lesson with evidence and classroom links.",
@@ -584,10 +594,10 @@ const EN_COPY: UiCopy = {
   datasetCatalogHeroProof: ["Evidence and uncertainty stay visible", "Student PDF + teacher reference", "Regional materials via consultation"],
   datasetCatalogRootQuickStartKicker: "Free historical map pilot",
   datasetCatalogRootQuickStartTitle: "See change around Ogurike",
-  datasetCatalogRootQuickStartLead: "Start with the 1590 and 1596 Ujigawa snapshots. Compare the map first; make a classroom pack when you are ready.",
+  datasetCatalogRootQuickStartLead: "Choose a year to place public mapped features on the map. Select a feature to inspect its sources and uncertainty.",
   datasetCatalogRootQuickStartPrimary: "See Ogurike change",
   datasetCatalogRootQuickStartSecondary: "Choose a region",
-  datasetCatalogRootQuickStartNote: "Free to explore: evidence, uncertainty, sharing, and reports stay visible.",
+  datasetCatalogRootQuickStartNote: "Start with the map. Classroom tools stay in the region catalog.",
   datasetCatalogPurposeHeading: "Choose what you want to do",
   datasetCatalogPurposeExplore: "Explore the map",
   datasetCatalogPurposeExploreLead: "Open a region card to inspect historical geography and evidence.",
@@ -710,9 +720,14 @@ const JA_COPY: UiCopy = {
   recordedHint: "収録時点を選ぶと、データのない年を飛ばして移動できます。",
   viewerMode: "地図ビューアー・自由に調べる",
   timelineLabel: "地形の変遷タイムライン",
-  timelineHint: "実際に作成したスナップショットだけを表示しています。年を選ぶと、その時点の地物を比較できます。",
-  timelineSnapshot: (year, count) => `${formatYear(year, "ja")}・${count}件`,
-  showingYear: (year) => `${formatYear(year, "ja")}の可能な活動を表示しています。`,
+  timelineHint: "作成済みの収録時点を選ぶと、その年の水域・河川などを表示します。前の時点を重ねて形を比較できます。",
+  timelineSnapshot: (year, count) => `${formatYear(year, "ja")}・${count}地物`,
+  temporalComparePrevious: (year) => `前の時点（${formatYear(year, "ja")}）を重ねる`,
+  temporalCompareClear: "前の時点を非表示",
+  temporalCompareUnavailable: "前の時点なし",
+  temporalComparisonLegend: "前の収録時点",
+  approximationNote: "歴史地物の形状は、出典資料に基づく概略復元です。",
+  showingYear: (year) => `${formatYear(year, "ja")}の公開地物を表示しています。`,
   mapLabel: "地図",
   mapFallback: "地図を読み込んでいます。背景地図の準備中も地物一覧を利用できます。",
   featureInformation: "地物情報",
@@ -935,7 +950,7 @@ const JA_COPY: UiCopy = {
   lessonPackPilotDownloadFailed: "保存できませんでした。表示された相談文を選択して手動で保存してください。",
   lessonPackPilotMailOpened: "メールアプリを開きました（送信は完了していません）。",
   lessonPackPilotSubject: "Chronomap 地域教材パックの相談",
-  datasetCatalogOpen: "地域・教材を選ぶ（料金も見る）",
+  datasetCatalogOpen: "地域を選ぶ",
   datasetCatalogDialogLabel: "地域・教材カタログ",
   datasetCatalogHeading: "地域・教材を選ぶ",
   datasetCatalogLead: "無料の歴史地図パイロットから始め、根拠と授業用リンク付きのガイド教材を開けます。",
@@ -946,10 +961,10 @@ const JA_COPY: UiCopy = {
   datasetCatalogHeroProof: ["出典と不確実性が見える", "生徒用PDF＋教員用資料", "地域教材は相談から"],
   datasetCatalogRootQuickStartKicker: "無料の歴史地図パイロット",
   datasetCatalogRootQuickStartTitle: "巨椋池の変化を、まず地図で見る",
-  datasetCatalogRootQuickStartLead: "1590年と1596年の宇治川スナップショットから始めます。先に地図で比べ、必要になったら授業用教材に整えられます。",
+  datasetCatalogRootQuickStartLead: "年代を選ぶと、その時点の公開地物が地図に重なります。地物を選ぶと出典と不確実性を確認できます。",
   datasetCatalogRootQuickStartPrimary: "巨椋池の変化を見る",
   datasetCatalogRootQuickStartSecondary: "地域を選ぶ",
-  datasetCatalogRootQuickStartNote: "無料で比較・出典確認・共有・レポートまで試せます。",
+  datasetCatalogRootQuickStartNote: "まずは地図で比較。教材機能は地域カタログから開けます。",
   datasetCatalogPurposeHeading: "目的から選ぶ",
   datasetCatalogPurposeExplore: "調べる",
   datasetCatalogPurposeExploreLead: "地域カードから歴史地図を開き、地物と出典を確認します。",

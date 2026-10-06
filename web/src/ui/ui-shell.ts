@@ -29,7 +29,7 @@ import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../d
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
 import type { LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 
-export interface MapAdapterLike { mount(container: HTMLElement, asset?: HistoricalMapAsset | null): void; setFeatures(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setTerritoryVisibility?(visible: boolean): void; setHistoricalMapAssetOpacity?(value: number): void; setHistoricalMapAssetVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
+export interface MapAdapterLike { mount(container: HTMLElement, asset?: HistoricalMapAsset | null): void; setFeatures(features: AppState["visibleFeatures"]): void; setComparisonFeatures?(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setTerritoryVisibility?(visible: boolean): void; setHistoricalMapAssetOpacity?(value: number): void; setHistoricalMapAssetVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
 export type DatasetCatalogLoader = () => Promise<DatasetCatalogSnapshots>;
 export interface UiShellOptions {
@@ -63,6 +63,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let workshopFeedbackState: LessonPackFeedbackState | null = null;
   let workshopOffer: LessonPackOfferPlan | null = requestedOffer ?? null;
   let workshopPreviewOpen = false;
+  let temporalComparisonOpen = false;
   let pendingFeatureId = requestedLessonStep?.featureId ?? (sharedMatchesDataset ? shared.featureId ?? null : null);
   if (typeof document !== "undefined") document.documentElement.lang = copy.language;
   let state: AppState = { status: "loading", selectedYear: requestedLessonStep?.year ?? sharedYear ?? defaultYear, visibleFeatures: [], selectedFeatureId: null, activeMobileTab: "list", error: null, allFeatures: [] };
@@ -70,11 +71,17 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let lastFeatureId: string | null = null;
   const historicalMapAsset = bundle.dataset.historicalMapAssets?.find(isTileHistoricalMapAsset) ?? null;
   const comparisons = comparisonCandidates(bundle.features);
+  const comparisonFeaturesForYear = (year: number): readonly AppState["visibleFeatures"][number][] => {
+    const snapshots = filterFeaturesByYear(bundle.features, year);
+    const selected = state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId);
+    return selected ? snapshots.filter((feature) => feature.properties.entityId === selected.properties.entityId) : snapshots;
+  };
   let comparisonEntityId: string | null = requestedLessonStep?.comparisonEntityId ?? null;
   root.replaceChildren();
 
   const shell = document.createElement("div"); shell.className = "app-shell"; root.append(shell);
   if (rootQuickStartOpen) shell.dataset.rootQuickstart = "";
+  if (!lesson) shell.dataset.viewerRoute = "";
   const header = document.createElement("header"); header.className = "app-header";
   const eyebrow = document.createElement("p"); eyebrow.className = "eyebrow"; eyebrow.textContent = copy.language === "ja" ? "歴史地図パイロット" : "Historical map pilot";
   const title = document.createElement("h1"); title.textContent = localizedText(bundle.dataset.title, bundle.dataset.defaultLanguage);
@@ -162,7 +169,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const mapFrame = document.createElement("section"); mapFrame.className = "map-frame";
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback;
   const mapSettings = createMapSettings(copy, (settings) => { adapter?.setBasemapOpacity?.(settings.basemapOpacity); adapter?.setHistoricalOpacity?.(settings.historicalOpacity); adapter?.setHistoricalVisibility?.(settings.historicalVisible); adapter?.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter?.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter?.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); }, historicalMapAsset);
-  mapFrame.append(map, mapSettings.element); content.append(mapFrame);
+  const mapLegend = renderMapLegend(copy, state.selectedYear, null, false);
+  const approximationNote = document.createElement("p"); approximationNote.className = "map-approximation-note"; approximationNote.dataset.viewerApproximation = ""; approximationNote.textContent = copy.approximationNote;
+  mapFrame.append(map, mapSettings.element, mapLegend, approximationNote); content.append(mapFrame);
   const rootQuickStart = rootQuickStartOpen ? renderRootQuickStart(copy, bundle, datasetSlug) : null;
   if (rootQuickStart) mapFrame.append(rootQuickStart);
   const sidebar = document.createElement("section"); sidebar.className = "sidebar";
@@ -480,7 +489,9 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     const previousYear = adjacentYear(years, state.selectedYear, -1); const nextYear = adjacentYear(years, state.selectedYear, 1);
     previous.disabled = disabled || previousYear === null; next.disabled = disabled || nextYear === null; input.disabled = disabled; snapshotSelect.disabled = disabled;
     shownYear.textContent = copy.showingYear(state.selectedYear); shownYear.dataset.currentYear = String(state.selectedYear);
-    updateViewerTimeline(timeline, state.selectedYear, disabled);
+    updateViewerTimeline(timeline, state.selectedYear, disabled, previousYear, temporalComparisonOpen, copy);
+    updateMapLegend(mapLegend, copy, state.selectedYear, previousYear, temporalComparisonOpen);
+    adapter?.setComparisonFeatures?.(temporalComparisonOpen && previousYear !== null ? comparisonFeaturesForYear(previousYear) : []);
     live.textContent = statusText(state, copy);
     basemapAlert.hidden = !state.basemapError; basemapAlert.textContent = state.basemapError ? copy.basemapFailure(state.basemapError) : ""; basemapRetry.hidden = !state.basemapError || !adapter?.retry; retry.hidden = state.status !== "failed";
     reportButton.hidden = state.status === "loading" || state.status === "retrying" || state.status === "failed" || state.selectedFeatureId === null;
@@ -520,8 +531,14 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   reportButton.addEventListener("click", openReport);
   catalogButton.addEventListener("click", () => { void openDatasetCatalog(); });
   rootQuickStart?.querySelector<HTMLButtonElement>("[data-root-quickstart-secondary]")?.addEventListener("click", () => { void openDatasetCatalog(); });
+  timeline.querySelector<HTMLButtonElement>("[data-temporal-compare]")?.addEventListener("click", () => {
+    const comparisonYear = adjacentYear(years, state.selectedYear, -1);
+    if (comparisonYear === null) return;
+    temporalComparisonOpen = !temporalComparisonOpen;
+    update();
+  });
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
-  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map, historicalMapAsset); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); adapter.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
+  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); try { adapter.mount(map, historicalMapAsset); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); adapter.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); const comparisonYear = adjacentYear(years, state.selectedYear, -1); adapter.setComparisonFeatures?.(temporalComparisonOpen && comparisonYear !== null ? comparisonFeaturesForYear(comparisonYear) : []); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
   retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear });
   if (catalogOpen) queueMicrotask(() => { void openDatasetCatalog(); });
@@ -609,15 +626,56 @@ function renderViewerTimeline(copy: UiCopy, bundle: PublicBundle, years: readonl
     snapshot.addEventListener("click", () => onSelect(year));
     track.append(snapshot);
   }
-  section.append(heading, hint, track);
+  const compare = button(copy.temporalCompareUnavailable);
+  compare.dataset.temporalCompare = "";
+  compare.disabled = true;
+  compare.setAttribute("aria-pressed", "false");
+  compare.setAttribute("aria-label", copy.temporalCompareUnavailable);
+  compare.className = "temporal-compare-button";
+  section.append(heading, hint, track, compare);
   return section;
 }
-function updateViewerTimeline(timeline: HTMLElement, currentYear: number, disabled: boolean): void {
+function updateViewerTimeline(timeline: HTMLElement, currentYear: number, disabled: boolean, comparisonYear: number | null, comparisonOpen: boolean, copy: UiCopy): void {
   for (const snapshot of timeline.querySelectorAll<HTMLButtonElement>("[data-viewer-snapshot]")) {
     const isCurrent = snapshot.dataset.viewerSnapshot === String(currentYear);
     snapshot.disabled = disabled;
     if (isCurrent) snapshot.setAttribute("aria-current", "step");
     else snapshot.removeAttribute("aria-current");
+  }
+  const compare = timeline.querySelector<HTMLButtonElement>("[data-temporal-compare]");
+  if (!compare) return;
+  compare.disabled = disabled || comparisonYear === null;
+  compare.setAttribute("aria-pressed", String(comparisonOpen && comparisonYear !== null));
+  compare.textContent = comparisonYear === null
+    ? copy.temporalCompareUnavailable
+    : comparisonOpen
+      ? copy.temporalCompareClear
+      : copy.temporalComparePrevious(comparisonYear);
+  compare.setAttribute("aria-label", compare.textContent);
+}
+function renderMapLegend(copy: UiCopy, currentYear: number, comparisonYear: number | null, comparisonOpen: boolean): HTMLElement {
+  const legend = document.createElement("aside");
+  legend.className = "map-legend-strip";
+  legend.dataset.mapLegend = "";
+  legend.setAttribute("aria-label", copy.mapLegend);
+  const current = document.createElement("span");
+  current.className = "map-legend-chip map-legend-current";
+  current.textContent = `${copy.legendPolygon} · ${displayYearLocalized(currentYear, copy.language)}`;
+  const previous = document.createElement("span");
+  previous.className = "map-legend-chip map-legend-previous";
+  previous.textContent = comparisonYear === null ? copy.temporalComparisonLegend : `${copy.temporalComparisonLegend} · ${displayYearLocalized(comparisonYear, copy.language)}`;
+  previous.hidden = !comparisonOpen || comparisonYear === null;
+  legend.append(current, previous);
+  return legend;
+}
+function updateMapLegend(legend: HTMLElement, copy: UiCopy, currentYear: number, comparisonYear: number | null, comparisonOpen: boolean): void {
+  const chips = legend.querySelectorAll<HTMLElement>(".map-legend-chip");
+  const current = chips.item(0);
+  const previous = chips.item(1);
+  if (current) current.textContent = `${copy.legendPolygon} · ${displayYearLocalized(currentYear, copy.language)}`;
+  if (previous) {
+    previous.textContent = comparisonYear === null ? copy.temporalComparisonLegend : `${copy.temporalComparisonLegend} · ${displayYearLocalized(comparisonYear, copy.language)}`;
+    previous.hidden = !comparisonOpen || comparisonYear === null;
   }
 }
 function button(text: string): HTMLButtonElement { const element = document.createElement("button"); element.type = "button"; element.textContent = text; return element; }

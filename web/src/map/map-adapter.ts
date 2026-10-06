@@ -2,9 +2,10 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Dataset, FeatureVersion, HistoricalMapAsset } from "../domain/types";
-import { createGsiStyle, HISTORICAL_LAYER_IDS, HISTORICAL_MAP_ASSET_LAYER_ID, TERRITORY_LAYER_IDS } from "./map-style";
+import { createGsiStyle, HISTORICAL_COMPARISON_SOURCE_ID, HISTORICAL_LAYER_IDS, HISTORICAL_MAP_ASSET_LAYER_ID, TERRITORY_LAYER_IDS } from "./map-style";
 
 const sourceId = "historical-features";
+const comparisonSourceId = HISTORICAL_COMPARISON_SOURCE_ID;
 const interactiveLayerIds = [...HISTORICAL_LAYER_IDS];
 
 maplibregl.setWorkerUrl(workerUrl);
@@ -19,12 +20,14 @@ export class MapAdapter {
   private map: maplibregl.Map | null = null;
   private container: HTMLElement | null = null;
   private features: readonly FeatureVersion[] = [];
+  private comparisonFeatures: readonly FeatureVersion[] = [];
   private selectedFeatureId: string | null = null;
   private viewport: Dataset["bbox"] | null = null;
   private requestedCamera: MapCamera | null = null;
   private camera: MapCamera | null = null;
   private viewportApplied = false;
   private sourceReady = false;
+  private comparisonSourceReady = false;
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
   private cameraChangeHandler: ((camera: MapCamera) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
@@ -54,6 +57,7 @@ export class MapAdapter {
     this.map?.remove();
     this.viewportApplied = false;
     this.sourceReady = false;
+    this.comparisonSourceReady = false;
     this.map = new maplibregl.Map({ container: this.container, style: createGsiStyle(this.historicalMapAsset) as unknown as maplibregl.StyleSpecification, center: [135, 35], zoom: 4 });
     this.map.on("load", () => { this.updateSource(); this.applyRequestedCameraOrViewport(); });
     this.map.on("styledata", () => { this.updateSource(); this.applyDisplaySettings(); });
@@ -79,6 +83,7 @@ export class MapAdapter {
   }
 
   setFeatures(features: readonly FeatureVersion[]): void { this.features = features; this.updateSource(true); }
+  setComparisonFeatures(features: readonly FeatureVersion[]): void { this.comparisonFeatures = features; this.updateComparisonSource(true); }
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(true); }
   setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.map) this.applyRequestedCameraOrViewport(); }
   setCamera(camera: MapCamera): void { this.requestedCamera = camera; this.camera = camera; this.map?.jumpTo({ center: [camera.longitude, camera.latitude], zoom: camera.zoom }); }
@@ -129,6 +134,15 @@ export class MapAdapter {
     if (!source || (this.sourceReady && !force)) return;
     source.setData({ type: "FeatureCollection", features: this.features.map((feature) => ({ ...feature, properties: { ...feature.properties, id: feature.id, selected: feature.id === this.selectedFeatureId } })) } as Parameters<maplibregl.GeoJSONSource["setData"]>[0]);
     this.sourceReady = true;
+    this.updateComparisonSource(force);
+  }
+
+  private updateComparisonSource(force = false): void {
+    const source = this.map?.getSource(comparisonSourceId) as maplibregl.GeoJSONSource | undefined;
+    if (!source || (this.comparisonSourceReady && !force)) return;
+    if (!this.comparisonFeatures.length && !this.comparisonSourceReady) return;
+    source.setData({ type: "FeatureCollection", features: this.comparisonFeatures.map((feature) => ({ ...feature, properties: { ...feature.properties, comparison: true } })) } as Parameters<maplibregl.GeoJSONSource["setData"]>[0]);
+    this.comparisonSourceReady = true;
   }
 
   private applyDisplaySettings(): void {
@@ -146,6 +160,14 @@ export class MapAdapter {
         if (this.map.getLayer(layerId)) {
           this.map.setPaintProperty(layerId, "circle-opacity", this.historicalOpacity);
           this.map.setPaintProperty(layerId, "circle-stroke-opacity", this.historicalOpacity);
+        }
+      }
+      for (const layerId of ["comparison-polygons", "comparison-lines", "comparison-points"]) {
+        if (this.map.getLayer(layerId)) {
+          const property = layerId === "comparison-polygons" ? "fill-opacity" : layerId === "comparison-points" ? "circle-opacity" : "line-opacity";
+          const opacity = layerId === "comparison-polygons" ? 0.08 : layerId === "comparison-points" ? 0.35 : 0.62;
+          this.map.setPaintProperty(layerId, property, opacity * this.historicalOpacity);
+          this.map.setLayoutProperty(layerId, "visibility", this.historicalVisible ? "visible" : "none");
         }
       }
       for (const layerId of ["historical-lines", "selected-polygon-outline", "selected-territory-outline", "selected-line-halo", "selected-lines"]) {

@@ -40,3 +40,15 @@ def test_ogurike_public_bundle_is_deterministic(tmp_path: Path):
     assert [(name, (first / name).read_bytes()) for name in FILES] == [
         (name, (second / name).read_bytes()) for name in FILES
     ]
+
+
+def test_ogurike_1910_waterbody_keeps_a_readable_historical_outline():
+    package = load_package(DATA)
+    feature = next(item for item in package.feature_versions["features"] if item["id"] == "ogurike:version:waterbody-1910")
+
+    # The outline is still explicitly approximate, but it must retain the
+    # bends read from the cited transition figure instead of regressing to a
+    # generic octagon that cannot communicate the former shoreline.
+    assert feature["geometry"]["type"] == "Polygon"
+    assert len(feature["geometry"]["coordinates"][0]) >= 15
+    assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"

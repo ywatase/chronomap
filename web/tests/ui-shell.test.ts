@@ -31,6 +31,36 @@ describe("ui shell", () => {
     expect(viewport).toEqual([0, 0, 1, 1]);
   });
 
+  it("lets the viewer overlay the previous authored snapshot without replacing the current features", () => {
+    const snapshotBase = structuredClone(bundle) as PublicBundle;
+    const snapshotBundle = {
+      ...snapshotBase,
+      dataset: { ...snapshotBase.dataset, defaultLanguage: "ja" },
+      features: [
+        { ...snapshotBase.features[0]!, id: "current", properties: { ...snapshotBase.features[0]!.properties, labels: { ja: "現在" }, temporal: { start: { earliestYear: 0, latestYear: 0, precision: "year", qualifier: "exact" }, end: null } } },
+        { ...snapshotBase.features[0]!, id: "previous", properties: { ...snapshotBase.features[0]!.properties, labels: { ja: "前の時点" }, temporal: { start: { earliestYear: -1, latestYear: -1, precision: "year", qualifier: "exact" }, end: null } } },
+      ],
+    } as PublicBundle;
+    const root = document.createElement("div");
+    const controller = mountUiShell(root, snapshotBundle, () => undefined);
+    let comparison: readonly unknown[] = [];
+    const adapter = {
+      mount: () => undefined,
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      setComparisonFeatures: (features) => { comparison = features; },
+    } as MapAdapterLike & { setComparisonFeatures: (features: readonly unknown[]) => void };
+    controller.setMapAdapter(adapter);
+
+    const toggle = root.querySelector<HTMLButtonElement>("[data-temporal-compare]")!;
+    expect(toggle.disabled).toBe(false);
+    toggle.click();
+
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(comparison.map((feature: any) => feature.id)).toEqual(["previous"]);
+    controller.destroy();
+  });
+
   it("uses the provided neutral root for one header, main, and footer landmark", () => {
     const root = document.createElement("div"); mountUiShell(root, bundle, () => undefined);
     expect(root.querySelectorAll("header")).toHaveLength(1);

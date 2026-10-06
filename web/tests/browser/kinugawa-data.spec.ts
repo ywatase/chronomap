@@ -8,7 +8,7 @@ test.describe("Kinugawa and Kokaigawa river-history dataset", () => {
     await expect(page.getByLabel(/収録時点|Recorded snapshots/).locator("option")).toHaveCount(3);
     await expect(page.locator("[data-feature-id]")).toHaveCount(1);
 
-    await page.getByRole("button", { name: /地域・教材を選ぶ|Choose a region or lesson/ }).click();
+    await page.locator("[data-dataset-catalog-open]").click();
     const catalog = page.locator("[data-dataset-catalog-dialog]");
     await expect(catalog.locator("[data-dataset-catalog-card]")).toHaveCount(7);
     const card = catalog.locator('[data-dataset-catalog-card="kinugawa"]');

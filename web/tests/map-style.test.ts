@@ -42,16 +42,17 @@ const point = (id: string, coordinates: readonly unknown[]): FeatureVersion => (
 });
 
 describe("map style", () => {
-  it("defines the attributed GSI raster and exactly one historical GeoJSON source", () => {
+  it("defines the attributed GSI raster and a separate source for comparison snapshots", () => {
     const style = createGsiStyle();
-    expect(Object.keys(style.sources)).toEqual(["gsi", "historical-features"]);
+    expect(Object.keys(style.sources)).toEqual(["gsi", "historical-features", "historical-comparison"]);
     expect(style.sources.gsi).toMatchObject({ type: "raster", attribution: expect.stringContaining("https://maps.gsi.go.jp/development/ichiran.html") });
     expect(style.sources["historical-features"]).toMatchObject({ type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    expect(style.sources["historical-comparison"]).toMatchObject({ type: "geojson", data: { type: "FeatureCollection", features: [] } });
   });
 
   it("uses distinct point, line, and polygon layers with selected and hypothesis patterns", () => {
     const layers = geometryLayerDefinitions();
-    expect(layers.map((layer) => layer.id)).toEqual(expect.arrayContaining(["historical-points", "historical-lines", "historical-polygons", "selected-point-halo", "selected-line-halo", "selected-polygon-outline"]));
+    expect(layers.map((layer) => layer.id)).toEqual(expect.arrayContaining(["historical-points", "historical-lines", "historical-polygons", "comparison-polygons", "comparison-lines", "comparison-points", "selected-point-halo", "selected-line-halo", "selected-polygon-outline"]));
     expect(layers.some((layer) => "line-dasharray" in (layer.layout ?? {}))).toBe(false);
     expect(layers.some((layer) => "line-dasharray" in (layer.paint ?? {}))).toBe(true);
     expect(layers.some((layer) => "line-width" in (layer.paint ?? {}) && layer.id.startsWith("selected-"))).toBe(true);
