@@ -58,6 +58,26 @@ test.describe("Ogurike data snapshots", () => {
     await page.screenshot({ path: testInfo.outputPath("ogurike-1885-outline.png"), fullPage: true });
   });
 
+  test("shows the 1590 main pool with its caveat", async ({ page }, testInfo) => {
+    await page.goto("/?year=1590");
+    const detail = page.locator("#panel-detail");
+    await page.getByRole("button", { name: /巨椋池（1590年・工事前の概略）/ }).click();
+    await expect(detail).toContainText("主水域");
+    await expect(detail).toContainText("網状河道");
+    await expect(detail).toContainText("補間頂点は測量精度を意味しません");
+    await expect(detail).toContainText("ogurike:evidence:waterbody-1590-geometry");
+    await page.screenshot({ path: testInfo.outputPath("ogurike-1590-main-pool.png"), fullPage: true });
+  });
+
+  test("describes the 1590 river as a representative connection, not the complete network", async ({ page }) => {
+    await page.goto("/?year=1590");
+    const detail = page.locator("#panel-detail");
+    await page.getByRole("button", { name: /宇治川（1590年・工事前）/ }).click();
+    await expect(detail).toContainText("代表的な接続");
+    await expect(detail).toContainText("網状河道全体");
+    await expect(detail).toContainText("ogurike:evidence:ujigawa-1590-geometry");
+  });
+
   test("shows evidence, uncertainty, citation, and rights for point line and polygon", async ({ page }, testInfo) => {
     await page.goto("/");
     const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);

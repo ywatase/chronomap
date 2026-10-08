@@ -52,16 +52,16 @@
 - 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1590-temporal`)
-  - `location`: `approximate` — 資料図の相対位置を概略線にしたものです。 (Evidence: `ogurike:evidence:ujigawa-1590-temporal`)
-  - `geometry`: `approximate` — 少数の折れ点による概略復元であり、精密な河道中心線ではありません。 (Evidence: `ogurike:evidence:ujigawa-1590-geometry`)
+  - `location`: `approximate` — 図①が示す主水面との接続関係を現在地図上に概略配置しています。正確な河道位置ではありません。 (Evidence: `ogurike:evidence:ujigawa-1590-geometry`)
+  - `geometry`: `approximate` — 主水面への流路網の接続関係を示す少数折れ点の代表線であり、完全な網状流路・枝数・正確な河道中心線を示しません。 (Evidence: `ogurike:evidence:ujigawa-1590-geometry`)
   - `identity`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1590-temporal`)
 
 - Evidence:
 
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
-| `ogurike:evidence:ujigawa-1590-geometry` | derived-geometry | geometry | PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:ujigawa-1590-geometry` — 図の相対的な流路関係を少数の折れ点へ手動加工した概略線であり、正確な河道中心線ではない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:ujigawa-1590-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:ujigawa-1590-geometry` — 図①が示す、宇治川・流路網と主水面の接続関係を少数の折れ点へ手動加工した代表線である。周囲の網状河道全体、枝数、正確な河道中心線は示さない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:ujigawa-1590-temporal` | citation | identity, location, temporal | PDF p.2-21末尾–p.2-22 図2.2-1① | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:ujigawa-1590-temporal` — 資料図が河川工事前の1590年スナップショットとして示すことを確認する。
 
@@ -102,8 +102,8 @@
 - 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` — 資料図①の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
-  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
-  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
+  - `location`: `approximate` — 図①の主水域を現在地図上の概略位置へ配置しています。岸線の精密な座標や地番を示すものではありません。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
+  - `geometry`: `approximate` — 図①に見える広い主水面の丸みある肩、北縁の複数の入り込み、南岸の凹凸を手動で再構成した概略形状です。表示用の補間頂点は測量精度を意味せず、周囲の網状河道・島・砂州、精密な湖岸・面積・深度も表しません。 (Evidence: `ogurike:evidence:waterbody-1590-geometry`)
   - `identity`: `well-supported` — 資料図①の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1590-temporal`)
 
 - Evidence:
@@ -111,7 +111,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1590-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1①『秀吉による河川工事前（1590年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1590-geometry` — 変遷図①に示される巨椋池周辺の相対的な水域範囲と湾入を、現在の地図上へ手動加工した概略面である。原図の境界・面積・水深を再現しない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1590-geometry` — 図①に見える広い主水面の丸みある肩、北縁の複数の入り込み、南岸の凹凸を手動で再構成した概略形状である。表示用の補間頂点は測量精度を意味しない。周囲の網状河道・島・砂州、精密な湖岸・面積・深度は表さない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1590-temporal` | citation | identity, temporal | PDF p.2-21末尾–p.2-22 図2.2-1① | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1590-temporal` — 資料図が河川工事前の1590年スナップショットとして示すことを確認する。
 

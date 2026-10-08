@@ -121,6 +121,54 @@ def test_ogurike_1885_outline_and_caveat_use_the_registered_figure_evidence():
     assert "北東の離れた水面" in properties["description"]["ja"]
 
 
+def test_ogurike_1590_pool_is_independent_with_northern_inlets_and_a_caveated_river_connection():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    pool = features["ogurike:version:waterbody-1590"]
+    outline_1590 = pool["geometry"]["coordinates"][0]
+    outline_1596 = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
+    outline_1885 = features["ogurike:version:waterbody-1885"]["geometry"]["coordinates"][0]
+    river = features["ogurike:version:ujigawa-1590"]
+
+    assert pool["geometry"]["type"] == "Polygon"
+    assert len(pool["geometry"]["coordinates"]) == 1  # main basin only; no speculative islands or branches
+    # These snapshots share a broad basin footprint, so require a meaningful
+    # shoreline difference without exaggerating it to clear an arbitrary gap.
+    assert normalized_outline_distance(outline_1596, outline_1590) > 0.07
+    assert normalized_outline_distance(outline_1885, outline_1590) > 0.08
+    assert all(round(coordinate, 4) == coordinate for point in outline_1590 for coordinate in point)
+
+    # Three broad northern water inlets join the central basin, with shore
+    # between them; these are shape landmarks, not asserted river branches.
+    assert point_in_polygon((135.769, 34.925), outline_1590)
+    assert not point_in_polygon((135.773, 34.925), outline_1590)
+    assert point_in_polygon((135.779, 34.925), outline_1590)
+    assert not point_in_polygon((135.783, 34.925), outline_1590)
+    assert point_in_polygon((135.789, 34.925), outline_1590)
+    north_inlet_bands = ((135.767, 135.773), (135.777, 135.783), (135.787, 135.793))
+    assert all(sum(start <= point[0] <= end and point[1] >= 34.924 for point in outline_1590[:-1]) >= 3 for start, end in north_inlet_bands)
+    assert minimum_vertex_angle(outline_1590) >= 60  # no needle-like spike or abrupt reversal
+    assert line_crosses_polygon_interior(river["geometry"]["coordinates"], outline_1590)
+    assert "主水域" in pool["properties"]["description"]["ja"]
+    assert "網状河道" in pool["properties"]["description"]["ja"]
+    assert "補間頂点" in pool["properties"]["uncertainty"]["geometry"]["note"]
+    assert "代表的な接続" in river["properties"]["description"]["ja"]
+
+
+def test_ogurike_1590_main_pool_and_river_location_cite_geometry_evidence():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    evidence_id = "ogurike:evidence:waterbody-1590-geometry"
+    pool = features["ogurike:version:waterbody-1590"]["properties"]
+    river = features["ogurike:version:ujigawa-1590"]["properties"]
+
+    assert pool["uncertainty"]["geometry"]["assessment"] == "approximate"
+    assert pool["uncertainty"]["location"]["assessment"] == "approximate"
+    assert evidence_id in pool["uncertainty"]["geometry"]["evidenceIds"]
+    assert evidence_id in pool["uncertainty"]["location"]["evidenceIds"]
+    assert "ogurike:evidence:ujigawa-1590-geometry" in river["uncertainty"]["location"]["evidenceIds"]
+
+
 def test_ogurike_1933_pool_does_not_invent_a_large_shrink_from_1910():
     package = load_package(DATA)
     features = {item["id"]: item for item in package.feature_versions["features"]}
@@ -226,6 +274,20 @@ def normalized_outline_distance(first, second, samples=48):
             ]
             candidates.append(math.sqrt(sum(distance * distance for distance in distances) / samples))
     return min(candidates)
+
+
+def minimum_vertex_angle(ring):
+    unique_count = len(ring) - 1
+    angles = []
+    for index in range(unique_count):
+        previous = ring[(index - 1) % unique_count]
+        current = ring[index]
+        following = ring[(index + 1) % unique_count]
+        first = (previous[0] - current[0], previous[1] - current[1])
+        second = (following[0] - current[0], following[1] - current[1])
+        cosine = sum(a * b for a, b in zip(first, second)) / (math.hypot(*first) * math.hypot(*second))
+        angles.append(math.degrees(math.acos(max(-1, min(1, cosine)))))
+    return min(angles)
 
 
 def line_crosses_polygon_interior(line, ring):
