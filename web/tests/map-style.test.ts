@@ -63,6 +63,17 @@ describe("map style", () => {
     expect(layers.some((layer) => "line-width" in (layer.paint ?? {}) && layer.id.startsWith("selected-"))).toBe(true);
   });
 
+  it("keeps selected waterbody polygons filled beneath their selection outline", () => {
+    const layers = geometryLayerDefinitions();
+    const polygons = layers.find((layer) => layer.id === "historical-polygons");
+    const selectionExclusion = ["!=", ["get", "selected"], true];
+
+    expect(polygons?.filter).not.toContainEqual(selectionExclusion);
+    expect(layers.findIndex((layer) => layer.id === "historical-polygons")).toBeLessThan(
+      layers.findIndex((layer) => layer.id === "selected-polygon-outline"),
+    );
+  });
+
   it("renders political territory separately from ordinary polygons", () => {
     const layers = geometryLayerDefinitions();
     const territory = layers.find((layer) => layer.id === "historical-territories");

@@ -28,7 +28,10 @@ test.describe("Ogurike data snapshots", () => {
     await page.screenshot({ path: testInfo.outputPath("ogurike-1910-outline.png"), fullPage: true });
 
     await snapshots.selectOption("1933");
-    await expect(page.getByRole("button", { name: /巨椋池（1933年・残存水域の概略）/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /巨椋池（1933年・概略）/ })).toBeVisible();
+    await page.getByRole("button", { name: /巨椋池（1933年・概略）/ }).click();
+    await expect(page.getByText("近畿地方整備局の図⑤は図④（1910年）と同程度の主水域を描いています。両図から湖岸の差を測れないため、1910年の概略輪郭を再利用して表示しています。1933年に湖岸が完全に同一だったことや、周辺河道・池を示すものではありません。", { exact: true })).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath("ogurike-1933-outline.png"), fullPage: true });
 
     await snapshots.selectOption("1942");
     await expect(page.getByRole("button", { name: /巨椋池干拓之碑/ })).toBeVisible();

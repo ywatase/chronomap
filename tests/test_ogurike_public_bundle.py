@@ -84,6 +84,18 @@ def test_ogurike_1910_outline_reflects_its_own_source_figure():
     assert normalized_outline_distance(outline_1596, outline_1910) > 0.08
 
 
+def test_ogurike_1933_pool_does_not_invent_a_large_shrink_from_1910():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    outline_1910 = features["ogurike:version:waterbody-1910"]["geometry"]["coordinates"][0]
+    outline_1933 = features["ogurike:version:waterbody-1933"]["geometry"]["coordinates"][0]
+
+    # Figure ⑤ draws a main pool of broadly comparable size to figure ④.
+    # It does not establish the large contraction in the previous polygon.
+    area_ratio = polygon_area(outline_1933) / polygon_area(outline_1910)
+    assert 0.9 <= area_ratio <= 1.1
+
+
 def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
     package = load_package(DATA)
     waterbodies = {
@@ -141,6 +153,13 @@ def normalized_outline_distance(first, second, samples=48):
             ]
             candidates.append(math.sqrt(sum(distance * distance for distance in distances) / samples))
     return min(candidates)
+
+
+def polygon_area(ring):
+    return abs(sum(
+        start[0] * end[1] - end[0] * start[1]
+        for start, end in zip(ring, ring[1:])
+    )) / 2
 
 
 def sample_normalized_outline(ring, samples):

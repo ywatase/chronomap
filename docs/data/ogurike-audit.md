@@ -16,7 +16,7 @@
 | `ogurike:version:waterbody-1596` | 巨椋池（1596年・工事後の概略） | Polygon | 1596年 | open-license |
 | `ogurike:version:waterbody-1885` | 巨椋池（1885年・工事前の概略） | Polygon | 1885年 | open-license |
 | `ogurike:version:waterbody-1910` | 巨椋池（1910年・概略） | Polygon | 1910年 | open-license |
-| `ogurike:version:waterbody-1933` | 巨椋池（1933年・残存水域の概略） | Polygon | 1933年 | open-license |
+| `ogurike:version:waterbody-1933` | 巨椋池（1933年・概略） | Polygon | 1933年 | open-license |
 
 ### `ogurike:version:reclamation-monument-1942`
 
@@ -199,22 +199,22 @@
 
 ### `ogurike:version:waterbody-1933`
 
-- 地物: 巨椋池（1933年・残存水域の概略） (`ogurike:entity:waterbody`)
+- 地物: 巨椋池（1933年・概略） (`ogurike:entity:waterbody`)
 - geometry: `Polygon`
 - 年代: 1933年
 - 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` — 資料図⑤の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
   - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
-  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な境界ではない。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
-  - `identity`: `well-supported` — 資料図⑤の残存水域として扱う。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
+  - `geometry`: `approximate` — 図⑤は図④と同程度の主水域を描くため、湖岸差を座標化できない箇所は1910年の概略輪郭を再利用しています。精密境界や完全な同一性を示さず、周辺池・河道も含めません。 (Evidence: `ogurike:evidence:waterbody-1933-geometry`)
+  - `identity`: `well-supported` — 資料図⑤の1933年スナップショットの主水域として扱う。 (Evidence: `ogurike:evidence:waterbody-1933-temporal`)
 
 - Evidence:
 
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1933-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1933-geometry` — 変遷図⑤の残存水域の相対的な範囲と湾入を手動加工した概略面である。干拓前後の精密な境界ではない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1933-geometry` — 図⑤は図④と同程度の主水域を描く。湖岸の差を座標化できる資料精度がないため1910年の概略輪郭を再利用し、完全に同一の湖岸とは主張しない。別河道や周辺池、面積逆算は含めない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1933-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1⑤ | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1933-temporal` — 資料図が淀川改良工事増補完成時の1933年スナップショットとして示すことを確認する。
 

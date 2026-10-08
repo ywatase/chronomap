@@ -141,7 +141,7 @@
   {
     "id": "ogurike:evidence:waterbody-1933-geometry",
     "locator": "PDF p.2-22 図2.2-1⑤『淀川改良工事増補完成時（1933年）』",
-    "note": "変遷図⑤の残存水域の相対的な範囲と湾入を手動加工した概略面である。干拓前後の精密な境界ではない。",
+    "note": "図⑤は図④と同程度の主水域を描く。湖岸の差を座標化できる資料精度がないため1910年の概略輪郭を再利用し、完全に同一の湖岸とは主張しない。別河道や周辺池、面積逆算は含めない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
