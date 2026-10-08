@@ -84,6 +84,43 @@ def test_ogurike_1910_outline_reflects_its_own_source_figure():
     assert normalized_outline_distance(outline_1596, outline_1910) > 0.08
 
 
+def test_ogurike_1885_pool_has_a_distinct_two_lobed_main_water_outline():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    pool = features["ogurike:version:waterbody-1885"]
+    outline_1596 = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
+    geometry = pool["geometry"]
+
+    assert geometry["type"] == "Polygon"
+    assert len(geometry["coordinates"]) == 1  # connected main pool only; no speculative island or detached pool
+    ring = geometry["coordinates"][0]
+    assert ring[0] == ring[-1]
+    assert all(round(coordinate, 3) == coordinate for point in ring for coordinate in point)
+    assert normalized_outline_distance(outline_1596, ring) > 0.08
+
+    # Broad interior/exterior checks preserve two lobes joined by a narrow
+    # central neck and a pronounced cleft entering from the southern shore.
+    assert point_in_polygon((135.766, 34.914), ring)  # smaller western lobe
+    assert point_in_polygon((135.791, 34.912), ring)  # larger eastern/southeastern lobe
+    assert point_in_polygon((135.778, 34.916), ring)  # narrow central connection
+    assert not point_in_polygon((135.778, 34.911), ring)  # southern cleft
+
+
+def test_ogurike_1885_outline_and_caveat_use_the_registered_figure_evidence():
+    package = load_package(DATA)
+    pool = next(item for item in package.feature_versions["features"] if item["id"] == "ogurike:version:waterbody-1885")
+    properties = pool["properties"]
+    evidence_id = "ogurike:evidence:waterbody-1885-geometry"
+
+    assert properties["uncertainty"]["geometry"]["assessment"] == "approximate"
+    assert properties["uncertainty"]["location"]["assessment"] == "approximate"
+    assert evidence_id in properties["uncertainty"]["geometry"]["evidenceIds"]
+    assert evidence_id in properties["uncertainty"]["location"]["evidenceIds"]
+    assert evidence_id in properties["evidenceIds"]
+    assert "細い接続部" in properties["description"]["ja"]
+    assert "北東の離れた水面" in properties["description"]["ja"]
+
+
 def test_ogurike_1933_pool_does_not_invent_a_large_shrink_from_1910():
     package = load_package(DATA)
     features = {item["id"]: item for item in package.feature_versions["features"]}

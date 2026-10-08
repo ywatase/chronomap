@@ -152,8 +152,8 @@
 - 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` — 資料図③の年代区分に基づく。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
-  - `location`: `approximate` — 資料図の相対位置を現在の地図へ概略配置した。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
-  - `geometry`: `approximate` — 資料図の相対配置と湾入を残した手動加工の概略面であり、精密な湖岸線ではない。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
+  - `location`: `approximate` — 図③の主水域を現在地図上の概略位置へ配置しています。岸線の精密な座標や地番を示すものではありません。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
+  - `geometry`: `approximate` — 図③の主水域に見える西側と東～南東側の二葉状の輪郭、細い中央接続、南側の湾入を手動加工した概略形状です。正確な岸線・面積・深度・周辺水域全体を示さず、島状表示や北東の離れた水面も含みません。 (Evidence: `ogurike:evidence:waterbody-1885-geometry`)
   - `identity`: `well-supported` — 資料図③の巨椋池として扱う。 (Evidence: `ogurike:evidence:waterbody-1885-temporal`)
 
 - Evidence:
@@ -161,7 +161,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-1885-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-1885-geometry` — 変遷図③の相対的な水域範囲と湾入を手動加工した概略面である。1885年の精密な湖岸線・測量図ではない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-1885-geometry` — 図③の主水域に見える西側と東～南東側の二葉状の輪郭、細い中央接続、南側の湾入を手動加工した概略形状である。正確な岸線・面積・深度・周辺水域全体を示さず、島状表示や北東の離れた水面も含まない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-1885-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1③ | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:waterbody-1885-temporal` — 資料図が淀川改良工事前の1885年スナップショットとして示すことを確認する。
 

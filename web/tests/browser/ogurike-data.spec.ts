@@ -47,6 +47,17 @@ test.describe("Ogurike data snapshots", () => {
     await page.screenshot({ path: testInfo.outputPath("ogurike-1596-ujigawa.png"), fullPage: true });
   });
 
+  test("shows the reconstructed 1885 two-lobed pool with its caveat", async ({ page }, testInfo) => {
+    await page.goto("/?year=1885");
+    await page.getByRole("button", { name: /巨椋池（1885年・工事前の概略）/ }).click();
+    const detail = page.locator("#panel-detail");
+    await expect(detail).toContainText("西側の小さめの水域");
+    await expect(detail).toContainText("細い接続部");
+    await expect(detail).toContainText("北東の離れた水面");
+    await expect(detail).toContainText("ogurike:evidence:waterbody-1885-geometry");
+    await page.screenshot({ path: testInfo.outputPath("ogurike-1885-outline.png"), fullPage: true });
+  });
+
   test("shows evidence, uncertainty, citation, and rights for point line and polygon", async ({ page }, testInfo) => {
     await page.goto("/");
     const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);

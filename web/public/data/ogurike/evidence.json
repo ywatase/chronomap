@@ -119,7 +119,7 @@
   {
     "id": "ogurike:evidence:waterbody-1885-geometry",
     "locator": "PDF p.2-22 図2.2-1③『淀川改良工事前（1885年）』",
-    "note": "変遷図③の相対的な水域範囲と湾入を手動加工した概略面である。1885年の精密な湖岸線・測量図ではない。",
+    "note": "図③の主水域に見える西側と東～南東側の二葉状の輪郭、細い中央接続、南側の湾入を手動加工した概略形状である。正確な岸線・面積・深度・周辺水域全体を示さず、島状表示や北東の離れた水面も含まない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
