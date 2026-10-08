@@ -17,6 +17,10 @@ import { readFileSync } from "node:fs";
       if (options.center) this.center = { lng: options.center[0], lat: options.center[1] };
       if (options.zoom !== undefined) this.zoom = options.zoom;
     });
+    easeTo = vi.fn((options: { center?: readonly [number, number]; zoom?: number }) => {
+      if (options.center) this.center = { lng: options.center[0], lat: options.center[1] };
+      if (options.zoom !== undefined) this.zoom = options.zoom;
+    });
     center = { lng: 135.75, lat: 34.89 };
     zoom = 11;
     remove = vi.fn();
@@ -118,6 +122,27 @@ describe("MapAdapter", () => {
     expect(map.fitBounds).toHaveBeenCalledWith([[135.73, 34.87], [135.82, 34.94]], { padding: 48, maxZoom: 13, duration: 0 });
     map.fire("load");
     expect(map.fitBounds).toHaveBeenCalledTimes(1);
+  });
+
+  it("fits the map to a selected historical feature geometry", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+    adapter.focusFeature({
+      type: "Feature",
+      id: "waterbody",
+      geometry: { type: "Polygon", coordinates: [[[135.72, 34.86], [135.78, 34.86], [135.8, 34.91], [135.72, 34.86]]] },
+      properties: {} as any,
+    });
+    expect(map.fitBounds).toHaveBeenCalledWith([[135.72, 34.86], [135.8, 34.91]], { padding: 64, maxZoom: 15, duration: 450 });
+  });
+
+  it("centers point features and safely bounds multi geometries", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"));
+    const map = mocked.maps.at(-1);
+    adapter.focusFeature({ type: "Feature", id: "point", geometry: { type: "Point", coordinates: [135.75, 34.9] }, properties: {} as any });
+    expect(map.easeTo).toHaveBeenCalledWith({ center: [135.75, 34.9], zoom: 15, duration: 450 });
+    adapter.focusFeature({ type: "Feature", id: "multi", geometry: { type: "MultiLineString", coordinates: [[[135.7, 34.8], [135.8, 34.95]], [[135.72, 34.85], [135.82, 34.92]]] }, properties: {} as any });
+    expect(map.fitBounds).toHaveBeenCalledWith([[135.7, 34.8], [135.82, 34.95]], { padding: 64, maxZoom: 15, duration: 450 });
   });
 
   it("preserves authored coordinate order in its one GeoJSON source", () => {

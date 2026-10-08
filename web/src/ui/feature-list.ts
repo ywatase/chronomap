@@ -3,6 +3,7 @@ import type { AppState } from "../app/state";
 import type { FeatureVersion, PublicBundle, TemporalExtent } from "../domain/types";
 import { entityTypeLabel, uiCopy } from "./copy";
 import { localizedText } from "../domain/labels";
+import { featureMatches } from "./feature-search";
 
 export interface FeatureListOptions {
   readonly query?: string;
@@ -58,25 +59,6 @@ export function renderFeatureList(container: HTMLElement, state: AppState, bundl
     item.append(members); list.append(item);
   }
   container.append(list);
-}
-
-function featureMatches(feature: FeatureVersion, bundle: PublicBundle, query: string): boolean {
-  const entity = bundle.entitiesById[feature.properties.entityId];
-  const values = [
-    feature.id,
-    feature.properties.entityId,
-    ...Object.values(feature.properties.labels),
-    ...Object.values(feature.properties.description),
-    ...(feature.properties.hypothesisLabel ? Object.values(feature.properties.hypothesisLabel) : []),
-    ...(entity ? Object.values(entity.labels) : []),
-    ...(entity ? Object.values(entity.description) : []),
-  ];
-  const normalizedQuery = normalizeSearch(query);
-  return values.some((value) => normalizeSearch(value).includes(normalizedQuery));
-}
-
-function normalizeSearch(value: string): string {
-  return value.trim().toLocaleLowerCase();
 }
 
 function groupedFeatures(features: readonly FeatureVersion[]): readonly { label: string | null; features: readonly FeatureVersion[] }[] {

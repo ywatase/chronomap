@@ -301,6 +301,10 @@ export interface UiCopy {
   readonly basemapFailure: (message: string) => string;
   readonly footerBasemap: string;
   readonly mapCandidates: string;
+  readonly mapSearchLabel: string;
+  readonly mapSearchPlaceholder: string;
+  readonly mapSearchScope: string;
+  readonly mapSearchResult: (label: string, type: string, period: string) => string;
   readonly featureHeading: string;
   readonly featureSearchLabel: string;
   readonly featureSearchPlaceholder: string;
@@ -676,6 +680,10 @@ const EN_COPY: UiCopy = {
   basemapFailure: (message) => `Basemap or map rendering is unavailable; GSI context may be affected. The historical list and details remain available. ${message}`,
   footerBasemap: "Basemap: GSI Maps attribution and terms",
   mapCandidates: "Map candidates at this location",
+  mapSearchLabel: "Find a historical feature",
+  mapSearchPlaceholder: "Name, place, or ID",
+  mapSearchScope: "Searches all public snapshots in this region.",
+  mapSearchResult: (label, type, period) => `${label} · ${type} · ${period}`,
   featureHeading: "Features",
   featureSearchLabel: "Search visible features",
   featureSearchPlaceholder: "Name, description, or ID",
@@ -1043,6 +1051,10 @@ const JA_COPY: UiCopy = {
   basemapFailure: () => "背景地図を表示できません。GSIの地図情報が利用できない場合も、歴史地物の一覧と詳細は確認できます。再試行できます。",
   footerBasemap: "背景地図: 国土地理院（出典・利用条件）",
   mapCandidates: "この位置の候補",
+  mapSearchLabel: "地図上の歴史地物を探す",
+  mapSearchPlaceholder: "地名・地物名・IDで検索",
+  mapSearchScope: "この地域で公開されている全時点の地物を検索します。",
+  mapSearchResult: (label, type, period) => `${label} · ${type} · ${period}`,
   featureHeading: "表示中の地物",
   featureSearchLabel: "表示中の地物を検索",
   featureSearchPlaceholder: "名称・説明・IDで検索",

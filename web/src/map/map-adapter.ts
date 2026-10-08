@@ -86,6 +86,22 @@ export class MapAdapter {
   setComparisonFeatures(features: readonly FeatureVersion[]): void { this.comparisonFeatures = features; this.updateComparisonSource(true); }
   setSelectedFeature(id: string | null): void { this.selectedFeatureId = id; this.updateSource(true); }
   setViewport(bbox: Dataset["bbox"]): void { this.viewport = bbox; if (this.map) this.applyRequestedCameraOrViewport(); }
+  focusFeature(feature: FeatureVersion): void {
+    if (!this.map) return;
+    const bounds = geometryBounds(feature);
+    if (!bounds) return;
+    // A search result is an intentional new navigation target. Clear the
+    // shared-camera guard so a programmatic fit cannot be snapped back to the
+    // URL camera restored during mount.
+    this.requestedCamera = null;
+    this.viewportApplied = true;
+    const [[west, south], [east, north]] = bounds;
+    if (west === east && south === north) {
+      this.map.easeTo({ center: [west, south], zoom: 15, duration: 450 });
+      return;
+    }
+    this.map.fitBounds(bounds, { padding: 64, maxZoom: 15, duration: 450 });
+  }
   setCamera(camera: MapCamera): void { this.requestedCamera = camera; this.camera = camera; this.map?.jumpTo({ center: [camera.longitude, camera.latitude], zoom: camera.zoom }); }
   setBasemapOpacity(value: number): void { this.basemapOpacity = clamp(value); this.applyDisplaySettings(); }
   setHistoricalOpacity(value: number): void { this.historicalOpacity = clamp(value); this.applyDisplaySettings(); }
@@ -189,3 +205,25 @@ function sameCamera(first: MapCamera, second: MapCamera): boolean {
 }
 
 function clamp(value: number): number { return Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0; }
+
+function geometryBounds(feature: FeatureVersion): [[number, number], [number, number]] | null {
+  const positions: [number, number][] = [];
+  collectPositions(feature.geometry.coordinates, positions);
+  if (!positions.length) return null;
+  let west = positions[0]![0]; let south = positions[0]![1];
+  let east = west; let north = south;
+  for (const [longitude, latitude] of positions.slice(1)) {
+    west = Math.min(west, longitude); east = Math.max(east, longitude);
+    south = Math.min(south, latitude); north = Math.max(north, latitude);
+  }
+  return [[west, south], [east, north]];
+}
+
+function collectPositions(value: unknown, positions: [number, number][]): void {
+  if (!Array.isArray(value)) return;
+  if (value.length >= 2 && typeof value[0] === "number" && Number.isFinite(value[0]) && typeof value[1] === "number" && Number.isFinite(value[1])) {
+    positions.push([value[0], value[1]]);
+    return;
+  }
+  for (const child of value) collectPositions(child, positions);
+}

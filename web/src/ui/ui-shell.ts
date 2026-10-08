@@ -2,7 +2,7 @@ import { displayYearLocalized, initialYear, localizedText, recordedYears } from 
 import { filterFeaturesByYear } from "../domain/temporal-filter";
 import type { AppEvent, AppState } from "../app/state";
 import { reduce } from "../app/state";
-import type { Dataset, HistoricalMapAsset, PublicBundle } from "../domain/types";
+import type { Dataset, FeatureVersion, HistoricalMapAsset, PublicBundle } from "../domain/types";
 import { isTileHistoricalMapAsset } from "../domain/historical-map-assets";
 import { parseSharedState, sharedQuery } from "../domain/share-state";
 import type { MapCamera } from "../map/map-adapter";
@@ -14,6 +14,7 @@ import { uiCopy, type UiCopy } from "./copy";
 import { buildReportModel } from "../domain/report-model";
 import { renderPrintReport } from "./print-report";
 import { createMapSettings } from "./map-settings";
+import { createMapSearch } from "./map-search";
 import type { Lesson } from "../domain/lesson";
 import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
@@ -29,7 +30,7 @@ import { buildDatasetCatalogViewModel, type DatasetCatalogSnapshots } from "../d
 import { renderDatasetCatalog } from "./dataset-catalog-dialog";
 import type { LessonPackOfferPlan } from "../domain/lesson-pack-pilot";
 
-export interface MapAdapterLike { mount(container: HTMLElement, asset?: HistoricalMapAsset | null): void; setFeatures(features: AppState["visibleFeatures"]): void; setComparisonFeatures?(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setTerritoryVisibility?(visible: boolean): void; setHistoricalMapAssetOpacity?(value: number): void; setHistoricalMapAssetVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
+export interface MapAdapterLike { mount(container: HTMLElement, asset?: HistoricalMapAsset | null): void; setFeatures(features: AppState["visibleFeatures"]): void; setComparisonFeatures?(features: AppState["visibleFeatures"]): void; setSelectedFeature(id: string | null): void; focusFeature?(feature: FeatureVersion): void; setBasemapOpacity?(value: number): void; setHistoricalOpacity?(value: number): void; setHistoricalVisibility?(visible: boolean): void; setTerritoryVisibility?(visible: boolean): void; setHistoricalMapAssetOpacity?(value: number): void; setHistoricalMapAssetVisibility?(visible: boolean): void; setViewport?(bbox: Dataset["bbox"]): void; setCamera?(camera: MapCamera): void; getCamera?(): MapCamera | null; onSelect?(handler: (ids: readonly string[]) => void): void; onCameraChange?(handler: (camera: MapCamera) => void): void; onBasemapError?(handler: (message: string) => void): void; retry?(): void; destroy?(): void; }
 export interface AppController { setMapAdapter(adapter: MapAdapterLike): void; reportBasemapFailure(message: string): void; retry(): void; destroy(): void; }
 export type DatasetCatalogLoader = () => Promise<DatasetCatalogSnapshots>;
 export interface UiShellOptions {
@@ -169,9 +170,11 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const mapFrame = document.createElement("section"); mapFrame.className = "map-frame";
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback;
   const mapSettings = createMapSettings(copy, (settings) => { adapter?.setBasemapOpacity?.(settings.basemapOpacity); adapter?.setHistoricalOpacity?.(settings.historicalOpacity); adapter?.setHistoricalVisibility?.(settings.historicalVisible); adapter?.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter?.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter?.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); }, historicalMapAsset);
+  const mapSearch = createMapSearch(copy, bundle, (featureId) => selectFeature(featureId));
+  const mapToolbar = document.createElement("div"); mapToolbar.className = "map-toolbar"; mapToolbar.append(mapSearch.element, mapSettings.element);
   const mapLegend = renderMapLegend(copy, state.selectedYear, null, false);
   const approximationNote = document.createElement("p"); approximationNote.className = "map-approximation-note"; approximationNote.dataset.viewerApproximation = ""; approximationNote.textContent = copy.approximationNote;
-  mapFrame.append(map, mapSettings.element, mapLegend, approximationNote); content.append(mapFrame);
+  mapFrame.append(map, mapToolbar, mapLegend, approximationNote); content.append(mapFrame);
   const rootQuickStart = rootQuickStartOpen ? renderRootQuickStart(copy, bundle, datasetSlug) : null;
   if (rootQuickStart) mapFrame.append(rootQuickStart);
   const sidebar = document.createElement("section"); sidebar.className = "sidebar";
@@ -184,6 +187,17 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const footer = document.createElement("footer"); footer.innerHTML = `${copy.footerBasemap}: <a href="https://maps.gsi.go.jp/development/ichiran.html">GSI Maps</a>.`; shell.append(footer);
 
   const focusDetails = () => { if (window.matchMedia?.("(min-width: 48rem)").matches) detailPanel.focus(); else detailTab.focus(); };
+  const selectFeature = (featureId: string) => {
+    const feature = state.allFeatures.find((candidate) => candidate.id === featureId) ?? bundle.features.find((candidate) => candidate.id === featureId);
+    if (!feature) return;
+    leaveLesson();
+    lastFeatureId = featureId;
+    const targetYear = representativeYear(feature, state.selectedYear, years);
+    if (targetYear !== state.selectedYear) emit({ type: "yearChanged", year: targetYear });
+    emit({ type: "featureSelected", featureId });
+    adapter?.focusFeature?.(feature);
+    focusDetails();
+  };
   const syncUrl = () => {
     if (typeof window === "undefined" || !window.history?.replaceState) return;
     const camera = adapter?.getCamera?.() ?? requestedCamera;
@@ -497,9 +511,10 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     reportButton.hidden = state.status === "loading" || state.status === "retrying" || state.status === "failed" || state.selectedFeatureId === null;
     renderLessonPanel(lessonHost, lesson, lessonIndex, copy, lessonActions);
     listPanel.hidden = state.activeMobileTab !== "list"; detailPanel.hidden = state.activeMobileTab !== "detail"; listPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "list")); detailPanel.setAttribute("aria-hidden", String(state.activeMobileTab !== "detail")); listTab.setAttribute("aria-selected", String(state.activeMobileTab === "list")); detailTab.setAttribute("aria-selected", String(state.activeMobileTab === "detail"));
-    renderMapCandidates(candidates, state, bundle, copy, (featureId) => { leaveLesson(); lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
+    mapSearch.setFeatures(state.visibleFeatures, state.selectedFeatureId);
+    renderMapCandidates(candidates, state, bundle, copy, (featureId) => selectFeature(featureId));
     renderComparisonCards(comparison, comparisons, bundle, comparisonEntityId, state.selectedFeatureId, (entityId) => { comparisonEntityId = comparisonEntityId === entityId ? null : entityId; update(); }, (featureId) => selectComparisonVersion(featureId));
-    renderFeatureList(listPanel, state, bundle, (featureId) => { leaveLesson(); lastFeatureId = featureId; emit({ type: "featureSelected", featureId }); focusDetails(); });
+    renderFeatureList(listPanel, state, bundle, (featureId) => selectFeature(featureId));
     renderMetadataPanel(detailPanel, state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId) ?? null, bundle, () => { emit({ type: "detailClosed" }); const returnControl = [...candidates.querySelectorAll<HTMLButtonElement>("[data-map-candidate-id]")].find((button) => button.dataset.mapCandidateId === lastFeatureId) ?? [...listPanel.querySelectorAll<HTMLButtonElement>("[data-feature-id]")].find((button) => button.dataset.featureId === lastFeatureId); returnControl?.focus(); });
   };
   const emit = (event: AppEvent) => {
@@ -519,7 +534,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     leaveLesson();
     state = reduce(state, { type: "yearChanged", year }); dispatch({ type: "yearChanged", year });
     state = reduce(state, { type: "featureSelected", featureId }); dispatch({ type: "featureSelected", featureId });
-    lastFeatureId = featureId; syncUrl(); adapter?.setFeatures(state.visibleFeatures); adapter?.setSelectedFeature(state.selectedFeatureId); update();
+    lastFeatureId = featureId; syncUrl(); adapter?.setFeatures(state.visibleFeatures); adapter?.setSelectedFeature(state.selectedFeatureId); update(); adapter?.focusFeature?.(feature);
     focusDetails();
   };
   const commitYear = () => { const value = Number(input.value); if (Number.isInteger(value)) { leaveLesson(); emit({ type: "yearChanged", year: value }); } };
@@ -563,6 +578,18 @@ function viewerDefaultYear(bundle: PublicBundle): number {
   return fallback;
 }
 function adjacentYear(years: readonly number[], current: number, direction: -1 | 1): number | null { if (!years.length) return null; const index = years.indexOf(current); if (index >= 0) return years[index + direction] ?? null; if (direction < 0) return [...years].reverse().find((year) => year < current) ?? null; return years.find((year) => year > current) ?? null; }
+function representativeYear(feature: FeatureVersion, currentYear: number, years: readonly number[]): number {
+  const start = feature.properties.temporal.start?.earliestYear ?? -Infinity;
+  const end = feature.properties.temporal.end?.latestYear ?? Infinity;
+  if (start <= currentYear && currentYear <= end) return currentYear;
+  const candidates = years.filter((year) => start <= year && year <= end);
+  if (candidates.length) return candidates.reduce((closest, year) => Math.abs(year - currentYear) < Math.abs(closest - currentYear) ? year : closest);
+  const authoredStart = feature.properties.temporal.start?.latestYear ?? feature.properties.temporal.start?.earliestYear;
+  if (typeof authoredStart === "number" && Number.isFinite(authoredStart)) return authoredStart;
+  const authoredEnd = feature.properties.temporal.end?.earliestYear ?? feature.properties.temporal.end?.latestYear;
+  if (typeof authoredEnd === "number" && Number.isFinite(authoredEnd)) return authoredEnd;
+  return currentYear;
+}
 function datasetKey(id: string): string { return id.split(":", 1)[0] ?? id; }
 function yearWithinDataset(year: number, dataset: Dataset): boolean { const minimum = dataset.temporalExtent.start?.earliestYear; const maximum = dataset.temporalExtent.end?.latestYear; return (minimum === null || minimum === undefined || year >= minimum) && (maximum === null || maximum === undefined || year <= maximum); }
 function cameraFromSharedState(state: ReturnType<typeof parseSharedState>): MapCamera | null { return state.longitude !== undefined && state.latitude !== undefined && state.zoom !== undefined ? { longitude: state.longitude, latitude: state.latitude, zoom: state.zoom } : null; }

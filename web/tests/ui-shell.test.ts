@@ -31,6 +31,33 @@ describe("ui shell", () => {
     expect(viewport).toEqual([0, 0, 1, 1]);
   });
 
+  it("searches a later public snapshot, changes the year, and focuses its geometry", () => {
+    const later = {
+      ...bundle.features[0]!,
+      id: "later",
+      geometry: { type: "Polygon", coordinates: [[[0.2, 0.2], [0.4, 0.2], [0.4, 0.4], [0.2, 0.2]]] },
+      properties: {
+        ...bundle.features[0]!.properties,
+        labels: { en: "Later place" },
+        temporal: { start: { earliestYear: 10, latestYear: 10, precision: "year", qualifier: "exact" }, end: { earliestYear: 10, latestYear: 10, precision: "year", qualifier: "exact" } },
+      },
+    };
+    const snapshotBundle = { ...bundle, features: [...bundle.features, later] } as PublicBundle;
+    const root = document.createElement("div"); document.body.append(root);
+    const controller = mountUiShell(root, snapshotBundle, () => undefined);
+    let focused: string | undefined;
+    controller.setMapAdapter({ mount: () => undefined, setFeatures: () => undefined, setSelectedFeature: () => undefined, focusFeature: (feature) => { focused = feature.id; } });
+    const search = root.querySelector<HTMLInputElement>("[data-map-feature-search]")!;
+    search.value = "later place";
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+    root.querySelector<HTMLButtonElement>('[data-map-feature-result][data-feature-id="later"]')!.click();
+    expect(root.querySelector<HTMLInputElement>("#selected-year")?.value).toBe("10");
+    expect(root.querySelector("h3")?.textContent).toBe("Entity");
+    expect(focused).toBe("later");
+    controller.destroy(); root.remove();
+    window.history.replaceState(null, "", "/");
+  });
+
   it("lets the viewer overlay the previous authored snapshot without replacing the current features", () => {
     const snapshotBase = structuredClone(bundle) as PublicBundle;
     const snapshotBundle = {
