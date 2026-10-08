@@ -178,7 +178,7 @@
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:waterbody-temporal`)
   - `location`: `approximate` — 京都府RDBの地域情報と資料図の相対位置をもとにした概略です。 (Evidence: `ogurike:evidence:waterbody-region`)
-  - `geometry`: `approximate` — 資料図④の外縁・周辺配置と関連図の湾入を参照した手動加工の概略面です。座標の桁数と補助点は輪郭の可読性を保つためで、精密な境界や測量精度を意味しません。 (Evidence: `ogurike:evidence:waterbody-geometry`)
+  - `geometry`: `approximate` — 資料図④をもとに北西側の入り込み、東側の肩、南岸の湾入を残した手動加工の概略面です。外縁の精密座標・測量精度は示さず、別の河道や周辺池も輪郭へ含めていません。 (Evidence: `ogurike:evidence:waterbody-geometry`)
   - `identity`: `well-supported` (Evidence: `ogurike:evidence:waterbody-region`, `ogurike:evidence:waterbody-temporal`)
 
 - Evidence:
@@ -186,7 +186,7 @@
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
 | `ogurike:evidence:waterbody-geometry` | derived-geometry | geometry | PDF p.2-22 図2.2-1④『淀川改良工事完成時（1910年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:waterbody-geometry` — 図2.2-1④の水域外縁を、湖岸の張り出し・入り江・南岸の凹凸が読めるよう手動トレースした概略面である。資料図の縮尺・投影を測量成果として扱わず、精密な境界や面積逆算も行わない。 (publicationBasis: `open-license`)
+  - `ogurike:evidence:waterbody-geometry` — 図2.2-1④から、北西側の入り込み、東側の張り出し、南岸の複数の凹凸を読める範囲で手動再構成した概略面である。縮尺・投影を測量成果として扱わず、精密な境界、別河道、周辺池、面積逆算を示さない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:waterbody-region` | citation | identity, location, temporal | 『概要』および『5万分の1 京都東南部・京都西南部（大正6年発行）』 | `ogurike:source:kyoto-prefecture-rdb` |
   - `ogurike:evidence:waterbody-region` — 巨椋池の地域、面積、干拓時期、1917年発行図の所在を補強する引用メタデータ。掲載画像は再現しない。
 | `ogurike:evidence:waterbody-temporal` | citation | identity, temporal | PDF p.2-22 図2.2-1④ | `ogurike:source:mlit-ogurike-transition` |

@@ -51,15 +51,17 @@ def test_ogurike_1910_waterbody_keeps_a_readable_historical_outline():
     # source-figure shoreline bends instead of regressing to a generic
     # octagon that cannot communicate the former shoreline.
     assert feature["geometry"]["type"] == "Polygon"
-    ring = feature["geometry"]["coordinates"][0]
+    coordinates = feature["geometry"]["coordinates"]
+    assert len(coordinates) == 1  # only the main pool's exterior; no unverified islands/holes
+    ring = coordinates[0]
     assert len(ring) >= 50
     assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.004
     assert (round(min(point[0] for point in ring), 3), round(max(point[0] for point in ring), 3)) == (135.757, 135.799)
     assert (round(min(point[1] for point in ring), 3), round(max(point[1] for point in ring), 3)) == (34.899, 34.927)
-    assert any(point[0] < 135.758 and 34.909 <= point[1] <= 34.911 for point in ring)  # west inlet
-    assert any(point[0] > 135.798 and 34.916 <= point[1] <= 34.919 for point in ring)  # east shoulder
-    assert any(point[1] < 34.9 and 135.783 <= point[0] <= 135.787 for point in ring)  # south bay
-    assert any(point[1] > 34.926 and 135.779 <= point[0] <= 135.783 for point in ring)  # north lobe
+    assert any(point[0] < 135.758 and 34.909 <= point[1] <= 34.912 for point in ring)  # west inlet
+    assert any(point[0] > 135.798 and 34.908 <= point[1] <= 34.911 for point in ring)  # east shoulder
+    assert any(point[1] < 34.9 and 135.775 <= point[0] <= 135.778 for point in ring)  # south bay
+    assert any(point[1] > 34.926 and 135.776 <= point[0] <= 135.780 for point in ring)  # northern shoulder
     turns = []
     unique_count = len(ring) - 1
     for index in range(unique_count):
@@ -68,6 +70,18 @@ def test_ogurike_1910_waterbody_keeps_a_readable_historical_outline():
     assert sum(turn > 0 for turn in turns) > 8
     assert sum(turn < 0 for turn in turns) > 8
     assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
+
+
+def test_ogurike_1910_outline_reflects_its_own_source_figure():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    outline_1596 = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
+    outline_1910 = features["ogurike:version:waterbody-1910"]["geometry"]["coordinates"][0]
+
+    # The 1910 snapshot must be independently interpreted from figure ④. A
+    # translated or uniformly scaled copy of the 1596 outline hides the
+    # documented change in the main pool's bays and south shore.
+    assert normalized_outline_distance(outline_1596, outline_1910) > 0.08
 
 
 def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
@@ -113,3 +127,40 @@ def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
             turns.append((current[0] - previous[0]) * (following[1] - current[1]) - (current[1] - previous[1]) * (following[0] - current[0]))
         assert sum(turn > 0 for turn in turns) >= 4
         assert sum(turn < 0 for turn in turns) >= 4
+
+
+def normalized_outline_distance(first, second, samples=48):
+    first = sample_normalized_outline(first, samples)
+    second = sample_normalized_outline(second, samples)
+    candidates = []
+    for outline in (second, list(reversed(second))):
+        for offset in range(samples):
+            distances = [
+                math.dist(first[index], outline[(index + offset) % samples])
+                for index in range(samples)
+            ]
+            candidates.append(math.sqrt(sum(distance * distance for distance in distances) / samples))
+    return min(candidates)
+
+
+def sample_normalized_outline(ring, samples):
+    points = ring[:-1]
+    min_x = min(point[0] for point in points)
+    max_x = max(point[0] for point in points)
+    min_y = min(point[1] for point in points)
+    max_y = max(point[1] for point in points)
+    normalized = [((x - min_x) / (max_x - min_x), (y - min_y) / (max_y - min_y)) for x, y in points]
+    segment_lengths = [math.dist(normalized[index], normalized[(index + 1) % len(normalized)]) for index in range(len(normalized))]
+    perimeter = sum(segment_lengths)
+    sampled = []
+    for sample in range(samples):
+        distance = perimeter * sample / samples
+        for index, segment_length in enumerate(segment_lengths):
+            if distance <= segment_length or index == len(segment_lengths) - 1:
+                start = normalized[index]
+                end = normalized[(index + 1) % len(normalized)]
+                ratio = 0 if segment_length == 0 else distance / segment_length
+                sampled.append((start[0] + (end[0] - start[0]) * ratio, start[1] + (end[1] - start[1]) * ratio))
+                break
+            distance -= segment_length
+    return sampled

@@ -164,7 +164,7 @@
   {
     "id": "ogurike:evidence:waterbody-geometry",
     "locator": "PDF p.2-22 図2.2-1④『淀川改良工事完成時（1910年）』",
-    "note": "図2.2-1④の水域外縁を、湖岸の張り出し・入り江・南岸の凹凸が読めるよう手動トレースした概略面である。資料図の縮尺・投影を測量成果として扱わず、精密な境界や面積逆算も行わない。",
+    "note": "図2.2-1④から、北西側の入り込み、東側の張り出し、南岸の複数の凹凸を読める範囲で手動再構成した概略面である。縮尺・投影を測量成果として扱わず、精密な境界、別河道、周辺池、面積逆算を示さない。",
     "publicationBasis": "open-license",
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "supports": [
