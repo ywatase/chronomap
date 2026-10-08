@@ -78,6 +78,31 @@ test.describe("viewer-first historical map", () => {
     });
   }
 
+  test("searches recorded public regions and opens a feature deep link", async ({ page }) => {
+    await page.goto("/?dataset=ogurike");
+    await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
+
+    const mapSearch = page.locator("[data-map-search]");
+    await mapSearch.locator("summary").click();
+    await mapSearch.locator("[data-map-feature-search]").fill("渡辺津");
+    const result = mapSearch.locator('[data-map-feature-result][data-map-dataset="osaka"]');
+    await expect(result).toBeVisible();
+    await expect(result).toContainText("大阪市・上町台地");
+    await expect(result).toContainText("渡辺津");
+    await result.click();
+
+    await page.waitForURL(/dataset=osaka/);
+    const targetUrl = new URL(page.url());
+    expect(targetUrl.searchParams.get("feature")).toBe("osaka:version:watanabe-port-1496");
+    expect(targetUrl.searchParams.get("year")).toBe("1580");
+    await expect(page.locator("main [role=status]")).toContainText(/利用できます|available/i);
+    await expect(page.locator("h1")).toContainText(/大坂・石山本願寺|Osaka and Ishiyama Honganji/);
+    await expect(page.getByLabel(/表示年|Year/)).toHaveValue("1580");
+    await expect(page.locator(".detail-panel")).toContainText("渡辺津");
+    await expect(page.locator("#tab-detail")).toHaveAttribute("aria-selected", "true");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
+  });
+
   test("keeps education optional in the region catalog", async ({ page }) => {
     await page.goto("/");
     await page.locator("aside[data-root-quickstart] [data-root-quickstart-secondary]").click();

@@ -7,21 +7,34 @@ import { featureMatches } from "./feature-search";
 export interface MapSearchController {
   readonly element: HTMLDetailsElement;
   setFeatures(features: readonly FeatureVersion[], selectedFeatureId?: string | null): void;
+  setExternalEntries(entries: readonly MapSearchEntry[]): void;
+  setSearchLoading(loading: boolean): void;
+}
+
+export interface MapSearchEntry {
+  readonly datasetSlug: string;
+  readonly region?: string;
+  readonly bundle: PublicBundle;
+  readonly feature: FeatureVersion;
 }
 
 /**
- * A map-first search for all public snapshots in the loaded bundle.
- * Results are deliberately local and citation-free: choosing one hands the
- * feature id back to the shell, which owns year changes, details, and camera.
+ * A map-first search for public snapshots in the loaded bundle and, once the
+ * shell supplies them, other recorded regional bundles. Results are
+ * deliberately citation-free: choosing one hands the entry back to the shell,
+ * which owns year changes, navigation, details, and camera.
  */
 export function createMapSearch(
   copy: UiCopy,
   bundle: PublicBundle,
-  onSelect: (featureId: string, trigger: HTMLButtonElement) => void,
+  onSelect: (entry: MapSearchEntry, trigger: HTMLButtonElement) => void,
+  onQueryChange?: (query: string) => void,
 ): MapSearchController {
   let visibleFeatures: readonly FeatureVersion[] = [];
   let selectedFeatureId: string | null = null;
   let query = "";
+  let externalEntries: readonly MapSearchEntry[] = [];
+  let searchLoading = false;
 
   const element = document.createElement("details");
   element.className = "map-search";
@@ -61,14 +74,23 @@ export function createMapSearch(
   body.append(results);
   element.append(body);
 
-  const allFeatures = bundle.features.filter((feature) => feature.properties.publicationStatus === "public");
+  const localDatasetSlug = typeof bundle.dataset.id === "string" ? bundle.dataset.id.split(":", 1)[0] ?? "" : "";
+  const localEntries: readonly MapSearchEntry[] = bundle.features
+    .filter((feature) => feature.properties.publicationStatus === "public")
+    .map((feature) => ({ datasetSlug: localDatasetSlug, bundle, feature }));
   const render = () => {
     const trimmedQuery = query.trim();
-    const filtered = trimmedQuery === "" ? [] : allFeatures.filter((feature) => featureMatches(feature, bundle, query));
-    count.textContent = trimmedQuery === "" ? "" : copy.featureCount(filtered.length, allFeatures.length);
+    const allEntries = [...localEntries, ...externalEntries];
+    const filtered = trimmedQuery === "" ? [] : allEntries.filter((entry) => featureMatches(entry.feature, entry.bundle, query));
+    count.textContent = searchLoading
+      ? copy.mapSearchLoading
+      : trimmedQuery === ""
+        ? ""
+        : copy.featureCount(filtered.length, allEntries.length);
     results.replaceChildren();
     results.hidden = trimmedQuery === "";
     if (trimmedQuery === "") return;
+    if (searchLoading && filtered.length === 0) return;
     if (filtered.length === 0) {
       const notice = document.createElement("li");
       notice.className = "map-search-empty";
@@ -76,24 +98,27 @@ export function createMapSearch(
       results.append(notice);
       return;
     }
-    for (const feature of filtered) {
+    for (const entry of filtered) {
+      const feature = entry.feature;
       const item = document.createElement("li");
       const button = document.createElement("button");
       button.type = "button";
       button.dataset.mapFeatureResult = "";
       button.dataset.mapFeatureId = feature.id;
-      button.setAttribute("aria-pressed", String(selectedFeatureId === feature.id && visibleFeatures.some((candidate) => candidate.id === feature.id)));
-      const entity = bundle.entitiesById[feature.properties.entityId];
-      const labelText = localizedText(feature.properties.labels, bundle.dataset.defaultLanguage);
+      button.dataset.mapDataset = entry.datasetSlug;
+      button.setAttribute("aria-pressed", String(entry.datasetSlug === localDatasetSlug && selectedFeatureId === feature.id && visibleFeatures.some((candidate) => candidate.id === feature.id)));
+      const entity = entry.bundle.entitiesById[feature.properties.entityId];
+      const featureLabel = localizedText(feature.properties.labels, entry.bundle.dataset.defaultLanguage);
+      const labelText = entry.region ? `${entry.region} · ${featureLabel}` : featureLabel;
       const typeText = entity ? entityTypeLabel(entity.type, copy.language) : feature.geometry.type;
-      const periodText = possiblePeriod(feature.properties.temporal, bundle.dataset.defaultLanguage);
+      const periodText = possiblePeriod(feature.properties.temporal, entry.bundle.dataset.defaultLanguage);
       button.textContent = copy.mapSearchResult(labelText, typeText, periodText);
-      button.addEventListener("click", () => { onSelect(feature.id, button); element.open = false; });
+      button.addEventListener("click", () => { onSelect(entry, button); element.open = false; });
       item.append(button);
       results.append(item);
     }
   };
-  input.addEventListener("input", () => { query = input.value; render(); });
+  input.addEventListener("input", () => { query = input.value; onQueryChange?.(query); render(); });
   render();
 
   return {
@@ -101,6 +126,14 @@ export function createMapSearch(
     setFeatures(features, nextSelectedFeatureId = null) {
       visibleFeatures = features;
       selectedFeatureId = nextSelectedFeatureId;
+      render();
+    },
+    setExternalEntries(entries) {
+      externalEntries = entries;
+      render();
+    },
+    setSearchLoading(loading) {
+      searchLoading = loading;
       render();
     },
   };

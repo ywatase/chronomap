@@ -43,7 +43,7 @@ describe("map search", () => {
 
   it("filters visible features and selects a result from the map toolbar", () => {
     const selected: string[] = [];
-    const search = createMapSearch(uiCopy("en"), bundle, (featureId) => selected.push(featureId));
+    const search = createMapSearch(uiCopy("en"), bundle, (entry) => selected.push(entry.feature.id));
     document.body.append(search.element);
     search.setFeatures([river]);
 
@@ -55,5 +55,32 @@ describe("map search", () => {
     expect(search.element.querySelector("[data-map-feature-result]")?.textContent).toContain("Ogurike");
     (search.element.querySelector("[data-map-feature-result]") as HTMLButtonElement).click();
     expect(selected).toEqual(["pond"]);
+  });
+
+  it("adds delayed cross-region candidates with an explicit region label", () => {
+    const foreign = feature("foreign", "Watanabe port", [135.5, 34.7]);
+    const foreignBundle = { ...bundle, dataset: { defaultLanguage: "en", id: "osaka:dataset:pilot" }, features: [foreign] } as unknown as PublicBundle;
+    const selected: string[] = [];
+    const search = createMapSearch(uiCopy("en"), bundle, (entry) => selected.push(`${entry.datasetSlug}:${entry.feature.id}`));
+    search.setExternalEntries([{ datasetSlug: "osaka", region: "Osaka City", bundle: foreignBundle, feature: foreign }]);
+    document.body.append(search.element);
+
+    const input = search.element.querySelector<HTMLInputElement>("[data-map-feature-search]")!;
+    input.value = "watanabe";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+
+    const result = search.element.querySelector<HTMLButtonElement>("[data-map-feature-result]")!;
+    expect(result.textContent).toContain("Osaka City");
+    expect(result.dataset.mapDataset).toBe("osaka");
+    result.click();
+    expect(selected).toEqual(["osaka:foreign"]);
+  });
+
+  it("announces a delayed regional index without hiding the local map", () => {
+    const search = createMapSearch(uiCopy("en"), bundle, () => undefined);
+    search.setSearchLoading(true);
+    expect(search.element.querySelector(".map-search-count")?.textContent).toContain("Loading recorded regions");
+    search.setSearchLoading(false);
+    expect(search.element.querySelector(".map-search-count")?.textContent).toBe("");
   });
 });

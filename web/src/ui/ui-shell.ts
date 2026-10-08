@@ -14,7 +14,7 @@ import { uiCopy, type UiCopy } from "./copy";
 import { buildReportModel } from "../domain/report-model";
 import { renderPrintReport } from "./print-report";
 import { createMapSettings } from "./map-settings";
-import { createMapSearch } from "./map-search";
+import { createMapSearch, type MapSearchEntry } from "./map-search";
 import type { Lesson } from "../domain/lesson";
 import { lessonStepIndex } from "../domain/lesson";
 import { renderLessonPanel } from "./lesson-panel";
@@ -59,6 +59,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   let builderOpen = (shared.view === "builder" && sharedMatchesDataset && Boolean(lesson && shared.lessonId === lesson.id)) || (options.initialBuilderOpen === true && Boolean(lesson));
   let catalogSnapshots: DatasetCatalogSnapshots | null = null;
   let catalogPromise: Promise<DatasetCatalogSnapshots> | null = null;
+  let mapSearchLoadToken = 0;
   let workshopBaseModel: LessonPackModel | null = null;
   let workshopInput: LessonPackCustomizationInput | null = null;
   let workshopFeedbackState: LessonPackFeedbackState | null = null;
@@ -176,7 +177,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
   const map = document.createElement("section"); map.className = "map-placeholder"; map.dataset.mapHost = ""; map.setAttribute("aria-label", copy.mapLabel); map.textContent = copy.mapFallback;
   const mapSettings = createMapSettings(copy, (settings) => { adapter?.setBasemapOpacity?.(settings.basemapOpacity); adapter?.setHistoricalOpacity?.(settings.historicalOpacity); adapter?.setHistoricalVisibility?.(settings.historicalVisible); adapter?.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter?.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter?.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); }, historicalMapAssets, (asset) => { historicalMapAsset = asset; historicalMapAssetAlert.hidden = true; historicalMapAssetAlert.textContent = ""; adapter?.setHistoricalMapAsset?.(asset); syncUrl(); });
   mapSettings.setHistoricalMapAsset(historicalMapAsset);
-  const mapSearch = createMapSearch(copy, bundle, (featureId) => selectFeature(featureId));
+  const mapSearch = createMapSearch(copy, bundle, selectMapSearchEntry, loadMapSearchCatalog);
   const mapToolbar = document.createElement("div"); mapToolbar.className = "map-toolbar"; mapToolbar.append(mapSearch.element, mapSettings.element);
   const mapLegend = renderMapLegend(copy, state.selectedYear, null, false);
   const approximationNote = document.createElement("p"); approximationNote.className = "map-approximation-note"; approximationNote.dataset.viewerApproximation = ""; approximationNote.textContent = copy.approximationNote;
@@ -204,6 +205,52 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     adapter?.focusFeature?.(feature);
     focusDetails();
   };
+  function selectMapSearchEntry(entry: MapSearchEntry): void {
+    if (entry.datasetSlug === datasetSlug) {
+      selectFeature(entry.feature.id);
+      return;
+    }
+    const targetYears = authoredYears(entry.bundle, viewerDefaultYear(entry.bundle));
+    const targetYear = representativeYear(entry.feature, state.selectedYear, targetYears);
+    const query = sharedQuery({
+      dataset: entry.datasetSlug,
+      view: null,
+      lessonId: null,
+      lessonStepId: null,
+      year: targetYear,
+      featureId: entry.feature.id,
+      historicalMapAssetId: null,
+    });
+    if (typeof window !== "undefined") window.location.assign(`${window.location.pathname}${query}${window.location.hash}`);
+  }
+  function loadMapSearchCatalog(nextQuery: string): void {
+    const token = ++mapSearchLoadToken;
+    if (!nextQuery.trim() || !catalogLoader) {
+      mapSearch.setExternalEntries([]);
+      mapSearch.setSearchLoading(false);
+      return;
+    }
+    mapSearch.setSearchLoading(true);
+    if (!catalogPromise) catalogPromise = catalogLoader();
+    void catalogPromise.then((snapshots) => {
+      if (token !== mapSearchLoadToken) return;
+      const entries: MapSearchEntry[] = [];
+      for (const catalogEntry of DATASET_CATALOG) {
+        if (catalogEntry.slug === datasetSlug) continue;
+        const snapshot = snapshots[catalogEntry.slug];
+        if (!snapshot?.bundle) continue;
+        for (const feature of snapshot.bundle.features) {
+          if (feature.properties.publicationStatus !== "public") continue;
+          entries.push({ datasetSlug: catalogEntry.slug, region: catalogEntry.region[copy.language], bundle: snapshot.bundle, feature });
+        }
+      }
+      mapSearch.setExternalEntries(entries);
+    }).catch(() => {
+      if (token === mapSearchLoadToken) mapSearch.setExternalEntries([]);
+    }).finally(() => {
+      if (token === mapSearchLoadToken) mapSearch.setSearchLoading(false);
+    });
+  }
   const syncUrl = () => {
     if (typeof window === "undefined" || !window.history?.replaceState) return;
     const camera = adapter?.getCamera?.() ?? requestedCamera;
@@ -559,7 +606,7 @@ export function mountUiShell(root: HTMLElement, bundle: PublicBundle, dispatch: 
     update();
   });
   listTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "list" })); detailTab.addEventListener("click", () => emit({ type: "mobileTabChanged", tab: "detail" })); tabs.addEventListener("keydown", (event) => { if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return; event.preventDefault(); const nextTab = event.key === "ArrowLeft" ? (state.activeMobileTab === "list" ? detailTab : listTab) : (state.activeMobileTab === "list" ? detailTab : listTab); nextTab.focus(); nextTab.click(); });
-  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); adapter.onHistoricalMapAssetError?.((error) => { historicalMapAssetAlert.hidden = false; historicalMapAssetAlert.textContent = copy.historicalMapAssetFailure(error); }); try { adapter.mount(map, historicalMapAsset); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); adapter.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); const comparisonYear = adjacentYear(years, state.selectedYear, -1); adapter.setComparisonFeatures?.(temporalComparisonOpen && comparisonYear !== null ? comparisonFeaturesForYear(comparisonYear) : []); adapter.setSelectedFeature(state.selectedFeatureId); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
+  const controller: AppController = { setMapAdapter(nextAdapter) { adapter?.destroy?.(); adapter = nextAdapter; adapter.onSelect?.((featureIds) => { leaveLesson(); if (featureIds.length === 1) { lastFeatureId = featureIds[0]!; emit({ type: "mapCandidatesReported", featureIds }); focusDetails(); } else emit({ type: "mapCandidatesReported", featureIds }); }); adapter.onCameraChange?.(() => syncUrl()); adapter.onBasemapError?.((error) => emit({ type: "basemapFailed", error })); adapter.onHistoricalMapAssetError?.((error) => { historicalMapAssetAlert.hidden = false; historicalMapAssetAlert.textContent = copy.historicalMapAssetFailure(error); }); try { adapter.mount(map, historicalMapAsset); const settings = mapSettings.getSettings(); adapter.setBasemapOpacity?.(settings.basemapOpacity); adapter.setHistoricalOpacity?.(settings.historicalOpacity); adapter.setHistoricalVisibility?.(settings.historicalVisible); adapter.setTerritoryVisibility?.(settings.territoryVisible); if (settings.historicalMapAssetOpacity !== undefined) adapter.setHistoricalMapAssetOpacity?.(settings.historicalMapAssetOpacity); if (settings.historicalMapAssetVisible !== undefined) adapter.setHistoricalMapAssetVisibility?.(settings.historicalMapAssetVisible); if (requestedCamera) adapter.setCamera?.(requestedCamera); adapter.setViewport?.(bundle.dataset.bbox); adapter.setFeatures(state.visibleFeatures); const comparisonYear = adjacentYear(years, state.selectedYear, -1); adapter.setComparisonFeatures?.(temporalComparisonOpen && comparisonYear !== null ? comparisonFeaturesForYear(comparisonYear) : []); adapter.setSelectedFeature(state.selectedFeatureId); const requestedFeature = state.selectedFeatureId ? state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId) : null; if (requestedFeature && !requestedCamera) adapter.focusFeature?.(requestedFeature); syncUrl(); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "地図の初期化に失敗しました。" : "Basemap or map rendering could not start."); } }, reportBasemapFailure(message) { emit({ type: "basemapFailed", error: message }); }, retry() { emit({ type: "retryStarted" }); }, destroy() { adapter?.destroy?.(); adapter = null; root.replaceChildren(); } };
   basemapRetry.addEventListener("click", () => { try { adapter?.retry?.(); emit({ type: "basemapRecovered" }); } catch { controller.reportBasemapFailure(copy.language === "ja" ? "背景地図を再起動できませんでした。" : "Basemap or map rendering could not restart."); } });
   retry.addEventListener("click", () => controller.retry()); emit({ type: "bundleReady", features: bundle.features, year: state.selectedYear });
   if (catalogOpen) queueMicrotask(() => { void openDatasetCatalog(); });

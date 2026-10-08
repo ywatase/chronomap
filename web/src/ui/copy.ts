@@ -312,6 +312,7 @@ export interface UiCopy {
   readonly mapSearchLabel: string;
   readonly mapSearchPlaceholder: string;
   readonly mapSearchScope: string;
+  readonly mapSearchLoading: string;
   readonly mapSearchResult: (label: string, type: string, period: string) => string;
   readonly featureHeading: string;
   readonly featureSearchLabel: string;
@@ -698,7 +699,8 @@ const EN_COPY: UiCopy = {
   mapCandidates: "Map candidates at this location",
   mapSearchLabel: "Find a historical feature",
   mapSearchPlaceholder: "Name, place, or ID",
-  mapSearchScope: "Searches all public snapshots in this region.",
+  mapSearchScope: "Searches recorded public regional data (not a nationwide index).",
+  mapSearchLoading: "Loading recorded regions…",
   mapSearchResult: (label, type, period) => `${label} · ${type} · ${period}`,
   featureHeading: "Features",
   featureSearchLabel: "Search visible features",
@@ -1077,7 +1079,8 @@ const JA_COPY: UiCopy = {
   mapCandidates: "この位置の候補",
   mapSearchLabel: "地図上の歴史地物を探す",
   mapSearchPlaceholder: "地名・地物名・IDで検索",
-  mapSearchScope: "この地域で公開されている全時点の地物を検索します。",
+  mapSearchScope: "収録済みの公開地域データから検索します（全国網羅ではありません）。",
+  mapSearchLoading: "収録地域を読み込んでいます…",
   mapSearchResult: (label, type, period) => `${label} · ${type} · ${period}`,
   featureHeading: "表示中の地物",
   featureSearchLabel: "表示中の地物を検索",

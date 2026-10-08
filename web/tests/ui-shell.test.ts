@@ -96,6 +96,30 @@ describe("ui shell", () => {
     window.history.replaceState(null, "", "/");
   });
 
+  it("keeps available regional search results when another bundle is unavailable", async () => {
+    const foreignFeature = {
+      ...bundle.features[0]!,
+      id: "osaka:version:foreign",
+      properties: { ...bundle.features[0]!.properties, labels: { en: "Watanabe port" } },
+    };
+    const foreignBundle = { ...bundle, dataset: { ...bundle.dataset, id: "osaka:dataset:pilot" }, features: [foreignFeature] } as PublicBundle;
+    const root = document.createElement("div");
+    document.body.append(root);
+    const controller = mountUiShell(root, bundle, () => undefined, null, async () => ({
+      osaka: { bundle: foreignBundle, lesson: null },
+      heijokyo: { bundle: null, lesson: null },
+    }));
+    const input = root.querySelector<HTMLInputElement>("[data-map-feature-search]")!;
+    input.value = "Watanabe";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const result = root.querySelector<HTMLButtonElement>('[data-map-feature-result][data-map-dataset="osaka"]');
+    expect(result).toBeTruthy();
+    expect(result?.textContent).toContain("Osaka City");
+    controller.destroy();
+    root.remove();
+  });
+
   it("lets the viewer overlay the previous authored snapshot without replacing the current features", () => {
     const snapshotBase = structuredClone(bundle) as PublicBundle;
     const snapshotBundle = {
