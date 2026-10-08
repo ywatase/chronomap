@@ -38,8 +38,8 @@
     "sourceId": "ogurike:source:mlit-ogurike-transition",
     "locator": "PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』",
     "usage": "derived-geometry",
-    "supports": ["geometry"],
-    "note": "図の相対的な流路関係を少数の折れ点へ手動加工した概略線であり、太閤堤の精密線形ではない。",
+    "supports": ["geometry", "location"],
+    "note": "図②が示す、主湖面から分離して北側を通る流路関係を少数の折れ点へ手動加工した概略線である。精密な河道中心線、堤防線形、接続位置は示さない。",
     "publicationBasis": "open-license"
   },
   {

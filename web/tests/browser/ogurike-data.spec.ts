@@ -37,6 +37,16 @@ test.describe("Ogurike data snapshots", () => {
     await expect(page.getByRole("button", { name: /巨椋池干拓之碑/ })).toBeVisible();
   });
 
+  test("shows the approximate 1596 river north of the pool with its caveat", async ({ page }, testInfo) => {
+    await page.goto("/?year=1596");
+    await page.getByRole("button", { name: /宇治川（1596年・工事後）/ }).click();
+    const detail = page.locator("#panel-detail");
+    await expect(detail).toContainText("主湖面を横断しません");
+    await expect(detail).toContainText("精密な河道中心線");
+    await expect(detail).toContainText("ogurike:evidence:ujigawa-1596-geometry");
+    await page.screenshot({ path: testInfo.outputPath("ogurike-1596-ujigawa.png"), fullPage: true });
+  });
+
   test("shows evidence, uncertainty, citation, and rights for point line and polygon", async ({ page }, testInfo) => {
     await page.goto("/");
     const snapshots = page.getByLabel(/収録時点|Recorded snapshots/);

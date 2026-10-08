@@ -44,16 +44,16 @@
     {
       "type": "Feature",
       "id": "ogurike:version:ujigawa-1596",
-      "geometry": { "type": "LineString", "coordinates": [[135.806, 34.924], [135.792, 34.917], [135.782, 34.906], [135.779, 34.894], [135.781, 34.881]] },
+      "geometry": { "type": "LineString", "coordinates": [[135.806, 34.924], [135.8, 34.922], [135.797, 34.924], [135.793, 34.928], [135.786, 34.93], [135.777, 34.93], [135.767, 34.929], [135.757, 34.927], [135.749, 34.922]] },
       "properties": {
         "entityId": "ogurike:entity:ujigawa",
         "labels": { "ja": "宇治川（1596年・工事後）" },
-        "description": { "ja": "近畿地方整備局の1596年資料図をもとにした、秀吉による河川工事後の流路の概略復元です。太閤堤の精密な線形ではありません。" },
+        "description": { "ja": "近畿地方整備局の図②に示される工事後の河道と主湖面の分離を表すため、宇治川が池の北～北東側を回る相対的な流路として現在地図上へ概略配置しました。主湖面を横断しませんが、精密な河道中心線・堤防線形・接続位置を示すものではありません。" },
         "temporal": { "start": { "earliestYear": 1596, "latestYear": 1596, "precision": "year", "qualifier": "exact" }, "end": { "earliestYear": 1596, "latestYear": 1596, "precision": "year", "qualifier": "exact" } },
         "uncertainty": {
           "temporal": { "assessment": "well-supported", "note": "", "evidenceIds": ["ogurike:evidence:ujigawa-1596-temporal"] },
-          "location": { "assessment": "approximate", "note": "資料図の相対位置を概略線にしたものです。", "evidenceIds": ["ogurike:evidence:ujigawa-1596-temporal"] },
-          "geometry": { "assessment": "approximate", "note": "少数の折れ点による概略復元であり、太閤堤の精密線形ではありません。", "evidenceIds": ["ogurike:evidence:ujigawa-1596-geometry"] },
+          "location": { "assessment": "approximate", "note": "資料図が示す主湖面北～北東側の相対位置を現在地図上へ概略配置しています。正確な河道位置ではありません。", "evidenceIds": ["ogurike:evidence:ujigawa-1596-geometry"] },
+          "geometry": { "assessment": "approximate", "note": "主湖面の北～北東側を通る関係だけを示す少数折れ点の概略線であり、精密な河道中心線や堤防線形ではありません。", "evidenceIds": ["ogurike:evidence:ujigawa-1596-geometry"] },
           "identity": { "assessment": "well-supported", "note": "", "evidenceIds": ["ogurike:evidence:ujigawa-1596-temporal"] }
         },
         "evidenceIds": ["ogurike:evidence:ujigawa-1596-geometry", "ogurike:evidence:ujigawa-1596-temporal"],

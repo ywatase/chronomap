@@ -77,16 +77,16 @@
 - 権利: `open-license` — 表示: 国土交通省近畿地方整備局（原資料）、Chronomap（概略加工） — PDL1.0の出典表示と編集・加工表示を含みます。
 - 不確実性:
   - `temporal`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1596-temporal`)
-  - `location`: `approximate` — 資料図の相対位置を概略線にしたものです。 (Evidence: `ogurike:evidence:ujigawa-1596-temporal`)
-  - `geometry`: `approximate` — 少数の折れ点による概略復元であり、太閤堤の精密線形ではありません。 (Evidence: `ogurike:evidence:ujigawa-1596-geometry`)
+  - `location`: `approximate` — 資料図が示す主湖面北～北東側の相対位置を現在地図上へ概略配置しています。正確な河道位置ではありません。 (Evidence: `ogurike:evidence:ujigawa-1596-geometry`)
+  - `geometry`: `approximate` — 主湖面の北～北東側を通る関係だけを示す少数折れ点の概略線であり、精密な河道中心線や堤防線形ではありません。 (Evidence: `ogurike:evidence:ujigawa-1596-geometry`)
   - `identity`: `well-supported` (Evidence: `ogurike:evidence:ujigawa-1596-temporal`)
 
 - Evidence:
 
 | Evidence | 用途 | supports | locator | source |
 |---|---|---|---|---|
-| `ogurike:evidence:ujigawa-1596-geometry` | derived-geometry | geometry | PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』 | `ogurike:source:mlit-ogurike-transition` |
-  - `ogurike:evidence:ujigawa-1596-geometry` — 図の相対的な流路関係を少数の折れ点へ手動加工した概略線であり、太閤堤の精密線形ではない。 (publicationBasis: `open-license`)
+| `ogurike:evidence:ujigawa-1596-geometry` | derived-geometry | geometry, location | PDF p.2-22 図2.2-1②『秀吉による河川工事後（1596年）』 | `ogurike:source:mlit-ogurike-transition` |
+  - `ogurike:evidence:ujigawa-1596-geometry` — 図②が示す、主湖面から分離して北側を通る流路関係を少数の折れ点へ手動加工した概略線である。精密な河道中心線、堤防線形、接続位置は示さない。 (publicationBasis: `open-license`)
 | `ogurike:evidence:ujigawa-1596-temporal` | citation | identity, location, temporal | PDF p.2-21末尾–p.2-22 図2.2-1② | `ogurike:source:mlit-ogurike-transition` |
   - `ogurike:evidence:ujigawa-1596-temporal` — 資料図が河川工事後の1596年スナップショットとして示すことを確認する。
 

@@ -96,6 +96,42 @@ def test_ogurike_1933_pool_does_not_invent_a_large_shrink_from_1910():
     assert 0.9 <= area_ratio <= 1.1
 
 
+def test_ogurike_1596_ujigawa_does_not_cross_the_main_pool():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    river = features["ogurike:version:ujigawa-1596"]["geometry"]["coordinates"]
+    lake = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
+
+    assert not line_crosses_polygon_interior(river, lake)
+
+
+def test_ogurike_1596_ujigawa_stays_near_the_lakes_north_side():
+    package = load_package(DATA)
+    features = {item["id"]: item for item in package.feature_versions["features"]}
+    river = features["ogurike:version:ujigawa-1596"]["geometry"]["coordinates"]
+    lake = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
+    lake_north = max(point[1] for point in lake)
+    lake_height = lake_north - min(point[1] for point in lake)
+    lake_min_lon = min(point[0] for point in lake)
+    lake_max_lon = max(point[0] for point in lake)
+    river_points_along_pool = [point for point in river if lake_min_lon <= point[0] <= lake_max_lon]
+
+    assert len(river_points_along_pool) >= 4
+    # Over the pool's longitude span, keep the line close to its northern edge
+    # relative to the pool's full north-south extent, not a fixed loose margin.
+    assert max(abs(point[1] - lake_north) for point in river_points_along_pool) <= lake_height * 0.2
+    assert min(point[0] for point in river) < lake_max_lon - 0.02
+    assert max(point[0] for point in river) > lake_max_lon
+    assert all(round(coordinate, 3) == coordinate for point in river for coordinate in point)
+
+
+def test_ogurike_1596_ujigawa_location_uses_geometry_evidence():
+    package = load_package(DATA)
+    feature = next(item for item in package.feature_versions["features"] if item["id"] == "ogurike:version:ujigawa-1596")
+
+    assert "ogurike:evidence:ujigawa-1596-geometry" in feature["properties"]["uncertainty"]["location"]["evidenceIds"]
+
+
 def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
     package = load_package(DATA)
     waterbodies = {
@@ -153,6 +189,42 @@ def normalized_outline_distance(first, second, samples=48):
             ]
             candidates.append(math.sqrt(sum(distance * distance for distance in distances) / samples))
     return min(candidates)
+
+
+def line_crosses_polygon_interior(line, ring):
+    if any(point_in_polygon(point, ring) for point in line):
+        return True
+
+    for start, end in zip(line, line[1:]):
+        midpoint = ((start[0] + end[0]) / 2, (start[1] + end[1]) / 2)
+        if point_in_polygon(midpoint, ring):
+            return True
+        for edge_start, edge_end in zip(ring, ring[1:]):
+            if segments_cross_interior(start, end, edge_start, edge_end):
+                return True
+    return False
+
+
+def point_in_polygon(point, ring):
+    x, y = point
+    inside = False
+    for start, end in zip(ring, ring[1:]):
+        if (start[1] > y) != (end[1] > y):
+            crossing_x = start[0] + (y - start[1]) * (end[0] - start[0]) / (end[1] - start[1])
+            if x < crossing_x:
+                inside = not inside
+    return inside
+
+
+def segments_cross_interior(first_start, first_end, second_start, second_end):
+    def orientation(start, end, point):
+        return (end[0] - start[0]) * (point[1] - start[1]) - (end[1] - start[1]) * (point[0] - start[0])
+
+    first_side_a = orientation(first_start, first_end, second_start)
+    first_side_b = orientation(first_start, first_end, second_end)
+    second_side_a = orientation(second_start, second_end, first_start)
+    second_side_b = orientation(second_start, second_end, first_end)
+    return first_side_a * first_side_b < 0 and second_side_a * second_side_b < 0
 
 
 def polygon_area(ring):
