@@ -168,7 +168,7 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 
 大阪府・大阪市・大阪市中央区の公式説明を引用メタデータとして、河内湾・河内湖の古代水域、古代海岸線、石山（大坂）本願寺、石山合戦、寺内町、渡辺津、淀川水運を7 FeatureVersion／7 Entityで追加した。河内湾は少数頂点の概略Polygon、古代海岸線と淀川水運は概略LineString、石山本願寺・石山合戦・渡辺津は代表Point、寺内町は概略Polygonである。これらは正確な古代海岸線、潮間帯、寺域、戦場全体、町割、港域、河道中心線、航路を復元せず、4次元不確実性、独自形状メモ、Evidence／Source／Rights、公開監査を保持する。
 
-対象範囲が一致する国土地理院の`ort_riku10`（1936〜1942年頃）XYZタイルを、古代・中世geometryとは別の後世の地理コンテキストとして登録した。タイルの出典、権利、取得日、提供座標と歴史geometryの時代差をUIへ表示し、取得失敗時は現在地図・歴史geometry・根拠へフォールバックする。`dataset=osaka`、7ステップの日英lesson、カタログ、監査、desktop／mobileのPlaywright E2Eで、実データとアセットの同期を固定した。
+対象範囲が一致する国土地理院の`ort_riku10`（1936〜1942年頃）XYZタイルを、古代・中世geometryとは別の後世の地理コンテキストとして登録した。タイルの出典、権利、取得日、提供座標と歴史geometryの時代差をUIへ表示し、取得失敗時は現在地図・歴史geometry・根拠へフォールバックする。`ort_1928`（1928年頃）も同じ契約で追加し、地図設定から年代を切り替えられるようにした。共有URLのID復元、不明IDの既定値復帰、切替時のカメラ・表示状態保持を、`dataset=osaka`のdesktop／mobile Playwright E2Eとunitで固定した。
 
 ## 実装済みデータ拡張: 平城京の境界仮説
 
@@ -217,7 +217,8 @@ allow-list済みの地域カードに、目的別の授業テンプレート行�
 - [日本公開データ・カバレッジ監査](japan-coverage-matrix.md)で7地域、44 FeatureVersion、32 EntityのEntity／Evidence／Source到達性と不足typeを固定済み。領域Entityの表示契約（種別・凡例・切替・fail-closed）、平城京の`boundary`仮説2案、安土城の`waterbody`／`settlement`概略Polygon、`sphere-of-influence`仮説2案、`polity`仮説2案、`port`代表Point、賤ヶ岳・石山合戦・関ケ原の`battlefield`代表Point、大坂の`waterbody`／`coastline`／`fortification`／`settlement`／`port`／`watercourse`、関ケ原の`route`／`settlement`縦切りを検証済み。次は別地域の領域資料または不足する古戦場へ進む
 - 追加の実データセットと出典・不確実性の制作（鬼怒川・小貝川の縦切りを追加済み。今回の信頼性ゲートを各地域へ展開）
 - 3種の領域Entityについて、隣接／重複が異なる意味（境界、広域勢力圏、政治中枢）として読めるかを実データで検証した。`port`代表Point、賤ヶ岳と石山合戦の`battlefield`代表Point、余呉湖と河内湾の`waterbody`概略Polygon、大坂の`coastline`／`settlement`／`watercourse`も追加済みで、次は別地域の根拠または不足する古戦場へ進む
-- [古地図・歴史画像アセットの採用記録](historical-map-assets.md)で、国土地理院の候補範囲と権利境界を確認済み、`HistoricalMapAsset`の検証・XYZタイルの個別表示／透明度・fail-closed経路まで実装済み。大阪`ort_riku10`で対象範囲・出典・後世コンテキストの分離・フォールバックを実データ縦切りした
+- [古地図・歴史画像アセットの採用記録](historical-map-assets.md)で、国土地理院の提供範囲と権利境界を確認済み、`HistoricalMapAsset`の検証・XYZタイルの個別表示／透明度・複数年代選択・共有URL復元・fail-closed経路まで実装済み。大阪`ort_riku10`／`ort_1928`で対象範囲・出典・後世コンテキストの分離・フォールバックを実データ縦切りした
+- 次の最小工程は、7地域の公開bundleを横断する地物検索である。巨椋池を開いた状態から「関ケ原」「平城京」「渡辺津」を検索し、対象地域・年代・地物・geometry・詳細・出典へ1操作で到達できることを受入条件とする。収録地域だけを検索範囲と明示し、1地域のbundle失敗は他地域と現在地図を止めない
 - 静的公開品質、スクリーンショット確認、E2Eの拡充
 - 1地域複数授業の利用状況を確認し、授業テンプレートの追加が教員の作成時間短縮につながるか検証する
 - コピーされたフィードバックを手動で確認し、保存・認証などの教員ワークフローは利用検証後に別途判断する

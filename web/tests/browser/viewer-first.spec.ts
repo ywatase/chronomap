@@ -67,13 +67,13 @@ test.describe("viewer-first historical map", () => {
       await mapSearch.locator("summary").click();
       const input = mapSearch.locator("[data-map-feature-search]");
       await input.fill("巨椋池（1590");
-      const result = mapSearch.locator('[data-map-feature-result][data-feature-id="ogurike:version:waterbody-1590"]');
+      const result = mapSearch.locator('[data-map-feature-result][data-map-feature-id="ogurike:version:waterbody-1590"]');
       await expect(result).toBeVisible();
       await result.click();
 
       await expect(page.getByLabel(/表示年|Year/)).toHaveValue("1590");
       await expect(page.locator(".detail-panel")).toContainText("巨椋池");
-      await expect(page.locator('[data-map-feature-result][data-feature-id="ogurike:version:waterbody-1590"]')).toHaveAttribute("aria-pressed", "true");
+      await expect(page.locator('[data-map-feature-result][data-map-feature-id="ogurike:version:waterbody-1590"]')).toHaveAttribute("aria-pressed", "true");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy();
     });
   }

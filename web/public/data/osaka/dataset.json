@@ -7,7 +7,7 @@
   ],
   "defaultLanguage": "ja",
   "description": {
-    "ja": "古代の河内湾・海岸線、石山（大坂）本願寺・石山合戦、寺内町、渡辺津と水運の関係を、現在の大阪市域に重ねて読む小規模な公開データです。形状は概略復元で、1936〜1942年頃の空中写真タイルは歴史geometryとは別の後世の地理コンテキストです。"
+    "ja": "古代の河内湾・海岸線、石山（大坂）本願寺・石山合戦、寺内町、渡辺津と水運の関係を、現在の大阪市域に重ねて読む小規模な公開データです。形状は概略復元で、1928年頃／1936〜1942年頃の空中写真タイルは歴史geometryとは別の後世の地理コンテキストです。"
   },
   "files": {
     "entities": "entities.json",
@@ -45,6 +45,37 @@
       "tileTemplate": "https://cyberjapandata.gsi.go.jp/xyz/ort_riku10/{z}/{x}/{y}.png",
       "title": {
         "ja": "陸地測量部空中写真（1936〜1942年頃）"
+      }
+    },
+    {
+      "accessedDate": "2026-10-08",
+      "attribution": "国土地理院",
+      "bbox": [
+        135.44,
+        34.59,
+        135.57,
+        34.78
+      ],
+      "date": "1928年頃",
+      "description": {
+        "ja": "大阪市域を対象とする1928年頃の後世の空中写真タイル。当時の古代・中世geometryや境界を示す資料ではなく、後世の地理コンテキストとして使います。"
+      },
+      "georeference": {
+        "error": "提供元の測位誤差と歴史geometryとの時代差は未評価",
+        "method": "国土地理院XYZタイルの提供座標"
+      },
+      "id": "osaka:historical-map:ort-1928",
+      "maxZoom": 18,
+      "minZoom": 13,
+      "rights": {
+        "attribution": "国土地理院",
+        "status": "open-license",
+        "terms": "国土地理院コンテンツ利用規約・地理院地図利用規約に従う。"
+      },
+      "sourceUrl": "https://maps.gsi.go.jp/development/ichiran.html",
+      "tileTemplate": "https://cyberjapandata.gsi.go.jp/xyz/ort_1928/{z}/{x}/{y}.png",
+      "title": {
+        "ja": "陸地測量部空中写真（1928年頃）"
       }
     }
   ],

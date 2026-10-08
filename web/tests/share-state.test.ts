@@ -13,6 +13,11 @@ describe("shareable map state", () => {
     });
   });
 
+  it("parses and serializes a historical map asset id", () => {
+    expect(parseSharedState("?dataset=osaka&mapAsset=osaka%3Ahistorical-map%3Aort-1928").historicalMapAssetId).toBe("osaka:historical-map:ort-1928");
+    expect(sharedQuery({ dataset: "osaka", year: 1580, featureId: null, historicalMapAssetId: "osaka:historical-map:ort-1928" })).toBe("?dataset=osaka&year=1580&mapAsset=osaka%3Ahistorical-map%3Aort-1928");
+  });
+
   it("restores a guided lesson step alongside the map state", () => {
     expect(parseSharedState("?dataset=ogurike&lesson=ogurike-intro&step=uji-1596&year=1596")).toEqual({
       dataset: "ogurike",

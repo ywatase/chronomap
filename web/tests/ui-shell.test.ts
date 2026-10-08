@@ -31,6 +31,44 @@ describe("ui shell", () => {
     expect(viewport).toEqual([0, 0, 1, 1]);
   });
 
+  it("restores and switches a validated historical map asset through the shared view", () => {
+    const first = {
+      id: "dataset:historical-map:first",
+      title: { en: "First context" },
+      description: { en: "First context" },
+      tileTemplate: "https://tiles.example.invalid/first/{z}/{x}/{y}.png",
+      bbox: [0, 0, 1, 1] as const,
+      date: "1928",
+      accessedDate: "2026-10-04",
+      georeference: { method: "provider", error: "not evaluated" },
+      sourceUrl: "https://example.invalid/first",
+      attribution: "Example",
+      rights: { status: "open-license" as const },
+      minZoom: 13,
+      maxZoom: 18,
+    };
+    const second = { ...first, id: "dataset:historical-map:second", title: { en: "Second context" }, tileTemplate: "https://tiles.example.invalid/second/{z}/{x}/{y}.png" };
+    const assetBundle = { ...bundle, dataset: { ...bundle.dataset, historicalMapAssets: [first, second] } } as PublicBundle;
+    window.history.replaceState(null, "", "/?dataset=dataset&mapAsset=dataset%3Ahistorical-map%3Asecond");
+    const root = document.createElement("div"); document.body.append(root);
+    const controller = mountUiShell(root, assetBundle, () => undefined);
+    let mounted: string | undefined;
+    let switched: string | undefined;
+    controller.setMapAdapter({
+      mount: (_container, asset) => { mounted = asset?.id; },
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      setHistoricalMapAsset: (asset) => { switched = asset?.id; },
+    });
+    expect(mounted).toBe(second.id);
+    const select = root.querySelector<HTMLSelectElement>("#historical-map-asset-select")!;
+    select.value = first.id;
+    select.dispatchEvent(new Event("change"));
+    expect(switched).toBe(first.id);
+    expect(new URLSearchParams(window.location.search).get("mapAsset")).toBe(first.id);
+    controller.destroy(); root.remove(); window.history.replaceState(null, "", "/");
+  });
+
   it("searches a later public snapshot, changes the year, and focuses its geometry", () => {
     const later = {
       ...bundle.features[0]!,
@@ -50,7 +88,7 @@ describe("ui shell", () => {
     const search = root.querySelector<HTMLInputElement>("[data-map-feature-search]")!;
     search.value = "later place";
     search.dispatchEvent(new Event("input", { bubbles: true }));
-    root.querySelector<HTMLButtonElement>('[data-map-feature-result][data-feature-id="later"]')!.click();
+    root.querySelector<HTMLButtonElement>('[data-map-feature-result][data-map-feature-id="later"]')!.click();
     expect(root.querySelector<HTMLInputElement>("#selected-year")?.value).toBe("10");
     expect(root.querySelector("h3")?.textContent).toBe("Entity");
     expect(focused).toBe("later");
@@ -164,6 +202,23 @@ describe("ui shell", () => {
     const alert = root.querySelector<HTMLElement>("[role=alert]")!;
     expect(alert.hidden).toBe(false);
     expect(alert.textContent).toContain("could not restart");
+  });
+
+  it("keeps a historical-map asset failure non-blocking", () => {
+    const root = document.createElement("div");
+    const controller = mountUiShell(root, bundle, () => undefined);
+    let reportAssetError: ((message: string) => void) | undefined;
+    controller.setMapAdapter({
+      mount: () => undefined,
+      setFeatures: () => undefined,
+      setSelectedFeature: () => undefined,
+      onHistoricalMapAssetError: (handler) => { reportAssetError = handler; },
+    });
+    reportAssetError?.("historical tile unavailable");
+
+    expect(root.querySelector<HTMLElement>(".historical-map-asset-alert")?.textContent).toContain("historical tile unavailable");
+    expect(root.querySelector<HTMLButtonElement>("[data-basemap-retry]")?.hidden).toBe(true);
+    expect(root.querySelector(".feature-choice")).toBeTruthy();
   });
 
   it("opens the catalog, syncs view=catalog, and restores focus on close", async () => {

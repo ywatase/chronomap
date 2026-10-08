@@ -245,6 +245,23 @@ def validate_semantics(package: DatasetPackage, profile: ValidationProfile) -> l
     bbox_issues, bounds = validate_bbox(dataset.get("bbox"))
     issues.extend(bbox_issues)
 
+    historical_map_asset_ids: set[str] = set()
+    for index, asset in enumerate(_records(dataset.get("historicalMapAssets"))):
+        asset_id = _mapping(asset).get("id")
+        if not isinstance(asset_id, str):
+            continue
+        if asset_id in historical_map_asset_ids:
+            issues.append(
+                _issue(
+                    "id.duplicate",
+                    "dataset.json",
+                    _pointer("historicalMapAssets", index, "id"),
+                    f"historical map asset identifier {asset_id!r} is already used",
+                )
+            )
+        else:
+            historical_map_asset_ids.add(asset_id)
+
     resources: dict[str, tuple[str, str]] = {}
     for identifier, expected, file, pointer in [
         (dataset.get("id"), "dataset", "dataset.json", "/id"),

@@ -40,10 +40,32 @@ export function renderPrintReport(container: HTMLElement, model: ReportModel, ac
 
   const mapSection = section(copy.reportMap);
   mapSection.classList.add("report-map");
-  const mapDescription = detail(model.basemapError ? copy.reportMapUnavailable : copy.language === "ja" ? "画面左側の地図表示と共有URLから、同じ表示を再現できます。" : "The map shown beside this sheet and the shared URL reproduce this view.");
+  const mapDescription = detail(model.basemapError ? copy.reportMapUnavailable : copy.reportMapReopenNote);
   mapDescription.className = "report-map-note";
   mapSection.append(mapDescription);
   sheet.append(mapSection);
+
+  if (model.historicalMapAsset) {
+    const historicalMap = section(copy.reportHistoricalMapContext);
+    historicalMap.classList.add("report-historical-map");
+    historicalMap.append(detail(`${model.historicalMapAsset.title} (${model.historicalMapAsset.id})`));
+    historicalMap.append(detail(model.historicalMapAsset.description));
+    historicalMap.append(detail(`${copy.reportHistoricalMapDate}: ${model.historicalMapAsset.date}`));
+    historicalMap.append(detail(`${copy.reportHistoricalMapAccessed}: ${model.historicalMapAsset.accessedDate}`));
+    historicalMap.append(detail(`${copy.reportHistoricalMapGeoreference}: ${model.historicalMapAsset.georeference}`));
+    historicalMap.append(detail(`${copy.reportHistoricalMapAttribution}: ${model.historicalMapAsset.attribution}`));
+    historicalMap.append(detail(`${copy.reportRights}: ${model.historicalMapAsset.rights}`));
+    if (isSafeHttpUrl(model.historicalMapAsset.sourceUrl)) {
+      const link = document.createElement("a");
+      link.href = model.historicalMapAsset.sourceUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = copy.reportSourceLink;
+      link.setAttribute("aria-label", `${copy.reportSourceLink}: ${model.historicalMapAsset.sourceUrl}`);
+      historicalMap.append(link, detail(model.historicalMapAsset.sourceUrl));
+    }
+    sheet.append(historicalMap);
+  }
 
   const featureSection = section(copy.reportFeature);
   featureSection.classList.add("report-feature");

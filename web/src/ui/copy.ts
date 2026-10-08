@@ -43,6 +43,7 @@ export interface UiCopy {
   readonly territoryVisibilityLabel: string;
   readonly historicalMapAssetOpacityLabel: string;
   readonly historicalMapAssetVisibilityLabel: string;
+  readonly historicalMapAssetSelectLabel: string;
   readonly historicalMapAssetUnavailable: string;
   readonly mapOpacityValue: (value: number) => string;
   readonly mapLegend: string;
@@ -75,12 +76,19 @@ export interface UiCopy {
   readonly reportShareUrl: string;
   readonly reportMap: string;
   readonly reportMapUnavailable: string;
+  readonly reportMapReopenNote: string;
+  readonly reportHistoricalMapContext: string;
+  readonly reportHistoricalMapDate: string;
+  readonly reportHistoricalMapAccessed: string;
+  readonly reportHistoricalMapGeoreference: string;
+  readonly reportHistoricalMapAttribution: string;
   readonly reportNoEvidence: string;
   readonly reportNoSources: string;
   readonly reportCitationOnly: string;
   readonly reportPrint: string;
   readonly reportClose: string;
   readonly reportSourceLink: string;
+  readonly historicalMapAssetFailure: (message: string) => string;
   readonly lessonStart: string;
   readonly lessonClose: string;
   readonly lessonPrevious: string;
@@ -385,6 +393,7 @@ const EN_COPY: UiCopy = {
   territoryVisibilityLabel: "Show territory and spheres of influence",
   historicalMapAssetOpacityLabel: "Historical map opacity",
   historicalMapAssetVisibilityLabel: "Show historical map",
+  historicalMapAssetSelectLabel: "Historical map context",
   historicalMapAssetUnavailable: "Historical map context is unavailable; current map and historical features remain available.",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "Legend",
@@ -417,12 +426,19 @@ const EN_COPY: UiCopy = {
   reportShareUrl: "Reopen this view",
   reportMap: "Current map view",
   reportMapUnavailable: "The basemap could not be retrieved. The text evidence and shared view remain available.",
+  reportMapReopenNote: "The shared URL reopens the same year, feature, and historical-map context; opacity and visibility settings are local to this browser.",
+  reportHistoricalMapContext: "Historical map context",
+  reportHistoricalMapDate: "Map date",
+  reportHistoricalMapAccessed: "Accessed",
+  reportHistoricalMapGeoreference: "Georeference and error",
+  reportHistoricalMapAttribution: "Attribution",
   reportNoEvidence: "No evidence references are attached.",
   reportNoSources: "No source metadata is available.",
   reportCitationOnly: "Citation-only metadata; no source body or image is reproduced.",
   reportPrint: "Print / save as PDF",
   reportClose: "Close report",
   reportSourceLink: "Open source",
+  historicalMapAssetFailure: (message) => `The historical map context could not be retrieved. The current basemap and historical features remain available. ${message}`,
   lessonStart: "Start guided lesson",
   lessonClose: "Close lesson",
   lessonPrevious: "Previous step",
@@ -756,6 +772,7 @@ const JA_COPY: UiCopy = {
   territoryVisibilityLabel: "領域・勢力圏を表示",
   historicalMapAssetOpacityLabel: "古地図の濃さ",
   historicalMapAssetVisibilityLabel: "古地図を表示",
+  historicalMapAssetSelectLabel: "古地図コンテキスト",
   historicalMapAssetUnavailable: "古地図コンテキストを利用できません。現在地図と歴史地物は引き続き利用できます。",
   mapOpacityValue: (value) => `${Math.round(value * 100)}%`,
   mapLegend: "凡例",
@@ -788,12 +805,19 @@ const JA_COPY: UiCopy = {
   reportShareUrl: "この表示を再び開く",
   reportMap: "現在の地図表示",
   reportMapUnavailable: "背景地図を取得できませんでした。文章・根拠・共有URLは出力できます。",
+  reportMapReopenNote: "共有URLから、同じ年代・地物・古地図コンテキストを再び開けます。濃さ・表示／非表示の設定はこのブラウザ内の表示です。",
+  reportHistoricalMapContext: "古地図コンテキスト",
+  reportHistoricalMapDate: "地図の年代",
+  reportHistoricalMapAccessed: "参照日",
+  reportHistoricalMapGeoreference: "測位・誤差",
+  reportHistoricalMapAttribution: "表示",
   reportNoEvidence: "根拠への参照はありません。",
   reportNoSources: "出典メタデータはありません。",
   reportCitationOnly: "引用メタデータのみを収録しています。原資料の本文・画像は転載していません。",
   reportPrint: "印刷 / PDF保存",
   reportClose: "レポートを閉じる",
   reportSourceLink: "出典を開く",
+  historicalMapAssetFailure: (message) => `古地図コンテキストを取得できません。現在地図と歴史地物は引き続き利用できます。${message}`,
   lessonStart: "ガイド教材を始める",
   lessonClose: "教材を閉じる",
   lessonPrevious: "前のステップ",

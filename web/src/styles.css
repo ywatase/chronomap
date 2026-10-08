@@ -105,9 +105,10 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .lesson-completion-actions { margin-top: .45rem; }
 
 .shell-content { display: grid; flex: 1; grid-template-columns: minmax(0, 1fr) minmax(19rem, 22rem); grid-template-rows: auto auto minmax(0, 1fr); gap: .65rem 1rem; min-height: 0; padding: .85rem clamp(1rem, 3vw, 3rem) 1.25rem; }
-.live-status, .basemap-alert { grid-column: 1 / -1; margin: 0; min-height: 1.35rem; }
+.live-status, .basemap-alert, .historical-map-asset-alert { grid-column: 1 / -1; margin: 0; min-height: 1.35rem; }
 .live-status { color: #2d536e; font-size: .9rem; }
 .basemap-alert { padding: .65rem .8rem; border-left: 4px solid #b45309; border-radius: .35rem; background: #fff4e5; color: #713f12; }
+.historical-map-asset-alert { padding: .55rem .75rem; border-left: 4px solid #c79c5d; border-radius: .35rem; background: #fff8eb; color: #6f4a13; }
 .shell-content > button { justify-self: start; }
 .map-frame { position: relative; grid-column: 1; grid-row: 3; min-height: clamp(30rem, 70svh, 48rem); min-width: 0; }
 .root-quickstart { position: absolute; z-index: 4; top: .7rem; right: .7rem; display: grid; width: min(21rem, calc(100% - 1.4rem)); gap: .35rem; padding: .7rem; border: 1px solid #6d9db7; border-top: 3px solid #b47b18; border-radius: .7rem; background: rgb(251 253 252 / 92%); box-shadow: var(--shadow-lift); backdrop-filter: blur(9px); }
@@ -155,6 +156,8 @@ h1 { max-width: 58rem; margin: 0; color: #102a43; font-size: clamp(1.55rem, 2.2v
 .map-visibility-control { display: flex; align-items: center; gap: .5rem; min-height: 2.75rem; margin-top: .5rem; color: #304b60; font-size: .8rem; font-weight: 700; }
 .map-visibility-control input { width: 1.2rem; height: 1.2rem; accent-color: #155e8a; }
 .historical-map-asset-control { margin-top: .7rem; padding-top: .65rem; border-top: 1px solid #d0dbe2; }
+.historical-map-asset-select { display: grid; gap: .25rem; margin-bottom: .55rem; color: #304b60; font-size: .78rem; font-weight: 700; }
+.historical-map-asset-select select { width: 100%; min-height: 2.7rem; padding: .4rem .5rem; border: 1px solid #8297a8; border-radius: .45rem; background: #fff; color: #17324d; }
 .historical-map-asset-control h4 { margin: 0; color: #304b60; font-size: .82rem; }
 .historical-map-asset-control p { margin: .35rem 0; color: #526879; font-size: .74rem; line-height: 1.45; }
 .historical-map-asset-control a { color: #155e8a; font-size: .78rem; font-weight: 700; }
@@ -649,7 +652,7 @@ footer a { color: #155e8a; }
   .app-shell[data-root-quickstart] .viewer-timeline-track button { min-height: 2.1rem; padding: .25rem .5rem; font-size: .72rem; }
   .temporal-compare-button { grid-column: 1; justify-self: start; }
   .shell-content { display: flex; flex-direction: column; gap: .55rem; padding: .65rem .75rem .9rem; }
-  .live-status, .basemap-alert, .shell-content > button { flex: 0 0 auto; }
+  .live-status, .basemap-alert, .historical-map-asset-alert, .shell-content > button { flex: 0 0 auto; }
   .map-frame { order: 1; width: 100%; min-height: 45svh; height: 48svh; }
   .app-shell[data-viewer-route] .map-frame { min-height: 68svh; height: 68svh; }
   .root-quickstart { top: auto; right: .55rem; bottom: .55rem; left: .55rem; width: auto; gap: .3rem; padding: .55rem; }

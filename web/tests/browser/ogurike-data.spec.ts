@@ -24,7 +24,7 @@ test.describe("Ogurike data snapshots", () => {
     await expect(year).toHaveValue("1910");
     await expect(page.getByRole("button", { name: /巨椋池（1910年・概略）/ })).toBeVisible();
     await page.getByRole("button", { name: /巨椋池（1910年・概略）/ }).click();
-    await expect(page.getByText("近畿地方整備局の1910年資料図をもとにした巨椋池の概略復元です。精密な水域境界や794haから逆算した面積を示しません。", { exact: true })).toBeVisible();
+    await expect(page.getByText("近畿地方整備局の1910年資料図④の外縁・周辺配置と関連図の湾入を参照し、現在の地図上へ再配置した巨椋池の概略復元です。精密な水域境界や794haから逆算した面積を示しません。", { exact: true })).toBeVisible();
 
     await snapshots.selectOption("1933");
     await expect(page.getByRole("button", { name: /巨椋池（1933年・残存水域の概略）/ })).toBeVisible();

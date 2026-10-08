@@ -14,12 +14,13 @@ def test_osaka_has_a_valid_historical_map_asset_for_the_osaka_tile_scope():
     package = load_package(PACKAGE)
     dataset = package.dataset
     assets = dataset["historicalMapAssets"]
-    assert len(assets) == 1
-    asset = assets[0]
-    assert asset["tileTemplate"].startswith("https://cyberjapandata.gsi.go.jp/xyz/ort_riku10/")
-    assert asset["bbox"] == (135.44, 34.59, 135.57, 34.78)
-    assert asset["rights"]["status"] == "open-license"
-    assert asset["georeference"]["error"]
+    assert len(assets) == 2
+    by_id = {asset["id"]: asset for asset in assets}
+    assert by_id["osaka:historical-map:ort-riku10"]["tileTemplate"].startswith("https://cyberjapandata.gsi.go.jp/xyz/ort_riku10/")
+    assert by_id["osaka:historical-map:ort-1928"]["tileTemplate"].startswith("https://cyberjapandata.gsi.go.jp/xyz/ort_1928/")
+    assert all(asset["bbox"] == (135.44, 34.59, 135.57, 34.78) for asset in assets)
+    assert all(asset["rights"]["status"] == "open-license" for asset in assets)
+    assert all(asset["georeference"]["error"] for asset in assets)
 
 
 def test_osaka_has_source_backed_core_historical_contexts():
@@ -50,8 +51,10 @@ def test_osaka_keeps_old_map_context_separate_from_historical_geometry():
     package = load_package(PACKAGE)
     features = package.feature_versions["features"]
     assert all("ort_riku10" not in feature["properties"]["description"]["ja"] for feature in features)
-    assert "1936〜1942年頃" in package.dataset["historicalMapAssets"][0]["date"]
-    assert "当時の古代・中世geometryを示すものではない" in package.dataset["historicalMapAssets"][0]["description"]["ja"]
+    assets = {asset["id"]: asset for asset in package.dataset["historicalMapAssets"]}
+    assert "1936〜1942年頃" in assets["osaka:historical-map:ort-riku10"]["date"]
+    assert "1928年頃" in assets["osaka:historical-map:ort-1928"]["date"]
+    assert "古代・中世geometry" in assets["osaka:historical-map:ort-1928"]["description"]["ja"]
 
 
 def test_osaka_package_passes_public_validation():

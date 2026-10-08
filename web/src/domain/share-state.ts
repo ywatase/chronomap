@@ -7,6 +7,7 @@ export interface SharedState {
   readonly lessonStepId?: string;
   readonly year?: number;
   readonly featureId?: string;
+  readonly historicalMapAssetId?: string;
   readonly longitude?: number;
   readonly latitude?: number;
   readonly zoom?: number;
@@ -23,6 +24,7 @@ export function parseSharedState(search: string): SharedState {
   const rawYear = params.get("year");
   const year = rawYear !== null && /^-?\d+$/.test(rawYear) ? Number(rawYear) : undefined;
   const featureId = params.get("feature")?.trim() || undefined;
+  const historicalMapAssetId = params.get("mapAsset")?.trim() || undefined;
   const dataset = params.get("dataset")?.trim() || undefined;
   const rawView = params.get("view");
   const view = rawView === "catalog" || rawView === "pack" || rawView === "builder" ? rawView : undefined;
@@ -40,6 +42,7 @@ export function parseSharedState(search: string): SharedState {
     ...(lessonStepId && /^[a-z0-9-]+$/.test(lessonStepId) ? { lessonStepId } : {}),
     ...(typeof year === "number" && Number.isSafeInteger(year) ? { year } : {}),
     ...(featureId ? { featureId } : {}),
+    ...(historicalMapAssetId ? { historicalMapAssetId } : {}),
     ...(longitude !== undefined ? { longitude } : {}),
     ...(latitude !== undefined ? { latitude } : {}),
     ...(zoom !== undefined ? { zoom } : {}),
@@ -47,7 +50,7 @@ export function parseSharedState(search: string): SharedState {
   };
 }
 
-export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | "pack" | "builder" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null; readonly offer?: LessonPackOfferPlan | null }): string {
+export function sharedQuery(state: { readonly dataset?: string | null; readonly view?: "catalog" | "pack" | "builder" | null; readonly lessonId?: string | null; readonly lessonStepId?: string | null; readonly year: number | null; readonly featureId: string | null; readonly historicalMapAssetId?: string | null; readonly longitude?: number | null; readonly latitude?: number | null; readonly zoom?: number | null; readonly offer?: LessonPackOfferPlan | null }): string {
   const params = new URLSearchParams();
   if (state.dataset) params.set("dataset", state.dataset);
   if (state.view === "catalog" || state.view === "pack" || state.view === "builder") params.set("view", state.view);
@@ -55,6 +58,7 @@ export function sharedQuery(state: { readonly dataset?: string | null; readonly 
   if (state.lessonStepId && /^[a-z0-9-]+$/.test(state.lessonStepId)) params.set("step", state.lessonStepId);
   if (state.year !== null && Number.isSafeInteger(state.year)) params.set("year", String(state.year));
   if (state.featureId) params.set("feature", state.featureId);
+  if (state.historicalMapAssetId) params.set("mapAsset", state.historicalMapAssetId);
   if (state.longitude !== undefined && state.longitude !== null && boundedNumber(state.longitude, -180, 180) !== undefined) params.set("lng", fixed(state.longitude, 5));
   if (state.latitude !== undefined && state.latitude !== null && boundedNumber(state.latitude, -MAX_MERCATOR_LATITUDE, MAX_MERCATOR_LATITUDE) !== undefined) params.set("lat", fixed(state.latitude, 5));
   if (state.zoom !== undefined && state.zoom !== null && boundedNumber(state.zoom, 0, MAX_MAP_ZOOM) !== undefined) params.set("z", fixed(state.zoom, 2));

@@ -64,6 +64,40 @@ def test_semantic_validation_rejects_a_duplicate_resource_id(tmp_path: Path):
     }
 
 
+def test_semantic_validation_rejects_a_duplicate_historical_map_asset_id(tmp_path: Path):
+    package_dir = copy_package(tmp_path)
+    mutate_json(
+        package_dir,
+        "dataset.json",
+        lambda dataset: dataset.__setitem__(
+            "historicalMapAssets",
+            [
+                {
+                    "id": "synthetic:historical-map:first",
+                    "title": {"en": "First"},
+                    "description": {"en": "First"},
+                    "tileTemplate": "https://tiles.example.invalid/first/{z}/{x}/{y}.png",
+                    "bbox": [139.0, 35.0, 140.0, 36.0],
+                    "date": "1936",
+                    "accessedDate": "2026-10-08",
+                    "georeference": {"method": "provider", "error": "not evaluated"},
+                    "sourceUrl": "https://example.invalid/first",
+                    "attribution": "Example",
+                    "rights": {"status": "open-license"},
+                    "minZoom": 13,
+                    "maxZoom": 18,
+                },
+            ] * 2,
+        ),
+    )
+
+    issues = validate_semantics(load_package(package_dir), ValidationProfile.AUTHORING)
+
+    assert ("id.duplicate", "dataset.json", "/historicalMapAssets/1/id") in {
+        (issue.code, issue.file, issue.pointer) for issue in issues
+    }
+
+
 def test_semantic_validation_rejects_a_wrong_reference_kind(tmp_path: Path):
     package_dir = copy_package(tmp_path)
     mutate_json(

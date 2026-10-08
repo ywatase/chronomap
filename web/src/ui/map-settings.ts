@@ -14,9 +14,17 @@ export interface MapDisplaySettings {
 export interface MapSettingsController {
   readonly element: HTMLDetailsElement;
   getSettings(): MapDisplaySettings;
+  setHistoricalMapAsset(asset: HistoricalMapAsset | null): void;
 }
 
-export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplaySettings) => void, asset: HistoricalMapAsset | null = null): MapSettingsController {
+export function createMapSettings(
+  copy: UiCopy,
+  onChange: (settings: MapDisplaySettings) => void,
+  assetInput: HistoricalMapAsset | readonly HistoricalMapAsset[] | null = null,
+  onAssetChange: (asset: HistoricalMapAsset) => void = () => undefined,
+): MapSettingsController {
+  const assets: readonly HistoricalMapAsset[] = Array.isArray(assetInput) ? [...assetInput] : assetInput ? [assetInput] : [];
+  let selectedAsset = assets[0] ?? null;
   let settings: MapDisplaySettings = { basemapOpacity: 1, historicalOpacity: 1, historicalVisible: true, territoryVisible: true };
   const details = document.createElement("details");
   details.className = "map-tools";
@@ -60,22 +68,47 @@ export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplayS
   territoryVisibilityLabel.append(territoryVisibility, document.createTextNode(copy.territoryVisibilityLabel));
   body.append(territoryVisibilityLabel);
 
-  if (asset) {
+  let assetSelect: HTMLSelectElement | null = null;
+  let assetTitle: HTMLElement | null = null;
+  let assetDescription: HTMLElement | null = null;
+  let assetProvenance: HTMLElement | null = null;
+  let assetSource: HTMLAnchorElement | null = null;
+  if (assets.length) {
     settings = { ...settings, historicalMapAssetOpacity: 1, historicalMapAssetVisible: true };
     const assetSection = document.createElement("section");
     assetSection.className = "historical-map-asset-control";
-    const assetTitle = document.createElement("h4");
-    assetTitle.textContent = localizedText(asset.title, copy.language);
+    if (assets.length > 1) {
+      const assetSelectLabel = document.createElement("label");
+      assetSelectLabel.className = "historical-map-asset-select";
+      assetSelectLabel.textContent = copy.historicalMapAssetSelectLabel;
+      assetSelect = document.createElement("select");
+      assetSelect.id = "historical-map-asset-select";
+      assetSelect.setAttribute("aria-label", copy.historicalMapAssetSelectLabel);
+      for (const candidate of assets) {
+        const option = document.createElement("option");
+        option.value = candidate.id;
+        option.textContent = `${localizedText(candidate.title, copy.language)} · ${candidate.date}`;
+        assetSelect.append(option);
+      }
+      assetSelectLabel.append(assetSelect);
+      assetSection.append(assetSelectLabel);
+      assetSelect.addEventListener("change", () => {
+        const next = assets.find((candidate) => candidate.id === assetSelect?.value);
+        if (!next) return;
+        selectedAsset = next;
+        renderAssetMetadata();
+        onAssetChange(next);
+      });
+    }
+    assetTitle = document.createElement("h4");
+    assetTitle.textContent = selectedAsset ? localizedText(selectedAsset.title, copy.language) : copy.historicalMapAssetUnavailable;
     assetSection.append(assetTitle);
-    const assetDescription = document.createElement("p");
-    assetDescription.textContent = asset.description[copy.language] ?? asset.description["en"] ?? Object.values(asset.description)[0] ?? "";
+    assetDescription = document.createElement("p");
     assetSection.append(assetDescription);
-    const assetProvenance = document.createElement("p");
+    assetProvenance = document.createElement("p");
     assetProvenance.className = "historical-map-asset-provenance";
-    assetProvenance.textContent = `${asset.date} · ${asset.georeference.method} (${asset.georeference.error}) · ${asset.attribution} · ${asset.rights.status}`;
     assetSection.append(assetProvenance);
-    const assetSource = document.createElement("a");
-    assetSource.href = asset.sourceUrl;
+    assetSource = document.createElement("a");
     assetSource.target = "_blank";
     assetSource.rel = "noreferrer";
     assetSource.textContent = copy.sourceLink;
@@ -98,6 +131,7 @@ export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplayS
     assetVisibilityLabel.append(assetVisibility, document.createTextNode(copy.historicalMapAssetVisibilityLabel));
     assetSection.append(assetVisibilityLabel);
     body.append(assetSection);
+    renderAssetMetadata();
   }
 
   const legend = document.createElement("section");
@@ -109,7 +143,24 @@ export function createMapSettings(copy: UiCopy, onChange: (settings: MapDisplayS
   body.append(legend);
   details.append(body);
 
-  return { element: details, getSettings: () => settings };
+  return {
+    element: details,
+    getSettings: () => settings,
+    setHistoricalMapAsset(asset) {
+      const next = assets.find((candidate) => candidate.id === asset?.id) ?? assets[0] ?? null;
+      selectedAsset = next;
+      if (assetSelect && next) assetSelect.value = next.id;
+      renderAssetMetadata();
+    },
+  };
+
+  function renderAssetMetadata(): void {
+    if (!selectedAsset || !assetTitle || !assetDescription || !assetProvenance || !assetSource) return;
+    assetTitle.textContent = localizedText(selectedAsset.title, copy.language);
+    assetDescription.textContent = selectedAsset.description[copy.language] ?? selectedAsset.description["en"] ?? Object.values(selectedAsset.description)[0] ?? "";
+    assetProvenance.textContent = `${selectedAsset.date} · ${selectedAsset.georeference.method} (${selectedAsset.georeference.error}) · ${selectedAsset.attribution} · ${selectedAsset.rights.status}`;
+    assetSource.href = selectedAsset.sourceUrl;
+  }
 }
 
 function rangeControl(labelText: string, formatValue: (value: number) => string, initial: number, id: string, onChange: (value: number) => void): HTMLElement {

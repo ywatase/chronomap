@@ -2,7 +2,7 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { Dataset, FeatureVersion, HistoricalMapAsset } from "../domain/types";
-import { createGsiStyle, HISTORICAL_COMPARISON_SOURCE_ID, HISTORICAL_LAYER_IDS, HISTORICAL_MAP_ASSET_LAYER_ID, TERRITORY_LAYER_IDS } from "./map-style";
+import { createGsiStyle, HISTORICAL_COMPARISON_SOURCE_ID, HISTORICAL_LAYER_IDS, HISTORICAL_MAP_ASSET_LAYER_ID, HISTORICAL_MAP_ASSET_SOURCE_ID, TERRITORY_LAYER_IDS } from "./map-style";
 
 const sourceId = "historical-features";
 const comparisonSourceId = HISTORICAL_COMPARISON_SOURCE_ID;
@@ -31,6 +31,7 @@ export class MapAdapter {
   private selectHandler: ((ids: readonly string[]) => void) | null = null;
   private cameraChangeHandler: ((camera: MapCamera) => void) | null = null;
   private basemapErrorHandler: ((message: string) => void) | null = null;
+  private historicalMapAssetErrorHandler: ((message: string) => void) | null = null;
   private basemapOpacity = 1;
   private historicalOpacity = 1;
   private historicalVisible = true;
@@ -71,7 +72,12 @@ export class MapAdapter {
       if (event.originalEvent) this.requestedCamera = null;
       this.camera = camera; if (this.camera) this.cameraChangeHandler?.(this.camera);
     });
-    this.map.on("error", (event: maplibregl.ErrorEvent) => this.basemapErrorHandler?.(event.error?.message ?? "Basemap or map rendering is unavailable."));
+    this.map.on("error", (event: maplibregl.ErrorEvent) => {
+      const sourceId = (event as maplibregl.ErrorEvent & { readonly sourceId?: string }).sourceId;
+      const message = event.error?.message ?? "Basemap or map rendering is unavailable.";
+      if (sourceId === HISTORICAL_MAP_ASSET_SOURCE_ID) this.historicalMapAssetErrorHandler?.(message);
+      else this.basemapErrorHandler?.(message);
+    });
     this.map.on("click", (event: maplibregl.MapMouseEvent) => {
       const clicked = this.map?.queryRenderedFeatures(event.point, { layers: interactiveLayerIds }) ?? [];
       const clickedIds = new Set(clicked.map((feature: maplibregl.MapGeoJSONFeature) => String(feature.id)).filter((id: string) => this.features.some((feature) => feature.id === id)));
@@ -120,6 +126,7 @@ export class MapAdapter {
   onSelect(handler: (ids: readonly string[]) => void): void { this.selectHandler = handler; }
   onCameraChange(handler: (camera: MapCamera) => void): void { this.cameraChangeHandler = handler; }
   onBasemapError(handler: (message: string) => void): void { this.basemapErrorHandler = handler; }
+  onHistoricalMapAssetError(handler: (message: string) => void): void { this.historicalMapAssetErrorHandler = handler; }
   destroy(): void { this.map?.remove(); this.map = null; this.container = null; }
 
   private applyViewport(): void {

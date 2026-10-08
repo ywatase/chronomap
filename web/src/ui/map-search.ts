@@ -63,9 +63,12 @@ export function createMapSearch(
 
   const allFeatures = bundle.features.filter((feature) => feature.properties.publicationStatus === "public");
   const render = () => {
-    const filtered = query.trim() === "" ? allFeatures : allFeatures.filter((feature) => featureMatches(feature, bundle, query));
-    count.textContent = copy.featureCount(filtered.length, allFeatures.length);
+    const trimmedQuery = query.trim();
+    const filtered = trimmedQuery === "" ? [] : allFeatures.filter((feature) => featureMatches(feature, bundle, query));
+    count.textContent = trimmedQuery === "" ? "" : copy.featureCount(filtered.length, allFeatures.length);
     results.replaceChildren();
+    results.hidden = trimmedQuery === "";
+    if (trimmedQuery === "") return;
     if (filtered.length === 0) {
       const notice = document.createElement("li");
       notice.className = "map-search-empty";
@@ -78,7 +81,7 @@ export function createMapSearch(
       const button = document.createElement("button");
       button.type = "button";
       button.dataset.mapFeatureResult = "";
-      button.dataset.featureId = feature.id;
+      button.dataset.mapFeatureId = feature.id;
       button.setAttribute("aria-pressed", String(selectedFeatureId === feature.id && visibleFeatures.some((candidate) => candidate.id === feature.id)));
       const entity = bundle.entitiesById[feature.properties.entityId];
       const labelText = localizedText(feature.properties.labels, bundle.dataset.defaultLanguage);

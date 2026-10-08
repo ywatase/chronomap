@@ -1,7 +1,7 @@
 import { displayYearLocalized, entityTypeLabel, localizedText } from "./labels";
 import type { ComparisonCandidate } from "./comparison-candidates";
 import type { AppState } from "../app/state";
-import type { FeatureVersion, PublicBundle, Rights, TemporalExtent } from "./types";
+import type { FeatureVersion, HistoricalMapAsset, PublicBundle, Rights, TemporalExtent } from "./types";
 
 export interface ReportEvidence {
   readonly id: string;
@@ -38,6 +38,18 @@ export interface ReportFeature {
   readonly evidence: readonly ReportEvidence[];
 }
 
+export interface ReportHistoricalMapAsset {
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly date: string;
+  readonly accessedDate: string;
+  readonly georeference: string;
+  readonly sourceUrl: string;
+  readonly attribution: string;
+  readonly rights: string;
+}
+
 export interface ReportModel {
   readonly language: "ja" | "en";
   readonly datasetId: string;
@@ -48,6 +60,7 @@ export interface ReportModel {
   readonly visibleFeatureCount: number;
   readonly feature: ReportFeature;
   readonly comparison: readonly ReportVersion[];
+  readonly historicalMapAsset: ReportHistoricalMapAsset | null;
   readonly shareUrl: string;
   readonly basemapError: string | null;
 }
@@ -57,7 +70,7 @@ export interface ReportModel {
  * by the print/PDF view. It deliberately returns null until a public feature
  * is selected, so a failed or empty dataset never exposes a report action.
  */
-export function buildReportModel(bundle: PublicBundle, state: AppState, shareUrl: string, candidate: ComparisonCandidate | null): ReportModel | null {
+export function buildReportModel(bundle: PublicBundle, state: AppState, shareUrl: string, candidate: ComparisonCandidate | null, historicalMapAsset: HistoricalMapAsset | null = null): ReportModel | null {
   const selected = state.selectedFeatureId === null ? null : state.visibleFeatures.find((feature) => feature.id === state.selectedFeatureId) ?? null;
   if (!selected || selected.properties.publicationStatus !== "public") return null;
   const language = bundle.dataset.defaultLanguage.toLowerCase().startsWith("ja") ? "ja" : "en";
@@ -71,8 +84,23 @@ export function buildReportModel(bundle: PublicBundle, state: AppState, shareUrl
     visibleFeatureCount: state.visibleFeatures.length,
     feature: projectFeature(selected, bundle, language),
     comparison: candidate && candidate.entityId === selected.properties.entityId ? candidate.versions.map(({ feature, year }) => projectVersion(feature, year, bundle, language)) : [],
+    historicalMapAsset: historicalMapAsset ? projectHistoricalMapAsset(historicalMapAsset, bundle, language) : null,
     shareUrl,
     basemapError: state.basemapError ?? null,
+  };
+}
+
+function projectHistoricalMapAsset(asset: HistoricalMapAsset, bundle: PublicBundle, language: "ja" | "en"): ReportHistoricalMapAsset {
+  return {
+    id: asset.id,
+    title: localizedText(asset.title, bundle.dataset.defaultLanguage),
+    description: localizedText(asset.description, bundle.dataset.defaultLanguage),
+    date: asset.date,
+    accessedDate: asset.accessedDate,
+    georeference: `${asset.georeference.method} (${asset.georeference.error})`,
+    sourceUrl: asset.sourceUrl,
+    attribution: asset.attribution,
+    rights: formatRights(asset.rights, language),
   };
 }
 

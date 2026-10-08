@@ -34,6 +34,13 @@ const bundle = {
 } as unknown as PublicBundle;
 
 describe("map search", () => {
+  it("does not place every feature in the hidden result tree before a query", () => {
+    const search = createMapSearch(uiCopy("en"), bundle, () => undefined);
+
+    expect(search.element.querySelectorAll("[data-map-feature-result]")).toHaveLength(0);
+    expect(search.element.querySelector("#map-feature-search-results")?.hasAttribute("hidden")).toBe(true);
+  });
+
   it("filters visible features and selects a result from the map toolbar", () => {
     const selected: string[] = [];
     const search = createMapSearch(uiCopy("en"), bundle, (featureId) => selected.push(featureId));

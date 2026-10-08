@@ -24,7 +24,8 @@ import { readFileSync } from "node:fs";
     center = { lng: 135.75, lat: 34.89 };
     zoom = 11;
     remove = vi.fn();
-    constructor(_options: unknown) { maps.push(this); }
+    options: any;
+    constructor(options: unknown) { this.options = options; maps.push(this); }
     on(event: string, handler: (event: any) => void): this { this.handlers.set(event, [...(this.handlers.get(event) ?? []), handler]); return this; }
     getSource(): typeof this.source | undefined { return this.sourceAvailable ? this.source : undefined; }
     getCenter(): typeof this.center { return this.center; }
@@ -180,6 +181,20 @@ describe("MapAdapter", () => {
     expect(errors).toEqual(["WebGL context lost"]);
   });
 
+  it("keeps historical-map tile errors separate from basemap failures", () => {
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"), {
+      id: "synthetic:historical-map:sample", title: { en: "Sample" }, description: { en: "Sample" },
+      tileTemplate: "https://tiles.example.invalid/ort/{z}/{x}/{y}.png", bbox: [135, 34, 136, 35], date: "1936", accessedDate: "2026-10-04",
+      georeference: { method: "provider", error: "not evaluated" }, sourceUrl: "https://example.invalid/source", attribution: "Example", rights: { status: "open-license" }, minZoom: 13, maxZoom: 18,
+    });
+    const basemap: string[] = []; const historical: string[] = [];
+    adapter.onBasemapError((message) => basemap.push(message));
+    adapter.onHistoricalMapAssetError((message) => historical.push(message));
+    mocked.maps.at(-1).fire("error", { error: new Error("historical tile unavailable"), sourceId: HISTORICAL_MAP_ASSET_SOURCE_ID });
+    expect(historical).toEqual(["historical tile unavailable"]);
+    expect(basemap).toEqual([]);
+  });
+
   it("updates only display paint/layout properties and preserves them across retry", () => {
     const adapter = new MapAdapter();
     adapter.mount(document.createElement("div"));
@@ -228,6 +243,32 @@ describe("MapAdapter", () => {
     expect(map.setPaintProperty).toHaveBeenCalledWith("historical-map-asset", "raster-opacity", 0.36);
     expect(map.setPaintProperty).toHaveBeenCalledWith("historical-polygons", "fill-opacity", 0.08);
     expect(map.setLayoutProperty).toHaveBeenCalledWith("historical-map-asset", "visibility", "none");
+  });
+
+  it("switches historical map assets while retaining the camera and display settings", () => {
+    const first = {
+      id: "synthetic:historical-map:first", title: { en: "First" }, description: { en: "First" },
+      tileTemplate: "https://tiles.example.invalid/first/{z}/{x}/{y}.png", bbox: [135, 34, 136, 35] as const,
+      date: "1928", accessedDate: "2026-10-04", georeference: { method: "provider", error: "not evaluated" },
+      sourceUrl: "https://example.invalid/first", attribution: "Example", rights: { status: "open-license" as const }, minZoom: 13, maxZoom: 18,
+    };
+    const second = { ...first, id: "synthetic:historical-map:second", tileTemplate: "https://tiles.example.invalid/second/{z}/{x}/{y}.png" };
+    const adapter = new MapAdapter(); adapter.mount(document.createElement("div"), first);
+    adapter.setFeatures([point("first", [135.5, 34.5])]);
+    adapter.setSelectedFeature("first");
+    adapter.setCamera({ longitude: 135.5, latitude: 34.5, zoom: 14 });
+    adapter.setHistoricalMapAssetOpacity(0.45);
+    adapter.setHistoricalMapAssetVisibility(false);
+    const original = mocked.maps.at(-1);
+
+    adapter.setHistoricalMapAsset(second);
+
+    const switched = mocked.maps.at(-1);
+    expect(original.remove).toHaveBeenCalledOnce();
+    expect(switched.options.style.sources[HISTORICAL_MAP_ASSET_SOURCE_ID].tiles).toEqual([second.tileTemplate]);
+    expect(switched.jumpTo).toHaveBeenCalledWith({ center: [135.5, 34.5], zoom: 14 });
+    expect(switched.setPaintProperty).toHaveBeenCalledWith(HISTORICAL_MAP_ASSET_LAYER_ID, "raster-opacity", 0.324);
+    expect(switched.setLayoutProperty).toHaveBeenCalledWith(HISTORICAL_MAP_ASSET_LAYER_ID, "visibility", "none");
   });
 
   it("hides only territory layers while ordinary point and line layers stay visible", () => {

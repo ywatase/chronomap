@@ -59,4 +59,35 @@ describe("map display settings", () => {
     expect(settings.getSettings()).toMatchObject({ historicalMapAssetOpacity: 0.4, historicalMapAssetVisible: false });
     expect(changes.at(-1)).toMatchObject({ historicalMapAssetOpacity: 0.4, historicalMapAssetVisible: false });
   });
+
+  it("switches between historical-map assets while retaining the display controls", () => {
+    const first = {
+      id: "synthetic:historical-map:first",
+      title: { ja: "昭和初期空中写真" },
+      description: { ja: "第一の後世コンテキスト" },
+      tileTemplate: "https://tiles.example.invalid/first/{z}/{x}/{y}.png",
+      bbox: [135, 34, 136, 35] as const,
+      date: "1928年頃",
+      accessedDate: "2026-10-04",
+      georeference: { method: "提供元XYZタイル", error: "未評価" },
+      sourceUrl: "https://example.invalid/source-first",
+      attribution: "試験アーカイブ",
+      rights: { status: "open-license" as const },
+      minZoom: 13,
+      maxZoom: 18,
+    };
+    const second = { ...first, id: "synthetic:historical-map:second", title: { ja: "戦前空中写真" }, description: { ja: "第二の後世コンテキスト" }, date: "1936〜1942年頃", sourceUrl: "https://example.invalid/source-second" };
+    const selected: string[] = [];
+    const settings = createMapSettings(uiCopy("ja"), () => undefined, [first, second], (asset) => selected.push(asset.id));
+    const select = settings.element.querySelector<HTMLSelectElement>("#historical-map-asset-select")!;
+    expect(select.options).toHaveLength(2);
+    expect(settings.element.textContent).toContain("昭和初期空中写真");
+    select.value = second.id;
+    select.dispatchEvent(new Event("change"));
+    expect(selected).toEqual([second.id]);
+    expect(settings.element.textContent).toContain("戦前空中写真");
+    settings.setHistoricalMapAsset(first);
+    expect(select.value).toBe(first.id);
+    expect(settings.element.textContent).toContain("1928年頃");
+  });
 });

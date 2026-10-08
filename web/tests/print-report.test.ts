@@ -26,6 +26,17 @@ const model: ReportModel = {
     evidence: [{ id: "evidence:map", supports: ["location"], locator: "図1", note: "引用メタデータのみ", citation: "資料図 1910", title: "資料図", url: "https://example.com/source", rights: "引用メタデータのみ", citationOnly: true }],
   },
   comparison: [],
+  historicalMapAsset: {
+    id: "ogurike:historical-map:sample",
+    title: "測量部地図（1910年頃）",
+    description: "後世の地理コンテキスト",
+    date: "1910年頃",
+    accessedDate: "2026-10-08",
+    georeference: "提供元XYZタイル（歴史geometryとの時代差は未評価）",
+    sourceUrl: "https://example.com/historical-map",
+    attribution: "国土地理院",
+    rights: "オープンライセンス。表示: 国土地理院。条件: 利用規約",
+  },
   shareUrl: "https://example.com/?year=1910&feature=feature%3A1910",
   basemapError: null,
 };
@@ -40,6 +51,9 @@ describe("print report", () => {
     expect(root.textContent).toContain("種別: 水域");
     expect(root.textContent).toContain("仮説: 概略復元案");
     expect(root.textContent).toContain("引用メタデータのみを収録しています");
+    expect(root.textContent).toContain("測量部地図（1910年頃）");
+    expect(root.textContent).toContain("歴史geometryとの時代差は未評価");
+    expect(root.querySelector("a[href='https://example.com/historical-map']")?.textContent).toBe("出典を開く");
     expect(root.querySelector("a[href='https://example.com/source']")?.textContent).toBe("出典を開く");
     expect(root.querySelector("[data-report-print]")).toBeTruthy();
   });

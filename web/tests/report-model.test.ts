@@ -45,9 +45,25 @@ const state: AppState = {
   allFeatures: [first, second],
 };
 
+const historicalMapAsset = {
+  id: "ogurike:historical-map:sample",
+  title: { ja: "測量部地図（1910年頃）" },
+  description: { ja: "後世の地理コンテキスト" },
+  tileTemplate: "https://tiles.example.invalid/{z}/{x}/{y}.png",
+  bbox: [0, 0, 1, 1] as const,
+  date: "1910年頃",
+  accessedDate: "2026-10-08",
+  georeference: { method: "提供元XYZタイル", error: "歴史geometryとの時代差は未評価" },
+  sourceUrl: "https://example.com/historical-map",
+  attribution: "国土地理院",
+  rights: { status: "open-license" as const, attribution: "国土地理院", terms: "利用規約" },
+  minZoom: 13,
+  maxZoom: 18,
+};
+
 describe("report model", () => {
   it("projects a selected feature with citation-only evidence and comparison versions", () => {
-    const model = buildReportModel(bundle, state, "https://example.com/?year=1910", comparisonCandidates(bundle.features)[0]!);
+    const model = buildReportModel(bundle, state, "https://example.com/?year=1910", comparisonCandidates(bundle.features)[0]!, historicalMapAsset);
     expect(model).not.toBeNull();
     expect(model?.feature.label).toBe("巨椋池");
     expect(model?.feature.entityType).toBe("水域");
@@ -57,6 +73,9 @@ describe("report model", () => {
     expect(model?.feature.evidence[0]?.citationOnly).toBe(true);
     expect(model?.feature.evidence[0]?.locator).toBe("図1");
     expect(model?.comparison.map((version) => version.year)).toEqual(["1910年", "1942年"]);
+    expect(model?.historicalMapAsset?.title).toBe("測量部地図（1910年頃）");
+    expect(model?.historicalMapAsset?.georeference).toContain("未評価");
+    expect(model?.historicalMapAsset?.rights).toContain("利用規約");
     expect(model?.shareUrl).toContain("year=1910");
   });
 
