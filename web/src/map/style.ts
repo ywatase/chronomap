@@ -69,6 +69,18 @@ function orderedThemes(manifest: Manifest): string[] {
   return [...THEME_ORDER.filter((id) => ids.includes(id)), ...ids.filter((id) => !THEME_ORDER.includes(id))];
 }
 
+/** Datasets drawn for the whole world (minZoom 0) fade out as the map zooms into a region. */
+const WORLD_FADE = { from: 4, to: 7 };
+
+function worldScale(manifest: Manifest): unknown {
+  return ["in", ["get", "dataset"], ["literal", manifest.datasets.filter((dataset) => dataset.minZoom === 0).map((dataset) => dataset.slug)]];
+}
+
+function fading(manifest: Manifest, opacity: number): unknown {
+  const world = worldScale(manifest);
+  return ["interpolate", ["linear"], ["zoom"], WORLD_FADE.from, opacity, WORLD_FADE.to, ["case", world, 0, opacity]];
+}
+
 function themeLayers(theme: string, manifest: Manifest, year: number, visible: boolean): LayerSpec[] {
   const color = THEME_COLORS[theme] ?? "#555555";
   const filled = theme === "polity" || theme === "sphere" ? hueColor : color;
@@ -76,10 +88,10 @@ function themeLayers(theme: string, manifest: Manifest, year: number, visible: b
   const where = (geometry: unknown) => ["all", ["==", ["get", "theme"], theme], geometry, yearFilter(year)];
   const fillOpacity = theme === "polity" ? 0.12 : theme === "sphere" ? 0.22 : 0.35;
   return [
-    { id: `theme-${theme}-fill`, type: "fill", ...base, filter: where(polygons), paint: { "fill-color": filled, "fill-opacity": fillOpacity } },
+    { id: `theme-${theme}-fill`, type: "fill", ...base, filter: where(polygons), paint: { "fill-color": filled, "fill-opacity": fading(manifest, fillOpacity) } },
     {
       id: `theme-${theme}-outline`, type: "line", ...base, filter: where(polygons),
-      paint: { "line-color": filled, "line-width": theme === "polity" ? 1.2 : 1, "line-opacity": 0.9, ...(theme === "sphere" ? { "line-dasharray": [2, 1] } : {}) },
+      paint: { "line-color": filled, "line-width": theme === "polity" ? 1.2 : 1, "line-opacity": fading(manifest, 0.9), ...(theme === "sphere" ? { "line-dasharray": [2, 1] } : {}) },
     },
     {
       id: `theme-${theme}-line`, type: "line", ...base, filter: where(lines),
@@ -105,7 +117,13 @@ function labelLayer(manifest: Manifest, year: number, hiddenThemes: readonly str
     type: "symbol",
     source: SOURCE,
     "source-layer": manifest.sourceLayer,
-    filter: ["all", ["in", ["get", "theme"], ["literal", shown]], yearFilter(year), ["any", ["!=", ["get", "theme"], "settlement"], [">=", ["zoom"], 12]]],
+    filter: [
+      "all",
+      ["in", ["get", "theme"], ["literal", shown]],
+      yearFilter(year),
+      ["any", ["!=", ["get", "theme"], "settlement"], [">=", ["zoom"], 12]],
+      ["any", ["!", worldScale(manifest)], ["<", ["zoom"], WORLD_FADE.to]],
+    ],
     layout: {
       "text-field": ["get", "name"],
       "text-font": ["Open Sans Semibold"],

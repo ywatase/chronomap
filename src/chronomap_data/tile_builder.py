@@ -24,7 +24,7 @@ from .schema_validation import validate_package
 
 
 DEFAULT_MIN_ZOOM = 4
-DETAIL_SHARD_SIZE = 500
+DETAIL_SHARD_SIZE = 200
 HUE_COUNT = 12
 OPEN_YEAR_MIN = -999999
 OPEN_YEAR_MAX = 999999

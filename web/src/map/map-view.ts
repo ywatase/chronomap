@@ -91,7 +91,7 @@ export function createMapView(options: MapViewOptions) {
         if (current) map.setFilter(id, [...current.slice(0, -1), filter] as maplibregl.FilterSpecification);
       }
       const label = map.getFilter("labels") as unknown[] | undefined;
-      if (label) map.setFilter("labels", [label[0], label[1], filter, label[3]] as maplibregl.FilterSpecification);
+      if (label) map.setFilter("labels", [label[0], label[1], filter, ...label.slice(3)] as maplibregl.FilterSpecification);
     },
     setThemeVisible(theme: string, visible: boolean) {
       state.hiddenThemes = visible ? state.hiddenThemes.filter((id) => id !== theme) : [...new Set([...state.hiddenThemes, theme])];

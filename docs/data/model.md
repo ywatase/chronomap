@@ -47,7 +47,7 @@
 | `historicalMapAssets` | `HistoricalMapAsset[]` | 任意。出典・権利・対象範囲・測位限界を持つ古地図／歴史画像コンテキスト |
 | `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）だけを持ち、全国タイルでこのDatasetの地物を表示し始めるズームを指定する |
 
-`historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。クライアントは不正なアセットだけを除外し、現在地図・歴史geometry・詳細・根拠を維持する。
+`historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。`tileTemplate` を持つアセットは `build-tiles` がmanifestの `rasters` に並べ、ビューアーの「歴史地図・空中写真」レイヤーになる。タイルの取得に失敗しても、現在地図・歴史geometry・詳細・根拠は使える。
 
 ### HistoricalEntity
 

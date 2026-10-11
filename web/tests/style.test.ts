@@ -16,7 +16,10 @@ const manifest: Manifest = {
   rasters: [
     { id: "swale", dataset: "gsi-history", title: { ja: "明治期の低湿地" }, description: { ja: "" }, date: "1880年代", tileTemplate: "https://example.test/{z}/{x}/{y}.png", attribution: "GSI", bbox: [122, 20, 154, 46], minZoom: 10, maxZoom: 16 },
   ],
-  datasets: [],
+  datasets: [
+    { slug: "world", id: "world:dataset:x", title: { en: "World" }, defaultLanguage: "en", bbox: [-180, -90, 180, 90], attribution: null, minZoom: 0, detailShards: 1, features: 1 },
+    { slug: "ogurike", id: "ogurike:dataset:x", title: { ja: "巨椋池" }, defaultLanguage: "ja", bbox: [135, 34, 136, 35], attribution: null, minZoom: 4, detailShards: 1, features: 1 },
+  ],
 };
 
 describe("createStyle", () => {
@@ -56,5 +59,18 @@ describe("createStyle", () => {
 
   it("draws highlight layers last", () => {
     expect(style.layers.slice(-HIGHLIGHT_LAYER_IDS.length).map((layer) => layer.id)).toEqual([...HIGHLIGHT_LAYER_IDS]);
+  });
+});
+
+describe("world-scale datasets", () => {
+  const style = createStyle(manifest, { tilesUrl: "pmtiles://x", year: 1600, hiddenThemes: [], rasters: [], base: "pale", baseOpacity: 1, rasterOpacity: 0.7 });
+
+  it("fade their polygons out when zooming into a region", () => {
+    const fill = style.layers.find((layer) => layer.id === "theme-polity-fill");
+    expect(fill?.paint?.["fill-opacity"]).toEqual(["interpolate", ["linear"], ["zoom"], 4, 0.12, 7, ["case", ["in", ["get", "dataset"], ["literal", ["world"]]], 0, 0.12]]);
+  });
+
+  it("drop their labels from zoom 7", () => {
+    expect(JSON.stringify(style.layers.find((layer) => layer.id === "labels")?.filter)).toContain('["<",["zoom"],7]');
   });
 });

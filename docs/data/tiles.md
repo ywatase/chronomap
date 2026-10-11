@@ -69,7 +69,7 @@
 
 ### 詳細索引
 
-詳細索引はDatasetごとに `detailShards = max(1, ceil(公開地物数 / 500))` 個のシャードへ分ける。FeatureVersionは `fnv1a32(feature_version_id) % detailShards` 番目のシャード `details/<slug>/<shard>.json` に入る。ビューアーは同じ計算でシャードを決める。
+詳細索引はDatasetごとに `detailShards = max(1, ceil(公開地物数 / 200))` 個のシャードへ分ける。FeatureVersionは `fnv1a32(feature_version_id) % detailShards` 番目のシャード `details/<slug>/<shard>.json` に入る。ビューアーは同じ計算でシャードを決める。
 
 各シャードは `dataset`、`features`、`entities`、`evidence`、`sources` を持ち、すべてIDをキーにした辞書順オブジェクトとする。`entities`・`evidence`・`sources` は、そのシャードのFeatureVersionから到達できるものだけを含む。Geometryは含めない。
 
