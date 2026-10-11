@@ -26,7 +26,7 @@ function start(app: HTMLElement, manifest: Manifest) {
     window.history.replaceState(null, "", formatHash(state));
   };
 
-  const mapElement = h("div", { id: "map", class: "map", role: "region", "aria-label": "歴史地図" });
+  const mapElement = h("div", { id: "map", class: "map", role: "region", "aria-label": "歴史地図（矢印キーで移動、Enterで中央の地物の詳細）" });
   const panelElement = h("aside", { class: "panel", "aria-label": "レイヤーと検索" });
   const detailElement = h("section", { class: "detail", id: "detail", "aria-label": "地物の詳細" });
   const timelineElement = h("footer", { class: "timeline", "aria-label": "年の選択" });

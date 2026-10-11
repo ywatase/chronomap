@@ -23,7 +23,8 @@ uv run chronomap-data build-tiles data imports --output web/public/chronomap
 - Click a feature for its possible period, description, four-part uncertainty,
   evidence with locators, sources, and rights. The top-most feature opens;
   other features at the same spot (for example the village's domain and
-  province) are listed below it.
+  province) are listed below it. With the keyboard, focus the map, pan with the
+  arrow keys, and press Enter to open the features at the centre.
 
 ## URL
 

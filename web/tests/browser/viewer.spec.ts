@@ -65,6 +65,15 @@ test.describe("national viewer", () => {
     await expect(detail).toBeHidden();
   });
 
+  test("opens the feature at the map centre with the keyboard", async ({ page }) => {
+    await page.goto("/#12/34.9132/135.7763/1590");
+    await page.waitForTimeout(2500);
+    await page.locator("#map canvas.maplibregl-canvas").focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator("#detail")).toBeVisible();
+    await expect(page.locator("#detail-title")).not.toHaveText("");
+  });
+
   test("lists every theme and the historical map layers in the panel", async ({ page, isMobile }) => {
     await page.goto("/");
     if (isMobile) await page.getByRole("button", { name: "レイヤー" }).click();

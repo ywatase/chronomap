@@ -61,10 +61,10 @@ export function createMapView(options: MapViewOptions) {
   });
 
   const interactive = interactiveLayerIds(manifest);
-  map.on("click", (event: MapMouseEvent) => {
+  function pickAt(x: number, y: number) {
     const box: [maplibregl.PointLike, maplibregl.PointLike] = [
-      [event.point.x - 4, event.point.y - 4],
-      [event.point.x + 4, event.point.y + 4],
+      [x - 4, y - 4],
+      [x + 4, y + 4],
     ];
     const seen = new Set<string>();
     const picked: PickedFeature[] = [];
@@ -75,6 +75,13 @@ export function createMapView(options: MapViewOptions) {
       picked.push({ featureVersionId: id, dataset: String(feature.properties.dataset), theme: String(feature.properties.theme), name: String(feature.properties.name) });
     }
     options.onPick(picked);
+  }
+  map.on("click", (event: MapMouseEvent) => pickAt(event.point.x, event.point.y));
+  // Keyboard: arrow keys pan (MapLibre), Enter opens the features at the centre of the map.
+  map.getCanvas().addEventListener("keydown", (event) => {
+    if (event.key !== "Enter") return;
+    const canvas = map.getCanvas();
+    pickAt(canvas.clientWidth / 2, canvas.clientHeight / 2);
   });
   for (const id of interactive) {
     map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
