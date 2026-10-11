@@ -73,6 +73,30 @@ public-profile validation and staging both succeed:
 uv run chronomap-data build-public tests/fixtures/valid/synthetic-package --output public-bundles/synthetic
 ```
 
+Build the national temporal vector-tile pipeline from every package under
+`data/`. This command requires Tippecanoe 2.79.0; the generated directory is
+ignored by Git.
+
+On Ubuntu, build the pinned upstream release:
+
+```sh
+sudo apt-get install build-essential libsqlite3-dev zlib1g-dev
+git clone --depth 1 --branch 2.79.0 https://github.com/felt/tippecanoe.git tippecanoe
+make -C tippecanoe -j
+sudo make -C tippecanoe install
+tippecanoe --version
+```
+
+Then build the national tiles and detail indexes:
+
+```sh
+uv run chronomap-data build-tiles data --output web/public/chronomap
+```
+
+The output contract is documented in [全国統合タイルの公開契約](docs/data/tiles.md).
+The existing per-pilot `build-public` commands remain available during the
+M2–M5 viewer migration.
+
 See [the normative data model](docs/data/model.md) for the complete package
 contract.
 

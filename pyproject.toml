@@ -19,6 +19,8 @@ chronomap-data = "chronomap_data.cli:main"
 
 [dependency-groups]
 dev = [
+  "mapbox-vector-tile>=2.2.0",
+  "pmtiles>=3.8.1",
   "pytest>=9.1,<10",
 ]
 

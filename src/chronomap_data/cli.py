@@ -9,6 +9,7 @@ from .loader import PackageLoadError, load_package
 from .models import ValidationIssue, ValidationProfile
 from .public_builder import PublicBuildIOError, PublicBuildValidationError, build_public_bundle
 from .schema_validation import validate_package
+from .tile_builder import build_tiles
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -31,6 +32,9 @@ def _parser() -> argparse.ArgumentParser:
     build_public = commands.add_parser("build-public")
     build_public.add_argument("dataset_dir")
     build_public.add_argument("--output", required=True)
+    build_tiles_command = commands.add_parser("build-tiles")
+    build_tiles_command.add_argument("package_root")
+    build_tiles_command.add_argument("--output", required=True)
     return parser
 
 
@@ -44,6 +48,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         arguments = _parser().parse_args(argv)
     except SystemExit as error:
         return int(error.code)
+
+    if arguments.command == "build-tiles":
+        try:
+            summary = build_tiles(arguments.package_root, arguments.output)
+        except PublicBuildValidationError as error:
+            for issue in error.issues:
+                print(format_issue(issue), file=sys.stderr)
+            return 1
+        except PublicBuildIOError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
+        print(f"built tiles: {summary.datasets} datasets, {summary.features} features -> {summary.output}")
+        return 0
 
     try:
         package = load_package(arguments.dataset_dir)

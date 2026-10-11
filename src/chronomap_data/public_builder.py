@@ -44,6 +44,17 @@ class BuildSummary:
         return self.sources
 
 
+@dataclass(frozen=True, slots=True)
+class PublicProjection:
+    """Reachable records emitted by the shared public projection."""
+
+    dataset: dict[str, object]
+    entities: list[object]
+    sources: list[object]
+    evidence: list[object]
+    feature_collection: dict[str, object]
+
+
 class PublicBuildValidationError(Exception):
     """The authoring package cannot safely be emitted as a public bundle."""
 
@@ -114,7 +125,7 @@ def _canonicalize_feature_identifier_arrays(feature_collection: dict[str, object
                 assessment["evidenceIds"] = sorted(assessment["evidenceIds"])
 
 
-def _project_evidence(
+def project_evidence(
     evidence: Sequence[Mapping[str, JsonValue]], source_by_id: Mapping[object, Mapping[str, JsonValue]]
 ) -> list[object]:
     projected: list[object] = []
@@ -137,7 +148,8 @@ def _project_evidence(
     return projected
 
 
-def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]:
+def project_public(package: DatasetPackage) -> PublicProjection:
+    """Project only public FeatureVersions and their reachable records."""
     collection = _mapping(package.feature_versions)
     public_features = [
         feature
@@ -161,7 +173,13 @@ def _project(package: DatasetPackage) -> tuple[dict[str, object], list[object], 
     _canonicalize_feature_identifier_arrays(feature_collection)
     dataset = _plain_json(package.dataset)
     assert isinstance(dataset, dict)
-    return dataset, _sorted_records(entities), _sorted_records(sources), _project_evidence(evidence, source_by_id), feature_collection
+    return PublicProjection(
+        dataset=dataset,
+        entities=_sorted_records(entities),
+        sources=_sorted_records(sources),
+        evidence=project_evidence(evidence, source_by_id),
+        feature_collection=feature_collection,
+    )
 
 
 def _format_json_integer(value: int) -> str:
@@ -240,14 +258,13 @@ def _serialized(value: object) -> bytes:
         raise PublicBuildIOError(f"could not serialize public output: {error}") from error
 
 
-def _write_bundle(directory: Path, documents: tuple[dict[str, object], list[object], list[object], list[object], dict[str, object]]) -> None:
-    dataset, entities, sources, evidence, feature_collection = documents
+def _write_bundle(directory: Path, projection: PublicProjection) -> None:
     for filename, value in (
-        ("dataset.json", dataset),
-        ("entities.json", entities),
-        ("sources.json", sources),
-        ("evidence.json", evidence),
-        ("feature-versions.geojson", feature_collection),
+        ("dataset.json", projection.dataset),
+        ("entities.json", projection.entities),
+        ("sources.json", projection.sources),
+        ("evidence.json", projection.evidence),
+        ("feature-versions.geojson", projection.feature_collection),
     ):
         (directory / filename).write_bytes(_serialized(value))
 
@@ -326,12 +343,12 @@ def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
     if output.exists() and not output.is_dir():
         raise PublicBuildIOError(f"output path is not a directory: {output}")
 
-    documents = _project(package)
+    projection = project_public(package)
     temp_directory: Path | None = None
     primary_error: PublicBuildIOError | None = None
     try:
         temp_directory = Path(tempfile.mkdtemp(prefix=f".{output.name}.tmp-", dir=output.parent))
-        _write_bundle(temp_directory, documents)
+        _write_bundle(temp_directory, projection)
         _swap_output(temp_directory, output)
     except OSError as error:
         primary_error = PublicBuildIOError(f"could not write public output: {error}")
@@ -348,9 +365,9 @@ def build_public_bundle(package: DatasetPackage, output: Path) -> BuildSummary:
                     raise PublicBuildIOError(f"could not clean public output staging: {cleanup_error}") from cleanup_error
 
     return BuildSummary(
-        versions=len(documents[4]["features"]),
-        entities=len(documents[1]),
-        evidence=len(documents[3]),
-        sources=len(documents[2]),
+        versions=len(projection.feature_collection["features"]),
+        entities=len(projection.entities),
+        evidence=len(projection.evidence),
+        sources=len(projection.sources),
         output=output,
     )

@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 .coverage
 public-bundles/
+web/public/chronomap/
 web/node_modules/
 web/dist/
 web/.env.local

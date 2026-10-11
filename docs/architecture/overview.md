@@ -4,9 +4,11 @@
 
 Chronomapの目的とMVP範囲は[プロダクト概要](../product/overview.md)を参照する。判断の根拠は[ADR 0001](../adr/0001-single-shared-web-application.md)、[ADR 0002](../adr/0002-static-client-side-mvp.md)、[ADR 0003](../adr/0003-maplibre-and-gsi-basemap.md)、[ADR 0004](../adr/0004-versioned-historical-features.md)、[ADR 0005](../adr/0005-normalized-data-package.md)、[ADR 0006](../adr/0006-possible-time-and-parallel-hypotheses.md)、[ADR 0007](../adr/0007-fail-closed-public-projection.md)に記録する。データの規範フィールドと不変条件は[歴史データ規範モデル](../data/model.md)を参照する。
 
+全国統合のPMTilesと詳細JSON索引の出力契約は[全国統合タイルの公開契約](../data/tiles.md)を参照する。
+
 ## システム構成とデータフロー
 
-> 2026-10-11: [ADR 0008](../adr/0008-seamless-national-map-with-temporal-vector-tiles.md) により、配信はデータセット別GeoJSONから全国統合のPMTilesと詳細JSON索引へ、ビューアーは地域選択から全国シームレス地図へ移行する。以下の記述は移行完了まで現行実装の説明として残す。
+> 2026-10-11: [ADR 0008](../adr/0008-seamless-national-map-with-temporal-vector-tiles.md) により、配信はデータセット別GeoJSONから全国統合のPMTilesと詳細JSON索引へ、ビューアーは地域選択から全国シームレス地図へ移行する。M1の公開投影後段におけるPMTiles統合と詳細・出典JSON索引の生成は実装済み。以下のUI記述はM2移行まで現行実装の説明として残す。
 
 ```mermaid
 flowchart LR
@@ -52,4 +54,4 @@ flowchart LR
 
 テストは、Temporal Filterとデータ検証をドメイン境界として重点化し、Map Adapterは地図ライブラリ境界として統合テストの対象にする。出典・ライセンスはMetadata Panelとデータセットの両方で確認可能にする。キーボード操作、十分なコントラスト、テキストでの状態説明を基本とし、地図の視覚情報だけに依存しない。
 
-GeoJSONの配信量または描画量がMVPの性能目標を継続して満たせなくなったときはPMTilesを検討する。更新頻度、検索・集計、アクセス制御、複数利用者による編集が静的公開の範囲を超えたときはPostGIS/APIを検討する。いずれも現時点では導入しない。
+PMTilesはM1の全国統合パイプラインで導入した。更新頻度、検索・集計、アクセス制御、複数利用者による編集が静的公開の範囲を超えたときはPostGIS/APIを検討する。

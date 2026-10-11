@@ -29,6 +29,16 @@ def read_tree(path: Path) -> dict[str, bytes]:
     return {file.relative_to(path).as_posix(): file.read_bytes() for file in sorted(path.rglob("*")) if file.is_file()}
 
 
+def projection_for_dataset(dataset: object) -> public_builder.PublicProjection:
+    return public_builder.PublicProjection(
+        dataset=dataset,
+        entities=[],
+        sources=[],
+        evidence=[],
+        feature_collection={"features": []},
+    )
+
+
 @pytest.mark.parametrize("relationship", ["same", "descendant", "ancestor", "symlink-descendant"])
 def test_build_public_bundle_rejects_input_output_path_overlap_without_changing_authoring_data(
     tmp_path: Path, relationship: str
@@ -474,15 +484,9 @@ def test_build_public_bundle_maps_serialization_unicode_errors_without_mutating_
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, existing_output: bool
 ):
     package = load_package(copy_package(tmp_path))
-    documents = (
-        {"invalid": "\ud800"},
-        [],
-        [],
-        [],
-        {"features": []},
-    )
+    projection = projection_for_dataset({"invalid": "\ud800"})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
     output = tmp_path / "public"
     if existing_output:
         output.mkdir()
@@ -501,15 +505,9 @@ def test_build_public_bundle_maps_serialization_unicode_errors_without_mutating_
 def test_build_public_cli_maps_serialization_unicode_errors_to_exit_2_without_a_traceback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
 ):
-    documents = (
-        {"invalid": "\ud800"},
-        [],
-        [],
-        [],
-        {"features": []},
-    )
+    projection = projection_for_dataset({"invalid": "\ud800"})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
 
     exit_code = main(["build-public", str(copy_package(tmp_path)), "--output", str(tmp_path / "public")])
 
@@ -523,9 +521,9 @@ def test_build_public_bundle_rejects_nonfinite_projected_numbers_without_mutatin
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, invalid_number: float, existing_output: bool
 ):
     package = load_package(copy_package(tmp_path))
-    documents = ({"invalid": invalid_number}, [], [], [], {"features": []})
+    projection = projection_for_dataset({"invalid": invalid_number})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
     output = tmp_path / "public"
     if existing_output:
         output.mkdir()
@@ -544,9 +542,9 @@ def test_build_public_bundle_rejects_nonfinite_projected_numbers_without_mutatin
 def test_build_public_cli_maps_nonfinite_projected_numbers_to_exit_2_without_a_traceback(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
 ):
-    documents = ({"invalid": float("nan")}, [], [], [], {"features": []})
+    projection = projection_for_dataset({"invalid": float("nan")})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
 
     exit_code = main(["build-public", str(copy_package(tmp_path)), "--output", str(tmp_path / "public")])
 
@@ -564,9 +562,9 @@ def test_build_public_bundle_maps_deeply_nested_projected_values_without_mutatin
     deeply_nested: object = None
     for _ in range(250):
         deeply_nested = {"nested": deeply_nested}
-    documents = ({"deep": deeply_nested}, [], [], [], {"features": []})
+    projection = projection_for_dataset({"deep": deeply_nested})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
     output = tmp_path / "public"
     if existing_output:
         output.mkdir()
@@ -593,9 +591,9 @@ def test_build_public_cli_maps_deeply_nested_projected_values_to_exit_2_without_
     deeply_nested: object = None
     for _ in range(250):
         deeply_nested = {"nested": deeply_nested}
-    documents = ({"deep": deeply_nested}, [], [], [], {"features": []})
+    projection = projection_for_dataset({"deep": deeply_nested})
     monkeypatch.setattr(public_builder, "validate_package", lambda package, profile: [])
-    monkeypatch.setattr(public_builder, "_project", lambda package: documents)
+    monkeypatch.setattr(public_builder, "project_public", lambda package: projection)
 
     previous_recursion_limit = sys.getrecursionlimit()
     sys.setrecursionlimit(200)
