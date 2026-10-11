@@ -45,6 +45,7 @@
 | `rights` | `Rights` | 公開データセットではpublishableであること |
 | `files` | オブジェクト | `entities`、`sources`、`evidence`、`featureVersions`を持ち、それぞれ固定ファイル名を値にする |
 | `historicalMapAssets` | `HistoricalMapAsset[]` | 任意。出典・権利・対象範囲・測位限界を持つ古地図／歴史画像コンテキスト |
+| `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）だけを持ち、全国タイルでこのDatasetの地物を表示し始めるズームを指定する |
 
 `historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。クライアントは不正なアセットだけを除外し、現在地図・歴史geometry・詳細・根拠を維持する。
 
@@ -66,7 +67,7 @@
 
 ### GeoJSON FeatureVersion
 
-`FeatureVersion`はGeoJSON `Feature`であり、Featureの`id`にkindが`version`のIDを置く。`geometry`はPoint、MultiPoint、LineString、MultiLineString、Polygon、MultiPolygonのいずれかとする。`properties`は次のフィールドを持つ。
+`FeatureVersion`はGeoJSON `Feature`であり、Featureの`id`にkindが`version`のIDを置く。`geometry`はPoint、MultiPoint、LineString、MultiLineString、Polygon、MultiPolygonのいずれかとする。JSON Schemaは`type`と`coordinates`配列の形だけを検査し、位置の要素数・WGS84範囲・リングの閉合・Dataset bboxへの包含は意味検証で1回だけ検査する。`properties`は次のフィールドを持つ。
 
 | フィールド | 値 | 制約 |
 | --- | --- | --- |

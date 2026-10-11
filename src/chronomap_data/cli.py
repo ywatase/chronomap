@@ -33,8 +33,12 @@ def _parser() -> argparse.ArgumentParser:
     build_public.add_argument("dataset_dir")
     build_public.add_argument("--output", required=True)
     build_tiles_command = commands.add_parser("build-tiles")
-    build_tiles_command.add_argument("package_root")
+    build_tiles_command.add_argument("package_roots", nargs="+")
     build_tiles_command.add_argument("--output", required=True)
+    import_command = commands.add_parser("import")
+    import_command.add_argument("source", choices=("bakumatsu", "wikidata", "world"))
+    import_command.add_argument("--output", default="imports")
+    import_command.add_argument("--cache", default=".cache/raw")
     return parser
 
 
@@ -49,9 +53,27 @@ def main(argv: Sequence[str] | None = None) -> int:
     except SystemExit as error:
         return int(error.code)
 
+    if arguments.command == "import":
+        from pathlib import Path
+
+        from .importers.bakumatsu import import_bakumatsu
+        from .importers.common import RawDataError
+        from .importers.wikidata import import_wikidata
+        from .importers.world import import_world
+
+        importer = {"bakumatsu": import_bakumatsu, "wikidata": import_wikidata, "world": import_world}[arguments.source]
+        try:
+            outputs = importer(Path(arguments.output), Path(arguments.cache))
+        except (RawDataError, OSError) as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
+        for output in outputs:
+            print(f"imported package -> {output}")
+        return 0
+
     if arguments.command == "build-tiles":
         try:
-            summary = build_tiles(arguments.package_root, arguments.output)
+            summary = build_tiles(arguments.package_roots, arguments.output)
         except PublicBuildValidationError as error:
             for issue in error.issues:
                 print(format_issue(issue), file=sys.stderr)

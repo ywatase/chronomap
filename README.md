@@ -1,83 +1,34 @@
-# Chronomap data contract tooling and a static historical-map pilot
+# Chronomap
 
-Chronomap packages are normalized, versioned historical-data records.  This
-repository contains their JSON Schemas, validator, and fail-closed public
-bundle builder. Installed wheels include the versioned schemas as internal
-package resources, so validation does not depend on a checkout. The checked-in
-`data/ogurike/`, `data/tonegawa/`, `data/heijokyo/`, `data/azuchijo/`, and
-`data/kinugawa/` are small, citation-linked pilots for the Ogurike, Tone River,
-Heijokyo, Azuchi Castle/Lake Biwa, and Kinugawa/Kokaigawa areas; the test
-fixture remains synthetic and is not history.
+Chronomap is a nationwide historical map: one seamless map of Japan (and the
+world) whose coastlines, lakes, rivers, castles, battlefields, villages,
+provinces, domains, and polities change with a year slider. Every feature
+carries its possible period, uncertainty, evidence, and source rights.
+The architecture is recorded in
+[ADR 0008](docs/adr/0008-seamless-national-map-with-temporal-vector-tiles.md).
+
+```text
+data/<slug>/      hand-authored 5-file packages (in Git)
+imports/<slug>/   packages generated from pinned external data (not in Git)
+      │  chronomap-data build-tiles data imports
+      ▼
+web/public/chronomap/   chronomap.pmtiles + manifest.json + details/ (not in Git)
+      │
+      ▼
+web/                    static MapLibre viewer
+```
 
 ## Setup
 
-Install Python 3.12 or later and [uv](https://docs.astral.sh/uv/), then run:
+Install Python 3.12+, [uv](https://docs.astral.sh/uv/), Node.js 22, and
+Tippecanoe 2.79.0, then:
 
 ```sh
 uv sync --dev
+(cd web && npm ci)
 ```
 
-## Commands
-
-Validate authoring data (the default profile):
-
-```sh
-uv run chronomap-data validate tests/fixtures/valid/synthetic-package
-```
-
-Validate it as data eligible for publication:
-
-```sh
-uv run chronomap-data validate tests/fixtures/valid/synthetic-package --profile public
-```
-
-Validate the Ogurike pilot and build the browser-facing projection:
-
-```sh
-uv run chronomap-data validate data/ogurike --profile public
-uv run chronomap-data build-public data/ogurike --output web/public/data/ogurike
-```
-
-The second public pilot uses the same contract:
-
-```sh
-uv run chronomap-data validate data/tonegawa --profile public
-uv run chronomap-data build-public data/tonegawa --output web/public/data/tonegawa
-```
-
-The third public pilot uses the same contract:
-
-```sh
-uv run chronomap-data validate data/heijokyo --profile public
-uv run chronomap-data build-public data/heijokyo --output web/public/data/heijokyo
-```
-
-The fourth public pilot uses the same contract:
-
-```sh
-uv run chronomap-data validate data/azuchijo --profile public
-uv run chronomap-data build-public data/azuchijo --output web/public/data/azuchijo
-```
-
-The fifth public pilot uses the same contract:
-
-```sh
-uv run chronomap-data validate data/kinugawa --profile public
-uv run chronomap-data build-public data/kinugawa --output web/public/data/kinugawa
-```
-
-Build a deterministic public projection.  The target is replaced only after
-public-profile validation and staging both succeed:
-
-```sh
-uv run chronomap-data build-public tests/fixtures/valid/synthetic-package --output public-bundles/synthetic
-```
-
-Build the national temporal vector-tile pipeline from every package under
-`data/`. This command requires Tippecanoe 2.79.0; the generated directory is
-ignored by Git.
-
-On Ubuntu, build the pinned upstream release:
+On Ubuntu, build the pinned Tippecanoe release:
 
 ```sh
 sudo apt-get install build-essential libsqlite3-dev zlib1g-dev
@@ -87,27 +38,55 @@ sudo make -C tippecanoe install
 tippecanoe --version
 ```
 
-Then build the national tiles and detail indexes:
+## Build the map data
+
+Import the external datasets. Raw files are downloaded once into `.cache/raw/`
+and rejected unless their SHA-256 matches the pinned value; packages are
+written to `imports/`.
 
 ```sh
-uv run chronomap-data build-tiles data --output web/public/chronomap
+uv run chronomap-data import world       # historical-basemaps, GPL-3.0 (about 1 minute)
+uv run chronomap-data import bakumatsu   # Bakumatsu villages, provinces, domains, CC BY-SA 4.0 (about 15 minutes, ~300 MB download)
 ```
 
-The output contract is documented in [全国統合タイルの公開契約](docs/data/tiles.md).
-The existing per-pilot `build-public` commands remain available during the
-M2–M5 viewer migration.
+Build the national tiles and detail indexes from every package:
 
-See [the normative data model](docs/data/model.md) for the complete package
-contract.
+```sh
+uv run chronomap-data build-tiles data imports --output web/public/chronomap
+```
 
-## Web demo
+`build-tiles data --output web/public/chronomap` alone (without `imports`)
+builds the small hand-authored set used by CI and the browser tests.
 
-The static responsive UI, setup instructions, and browser acceptance tests are
-documented in [web/README.md](web/README.md). The default `/data/ogurike/`
-bundle is generated from the pilot package; the header's region/lesson catalog
-or `/?dataset=tonegawa`, `/?dataset=heijokyo`, `/?dataset=azuchijo`, or
-`/?dataset=kinugawa` selects another pilot. All
-bundles keep restricted source material as citation-only metadata.
+The output contract is [全国統合タイルの公開契約](docs/data/tiles.md); the
+package contract is [the normative data model](docs/data/model.md).
 
-GitHub Actions runs the Python contract/public-data checks and the Web
-unit/build/Chromium acceptance suite on pushes and pull requests.
+## Run the viewer
+
+```sh
+cd web
+npm run dev        # http://localhost:5173/
+```
+
+See [web/README.md](web/README.md) for the viewer, URL format, and tests.
+
+## Validate a package
+
+```sh
+uv run chronomap-data validate data/ogurike --profile public
+uv run chronomap-data audit data/ogurike
+```
+
+`build-public <package> --output <dir>` writes the fail-closed public
+projection of one package; `build-tiles` uses the same projection internally.
+
+## Tests
+
+```sh
+uv run pytest -q
+(cd web && npm test && npm run build && npm run test:browser)
+```
+
+GitHub Actions validates every package under `data/`, checks that
+`build-tiles` is byte-for-byte deterministic, and runs the web unit, build,
+and Chromium browser suites against tiles built from `data/`.

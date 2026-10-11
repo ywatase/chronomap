@@ -2,6 +2,7 @@
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+import math
 from pathlib import Path
 import shutil
 import subprocess
@@ -22,6 +23,9 @@ from .public_builder import (
 from .schema_validation import validate_package
 
 
+DEFAULT_MIN_ZOOM = 4
+DETAIL_SHARD_SIZE = 500
+HUE_COUNT = 12
 OPEN_YEAR_MIN = -999999
 OPEN_YEAR_MAX = 999999
 TIPPECANOE_VERSION = "2.79.0"
@@ -37,6 +41,7 @@ TILE_PROPERTIES = (
     "name",
     "from_year",
     "to_year",
+    "hue",
 )
 
 THEME_DEFINITIONS = (
@@ -85,6 +90,24 @@ class TileBuildSummary:
     output: Path
 
 
+def fnv1a32(text: str) -> int:
+    """Return the 32-bit FNV-1a hash of *text* encoded as UTF-8."""
+    value = 0x811C9DC5
+    for byte in text.encode("utf-8"):
+        value = ((value ^ byte) * 0x01000193) & 0xFFFFFFFF
+    return value
+
+
+def detail_shard(feature_version_id: str, shards: int) -> int:
+    """Return the detail-index shard that holds *feature_version_id*."""
+    return fnv1a32(feature_version_id) % shards
+
+
+def _min_zoom(dataset: Mapping[str, object]) -> int:
+    value = _mapping(dataset.get("display")).get("minZoom")
+    return value if isinstance(value, int) and not isinstance(value, bool) else DEFAULT_MIN_ZOOM
+
+
 def _mapping(value: object) -> Mapping[str, object]:
     return value if isinstance(value, Mapping) else {}
 
@@ -107,7 +130,9 @@ def feature_period(properties: Mapping[str, object]) -> tuple[int, int]:
     return from_year, to_year
 
 
-def _tile_feature(feature: Mapping[str, object], dataset: TileDataset, entity_type_by_id: Mapping[str, str]) -> dict[str, object]:
+def _tile_feature(
+    feature: Mapping[str, object], dataset: TileDataset, entity_type_by_id: Mapping[str, str], min_zoom: int
+) -> dict[str, object]:
     feature_id = feature["id"]
     properties = _mapping(feature.get("properties"))
     entity_id = str(properties["entityId"])
@@ -116,6 +141,7 @@ def _tile_feature(feature: Mapping[str, object], dataset: TileDataset, entity_ty
     from_year, to_year = feature_period(properties)
     return {
         "type": "Feature",
+        "tippecanoe": {"minzoom": min_zoom},
         "geometry": feature["geometry"],
         "properties": {
             "feature_version_id": feature_id,
@@ -125,34 +151,106 @@ def _tile_feature(feature: Mapping[str, object], dataset: TileDataset, entity_ty
             "name": name,
             "from_year": from_year,
             "to_year": to_year,
+            "hue": fnv1a32(entity_id) % HUE_COUNT,
         },
     }
 
 
-def _detail_records(records: Sequence[object]) -> dict[str, object]:
-    result: dict[str, object] = {}
-    for record in records:
-        if not isinstance(record, Mapping):
-            continue
-        record_id = record.get("id")
-        if not isinstance(record_id, str):
-            continue
-        result[record_id] = dict(record)
-    return {record_id: result[record_id] for record_id in sorted(result)}
+def _by_id(records: Sequence[object]) -> dict[str, Mapping[str, object]]:
+    return {
+        str(record["id"]): record
+        for record in records
+        if isinstance(record, Mapping) and isinstance(record.get("id"), str)
+    }
 
 
-def _detail_features(features: Sequence[Mapping[str, object]]) -> dict[str, object]:
-    result: dict[str, object] = {}
+def _sorted_dict(records: Mapping[str, object]) -> dict[str, object]:
+    return {key: records[key] for key in sorted(records)}
+
+
+def _detail_shards(dataset: TileDataset, features: Sequence[Mapping[str, object]]) -> dict[str, dict[str, object]]:
+    """Split geometry-free details into hash shards with only reachable records."""
+    projection = dataset.projection
+    entities = _by_id(projection.entities)
+    evidence = _by_id(projection.evidence)
+    sources = _by_id(projection.sources)
+    shard_count = max(1, math.ceil(len(features) / DETAIL_SHARD_SIZE))
+    shards: list[dict[str, dict[str, object]]] = [
+        {"features": {}, "entities": {}, "evidence": {}, "sources": {}} for _ in range(shard_count)
+    ]
     for feature in features:
         feature_id = feature.get("id")
+        if not isinstance(feature_id, str):
+            continue
         properties = _mapping(feature.get("properties"))
-        if isinstance(feature_id, str):
-            result[feature_id] = {key: value for key, value in properties.items() if key != "publicationStatus"}
-    return {feature_id: result[feature_id] for feature_id in sorted(result)}
+        shard = shards[detail_shard(feature_id, shard_count)]
+        shard["features"][feature_id] = {key: value for key, value in properties.items() if key != "publicationStatus"}
+        entity_id = properties.get("entityId")
+        if isinstance(entity_id, str) and entity_id in entities:
+            shard["entities"][entity_id] = dict(entities[entity_id])
+        evidence_ids = set(_records_of_strings(properties.get("evidenceIds")))
+        for assessment in _mapping(properties.get("uncertainty")).values():
+            evidence_ids.update(_records_of_strings(_mapping(assessment).get("evidenceIds")))
+        for evidence_id in evidence_ids:
+            record = evidence.get(evidence_id)
+            if record is None:
+                continue
+            shard["evidence"][evidence_id] = dict(record)
+            source_id = record.get("sourceId")
+            if isinstance(source_id, str) and source_id in sources:
+                shard["sources"][source_id] = dict(sources[source_id])
+    return {
+        f"details/{dataset.slug}/{index}.json": {
+            "dataset": dataset.slug,
+            **{key: _sorted_dict(records) for key, records in shard.items()},
+        }
+        for index, shard in enumerate(shards)
+    }
+
+
+def _records_of_strings(value: object) -> tuple[str, ...]:
+    if isinstance(value, list | tuple):
+        return tuple(item for item in value if isinstance(item, str))
+    return ()
+
+
+def _default_year(years: Sequence[int], features: Sequence[Mapping[str, object]]) -> int | None:
+    periods = [
+        (int(properties["from_year"]), int(properties["to_year"]))
+        for properties in (_mapping(feature.get("properties")) for feature in features)
+    ]
+    best: tuple[int, int] | None = None
+    for year in years:
+        visible = sum(1 for start, end in periods if start <= year <= end)
+        if best is None or visible > best[1]:
+            best = (year, visible)
+    return best[0] if best else None
+
+
+def _rasters(dataset: TileDataset) -> list[dict[str, object]]:
+    rasters: list[dict[str, object]] = []
+    for asset in _records(dataset.projection.dataset.get("historicalMapAssets")):
+        if not isinstance(asset.get("tileTemplate"), str):
+            continue
+        rasters.append(
+            {
+                "id": asset["id"],
+                "dataset": dataset.slug,
+                "title": asset["title"],
+                "description": asset["description"],
+                "date": asset["date"],
+                "tileTemplate": asset["tileTemplate"],
+                "attribution": asset["attribution"],
+                "bbox": asset["bbox"],
+                "minZoom": asset["minZoom"],
+                "maxZoom": asset["maxZoom"],
+            }
+        )
+    return rasters
 
 
 def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
-    """Build the manifest, geometry-free details, and ordered tile features."""
+    """Build the manifest, geometry-free detail shards, and ordered tile features."""
     issues: list[ValidationIssue] = []
     seen_slugs: set[str] = set()
     for dataset in datasets:
@@ -176,32 +274,29 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
     ordered_datasets = sorted(datasets, key=lambda dataset: dataset.slug)
     details: dict[str, dict[str, object]] = {}
     manifest_datasets: list[dict[str, object]] = []
+    rasters: list[dict[str, object]] = []
     all_features: list[dict[str, object]] = []
     years: set[int] = set()
 
     for dataset in ordered_datasets:
         projection = dataset.projection
+        source_dataset = projection.dataset
+        min_zoom = _min_zoom(source_dataset)
         raw_features = _records(_mapping(projection.feature_collection).get("features"))
-        entities = _records(projection.entities)
         entity_type_by_id = {
             str(entity["id"]): str(entity["type"])
-            for entity in entities
+            for entity in _records(projection.entities)
             if isinstance(entity.get("id"), str) and isinstance(entity.get("type"), str)
         }
-        tile_features = [_tile_feature(feature, dataset, entity_type_by_id) for feature in raw_features]
+        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, min_zoom) for feature in raw_features]
         all_features.extend(tile_features)
         for feature in tile_features:
             properties = _mapping(feature["properties"])
             years.update(year for year in (properties["from_year"], properties["to_year"]) if year not in {OPEN_YEAR_MIN, OPEN_YEAR_MAX})
 
-        details[dataset.slug] = {
-            "dataset": dataset.slug,
-            "features": _detail_features(raw_features),
-            "entities": _detail_records(projection.entities),
-            "evidence": _detail_records(projection.evidence),
-            "sources": _detail_records(projection.sources),
-        }
-        source_dataset = projection.dataset
+        shards = _detail_shards(dataset, raw_features)
+        details.update(shards)
+        rasters.extend(_rasters(dataset))
         rights = _mapping(source_dataset.get("rights"))
         manifest_datasets.append(
             {
@@ -211,7 +306,8 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
                 "defaultLanguage": source_dataset["defaultLanguage"],
                 "bbox": source_dataset["bbox"],
                 "attribution": rights.get("attribution"),
-                "details": f"details/{dataset.slug}.json",
+                "minZoom": min_zoom,
+                "detailShards": len(shards),
                 "features": len(raw_features),
             }
         )
@@ -222,7 +318,7 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
         for theme_id, label_ja, label_en, _entity_types in THEME_DEFINITIONS
     ]
     manifest = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "tiles": "chronomap.pmtiles",
         "sourceLayer": "features",
         "openYear": {"min": OPEN_YEAR_MIN, "max": OPEN_YEAR_MAX},
@@ -231,7 +327,9 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
             "max": sorted_years[-1] if sorted_years else None,
         },
         "years": sorted_years,
+        "defaultYear": _default_year(sorted_years, all_features),
         "themes": themes,
+        "rasters": rasters,
         "datasets": manifest_datasets,
     }
     return TileDocuments(manifest=manifest, details=details, features=tuple(all_features))
@@ -264,18 +362,18 @@ def _write_geojson_sequence(path: Path, features: Sequence[dict[str, object]]) -
             output.write((_canonical_json(feature) + "\n").encode("utf-8"))
 
 
-def _validate_packages(package_root: Path, output: Path) -> list[TileDataset]:
-    try:
-        package_paths = sorted(
-            (path for path in package_root.iterdir() if path.is_dir()),
-            key=lambda path: path.name,
-        )
-    except OSError as error:
-        raise PublicBuildIOError(f"could not enumerate package root {package_root}: {error}") from error
+def _validate_packages(package_roots: Sequence[Path], output: Path) -> list[TileDataset]:
+    package_paths: list[Path] = []
+    for package_root in package_roots:
+        try:
+            package_paths.extend(path for path in package_root.iterdir() if path.is_dir())
+        except OSError as error:
+            raise PublicBuildIOError(f"could not enumerate package root {package_root}: {error}") from error
+    package_paths.sort(key=lambda path: (path.name, str(path)))
 
     if not package_paths:
         raise PublicBuildValidationError(
-            [ValidationIssue("tiles.no_packages", str(package_root), "", "package root contains no package directories")]
+            [ValidationIssue("tiles.no_packages", ", ".join(map(str, package_roots)), "", "package roots contain no package directories")]
         )
 
     packages: list[tuple[Path, DatasetPackage]] = []
@@ -306,21 +404,22 @@ def _validate_packages(package_root: Path, output: Path) -> list[TileDataset]:
     ]
 
 
-def build_tiles(package_root: Path, output: Path) -> TileBuildSummary:
+def build_tiles(package_roots: Sequence[Path], output: Path) -> TileBuildSummary:
     """Build the national PMTiles archive and public detail indexes atomically."""
     try:
-        package_root = Path(package_root).resolve()
+        package_roots = [Path(root).resolve() for root in package_roots]
         output = Path(output).resolve()
     except (OSError, RuntimeError) as error:
         raise PublicBuildIOError(f"could not resolve input or output path: {error}") from error
-    if not package_root.is_dir():
-        raise PublicBuildIOError(f"package root is not a directory: {package_root}")
+    for package_root in package_roots:
+        if not package_root.is_dir():
+            raise PublicBuildIOError(f"package root is not a directory: {package_root}")
     if not output.parent.is_dir():
         raise PublicBuildIOError(f"output parent directory does not exist: {output.parent}")
     if output.exists() and not output.is_dir():
         raise PublicBuildIOError(f"output path is not a directory: {output}")
 
-    datasets = _validate_packages(package_root, output)
+    datasets = _validate_packages(package_roots, output)
     documents = build_tile_documents(datasets)
     if shutil.which("tippecanoe") is None:
         raise PublicBuildIOError(f"Tippecanoe {TIPPECANOE_VERSION} is required; {TIPPECANOE_INSTALL_GUIDANCE}")
@@ -339,11 +438,11 @@ def build_tiles(package_root: Path, output: Path) -> TileBuildSummary:
         stage = Path(tempfile.mkdtemp(prefix=f".{output.name}.tmp-", dir=output.parent))
         work = stage / ".work"
         work.mkdir()
-        details_dir = stage / "details"
-        details_dir.mkdir()
         (stage / "manifest.json").write_bytes(_serialized(documents.manifest))
-        for slug, detail in documents.details.items():
-            (details_dir / f"{slug}.json").write_bytes(_serialized(detail))
+        for relative_path, detail in documents.details.items():
+            path = stage / relative_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(_serialized(detail))
         _write_geojson_sequence(work / "features.geojsonl", documents.features)
 
         command = [
@@ -351,7 +450,7 @@ def build_tiles(package_root: Path, output: Path) -> TileBuildSummary:
             "--quiet",
             "--output=chronomap.pmtiles",
             "--layer=features",
-            "--minimum-zoom=4",
+            "--minimum-zoom=0",
             "--maximum-zoom=12",
             "--no-feature-limit",
             "--no-tile-size-limit",

@@ -127,13 +127,22 @@ def test_historical_map_asset_contract_requires_one_https_resource_and_provenanc
         ("invalid-derived-geometry-evidence", "evidence.schema.json"),
         ("invalid-uncertainty-assessment", "feature-versions.schema.json"),
         ("invalid-hypothesis-label", "feature-versions.schema.json"),
-        ("invalid-geometry-position", "feature-versions.schema.json"),
         ("invalid-geometry-collection", "feature-versions.schema.json"),
     ],
 )
 def test_structurally_invalid_synthetic_fixtures_are_rejected(fixture_name, schema_filename):
     instance = load_json(ROOT / "tests/fixtures/invalid" / f"{fixture_name}.json")
     assert list(validator_for(schema_filename).iter_errors(instance))
+
+
+def test_geometry_positions_are_checked_by_semantic_validation_not_the_schema():
+    from chronomap_data.geometry import validate_geometry
+
+    instance = load_json(ROOT / "tests/fixtures/invalid" / "invalid-geometry-position.json")
+    assert list(validator_for("feature-versions.schema.json").iter_errors(instance)) == []
+    geometry = instance["features"][0]["geometry"]
+    issues = validate_geometry(geometry, [-10, -10, 10, 10], "feature-versions.geojson", "/features/0/geometry")
+    assert [issue.message for issue in issues] == ["position must contain exactly two finite numbers"]
 
 
 @pytest.mark.parametrize(

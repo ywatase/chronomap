@@ -16,7 +16,9 @@ from chronomap_data.tile_builder import (
     TileDataset,
     build_tile_documents,
     build_tiles,
+    detail_shard,
     feature_period,
+    fnv1a32,
 )
 
 
@@ -88,6 +90,13 @@ def decode_pmtiles(path: Path) -> tuple[dict[str, object], dict[int, dict[str, d
     return header, by_zoom
 
 
+def read_details(output: Path) -> dict[str, object]:
+    return {
+        path.relative_to(output).as_posix(): json.loads(path.read_text(encoding="utf-8"))
+        for path in sorted((output / "details").rglob("*.json"))
+    }
+
+
 def expected_data_documents():
     datasets = []
     for package_dir in sorted((ROOT / "data").iterdir(), key=lambda path: path.name):
@@ -151,10 +160,11 @@ def test_tile_documents_exclude_private_features_from_tiles_and_details(tmp_path
     ]
     assert all(
         set(feature["properties"])
-        == {"feature_version_id", "entity_id", "dataset", "theme", "name", "from_year", "to_year"}
+        == {"feature_version_id", "entity_id", "dataset", "theme", "name", "from_year", "to_year", "hue"}
         for feature in documents.features
     )
-    details = documents.details["synthetic"]
+    assert set(documents.details) == {"details/synthetic/0.json"}
+    details = documents.details["details/synthetic/0.json"]
     assert "synthetic:version:polygon-private" not in details["features"]
     assert "synthetic:entity:polygon-subject" not in details["entities"]
     assert all("publicationStatus" not in feature for feature in details["features"].values())
@@ -163,7 +173,7 @@ def test_tile_documents_exclude_private_features_from_tiles_and_details(tmp_path
 
 def test_details_keep_the_safe_citation_only_evidence_projection(tmp_path: Path):
     documents = build_tile_documents([synthetic_dataset(tmp_path)])
-    details = documents.details["synthetic"]
+    details = documents.details["details/synthetic/0.json"]
     evidence = details["evidence"]["synthetic:evidence:citation-identity"]
 
     assert evidence["usage"] == "citation"
@@ -218,7 +228,7 @@ def test_manifest_handles_datasets_without_finite_year_endpoints(tmp_path: Path)
 
 
 @pytest.mark.skipif(shutil.which("tippecanoe") is None, reason="Tippecanoe is required for PMTiles integration")
-def test_build_tiles_cli_writes_all_seven_public_datasets_and_all_z4_z12_features(tmp_path: Path, capsys):
+def test_build_tiles_cli_writes_every_public_dataset_and_all_z4_z12_features(tmp_path: Path, capsys):
     output = tmp_path / "chronomap"
     expected = expected_data_documents()
 
@@ -227,25 +237,23 @@ def test_build_tiles_cli_writes_all_seven_public_datasets_and_all_z4_z12_feature
     assert exit_code == 0
     captured = capsys.readouterr()
     assert captured.err == ""
-    assert "7 datasets" in captured.out
+    package_count = sum(1 for path in (ROOT / "data").iterdir() if path.is_dir())
+    assert f"{package_count} datasets" in captured.out
     assert "-> " + str(output.resolve()) in captured.out
     assert (output / "chronomap.pmtiles").is_file()
     assert (output / "manifest.json").is_file()
-    assert len(list((output / "details").glob("*.json"))) == 7
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest == expected.manifest
-    details = {
-        path.stem: json.loads(path.read_text(encoding="utf-8"))
-        for path in (output / "details").glob("*.json")
-    }
-    assert details == expected.details
+    assert read_details(output) == expected.details
+    assert len(expected.details) == package_count
 
     header, by_zoom = decode_pmtiles(output / "chronomap.pmtiles")
     expected_features = {
         feature["properties"]["feature_version_id"]: feature["properties"]
         for feature in expected.features
     }
-    assert (header["min_zoom"], header["max_zoom"]) == (4, 12)
+    assert (header["min_zoom"], header["max_zoom"]) == (0, 12)
+    assert 3 not in by_zoom
     for zoom in (4, 12):
         assert by_zoom[zoom] == expected_features
         assert all(set(properties) == set(TILE_PROPERTIES) for properties in by_zoom[zoom].values())
@@ -256,9 +264,9 @@ def test_build_tiles_is_byte_identical_across_two_builds(tmp_path: Path):
     first = tmp_path / "first"
     second = tmp_path / "second"
 
-    build_tiles(ROOT / "data", first)
+    build_tiles([ROOT / "data"], first)
     first_build = read_tree(first)
-    build_tiles(ROOT / "data", second)
+    build_tiles([ROOT / "data"], second)
 
     assert read_tree(second) == first_build
 
@@ -306,7 +314,7 @@ def test_build_tiles_rejects_an_unpinned_tippecanoe_version(tmp_path: Path, monk
     )
 
     with pytest.raises(PublicBuildIOError, match="found 2.80.0"):
-        build_tiles(package_root, output)
+        build_tiles([package_root], output)
 
     assert not output.exists()
 
@@ -345,7 +353,7 @@ def test_build_tiles_preserves_output_and_cleans_staging_when_tippecanoe_fails(t
     monkeypatch.setattr(tile_builder.subprocess, "run", fail_tool)
 
     with pytest.raises(PublicBuildIOError, match="synthetic tool failure"):
-        build_tiles(package_root, output)
+        build_tiles([package_root], output)
 
     assert read_tree(output) == before
     assert not list(tmp_path.glob(".chronomap.tmp-*"))
@@ -362,3 +370,133 @@ def test_build_tiles_rejects_empty_and_missing_package_roots(tmp_path: Path, cap
     assert empty_exit_code == 1
     assert missing_exit_code == 2
     assert "no package" in captured.err.lower()
+
+
+def test_fnv1a32_matches_reference_vectors():
+    assert fnv1a32("") == 0x811C9DC5
+    assert fnv1a32("a") == 0xE40C292C
+    assert fnv1a32("foobar") == 0xBF9CF968
+    assert fnv1a32("国") == fnv1a32("国".encode("utf-8").decode("utf-8"))
+
+
+def test_tile_features_carry_a_hue_derived_from_the_entity(tmp_path: Path):
+    documents = build_tile_documents([synthetic_dataset(tmp_path)])
+
+    for feature in documents.features:
+        properties = feature["properties"]
+        assert properties["hue"] == fnv1a32(properties["entity_id"]) % 12
+
+
+def test_dataset_display_min_zoom_is_applied_per_feature_and_reported(tmp_path: Path):
+    default = build_tile_documents([synthetic_dataset(tmp_path / "a")])
+    assert all(feature["tippecanoe"] == {"minzoom": 4} for feature in default.features)
+    assert default.manifest["datasets"][0]["minZoom"] == 4
+
+    (tmp_path / "b").mkdir()
+    package_dir = copy_synthetic_package(tmp_path / "b", "synthetic")
+    metadata = json.loads((package_dir / "dataset.json").read_text(encoding="utf-8"))
+    metadata["display"] = {"minZoom": 0}
+    (package_dir / "dataset.json").write_text(json.dumps(metadata), encoding="utf-8")
+    package = load_package(package_dir)
+    documents = build_tile_documents([TileDataset("synthetic", package, project_public(package))])
+
+    assert all(feature["tippecanoe"] == {"minzoom": 0} for feature in documents.features)
+    assert documents.manifest["datasets"][0]["minZoom"] == 0
+
+
+def test_manifest_default_year_has_the_most_visible_features_and_prefers_older_ties(tmp_path: Path):
+    documents = build_tile_documents([synthetic_dataset(tmp_path)])
+
+    assert documents.manifest["schemaVersion"] == 2
+    assert documents.manifest["defaultYear"] == 0
+
+
+def test_details_are_sharded_by_feature_hash_with_only_reachable_records(tmp_path: Path, monkeypatch):
+    monkeypatch.setattr(tile_builder, "DETAIL_SHARD_SIZE", 1)
+    documents = build_tile_documents([synthetic_dataset(tmp_path)])
+
+    assert documents.manifest["datasets"][0]["detailShards"] == 3
+    placed: dict[str, str] = {}
+    for path, shard in documents.details.items():
+        for feature_id, feature in shard["features"].items():
+            placed[feature_id] = path
+            assert feature["entityId"] in shard["entities"]
+            for evidence_id in feature["evidenceIds"]:
+                assert evidence_id in shard["evidence"]
+                assert shard["evidence"][evidence_id]["sourceId"] in shard["sources"]
+        referenced_entities = {feature["entityId"] for feature in shard["features"].values()}
+        assert set(shard["entities"]) == referenced_entities
+    assert placed == {
+        feature_id: f"details/synthetic/{detail_shard(feature_id, 3)}.json"
+        for feature_id in placed
+    }
+    assert len(placed) == 3
+
+
+def test_manifest_lists_tile_historical_map_assets_as_rasters(tmp_path: Path):
+    package_dir = tmp_path / "synthetic"
+    copy_synthetic_package(tmp_path, "synthetic")
+    metadata = json.loads((package_dir / "dataset.json").read_text(encoding="utf-8"))
+    metadata["historicalMapAssets"] = [
+        {
+            "id": "lowland",
+            "title": {"en": "Lowland"},
+            "description": {"en": "Meiji-era lowland"},
+            "bbox": [122, 20, 154, 46],
+            "date": "1880s-1910s",
+            "accessedDate": "2026-10-12",
+            "georeference": {"method": "published tiles", "error": "as published"},
+            "sourceUrl": "https://maps.gsi.go.jp/development/ichiran.html",
+            "attribution": "GSI",
+            "rights": {"status": "open-license", "attribution": "GSI"},
+            "tileTemplate": "https://cyberjapandata.gsi.go.jp/xyz/lowland/{z}/{x}/{y}.png",
+            "minZoom": 10,
+            "maxZoom": 16,
+        }
+    ]
+    (package_dir / "dataset.json").write_text(json.dumps(metadata), encoding="utf-8")
+    package = load_package(package_dir)
+
+    documents = build_tile_documents([TileDataset("synthetic", package, project_public(package))])
+
+    assert documents.manifest["rasters"] == [
+        {
+            "id": "lowland",
+            "dataset": "synthetic",
+            "title": {"en": "Lowland"},
+            "description": {"en": "Meiji-era lowland"},
+            "date": "1880s-1910s",
+            "tileTemplate": "https://cyberjapandata.gsi.go.jp/xyz/lowland/{z}/{x}/{y}.png",
+            "attribution": "GSI",
+            "bbox": [122, 20, 154, 46],
+            "minZoom": 10,
+            "maxZoom": 16,
+        }
+    ]
+
+
+def test_build_tiles_collects_packages_from_several_roots_and_rejects_cross_root_duplicates(tmp_path: Path, monkeypatch):
+    first = tmp_path / "data"
+    second = tmp_path / "imports"
+    first.mkdir()
+    second.mkdir()
+    copy_synthetic_package(first, "alpha")
+    copy_synthetic_package(second, "beta")
+    captured: list[list[str]] = []
+    validate_packages = tile_builder._validate_packages
+
+    def collect(roots, output):
+        datasets = validate_packages(roots, output)
+        captured.append([dataset.slug for dataset in datasets])
+        return datasets
+
+    monkeypatch.setattr(tile_builder.shutil, "which", lambda _command: None)
+    monkeypatch.setattr(tile_builder, "_validate_packages", collect)
+    with pytest.raises(PublicBuildIOError):
+        build_tiles([first, second], tmp_path / "out")
+    assert captured == [["alpha", "beta"]]
+
+    copy_synthetic_package(second, "alpha")
+    with pytest.raises(PublicBuildValidationError) as duplicate:
+        build_tiles([first, second], tmp_path / "out")
+    assert duplicate.value.issues[0].code == "tiles.slug_duplicate"

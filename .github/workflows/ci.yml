@@ -48,23 +48,25 @@ jobs:
           uv run chronomap-data build-tiles data --output "$first_output"
           uv run chronomap-data build-tiles data --output "$second_output"
           diff -r "$first_output" "$second_output"
+          cp -r "$first_output" web/public/chronomap
+      - name: Upload the tiles for the browser tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: chronomap-tiles
+          path: web/public/chronomap/
 
   web:
     name: Web unit, build, and browser
+    needs: python
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
+      - name: Download the tiles built from data/
+        uses: actions/download-artifact@v4
         with:
-          version: "0.12.5"
-          enable-cache: true
-      - name: Set up Python and data CLI
-        run: |
-          uv python install 3.12.10
-          uv sync --dev
-          echo "$GITHUB_WORKSPACE/.venv/bin" >> "$GITHUB_PATH"
+          name: chronomap-tiles
+          path: web/public/chronomap/
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:

@@ -2,11 +2,11 @@
 
 作成日: 2026-10-11
 
-この文書は、[ADR 0008](../adr/0008-seamless-national-map-with-temporal-vector-tiles.md) のM1で生成するPMTilesと詳細JSON索引の規範契約である。生成コマンドと運用手順は[README](../../README.md)を参照する。
+この文書は、[ADR 0008](../adr/0008-seamless-national-map-with-temporal-vector-tiles.md) で生成するPMTilesと詳細JSON索引の規範契約である。M1で定め、2026-10-12にM2〜M6のため改訂した（[設計書](../superpowers/specs/2026-10-12-adr0008-m2-m6-design.md)）。生成コマンドと運用手順は[README](../../README.md)を参照する。
 
 ## 入力と安全性
 
-`chronomap-data build-tiles <package-root> --output <directory>` は、`<package-root>` の直下にあるパッケージディレクトリを名前の昇順で処理する。ディレクトリ名は `dataset.json` の `id` の最初の `:` より前のslugと一致しなければならず、slugは重複できない。
+`chronomap-data build-tiles <package-root>... --output <directory>` は、1つ以上の `<package-root>` の直下にあるパッケージディレクトリをすべて集め、slugの昇順で処理する。手作業のパッケージは `data/`、取込コマンドの生成物は `imports/`（Git対象外）に置く。ディレクトリ名は `dataset.json` の `id` の最初の `:` より前のslugと一致しなければならず、slugはルートをまたいでも重複できない。
 
 全入力を `public` プロファイルで検証し、1件でも失敗すれば出力ディレクトリに触れず終了する。成功物は出力先と同じ親ディレクトリの一時ディレクトリへすべて生成してから、既存出力を原子的に置き換える。入出力エラーやTippecanoeの欠如・失敗は終了コード2、公開検証失敗は1、成功は0とする。
 
@@ -16,7 +16,7 @@
 <output>/
   chronomap.pmtiles
   manifest.json
-  details/<slug>.json
+  details/<slug>/<shard>.json
 ```
 
 `web/public/chronomap/` は生成物であり、Gitへコミットしない。
@@ -24,9 +24,10 @@
 ### PMTiles
 
 - Tippecanoe 2.79.0で生成する。入力は決定順の改行区切りGeoJSONとし、ツールは一時ディレクトリを作業ディレクトリにして相対パスで起動する。
-- ベクタータイルレイヤーは `features` の1つ、ズーム範囲は4〜12とする。
-- M1では地物数・タイルサイズによる間引きを無効にし、`-r1` で低ズームのPoint地物も間引かない。形状簡略化はTippecanoeの既定値を使う。
-- 各地物の属性は次の7項目だけとする。
+- ベクタータイルレイヤーは `features` の1つ、ズーム範囲は0〜12とする。
+- 地物は、Datasetの `display.minZoom`（未指定なら4）以上のタイルにだけ入る。GeoJSONSeqの各地物に `tippecanoe.minzoom` を付けて指定する。
+- 地物数・タイルサイズによる間引きを無効にし、`-r1` で低ズームのPoint地物も間引かない。形状簡略化はTippecanoeの既定値を使う。
+- 各地物の属性は次の8項目だけとする。
 
 | 属性 | 型 | 内容 |
 | --- | --- | --- |
@@ -37,6 +38,7 @@
 | `name` | string | FeatureVersion `labels` のdefaultLanguage値 |
 | `from_year` | int | `start.earliestYear`。未指定なら `-999999` |
 | `to_year` | int | `end.latestYear`。未指定なら `999999` |
+| `hue` | int | `entity_id` のFNV-1a 32bitハッシュ（UTF-8）を12で割った余り。塗り分け用 |
 
 選択年 `y` の表示条件は `from_year <= y <= to_year` である。
 
@@ -57,15 +59,19 @@
 
 ### Manifest
 
-`manifest.json` は `schemaVersion: 1`、`tiles: "chronomap.pmtiles"`、`sourceLayer: "features"`、`openYear: {"min": -999999, "max": 999999}`、`yearRange`、`years`、`themes`、`datasets` を持つ。
+`manifest.json` は `schemaVersion: 2`、`tiles: "chronomap.pmtiles"`、`sourceLayer: "features"`、`openYear: {"min": -999999, "max": 999999}`、`yearRange`、`years`、`defaultYear`、`themes`、`rasters`、`datasets` を持つ。
 
 - `yearRange` と `years` は、全地物の `from_year`・`to_year` から番兵値を除いて導出する。`years` は昇順・重複なしとする。有限な年が1つもなければ `yearRange` の `min` と `max` は `null`、`years` は空配列とする。
-- `datasets` はslug昇順。各項目は `slug`、Dataset `id`、`title`、`defaultLanguage`、`bbox`、`rights.attribution`、`details`、公開地物数 `features` を持つ。
+- `defaultYear` は `years` のうち、その年に表示される地物（`from_year <= y <= to_year`）が最も多い年とする。同数なら古い年。`years` が空なら `null`。
+- `datasets` はslug昇順。各項目は `slug`、Dataset `id`、`title`、`defaultLanguage`、`bbox`、`rights.attribution`、`minZoom`、詳細索引のシャード数 `detailShards`、公開地物数 `features` を持つ。
+- `rasters` は、Datasetの `historicalMapAssets` のうち `tileTemplate` を持つものを、slug順・Dataset内の記載順に並べる。各項目は `id`、`dataset`、`title`、`description`、`date`、`tileTemplate`、`attribution`、`bbox`、`minZoom`、`maxZoom` を持つ。
 - キーは既存の `_canonical_json` で直列化する。配列順はここで定めた順序とする。
 
 ### 詳細索引
 
-`details/<slug>.json` は `dataset`、`features`、`entities`、`evidence`、`sources` を持ち、すべてIDをキーにした辞書順オブジェクトとする。Geometryは含めない。
+詳細索引はDatasetごとに `detailShards = max(1, ceil(公開地物数 / 500))` 個のシャードへ分ける。FeatureVersionは `fnv1a32(feature_version_id) % detailShards` 番目のシャード `details/<slug>/<shard>.json` に入る。ビューアーは同じ計算でシャードを決める。
+
+各シャードは `dataset`、`features`、`entities`、`evidence`、`sources` を持ち、すべてIDをキーにした辞書順オブジェクトとする。`entities`・`evidence`・`sources` は、そのシャードのFeatureVersionから到達できるものだけを含む。Geometryは含めない。
 
 - `features` は公開FeatureVersionの `properties` を格納し、`publicationStatus` だけを除く。
 - `entities`、`evidence`、`sources` は共有公開投影の結果を使う。
