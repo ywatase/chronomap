@@ -110,6 +110,23 @@ function themeLayers(theme: string, manifest: Manifest, year: number, visible: b
   ];
 }
 
+/** Label zoom windows per theme, so dense themes do not bury the map: [theme, min zoom, max zoom]. */
+export const LABEL_ZOOMS: readonly (readonly [string, number, number])[] = [
+  ["settlement", 12, 24],
+  ["castle", 7, 24],
+  ["battlefield", 7, 24],
+  ["sphere", 0, 10],
+];
+
+function labelZooms(): unknown {
+  const listed = LABEL_ZOOMS.map(([theme]) => theme);
+  return [
+    "any",
+    ["!", ["in", ["get", "theme"], ["literal", listed]]],
+    ...LABEL_ZOOMS.map(([theme, low, high]) => ["all", ["==", ["get", "theme"], theme], [">=", ["zoom"], low], ["<", ["zoom"], high]]),
+  ];
+}
+
 function labelLayer(manifest: Manifest, year: number, hiddenThemes: readonly string[]): LayerSpec {
   const shown = manifest.themes.map((theme) => theme.id).filter((id) => !hiddenThemes.includes(id));
   return {
@@ -121,7 +138,7 @@ function labelLayer(manifest: Manifest, year: number, hiddenThemes: readonly str
       "all",
       ["in", ["get", "theme"], ["literal", shown]],
       yearFilter(year),
-      ["any", ["!=", ["get", "theme"], "settlement"], [">=", ["zoom"], 12]],
+      labelZooms(),
       ["any", ["!", worldScale(manifest)], ["<", ["zoom"], WORLD_FADE.to]],
     ],
     layout: {

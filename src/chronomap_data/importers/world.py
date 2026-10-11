@@ -118,7 +118,7 @@ def world_package(snapshots: Mapping[int, Mapping[str, object]]) -> tuple[dict, 
             "end": {"earliestYear": years[-1], "latestYear": years[-1], "precision": "year", "qualifier": "circa"},
         },
         "rights": {"status": "open-license", "attribution": ATTRIBUTION, "terms": TERMS},
-        "display": {"minZoom": 0},
+        "display": {"minZoom": 0, "maxZoom": 6},
         "files": FILES,
     }
     source = {

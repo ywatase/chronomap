@@ -21,8 +21,9 @@ uv run chronomap-data build-tiles data imports --output web/public/chronomap
   year buttons, and a year input. Keyboard on the slider: ←/→ one year,
   PageDown/PageUp previous/next recorded year, Home/End range ends.
 - Click a feature for its possible period, description, four-part uncertainty,
-  evidence with locators, sources, and rights. Overlapping features are listed
-  first.
+  evidence with locators, sources, and rights. The top-most feature opens;
+  other features at the same spot (for example the village's domain and
+  province) are listed below it.
 
 ## URL
 

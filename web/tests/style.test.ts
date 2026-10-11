@@ -17,8 +17,8 @@ const manifest: Manifest = {
     { id: "swale", dataset: "gsi-history", title: { ja: "明治期の低湿地" }, description: { ja: "" }, date: "1880年代", tileTemplate: "https://example.test/{z}/{x}/{y}.png", attribution: "GSI", bbox: [122, 20, 154, 46], minZoom: 10, maxZoom: 16 },
   ],
   datasets: [
-    { slug: "world", id: "world:dataset:x", title: { en: "World" }, defaultLanguage: "en", bbox: [-180, -90, 180, 90], attribution: null, minZoom: 0, detailShards: 1, features: 1 },
-    { slug: "ogurike", id: "ogurike:dataset:x", title: { ja: "巨椋池" }, defaultLanguage: "ja", bbox: [135, 34, 136, 35], attribution: null, minZoom: 4, detailShards: 1, features: 1 },
+    { slug: "world", id: "world:dataset:x", title: { en: "World" }, defaultLanguage: "en", bbox: [-180, -90, 180, 90], attribution: null, minZoom: 0, maxZoom: 6, detailShards: 1, features: 1 },
+    { slug: "ogurike", id: "ogurike:dataset:x", title: { ja: "巨椋池" }, defaultLanguage: "ja", bbox: [135, 34, 136, 35], attribution: null, minZoom: 4, maxZoom: 12, detailShards: 1, features: 1 },
   ],
 };
 
@@ -72,5 +72,14 @@ describe("world-scale datasets", () => {
 
   it("drop their labels from zoom 7", () => {
     expect(JSON.stringify(style.layers.find((layer) => layer.id === "labels")?.filter)).toContain('["<",["zoom"],7]');
+  });
+});
+
+describe("labels", () => {
+  it("show dense themes only within their zoom windows", () => {
+    const style = createStyle(manifest, { tilesUrl: "pmtiles://x", year: 1600, hiddenThemes: [], rasters: [], base: "pale", baseOpacity: 1, rasterOpacity: 0.7 });
+    const filter = JSON.stringify(style.layers.find((layer) => layer.id === "labels")?.filter);
+    expect(filter).toContain('["all",["==",["get","theme"],"settlement"],[">=",["zoom"],12],["<",["zoom"],24]]');
+    expect(filter).toContain('["all",["==",["get","theme"],"sphere"],[">=",["zoom"],0],["<",["zoom"],10]]');
   });
 });

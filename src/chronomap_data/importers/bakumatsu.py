@@ -74,6 +74,9 @@ def parse_villages(data: bytes) -> list[Village]:
             longitude, latitude = float(row["Longitude"]), float(row["Latitude"])
         except ValueError:
             continue
+        west, south, east, north = JAPAN_BBOX
+        if not (west <= longitude <= east and south <= latitude <= north):
+            continue  # a few rows carry a (0, 0) placeholder
         lords = tuple(value for key in sorted(k for k in row if k.startswith("領分")) if (value := row[key].strip()))
         villages.append(
             Village(

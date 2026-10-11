@@ -46,10 +46,12 @@ written to `imports/`.
 
 ```sh
 uv run chronomap-data import world       # historical-basemaps, GPL-3.0 (about 1 minute)
-uv run chronomap-data import bakumatsu   # Bakumatsu villages, provinces, domains, CC BY-SA 4.0 (about 15 minutes, ~300 MB download)
+uv run chronomap-data import bakumatsu   # Bakumatsu villages, provinces, domains, CC BY-SA 4.0 (about 16 minutes, ~300 MB download)
+uv run chronomap-data import wikidata    # castles and battles in Japan, CC0 (live query; retrieval date is recorded)
 ```
 
-Build the national tiles and detail indexes from every package:
+Build the national tiles and detail indexes from every package (about 10
+minutes with all imports; the 66,000-village package dominates validation):
 
 ```sh
 uv run chronomap-data build-tiles data imports --output web/public/chronomap

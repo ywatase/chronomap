@@ -26,6 +26,7 @@ export interface DatasetEntry {
   readonly bbox: readonly [number, number, number, number];
   readonly attribution: string | null;
   readonly minZoom: number;
+  readonly maxZoom: number;
   readonly detailShards: number;
   readonly features: number;
 }

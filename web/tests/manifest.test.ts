@@ -11,7 +11,7 @@ const valid = {
   defaultYear: 1590,
   themes: [{ id: "lake", labels: { ja: "湖沼", en: "Lakes" } }],
   rasters: [],
-  datasets: [{ slug: "ogurike", id: "ogurike:dataset:pilot-2026", title: { ja: "巨椋池" }, defaultLanguage: "ja", bbox: [135, 34, 136, 35], attribution: "MLIT", minZoom: 4, detailShards: 1, features: 8 }],
+  datasets: [{ slug: "ogurike", id: "ogurike:dataset:pilot-2026", title: { ja: "巨椋池" }, defaultLanguage: "ja", bbox: [135, 34, 136, 35], attribution: "MLIT", minZoom: 4, maxZoom: 12, detailShards: 1, features: 8 }],
 };
 
 describe("parseManifest", () => {

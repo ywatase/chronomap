@@ -45,7 +45,7 @@
 | `rights` | `Rights` | 公開データセットではpublishableであること |
 | `files` | オブジェクト | `entities`、`sources`、`evidence`、`featureVersions`を持ち、それぞれ固定ファイル名を値にする |
 | `historicalMapAssets` | `HistoricalMapAsset[]` | 任意。出典・権利・対象範囲・測位限界を持つ古地図／歴史画像コンテキスト |
-| `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）だけを持ち、全国タイルでこのDatasetの地物を表示し始めるズームを指定する |
+| `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）と `maxZoom`（0〜12の整数、既定12）で、全国タイルにこのDatasetの地物を入れるズーム範囲を指定する。世界規模の概略データは `maxZoom` を小さくし、それより先はタイルに入れない |
 
 `historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。`tileTemplate` を持つアセットは `build-tiles` がmanifestの `rasters` に並べ、ビューアーの「歴史地図・空中写真」レイヤーになる。タイルの取得に失敗しても、現在地図・歴史geometry・詳細・根拠は使える。
 

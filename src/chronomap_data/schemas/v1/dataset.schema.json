@@ -19,7 +19,10 @@
     "rights": { "$ref": "common.schema.json#/$defs/rights" },
     "display": {
       "type": "object",
-      "properties": { "minZoom": { "type": "integer", "minimum": 0, "maximum": 12 } },
+      "properties": {
+        "minZoom": { "type": "integer", "minimum": 0, "maximum": 12 },
+        "maxZoom": { "type": "integer", "minimum": 0, "maximum": 12 }
+      },
       "additionalProperties": false
     },
     "historicalMapAssets": {

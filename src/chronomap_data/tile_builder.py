@@ -24,6 +24,7 @@ from .schema_validation import validate_package
 
 
 DEFAULT_MIN_ZOOM = 4
+MAX_ZOOM = 12
 DETAIL_SHARD_SIZE = 200
 HUE_COUNT = 12
 OPEN_YEAR_MIN = -999999
@@ -103,9 +104,12 @@ def detail_shard(feature_version_id: str, shards: int) -> int:
     return fnv1a32(feature_version_id) % shards
 
 
-def _min_zoom(dataset: Mapping[str, object]) -> int:
-    value = _mapping(dataset.get("display")).get("minZoom")
-    return value if isinstance(value, int) and not isinstance(value, bool) else DEFAULT_MIN_ZOOM
+def _zoom_range(dataset: Mapping[str, object]) -> tuple[int, int]:
+    display = _mapping(dataset.get("display"))
+    low, high = display.get("minZoom"), display.get("maxZoom")
+    low = low if isinstance(low, int) and not isinstance(low, bool) else DEFAULT_MIN_ZOOM
+    high = high if isinstance(high, int) and not isinstance(high, bool) else MAX_ZOOM
+    return low, max(low, high)
 
 
 def _mapping(value: object) -> Mapping[str, object]:
@@ -131,7 +135,7 @@ def feature_period(properties: Mapping[str, object]) -> tuple[int, int]:
 
 
 def _tile_feature(
-    feature: Mapping[str, object], dataset: TileDataset, entity_type_by_id: Mapping[str, str], min_zoom: int
+    feature: Mapping[str, object], dataset: TileDataset, entity_type_by_id: Mapping[str, str], zooms: tuple[int, int]
 ) -> dict[str, object]:
     feature_id = feature["id"]
     properties = _mapping(feature.get("properties"))
@@ -141,7 +145,7 @@ def _tile_feature(
     from_year, to_year = feature_period(properties)
     return {
         "type": "Feature",
-        "tippecanoe": {"minzoom": min_zoom},
+        "tippecanoe": {"minzoom": zooms[0], "maxzoom": zooms[1]},
         "geometry": feature["geometry"],
         "properties": {
             "feature_version_id": feature_id,
@@ -281,14 +285,14 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
     for dataset in ordered_datasets:
         projection = dataset.projection
         source_dataset = projection.dataset
-        min_zoom = _min_zoom(source_dataset)
+        zooms = _zoom_range(source_dataset)
         raw_features = _records(_mapping(projection.feature_collection).get("features"))
         entity_type_by_id = {
             str(entity["id"]): str(entity["type"])
             for entity in _records(projection.entities)
             if isinstance(entity.get("id"), str) and isinstance(entity.get("type"), str)
         }
-        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, min_zoom) for feature in raw_features]
+        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, zooms) for feature in raw_features]
         all_features.extend(tile_features)
         for feature in tile_features:
             properties = _mapping(feature["properties"])
@@ -306,7 +310,8 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
                 "defaultLanguage": source_dataset["defaultLanguage"],
                 "bbox": source_dataset["bbox"],
                 "attribution": rights.get("attribution"),
-                "minZoom": min_zoom,
+                "minZoom": zooms[0],
+                "maxZoom": zooms[1],
                 "detailShards": len(shards),
                 "features": len(raw_features),
             }
@@ -451,7 +456,7 @@ def build_tiles(package_roots: Sequence[Path], output: Path) -> TileBuildSummary
             "--output=chronomap.pmtiles",
             "--layer=features",
             "--minimum-zoom=0",
-            "--maximum-zoom=12",
+            f"--maximum-zoom={MAX_ZOOM}",
             "--no-feature-limit",
             "--no-tile-size-limit",
             "-r1",

@@ -36,9 +36,9 @@ test.describe("national viewer", () => {
   });
 
   test("restores the year and hidden themes from a shared URL", async ({ page, isMobile }) => {
-    test.skip(isMobile === true);
     await page.goto("/#9/35/136/1596?off=lake");
     await expect(page.locator("#timeline-year")).toHaveText("1596年");
+    if (isMobile) await page.getByRole("button", { name: "レイヤー" }).click();
     await expect(page.locator('input[name="theme"][value="lake"]')).not.toBeChecked();
     await page.locator('input[name="theme"][value="river"]').uncheck();
     await expect(page).toHaveURL(/off=lake,river/);
@@ -54,8 +54,9 @@ test.describe("national viewer", () => {
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     const detail = page.locator("#detail");
     await expect(detail).toBeVisible();
-    const choice = detail.locator(".choice").first();
-    if (await choice.isVisible().catch(() => false)) await choice.click();
+    await expect(detail.locator("#detail-title")).not.toHaveText("");
+    const others = detail.locator("#other-features .choice", { hasText: "巨椋池" });
+    if ((await detail.locator("#detail-title").innerText()).includes("巨椋池") === false) await others.first().click();
     await expect(detail.locator("#detail-title")).toContainText("巨椋池");
     await expect(detail).toContainText("可能期間");
     await expect(detail).toContainText("確からしさ");

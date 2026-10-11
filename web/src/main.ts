@@ -50,27 +50,28 @@ function start(app: HTMLElement, manifest: Manifest) {
     onChoose: (feature) => void open(feature),
   });
 
+  let picked: PickedFeature[] = [];
+
   async function open(feature: PickedFeature) {
     view.highlight(feature.featureVersionId);
     detail.loading(feature.name);
     try {
       const resolved = await details.load(feature.dataset, feature.featureVersionId);
-      if (resolved) detail.detail(resolved);
+      if (resolved) detail.detail(resolved, picked.filter((item) => item.featureVersionId !== feature.featureVersionId));
       else detail.failed(feature.name);
     } catch {
       detail.failed(feature.name);
     }
   }
 
+  /** Open the top-most feature under the click; the others stay one tap away in the panel. */
   function pick(features: PickedFeature[]) {
+    picked = features;
     if (features.length === 0) {
       detail.hide();
       view.highlight(null);
-    } else if (features.length === 1) {
-      void open(features[0]);
     } else {
-      view.highlight(null);
-      detail.choices(features);
+      void open(features[0]);
     }
   }
 

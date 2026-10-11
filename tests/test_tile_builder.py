@@ -387,21 +387,21 @@ def test_tile_features_carry_a_hue_derived_from_the_entity(tmp_path: Path):
         assert properties["hue"] == fnv1a32(properties["entity_id"]) % 12
 
 
-def test_dataset_display_min_zoom_is_applied_per_feature_and_reported(tmp_path: Path):
+def test_dataset_display_zoom_range_is_applied_per_feature_and_reported(tmp_path: Path):
     default = build_tile_documents([synthetic_dataset(tmp_path / "a")])
-    assert all(feature["tippecanoe"] == {"minzoom": 4} for feature in default.features)
-    assert default.manifest["datasets"][0]["minZoom"] == 4
+    assert all(feature["tippecanoe"] == {"minzoom": 4, "maxzoom": 12} for feature in default.features)
+    assert (default.manifest["datasets"][0]["minZoom"], default.manifest["datasets"][0]["maxZoom"]) == (4, 12)
 
     (tmp_path / "b").mkdir()
     package_dir = copy_synthetic_package(tmp_path / "b", "synthetic")
     metadata = json.loads((package_dir / "dataset.json").read_text(encoding="utf-8"))
-    metadata["display"] = {"minZoom": 0}
+    metadata["display"] = {"minZoom": 0, "maxZoom": 6}
     (package_dir / "dataset.json").write_text(json.dumps(metadata), encoding="utf-8")
     package = load_package(package_dir)
     documents = build_tile_documents([TileDataset("synthetic", package, project_public(package))])
 
-    assert all(feature["tippecanoe"] == {"minzoom": 0} for feature in documents.features)
-    assert documents.manifest["datasets"][0]["minZoom"] == 0
+    assert all(feature["tippecanoe"] == {"minzoom": 0, "maxzoom": 6} for feature in documents.features)
+    assert (documents.manifest["datasets"][0]["minZoom"], documents.manifest["datasets"][0]["maxZoom"]) == (0, 6)
 
 
 def test_manifest_default_year_has_the_most_visible_features_and_prefers_older_ties(tmp_path: Path):

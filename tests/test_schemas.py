@@ -309,3 +309,18 @@ def test_source_formats_are_checked_with_the_jsonschema_format_checker(path, val
     assert {"uri", "date"} <= set(validator.format_checker.checkers)
     errors = list(validator.iter_errors(sources))
     assert_error(errors, path, "format")
+
+
+def test_large_feature_collections_are_validated_in_parallel_with_global_pointers(monkeypatch):
+    from chronomap_data import schema_validation
+
+    monkeypatch.setattr(schema_validation, "PARALLEL_CHUNK", 2)
+    collection = load_json(ROOT / "tests/fixtures/valid/synthetic-package/feature-versions.geojson")
+    collection["features"][3]["properties"]["labels"] = {}
+    parallel = schema_validation._feature_collection_errors(collection)
+
+    monkeypatch.setattr(schema_validation, "PARALLEL_CHUNK", 10_000)
+    serial = schema_validation._feature_collection_errors(collection)
+
+    assert parallel and sorted(map(str, parallel)) == sorted(map(str, serial))
+    assert all(path[:2] == ["features", 3] for path, _message in parallel)

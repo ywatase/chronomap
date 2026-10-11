@@ -32,12 +32,23 @@ function assessmentRow(dimension: keyof typeof DIMENSION_LABELS, value: Assessme
 
 /** Right-side panel (bottom sheet on phones) with the selected feature's evidence. */
 export function mountDetailPanel(root: HTMLElement, datasets: readonly DatasetEntry[], handlers: { onClose: () => void; onChoose: (feature: PickedFeature) => void }) {
+  // Features under the click, top-most first; the first opens and the rest are listed below it.
   const body = h("div", { class: "detail-body", id: "detail-body" });
   const close = h("button", { type: "button", class: "detail-close", "aria-label": "詳細を閉じる" }, "×");
   close.addEventListener("click", () => handlers.onClose());
   root.append(close, body);
   root.hidden = true;
   const datasetBySlug = new Map(datasets.map((dataset) => [dataset.slug, dataset]));
+
+  function choiceList(features: readonly PickedFeature[]) {
+    const list = h("ul", { class: "choice-list", id: "other-features" });
+    for (const feature of features) {
+      const button = h("button", { type: "button", class: "choice" }, feature.name, h("small", {}, text(datasetBySlug.get(feature.dataset)?.title)));
+      button.addEventListener("click", () => handlers.onChoose(feature));
+      list.append(h("li", {}, button));
+    }
+    return list;
+  }
 
   function show(...children: (Node | null)[]) {
     body.replaceChildren(...children.filter((child): child is Node => child !== null));
@@ -55,17 +66,7 @@ export function mountDetailPanel(root: HTMLElement, datasets: readonly DatasetEn
     failed(name: string) {
       show(h("h2", { class: "detail-title" }, name), h("p", { role: "alert" }, "詳細を読み込めませんでした。時間をおいてもう一度選んでください。"));
     },
-    choices(features: readonly PickedFeature[]) {
-      const list = h("ul", { class: "choice-list" });
-      for (const feature of features) {
-        const button = h("button", { type: "button", class: "choice" }, feature.name, h("small", {}, text(datasetBySlug.get(feature.dataset)?.title)));
-        button.addEventListener("click", () => handlers.onChoose(feature));
-        list.append(h("li", {}, button));
-      }
-      show(h("h2", { class: "detail-title" }, `${features.length}件の地物`), list);
-      list.querySelector("button")?.focus();
-    },
-    detail(resolved: ResolvedDetail) {
+    detail(resolved: ResolvedDetail, others: readonly PickedFeature[] = []) {
       const dataset = datasetBySlug.get(resolved.dataset);
       const language = dataset?.defaultLanguage ?? "en";
       const { feature } = resolved;
@@ -95,6 +96,8 @@ export function mountDetailPanel(root: HTMLElement, datasets: readonly DatasetEn
         h("h3", {}, "根拠と出典"),
         evidence,
         h("p", { class: "detail-rights" }, `この表示の権利: ${feature.rights.attribution ?? feature.rights.status}`),
+        others.length ? h("h3", {}, "この地点のほかの地物") : null,
+        others.length ? choiceList(others) : null,
       );
     },
   };
