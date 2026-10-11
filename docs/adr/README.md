@@ -11,9 +11,15 @@ ADRは、長期的に影響する設計判断、その背景、代替案、結�
 | 番号 | 題名 | 状態 | 要約 |
 | --- | --- | --- | --- |
 | [0001](0001-single-shared-web-application.md) | 共通Webアプリと地域別データセット | Accepted | 日本・中国・世界でコードを分けない。 |
-| [0002](0002-static-client-side-mvp.md) | 静的クライアントMVP | Accepted | GeoJSONをブラウザで読み込み・絞り込む。 |
+| [0002](0002-static-client-side-mvp.md) | 静的クライアントMVP | Superseded by 0008 | GeoJSONをブラウザで読み込み・絞り込む。 |
 | [0003](0003-maplibre-and-gsi-basemap.md) | MapLibre GL JSと地理院タイル | Accepted | 日本MVPの描画・背景地図を定める。 |
 | [0004](0004-versioned-historical-features.md) | 版管理された歴史地物 | Accepted | 対象の同一性と時代ごとの表現を分離する。 |
 | [0005](0005-normalized-data-package.md) | 正規化されたデータパッケージ | Accepted | 5ファイルの配布単位と規範契約を定める。 |
 | [0006](0006-possible-time-and-parallel-hypotheses.md) | 可能性優先の時間と並行仮説 | Accepted | 開閉可能な時間境界と同等な仮説の併記を定める。 |
 | [0007](0007-fail-closed-public-projection.md) | fail-closedな公開投影 | Accepted | 権利・参照を検証して安全な公開物だけを生成する。 |
+
+## 追加ADR
+
+| 番号 | 題名 | 状態 | 要約 |
+| --- | --- | --- | --- |
+| [0008](0008-seamless-national-map-with-temporal-vector-tiles.md) | 全国シームレス地図と時系列ベクタータイル | Accepted | 地域選択をやめ、全国PMTilesを年フィルタとテーマ別レイヤーで表示する。0002を置き換える。 |

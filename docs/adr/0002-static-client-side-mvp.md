@@ -2,9 +2,9 @@
 
 Date: 2026-09-14
 
-Status: Accepted
+Status: Superseded
 
-Superseded by: なし
+Superseded by: 0008
 
 ## Context
 
