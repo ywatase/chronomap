@@ -37,10 +37,22 @@
 | `theme` | string | Entity typeから決まるテーマID |
 | `name` | string | FeatureVersion `labels` のdefaultLanguage値 |
 | `from_year` | int | `start.earliestYear`。未指定なら `-999999` |
-| `to_year` | int | `end.latestYear`。未指定なら `999999` |
+| `to_year` | int | 表示期間の終わり。原則 `end.latestYear`（未指定なら `999999`）で、スナップショットの継続（下記）で延びることがある |
 | `hue` | int | `entity_id` のFNV-1a 32bitハッシュ（UTF-8）を12で割った余り。塗り分け用 |
 
 選択年 `y` の表示条件は `from_year <= y <= to_year` である。
+
+#### 表示期間（スナップショットの継続）
+
+資料の多くはある年の状態（スナップショット）だけを示すため、可能期間どおりに表示すると、次の資料の年まで地物が消えてしまう。そこで `to_year` は可能期間の終わりではなく、次の規則で決める表示期間の終わりとする。
+
+- 同じEntityに属し、`hypothesisGroupId` を持たないFeatureVersionを `from_year` 順に並べる。
+- 終了境界が有限な各FeatureVersionの表示は、次のFeatureVersionの `from_year` の前年まで続く（自分の可能期間の終わりより後なら延ばし、前なら縮めない）。
+- 最後のFeatureVersionは延ばさない。並行仮説、終了が開いているもの、同じ年に始まる次の版がないものもそのままとする。
+
+延ばしたのは表示だけで、その間に形が変わらなかったとは主張しない。世界の国境のように、資料自体が時点の系列で次の時点に消える地物もあるものは、取込コマンドが可能期間を次の時点の前年までとして記録する（この規則と矛盾しない）。詳細索引の `features` には、延ばしたFeatureVersionに限り `display: {"toYear": <表示の終わり>, "nextVersionYear": <次の版の開始年>}` を加え、ビューアーは「次の資料まで表示を継続」と示す。新しい資料（空中写真、古地図など）から同じEntityの新しい版を作れば、継続表示はその前年で自動的に止まる。
+
+manifestの `years`（タイムラインの目盛り）は、延ばす前の可能期間の年から作る。`defaultYear` は延ばした後の表示期間で数える。
 
 テーマ表はコードの1か所に定義し、同じ順序とラベルで `manifest.json` に出力する。スキーマは変更しない。
 

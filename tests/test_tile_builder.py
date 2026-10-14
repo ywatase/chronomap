@@ -500,3 +500,62 @@ def test_build_tiles_collects_packages_from_several_roots_and_rejects_cross_root
     with pytest.raises(PublicBuildValidationError) as duplicate:
         build_tiles([first, second], tmp_path / "out")
     assert duplicate.value.issues[0].code == "tiles.slug_duplicate"
+
+
+def _version(version_id, entity_id, start, end, hypothesis=None):
+    properties = {
+        "entityId": entity_id,
+        "temporal": {
+            "start": {"earliestYear": start, "latestYear": start},
+            "end": None if end is None else {"earliestYear": end, "latestYear": end},
+        },
+    }
+    if hypothesis:
+        properties["hypothesisGroupId"] = hypothesis
+    return {"id": version_id, "properties": properties}
+
+
+def test_display_periods_hold_each_snapshot_until_the_next_version():
+    features = [
+        _version("p:version:1910", "p:entity:pool", 1910, 1910),
+        _version("p:version:1590", "p:entity:pool", 1590, 1590),
+        _version("p:version:1596", "p:entity:pool", 1596, 1596),
+        _version("p:version:wide", "p:entity:long", 1500, 1700),
+        _version("p:version:wide-next", "p:entity:long", 1600, 1600),
+        _version("p:version:open", "p:entity:open", 1400, None),
+        _version("p:version:open-next", "p:entity:open", 1450, 1450),
+        _version("p:version:hyp-a", "p:entity:hyp", 1000, 1000, "p:hypothesis:h"),
+        _version("p:version:hyp-b", "p:entity:hyp", 1001, 1001, "p:hypothesis:h"),
+    ]
+
+    held = tile_builder.display_periods(features)
+
+    assert held == {
+        "p:version:1590": (1595, 1596),
+        "p:version:1596": (1909, 1910),
+    }
+
+
+def test_held_snapshots_extend_tiles_and_details_but_not_the_timeline_ticks(tmp_path: Path):
+    package_dir = tmp_path / "synthetic"
+    copy_synthetic_package(tmp_path, "synthetic")
+    collection_path = package_dir / "feature-versions.geojson"
+    collection = json.loads(collection_path.read_text(encoding="utf-8"))
+    point = next(feature for feature in collection["features"] if feature["id"] == "synthetic:version:point-open-boundary")
+    later = json.loads(json.dumps(point))
+    point["properties"]["temporal"]["end"] = {"earliestYear": 0, "latestYear": 0, "precision": "year", "qualifier": "exact"}
+    later["id"] = "synthetic:version:point-later"
+    later["properties"]["temporal"]["start"] = {"earliestYear": 5, "latestYear": 5, "precision": "year", "qualifier": "exact"}
+    collection["features"].append(later)
+    collection_path.write_text(json.dumps(collection), encoding="utf-8")
+    package = load_package(package_dir)
+
+    documents = build_tile_documents([TileDataset("synthetic", package, project_public(package))])
+
+    tile = next(feature for feature in documents.features if feature["properties"]["feature_version_id"] == "synthetic:version:point-open-boundary")
+    assert (tile["properties"]["from_year"], tile["properties"]["to_year"]) == (0, 4)
+    detail = documents.details["details/synthetic/0.json"]["features"]
+    assert detail["synthetic:version:point-open-boundary"]["display"] == {"toYear": 4, "nextVersionYear": 5}
+    assert "display" not in detail["synthetic:version:point-later"]
+    assert 4 not in documents.manifest["years"]
+    assert 5 in documents.manifest["years"]

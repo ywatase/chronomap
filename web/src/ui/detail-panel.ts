@@ -90,6 +90,9 @@ export function mountDetailPanel(root: HTMLElement, datasets: readonly DatasetEn
         h("h2", { class: "detail-title", id: "detail-title" }, text(feature.labels, language)),
         feature.hypothesisLabel ? h("p", { class: "detail-hypothesis" }, `仮説: ${text(feature.hypothesisLabel, language)}`) : null,
         h("p", { class: "detail-period" }, h("strong", {}, "可能期間 "), formatPeriod(feature.temporal.start, feature.temporal.end)),
+        feature.display
+          ? h("p", { class: "detail-held" }, `次の資料（${formatYear(feature.display.nextVersionYear)}）の前年まで、この形を表示しています。その間の変化は示していません。`)
+          : null,
         h("p", { class: "detail-description" }, text(feature.description, language)),
         h("h3", {}, "確からしさ"),
         uncertainty,

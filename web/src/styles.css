@@ -267,6 +267,14 @@ button {
   margin: 0 0 8px;
 }
 
+.detail-held {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-left: 3px solid var(--accent);
+  background: #f7efe6;
+  font-size: 0.85rem;
+}
+
 .assessments {
   margin: 0;
 }

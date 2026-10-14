@@ -29,6 +29,8 @@ export interface FeatureDetail {
   readonly evidenceIds: readonly string[];
   readonly rights: Rights;
   readonly hypothesisLabel?: TextMap;
+  /** Present when the map keeps this snapshot visible until the next version (docs/data/tiles.md). */
+  readonly display?: { readonly toYear: number; readonly nextVersionYear: number };
 }
 
 export interface EntityRecord {

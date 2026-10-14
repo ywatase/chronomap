@@ -65,6 +65,19 @@ test.describe("national viewer", () => {
     await expect(detail).toBeHidden();
   });
 
+  test("keeps a snapshot on the map until the next version and says so", async ({ page }) => {
+    await page.goto("/#12/34.9132/135.7763/1591");
+    await page.waitForTimeout(2500);
+    const box = await page.locator("#map").boundingBox();
+    if (!box) throw new Error("map has no box");
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    const detail = page.locator("#detail");
+    await expect(detail).toBeVisible();
+    if (!(await detail.locator("#detail-title").innerText()).includes("巨椋池")) await detail.locator("#other-features .choice", { hasText: "巨椋池" }).first().click();
+    await expect(detail.locator("#detail-title")).toContainText("1590");
+    await expect(detail.locator(".detail-held")).toContainText("1596年");
+  });
+
   test("opens the feature at the map centre with the keyboard", async ({ page }) => {
     await page.goto("/#12/34.9132/135.7763/1590");
     await page.waitForTimeout(2500);

@@ -134,8 +134,35 @@ def feature_period(properties: Mapping[str, object]) -> tuple[int, int]:
     return from_year, to_year
 
 
+def display_periods(features: Sequence[Mapping[str, object]]) -> dict[str, tuple[int, int]]:
+    """Return ``{version id: (held to_year, next version's from_year)}`` for snapshots held until the next version.
+
+    Versions of one entity without a hypothesis group are ordered by ``from_year``; a version with a finite
+    end stays visible until the year before the next version starts (never shortened, last one untouched).
+    """
+    series: dict[str, list[tuple[int, int, str]]] = {}
+    for feature in features:
+        properties = _mapping(feature.get("properties"))
+        feature_id, entity_id = feature.get("id"), properties.get("entityId")
+        if not isinstance(feature_id, str) or not isinstance(entity_id, str) or properties.get("hypothesisGroupId"):
+            continue
+        from_year, to_year = feature_period(properties)
+        series.setdefault(entity_id, []).append((from_year, to_year, feature_id))
+    held: dict[str, tuple[int, int]] = {}
+    for versions in series.values():
+        versions.sort()
+        for (from_year, to_year, feature_id), (next_from, _next_to, _next_id) in zip(versions, versions[1:]):
+            if to_year != OPEN_YEAR_MAX and next_from - 1 > to_year:
+                held[feature_id] = (next_from - 1, next_from)
+    return held
+
+
 def _tile_feature(
-    feature: Mapping[str, object], dataset: TileDataset, entity_type_by_id: Mapping[str, str], zooms: tuple[int, int]
+    feature: Mapping[str, object],
+    dataset: TileDataset,
+    entity_type_by_id: Mapping[str, str],
+    zooms: tuple[int, int],
+    held: Mapping[str, tuple[int, int]],
 ) -> dict[str, object]:
     feature_id = feature["id"]
     properties = _mapping(feature.get("properties"))
@@ -143,6 +170,7 @@ def _tile_feature(
     entity_type = entity_type_by_id[entity_id]
     name = _mapping(properties.get("labels"))[str(dataset.projection.dataset["defaultLanguage"])]
     from_year, to_year = feature_period(properties)
+    to_year = held.get(str(feature_id), (to_year, 0))[0]
     return {
         "type": "Feature",
         "tippecanoe": {"minzoom": zooms[0], "maxzoom": zooms[1]},
@@ -172,7 +200,9 @@ def _sorted_dict(records: Mapping[str, object]) -> dict[str, object]:
     return {key: records[key] for key in sorted(records)}
 
 
-def _detail_shards(dataset: TileDataset, features: Sequence[Mapping[str, object]]) -> dict[str, dict[str, object]]:
+def _detail_shards(
+    dataset: TileDataset, features: Sequence[Mapping[str, object]], held: Mapping[str, tuple[int, int]]
+) -> dict[str, dict[str, object]]:
     """Split geometry-free details into hash shards with only reachable records."""
     projection = dataset.projection
     entities = _by_id(projection.entities)
@@ -189,6 +219,8 @@ def _detail_shards(dataset: TileDataset, features: Sequence[Mapping[str, object]
         properties = _mapping(feature.get("properties"))
         shard = shards[detail_shard(feature_id, shard_count)]
         shard["features"][feature_id] = {key: value for key, value in properties.items() if key != "publicationStatus"}
+        if feature_id in held:
+            shard["features"][feature_id]["display"] = {"toYear": held[feature_id][0], "nextVersionYear": held[feature_id][1]}
         entity_id = properties.get("entityId")
         if isinstance(entity_id, str) and entity_id in entities:
             shard["entities"][entity_id] = dict(entities[entity_id])
@@ -292,13 +324,13 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
             for entity in _records(projection.entities)
             if isinstance(entity.get("id"), str) and isinstance(entity.get("type"), str)
         }
-        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, zooms) for feature in raw_features]
+        held = display_periods(raw_features)
+        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, zooms, held) for feature in raw_features]
         all_features.extend(tile_features)
-        for feature in tile_features:
-            properties = _mapping(feature["properties"])
-            years.update(year for year in (properties["from_year"], properties["to_year"]) if year not in {OPEN_YEAR_MIN, OPEN_YEAR_MAX})
+        for feature in raw_features:
+            years.update(year for year in feature_period(_mapping(feature.get("properties"))) if year not in {OPEN_YEAR_MIN, OPEN_YEAR_MAX})
 
-        shards = _detail_shards(dataset, raw_features)
+        shards = _detail_shards(dataset, raw_features, held)
         details.update(shards)
         rasters.extend(_rasters(dataset))
         rights = _mapping(source_dataset.get("rights"))
