@@ -85,6 +85,7 @@ describe("labels", () => {
     const filter = JSON.stringify(style.layers.find((layer) => layer.id === "labels")?.filter);
     expect(filter).toContain('["all",["==",["get","theme"],"settlement"],[">=",["zoom"],12],["<",["zoom"],24]]');
     expect(filter).toContain('["all",["==",["get","theme"],"sphere"],[">=",["zoom"],0],["<",["zoom"],10]]');
+    expect(filter).toContain('["all",["==",["get","theme"],"artificial"],[">=",["zoom"],24],["<",["zoom"],24]]');
   });
 });
 

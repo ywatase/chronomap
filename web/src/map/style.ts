@@ -167,6 +167,8 @@ export const LABEL_ZOOMS: readonly (readonly [string, number, number])[] = [
   ["castle", 7, 24],
   ["battlefield", 7, 24],
   ["sphere", 0, 10],
+  // Thousands of identical "埋立地／干拓地" names; the legend and detail panel say what they are.
+  ["artificial", 24, 24],
 ];
 
 function labelZooms(): unknown {
