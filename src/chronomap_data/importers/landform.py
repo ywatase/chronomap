@@ -15,7 +15,7 @@ import time
 import urllib.error
 import urllib.request
 
-from .common import FILES, RawDataError, assessment, fetch, round_coordinates, slug_part, write_package
+from .common import FILES, RawDataError, assessment, fetch, round_coordinates, write_package
 from .pins import C23_BASE_URL, C23_SHA256
 
 TILE_URL = "https://cyberjapandata.gsi.go.jp/xyz/experimental_landformclassification2/{z}/{x}/{y}.geojson"
@@ -25,7 +25,9 @@ MASK_ZOOM = 5
 MASK_TILES = [(x, y) for x in range(26, 30) for y in range(10, 15)]
 REQUEST_INTERVAL = 0.33
 COAST_DISTANCE = 0.001  # about 100 m in degrees
+PREFILTER_DISTANCE = 0.01  # about 1 km: drop inland fill while reading tiles, before merging
 SIMPLIFY_TOLERANCE = 0.0001  # about 10 m
+MIN_AREA = 1e-7  # about 1,000 m2 in square degrees; smaller pieces are tile-edge slivers
 SLUG = "gsi-artificial-land"
 JAPAN_BBOX = [122.0, 20.0, 154.0, 46.0]
 LANDFORM_ATTRIBUTION = "国土地理院 地形分類（人工地形）（Chronomapが融合・簡略化）"
@@ -109,8 +111,24 @@ def fetch_tiles(tiles: Sequence[tuple[int, int]], cache_dir: Path) -> Iterable[t
         yield (x, y), document
 
 
-def collect(tiles: Iterable[Mapping[str, object] | None]) -> tuple[list[object], list[object]]:
-    """Split tile polygons into drained land and filled/reclaimed land."""
+class CoastIndex:
+    """Distance test against coastline segments via an STRtree (buffering the national coastline exhausts memory)."""
+
+    def __init__(self, lines: Sequence[object]):
+        from shapely import STRtree
+
+        self.tree = STRtree(list(lines))
+
+    def within(self, geometry: object, distance: float) -> bool:
+        return len(self.tree.query(geometry, predicate="dwithin", distance=distance)) > 0
+
+
+def collect(tiles: Iterable[Mapping[str, object] | None], coast: "CoastIndex | None" = None) -> tuple[list[object], list[object]]:
+    """Split tile polygons into drained land and filled/reclaimed land.
+
+    With ``coast``, filled pieces farther than PREFILTER_DISTANCE from the coastline are dropped while
+    reading, so inland fill never reaches memory-heavy merging.
+    """
     from shapely.geometry import shape
 
     drained, filled = [], []
@@ -118,9 +136,13 @@ def collect(tiles: Iterable[Mapping[str, object] | None]) -> tuple[list[object],
         for feature in (document or {}).get("features", []):  # type: ignore[union-attr]
             code = str(feature.get("properties", {}).get("code"))
             target = drained if code in DRAINED_CODES else filled if code in FILLED_CODES else None
-            if target is not None:
-                geometry = shape(feature["geometry"])
-                target.append(geometry if geometry.is_valid else geometry.buffer(0))
+            if target is None:
+                continue
+            geometry = shape(feature["geometry"])
+            geometry = geometry if geometry.is_valid else geometry.buffer(0)
+            if target is filled and coast is not None and not coast.within(geometry, PREFILTER_DISTANCE):
+                continue
+            target.append(geometry)
     return drained, filled
 
 
@@ -131,16 +153,12 @@ def _explode(geometries: Sequence[object]) -> list[object]:
         return []
     merged = union_all(geometries).simplify(SIMPLIFY_TOLERANCE, preserve_topology=True)
     parts = list(getattr(merged, "geoms", [merged]))
-    return sorted((part for part in parts if part.geom_type == "Polygon" and not part.is_empty), key=lambda part: part.bounds)
+    return sorted((part for part in parts if part.geom_type == "Polygon" and part.area >= MIN_AREA), key=lambda part: part.bounds)
 
 
-def build_parts(drained: Sequence[object], filled: Sequence[object], coastline: Sequence[object]) -> tuple[list[object], list[object]]:
+def build_parts(drained: Sequence[object], filled: Sequence[object], coast: CoastIndex) -> tuple[list[object], list[object]]:
     """Merge tile pieces; keep every drained area and only filled areas within ~100 m of the coast."""
-    from shapely import union_all
-    from shapely.prepared import prep
-
-    coast = prep(union_all(list(coastline)).buffer(COAST_DISTANCE)) if coastline else None
-    coastal = [part for part in _explode(filled) if coast is not None and coast.intersects(part)]
+    coastal = [part for part in _explode(filled) if coast.within(part, COAST_DISTANCE)]
     return _explode(drained), coastal
 
 
@@ -158,9 +176,8 @@ def package(drained: Sequence[object], coastal: Sequence[object], accessed: str)
         ("drained", "干拓地（現代）", "湖沼や浅い海を干拓して造られた土地です。", drained, [shape_evidence]),
         ("reclaimed", "埋立地（現代・海岸沿い）", "海岸沿いの盛土地・埋立地です。", coastal, [shape_evidence, coast_evidence]),
     ):
-        for part in parts:
-            centre = part.representative_point()
-            key = f"{kind}-{slug_part(f'{centre.x:.4f},{centre.y:.4f}')}"
+        for index, part in enumerate(parts, 1):
+            key = f"{kind}-{index:05d}"
             entity_id = f"{SLUG}:entity:{key}"
             entities.append({"id": entity_id, "type": "artificial-land", "labels": {"ja": label}, "description": {"ja": note}})
             features.append({
@@ -250,9 +267,9 @@ def import_landform(output_root: Path, cache_dir: Path, today: str | None = None
     accessed = today or datetime.date.today().isoformat()
     landform_cache = cache_dir / "landform"
     tiles = coverage_tiles(landform_cache)
-    drained, filled = collect(document for _tile, document in fetch_tiles(tiles, landform_cache))
-    coastline = [line for name, digest in sorted(C23_SHA256.items()) for line in read_coastline(fetch(C23_BASE_URL + name, digest, cache_dir / "c23"))]
-    drained_parts, coastal_parts = build_parts(drained, filled, coastline)
+    coast = CoastIndex([line for name, digest in sorted(C23_SHA256.items()) for line in read_coastline(fetch(C23_BASE_URL + name, digest, cache_dir / "c23"))])
+    drained, filled = collect((document for _tile, document in fetch_tiles(tiles, landform_cache)), coast)
+    drained_parts, coastal_parts = build_parts(drained, filled, coast)
     write_package(output_root / SLUG, *package(drained_parts, coastal_parts, accessed))
     return [output_root / SLUG]
 

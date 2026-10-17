@@ -160,12 +160,14 @@ def test_landform_keeps_drained_land_and_only_coastal_reclaimed_land(tmp_path: P
     tiles = [
         tile(("4010101", box(135.70, 34.90, 135.75, 34.95)), ("4010201", box(139.77, 35.62, 139.78, 35.63))),
         tile(("4010101", box(135.75, 34.90, 135.80, 34.95)), ("11005", box(139.40, 35.60, 139.41, 35.61)), ("999999", box(0, 0, 1, 1))),
+        tile(("4010101", box(140.0, 36.0, 140.0001, 36.0001)), ("4010101", box(140.1, 36.0, 140.1001, 36.0001))),
     ]
     drained, filled = landform.collect(tiles)
-    assert len(drained) == 2 and len(filled) == 2
+    assert len(drained) == 4 and len(filled) == 2
 
-    coastline = [LineString([(139.78, 35.60), (139.78, 35.64)])]
-    drained_parts, coastal_parts = landform.build_parts(drained, filled, coastline)
+    coast = landform.CoastIndex([LineString([(139.78, 35.60), (139.78, 35.64)])])
+    assert len(landform.collect(tiles, coast)[1]) == 1
+    drained_parts, coastal_parts = landform.build_parts(drained, filled, coast)
 
     assert len(drained_parts) == 1
     assert drained_parts[0].bounds == pytest.approx((135.70, 34.90, 135.80, 34.95))
