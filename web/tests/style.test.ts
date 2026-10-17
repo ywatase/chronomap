@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { BASE_MAPS, createStyle, HIGHLIGHT_LAYER_IDS, themeLayerIds } from "../src/map/style";
-import { yearFilter } from "../src/domain/year-filter";
+import { BASE_MAPS, createStyle, HIGHLIGHT_LAYER_IDS, layersOfTheme, themeLayerIds, yearDependentFilters } from "../src/map/style";
+import { referenceFilter, yearFilter } from "../src/domain/year-filter";
 import type { Manifest } from "../src/domain/manifest";
 
 const manifest: Manifest = {
@@ -12,6 +12,7 @@ const manifest: Manifest = {
   themes: [
     { id: "polity", labels: { ja: "国" } },
     { id: "river", labels: { ja: "河川" } },
+    { id: "lake", labels: { ja: "湖沼" } },
   ],
   rasters: [
     { id: "swale", dataset: "gsi-history", title: { ja: "明治期の低湿地" }, description: { ja: "" }, date: "1880年代", tileTemplate: "https://example.test/{z}/{x}/{y}.png", attribution: "GSI", bbox: [122, 20, 154, 46], minZoom: 10, maxZoom: 16 },
@@ -81,5 +82,29 @@ describe("labels", () => {
     const filter = JSON.stringify(style.layers.find((layer) => layer.id === "labels")?.filter);
     expect(filter).toContain('["all",["==",["get","theme"],"settlement"],[">=",["zoom"],12],["<",["zoom"],24]]');
     expect(filter).toContain('["all",["==",["get","theme"],"sphere"],[">=",["zoom"],0],["<",["zoom"],10]]');
+  });
+});
+
+describe("reference layers", () => {
+  const style = createStyle(manifest, { tilesUrl: "pmtiles://x", year: 1200, hiddenThemes: ["river"], rasters: [], base: "pale", baseOpacity: 1, rasterOpacity: 0.7 });
+
+  it("draw natural themes before their first record, below the normal layers", () => {
+    const ids = style.layers.map((layer) => layer.id);
+    expect(ids).toContain("ref-lake-fill");
+    expect(ids.indexOf("ref-lake-line")).toBeLessThan(ids.indexOf("theme-polity-fill"));
+    expect(JSON.stringify(style.layers.find((layer) => layer.id === "ref-lake-fill")?.filter)).toContain(JSON.stringify(referenceFilter(1200)));
+    expect(ids).not.toContain("ref-polity-fill");
+  });
+
+  it("follow the theme visibility", () => {
+    expect(style.layers.find((layer) => layer.id === "ref-river-line")?.layout?.visibility).toBe("none");
+    expect(layersOfTheme("river")).toContain("ref-river-line");
+  });
+
+  it("are part of the year-dependent filters", () => {
+    const filters = yearDependentFilters(manifest, 900, []);
+    expect(JSON.stringify(filters["ref-lake-line"])).toContain(JSON.stringify(referenceFilter(900)));
+    expect(JSON.stringify(filters["theme-polity-fill"])).toContain(JSON.stringify(yearFilter(900)));
+    expect(filters.labels).toBeDefined();
   });
 });

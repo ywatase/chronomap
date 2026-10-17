@@ -1,5 +1,5 @@
 import type { Manifest } from "../domain/manifest";
-import { yearFilter } from "../domain/year-filter";
+import { referenceFilter, yearFilter } from "../domain/year-filter";
 
 export interface LayerSpec {
   readonly id: string;
@@ -56,6 +56,8 @@ export const HUE_PALETTE = ["#d95f02", "#1b9e77", "#7570b3", "#e7298a", "#66a61e
 
 /** Painting order from bottom to top. */
 const THEME_ORDER = ["polity", "sphere", "coast", "lake", "other", "river", "route", "settlement", "castle", "battlefield"];
+/** Natural themes whose earliest version is drawn as a dashed reference before its first record. */
+export const REFERENCE_THEMES = ["coast", "lake", "river"] as const;
 export const HIGHLIGHT_LAYER_IDS = ["highlight-fill", "highlight-line", "highlight-point"] as const;
 const SOURCE = "chronomap";
 
@@ -81,25 +83,47 @@ function fading(manifest: Manifest, opacity: number): unknown {
   return ["interpolate", ["linear"], ["zoom"], WORLD_FADE.from, opacity, WORLD_FADE.to, ["case", world, 0, opacity]];
 }
 
+const GEOMETRY_BY_KIND: Readonly<Record<string, unknown>> = { fill: polygons, outline: polygons, line: lines, point: points };
+
+function themeFilter(theme: string, kind: string, year: number): unknown {
+  return ["all", ["==", ["get", "theme"], theme], GEOMETRY_BY_KIND[kind], yearFilter(year)];
+}
+
+function referenceLayerFilter(theme: string, kind: "fill" | "line", year: number): unknown {
+  return ["all", ["==", ["get", "theme"], theme], kind === "fill" ? polygons : ["any", polygons, lines], referenceFilter(year)];
+}
+
+function referenceLayers(theme: string, manifest: Manifest, year: number, visible: boolean): LayerSpec[] {
+  const color = THEME_COLORS[theme] ?? "#555555";
+  const base = { source: SOURCE, "source-layer": manifest.sourceLayer, layout: { visibility: visible ? "visible" : "none" } };
+  return [
+    { id: `ref-${theme}-fill`, type: "fill", ...base, filter: referenceLayerFilter(theme, "fill", year), paint: { "fill-color": color, "fill-opacity": 0.12 } },
+    {
+      id: `ref-${theme}-line`, type: "line", ...base, filter: referenceLayerFilter(theme, "line", year),
+      paint: { "line-color": color, "line-width": 2, "line-opacity": 0.7, "line-dasharray": [2, 2] },
+    },
+  ];
+}
+
 function themeLayers(theme: string, manifest: Manifest, year: number, visible: boolean): LayerSpec[] {
   const color = THEME_COLORS[theme] ?? "#555555";
   const filled = theme === "polity" || theme === "sphere" ? hueColor : color;
   const base = { source: SOURCE, "source-layer": manifest.sourceLayer, layout: { visibility: visible ? "visible" : "none" } };
-  const where = (geometry: unknown) => ["all", ["==", ["get", "theme"], theme], geometry, yearFilter(year)];
+  const where = (kind: string) => themeFilter(theme, kind, year);
   const fillOpacity = theme === "polity" ? 0.12 : theme === "sphere" ? 0.22 : 0.35;
   return [
-    { id: `theme-${theme}-fill`, type: "fill", ...base, filter: where(polygons), paint: { "fill-color": filled, "fill-opacity": fading(manifest, fillOpacity) } },
+    { id: `theme-${theme}-fill`, type: "fill", ...base, filter: where("fill"), paint: { "fill-color": filled, "fill-opacity": fading(manifest, fillOpacity) } },
     {
-      id: `theme-${theme}-outline`, type: "line", ...base, filter: where(polygons),
+      id: `theme-${theme}-outline`, type: "line", ...base, filter: where("outline"),
       paint: { "line-color": filled, "line-width": theme === "polity" ? 1.2 : 1, "line-opacity": fading(manifest, 0.9), ...(theme === "sphere" ? { "line-dasharray": [2, 1] } : {}) },
     },
     {
-      id: `theme-${theme}-line`, type: "line", ...base, filter: where(lines),
+      id: `theme-${theme}-line`, type: "line", ...base, filter: where("line"),
       layout: { ...base.layout, "line-cap": "round", "line-join": "round" },
       paint: { "line-color": color, "line-width": ["interpolate", ["linear"], ["zoom"], 4, 1.5, 12, 4], ...(theme === "route" ? { "line-dasharray": [2, 1.5] } : {}) },
     },
     {
-      id: `theme-${theme}-point`, type: "circle", ...base, filter: where(points),
+      id: `theme-${theme}-point`, type: "circle", ...base, filter: where("point"),
       paint: {
         "circle-color": color,
         "circle-radius": theme === "settlement" ? ["interpolate", ["linear"], ["zoom"], 8, 2, 14, 5] : ["interpolate", ["linear"], ["zoom"], 4, 4, 12, 7],
@@ -127,20 +151,47 @@ function labelZooms(): unknown {
   ];
 }
 
-function labelLayer(manifest: Manifest, year: number, hiddenThemes: readonly string[]): LayerSpec {
+function labelFilter(manifest: Manifest, year: number, hiddenThemes: readonly string[]): unknown {
   const shown = manifest.themes.map((theme) => theme.id).filter((id) => !hiddenThemes.includes(id));
+  return [
+    "all",
+    ["in", ["get", "theme"], ["literal", shown]],
+    yearFilter(year),
+    labelZooms(),
+    ["any", ["!", worldScale(manifest)], ["<", ["zoom"], WORLD_FADE.to]],
+  ];
+}
+
+/** Every filter that depends on the year or on hidden themes, keyed by layer id. */
+export function yearDependentFilters(manifest: Manifest, year: number, hiddenThemes: readonly string[]): Record<string, unknown> {
+  const filters: Record<string, unknown> = { labels: labelFilter(manifest, year, hiddenThemes) };
+  for (const theme of orderedThemes(manifest)) {
+    for (const kind of Object.keys(GEOMETRY_BY_KIND)) filters[`theme-${theme}-${kind}`] = themeFilter(theme, kind, year);
+  }
+  for (const theme of referenceThemes(manifest)) {
+    filters[`ref-${theme}-fill`] = referenceLayerFilter(theme, "fill", year);
+    filters[`ref-${theme}-line`] = referenceLayerFilter(theme, "line", year);
+  }
+  return filters;
+}
+
+function referenceThemes(manifest: Manifest): string[] {
+  return REFERENCE_THEMES.filter((theme) => manifest.themes.some((item) => item.id === theme));
+}
+
+/** Layer ids drawn for a theme (normal and reference), for visibility toggles. */
+export function layersOfTheme(theme: string): string[] {
+  const ids = Object.keys(GEOMETRY_BY_KIND).map((kind) => `theme-${theme}-${kind}`);
+  return (REFERENCE_THEMES as readonly string[]).includes(theme) ? [`ref-${theme}-fill`, `ref-${theme}-line`, ...ids] : ids;
+}
+
+function labelLayer(manifest: Manifest, year: number, hiddenThemes: readonly string[]): LayerSpec {
   return {
     id: "labels",
     type: "symbol",
     source: SOURCE,
     "source-layer": manifest.sourceLayer,
-    filter: [
-      "all",
-      ["in", ["get", "theme"], ["literal", shown]],
-      yearFilter(year),
-      labelZooms(),
-      ["any", ["!", worldScale(manifest)], ["<", ["zoom"], WORLD_FADE.to]],
-    ],
+    filter: labelFilter(manifest, year, hiddenThemes),
     layout: {
       "text-field": ["get", "name"],
       "text-font": ["Open Sans Semibold"],
@@ -192,6 +243,9 @@ export function createStyle(manifest: Manifest, options: StyleOptions): StyleSpe
       paint: { "raster-opacity": options.rasterOpacity },
     });
   }
+  for (const theme of referenceThemes(manifest)) {
+    layers.push(...referenceLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme)));
+  }
   for (const theme of orderedThemes(manifest)) {
     layers.push(...themeLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme)));
   }
@@ -212,5 +266,5 @@ export function themeLayerIds(manifest: Manifest): string[] {
 
 /** Layer ids whose features can be clicked. */
 export function interactiveLayerIds(manifest: Manifest): string[] {
-  return themeLayerIds(manifest);
+  return [...themeLayerIds(manifest), ...referenceThemes(manifest).flatMap((theme) => [`ref-${theme}-fill`, `ref-${theme}-line`])];
 }

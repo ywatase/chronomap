@@ -40,3 +40,12 @@ describe("detail panel", () => {
     expect(root.querySelector(".detail-held")).toBeNull();
   });
 });
+
+describe("reference display", () => {
+  it("explains that the earliest record's shape is shown as a reference", () => {
+    const root = document.createElement("section");
+    mountDetailPanel(root, [], { onClose: () => {}, onChoose: () => {} }).detail(resolved({ toYear: 1595, nextVersionYear: 1596 }), [], true);
+    expect(root.querySelector(".detail-reference")?.textContent).toBe("この年の形を示す資料はありません。最古の資料（1590年）の形を参考として破線で表示しています。");
+    expect(root.textContent).not.toContain("次の資料");
+  });
+});

@@ -43,7 +43,9 @@ TILE_PROPERTIES = (
     "from_year",
     "to_year",
     "hue",
+    "ref_from_year",
 )
+NATURAL_ENTITY_TYPES = frozenset({"waterbody", "watercourse", "coastline"})
 
 THEME_DEFINITIONS = (
     ("coast", "海岸線・海域", "Coastline and sea", ("coastline",)),
@@ -157,12 +159,29 @@ def display_periods(features: Sequence[Mapping[str, object]]) -> dict[str, tuple
     return held
 
 
+def reference_versions(features: Sequence[Mapping[str, object]], entity_type_by_id: Mapping[str, str]) -> set[str]:
+    """Return the earliest non-hypothesis version of each natural entity, shown as a reference before its start."""
+    earliest: dict[str, tuple[int, str]] = {}
+    for feature in features:
+        properties = _mapping(feature.get("properties"))
+        feature_id, entity_id = feature.get("id"), properties.get("entityId")
+        if not isinstance(feature_id, str) or not isinstance(entity_id, str) or properties.get("hypothesisGroupId"):
+            continue
+        if entity_type_by_id.get(entity_id) not in NATURAL_ENTITY_TYPES:
+            continue
+        candidate = (feature_period(properties)[0], feature_id)
+        if entity_id not in earliest or candidate < earliest[entity_id]:
+            earliest[entity_id] = candidate
+    return {feature_id for _from_year, feature_id in earliest.values()}
+
+
 def _tile_feature(
     feature: Mapping[str, object],
     dataset: TileDataset,
     entity_type_by_id: Mapping[str, str],
     zooms: tuple[int, int],
     held: Mapping[str, tuple[int, int]],
+    references: set[str],
 ) -> dict[str, object]:
     feature_id = feature["id"]
     properties = _mapping(feature.get("properties"))
@@ -184,6 +203,7 @@ def _tile_feature(
             "from_year": from_year,
             "to_year": to_year,
             "hue": fnv1a32(entity_id) % HUE_COUNT,
+            "ref_from_year": OPEN_YEAR_MIN if feature_id in references else from_year,
         },
     }
 
@@ -325,7 +345,8 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
             if isinstance(entity.get("id"), str) and isinstance(entity.get("type"), str)
         }
         held = display_periods(raw_features)
-        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, zooms, held) for feature in raw_features]
+        references = reference_versions(raw_features, entity_type_by_id)
+        tile_features = [_tile_feature(feature, dataset, entity_type_by_id, zooms, held, references) for feature in raw_features]
         all_features.extend(tile_features)
         for feature in raw_features:
             years.update(year for year in feature_period(_mapping(feature.get("properties"))) if year not in {OPEN_YEAR_MIN, OPEN_YEAR_MAX})

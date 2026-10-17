@@ -57,7 +57,7 @@ function start(app: HTMLElement, manifest: Manifest) {
     detail.loading(feature.name);
     try {
       const resolved = await details.load(feature.dataset, feature.featureVersionId);
-      if (resolved) detail.detail(resolved, picked.filter((item) => item.featureVersionId !== feature.featureVersionId));
+      if (resolved) detail.detail(resolved, picked.filter((item) => item.featureVersionId !== feature.featureVersionId), state.year < feature.fromYear);
       else detail.failed(feature.name);
     } catch {
       detail.failed(feature.name);

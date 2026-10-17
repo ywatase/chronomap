@@ -5,14 +5,14 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { Protocol } from "pmtiles";
 import type { Manifest } from "../domain/manifest";
 import type { ViewState } from "../domain/view-state";
-import { yearFilter } from "../domain/year-filter";
-import { BASE_MAPS, type BaseMapId, createStyle, HIGHLIGHT_LAYER_IDS, highlightFilter, interactiveLayerIds, themeLayerIds } from "./style";
+import { BASE_MAPS, type BaseMapId, createStyle, HIGHLIGHT_LAYER_IDS, highlightFilter, interactiveLayerIds, layersOfTheme, yearDependentFilters } from "./style";
 
 export interface PickedFeature {
   readonly featureVersionId: string;
   readonly dataset: string;
   readonly theme: string;
   readonly name: string;
+  readonly fromYear: number;
 }
 
 export interface MapViewOptions {
@@ -72,7 +72,13 @@ export function createMapView(options: MapViewOptions) {
       const id = String(feature.properties.feature_version_id ?? "");
       if (!id || seen.has(id)) continue;
       seen.add(id);
-      picked.push({ featureVersionId: id, dataset: String(feature.properties.dataset), theme: String(feature.properties.theme), name: String(feature.properties.name) });
+      picked.push({
+        featureVersionId: id,
+        dataset: String(feature.properties.dataset),
+        theme: String(feature.properties.theme),
+        name: String(feature.properties.name),
+        fromYear: Number(feature.properties.from_year),
+      });
     }
     options.onPick(picked);
   }
@@ -88,27 +94,24 @@ export function createMapView(options: MapViewOptions) {
     map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
   }
 
+  function applyFilters() {
+    for (const [id, filter] of Object.entries(yearDependentFilters(manifest, state.year, state.hiddenThemes))) {
+      if (map.getLayer(id)) map.setFilter(id, filter as maplibregl.FilterSpecification);
+    }
+  }
+
   return {
     map,
     setYear(year: number) {
       state.year = year;
-      const filter = yearFilter(year);
-      for (const id of themeLayerIds(manifest)) {
-        const current = map.getFilter(id) as unknown[] | undefined;
-        if (current) map.setFilter(id, [...current.slice(0, -1), filter] as maplibregl.FilterSpecification);
-      }
-      const label = map.getFilter("labels") as unknown[] | undefined;
-      if (label) map.setFilter("labels", [label[0], label[1], filter, ...label.slice(3)] as maplibregl.FilterSpecification);
+      applyFilters();
     },
     setThemeVisible(theme: string, visible: boolean) {
       state.hiddenThemes = visible ? state.hiddenThemes.filter((id) => id !== theme) : [...new Set([...state.hiddenThemes, theme])];
-      for (const kind of ["fill", "outline", "line", "point"]) {
-        const id = `theme-${theme}-${kind}`;
+      for (const id of layersOfTheme(theme)) {
         if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", visible ? "visible" : "none");
       }
-      const shown = manifest.themes.map((item) => item.id).filter((id) => !state.hiddenThemes.includes(id));
-      const label = map.getFilter("labels") as unknown[] | undefined;
-      if (label) map.setFilter("labels", [label[0], ["in", ["get", "theme"], ["literal", shown]], ...label.slice(2)] as maplibregl.FilterSpecification);
+      applyFilters();
     },
     setRasterVisible(id: string, visible: boolean) {
       state.rasters = visible ? [...new Set([...state.rasters, id])] : state.rasters.filter((item) => item !== id);

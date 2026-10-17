@@ -160,7 +160,7 @@ def test_tile_documents_exclude_private_features_from_tiles_and_details(tmp_path
     ]
     assert all(
         set(feature["properties"])
-        == {"feature_version_id", "entity_id", "dataset", "theme", "name", "from_year", "to_year", "hue"}
+        == {"feature_version_id", "entity_id", "dataset", "theme", "name", "from_year", "to_year", "hue", "ref_from_year"}
         for feature in documents.features
     )
     assert set(documents.details) == {"details/synthetic/0.json"}
@@ -559,3 +559,23 @@ def test_held_snapshots_extend_tiles_and_details_but_not_the_timeline_ticks(tmp_
     assert "display" not in detail["synthetic:version:point-later"]
     assert 4 not in documents.manifest["years"]
     assert 5 in documents.manifest["years"]
+
+
+def test_reference_starts_mark_only_the_earliest_version_of_natural_entities():
+    features = [
+        _version("p:version:pool-1596", "p:entity:pool", 1596, 1596),
+        _version("p:version:pool-1590", "p:entity:pool", 1590, 1590),
+        _version("p:version:castle-1576", "p:entity:castle", 1576, 1576),
+        _version("p:version:hyp-a", "p:entity:marsh", 1000, 1000, "p:hypothesis:h"),
+    ]
+    types = {"p:entity:pool": "waterbody", "p:entity:castle": "fortification", "p:entity:marsh": "waterbody"}
+
+    assert tile_builder.reference_versions(features, types) == {"p:version:pool-1590"}
+
+
+def test_tile_features_carry_reference_start_years(tmp_path: Path):
+    documents = build_tile_documents([synthetic_dataset(tmp_path)])
+
+    for feature in documents.features:
+        properties = feature["properties"]
+        assert properties["ref_from_year"] in {properties["from_year"], -999999}
