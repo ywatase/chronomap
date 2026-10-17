@@ -48,6 +48,8 @@ written to `imports/`.
 uv run chronomap-data import world       # historical-basemaps, GPL-3.0 (about 1 minute)
 uv run chronomap-data import bakumatsu   # Bakumatsu villages, provinces, domains, CC BY-SA 4.0 (about 16 minutes, ~300 MB download)
 uv run chronomap-data import wikidata    # castles and battles in Japan, CC0 (live query; retrieval date is recorded)
+uv run chronomap-data import edo         # Edo-period coastline (as near-shore sea) and lakes, CC BY 4.0 (about 4 minutes)
+uv run chronomap-data import landform    # modern drained and coastal reclaimed land, GSI (first run fetches ~39,000 tiles, about 4 hours)
 ```
 
 Build the national tiles and detail indexes from every package (about 10

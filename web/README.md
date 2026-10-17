@@ -8,6 +8,10 @@ the repository root:
 uv run chronomap-data build-tiles data imports --output web/public/chronomap
 ```
 
+Vite caches the list of files under `public/` when the dev server starts.
+After a rebuild that adds datasets, restart `npm run dev`; otherwise new
+detail shards are answered with `index.html`.
+
 ## Screen
 
 - Full-screen map over GSI tiles (pale, standard, or photo; adjustable

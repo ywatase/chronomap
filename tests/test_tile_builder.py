@@ -37,6 +37,7 @@ ENTITY_THEME = {
     "port": "settlement",
     "route": "route",
     "archaeological-site": "other",
+    "artificial-land": "artificial",
     "other": "other",
 }
 
@@ -391,17 +392,19 @@ def test_dataset_display_zoom_range_is_applied_per_feature_and_reported(tmp_path
     default = build_tile_documents([synthetic_dataset(tmp_path / "a")])
     assert all(feature["tippecanoe"] == {"minzoom": 4, "maxzoom": 12} for feature in default.features)
     assert (default.manifest["datasets"][0]["minZoom"], default.manifest["datasets"][0]["maxZoom"]) == (4, 12)
+    assert default.manifest["datasets"][0]["seaMask"] is False
 
     (tmp_path / "b").mkdir()
     package_dir = copy_synthetic_package(tmp_path / "b", "synthetic")
     metadata = json.loads((package_dir / "dataset.json").read_text(encoding="utf-8"))
-    metadata["display"] = {"minZoom": 0, "maxZoom": 6}
+    metadata["display"] = {"minZoom": 0, "maxZoom": 6, "seaMask": True}
     (package_dir / "dataset.json").write_text(json.dumps(metadata), encoding="utf-8")
     package = load_package(package_dir)
     documents = build_tile_documents([TileDataset("synthetic", package, project_public(package))])
 
     assert all(feature["tippecanoe"] == {"minzoom": 0, "maxzoom": 6} for feature in documents.features)
     assert (documents.manifest["datasets"][0]["minZoom"], documents.manifest["datasets"][0]["maxZoom"]) == (0, 6)
+    assert documents.manifest["datasets"][0]["seaMask"] is True
 
 
 def test_manifest_default_year_has_the_most_visible_features_and_prefers_older_ties(tmp_path: Path):

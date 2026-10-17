@@ -31,11 +31,29 @@ export interface StyleOptions {
 
 const GSI_ATTRIBUTION = '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noreferrer">国土地理院</a>';
 
+/** `sea` is the base map's own sea colour, sampled from GSI tiles, so the period's sea blends in. */
 export const BASE_MAPS = {
-  pale: { label: "淡色地図", tiles: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", maxzoom: 18 },
-  std: { label: "標準地図", tiles: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", maxzoom: 18 },
-  photo: { label: "写真", tiles: "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg", maxzoom: 18 },
+  pale: { label: "淡色地図", tiles: "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", maxzoom: 18, sea: "#bed2ff" },
+  std: { label: "標準地図", tiles: "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", maxzoom: 18, sea: "#bed2ff" },
+  photo: { label: "写真", tiles: "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg", maxzoom: 18, sea: "#10142f" },
 } as const;
+const BACKGROUND = "#f4f1ea";
+
+/** The base map's sea as it appears over the background at the given base opacity. */
+export function seaColor(base: BaseMapId, baseOpacity: number): string {
+  const channel = (hex: string, index: number) => parseInt(hex.slice(1 + index * 2, 3 + index * 2), 16);
+  const mixed = [0, 1, 2].map((index) => Math.round(channel(BASE_MAPS[base].sea, index) * baseOpacity + channel(BACKGROUND, index) * (1 - baseOpacity)));
+  return `#${mixed.map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function seaMasked(manifest: Manifest): unknown {
+  return ["in", ["get", "dataset"], ["literal", manifest.datasets.filter((dataset) => dataset.seaMask).map((dataset) => dataset.slug)]];
+}
+
+/** Fill colour of the coast theme: sea-mask datasets take the base map's sea colour. */
+export function coastFillColor(manifest: Manifest, base: BaseMapId, baseOpacity: number): unknown {
+  return ["case", seaMasked(manifest), seaColor(base, baseOpacity), THEME_COLORS.coast];
+}
 export type BaseMapId = keyof typeof BASE_MAPS;
 
 /** Fixed theme colours; polity and sphere fills use the per-entity `hue` palette instead. */
@@ -49,13 +67,14 @@ export const THEME_COLORS: Readonly<Record<string, string>> = {
   battlefield: "#d9480f",
   settlement: "#6d4c41",
   route: "#8a6d00",
+  artificial: "#e07b39",
   other: "#6b3fa0",
 };
 
 export const HUE_PALETTE = ["#d95f02", "#1b9e77", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#1f78b4", "#b15928", "#e31a1c", "#6a3d9a", "#33a02c"];
 
 /** Painting order from bottom to top. */
-const THEME_ORDER = ["polity", "sphere", "coast", "lake", "other", "river", "route", "settlement", "castle", "battlefield"];
+const THEME_ORDER = ["polity", "sphere", "artificial", "coast", "lake", "other", "river", "route", "settlement", "castle", "battlefield"];
 /** Natural themes whose earliest version is drawn as a dashed reference before its first record. */
 export const REFERENCE_THEMES = ["coast", "lake", "river"] as const;
 export const HIGHLIGHT_LAYER_IDS = ["highlight-fill", "highlight-line", "highlight-point"] as const;
@@ -78,9 +97,15 @@ function worldScale(manifest: Manifest): unknown {
   return ["in", ["get", "dataset"], ["literal", manifest.datasets.filter((dataset) => dataset.minZoom === 0).map((dataset) => dataset.slug)]];
 }
 
-function fading(manifest: Manifest, opacity: number): unknown {
+/** Opacity that fades world-scale datasets out with zoom; sea-mask datasets are always opaque (or hidden). */
+function fading(manifest: Manifest, opacity: number, seaMaskOpacity = 1): unknown {
   const world = worldScale(manifest);
-  return ["interpolate", ["linear"], ["zoom"], WORLD_FADE.from, opacity, WORLD_FADE.to, ["case", world, 0, opacity]];
+  const sea = seaMasked(manifest);
+  return [
+    "interpolate", ["linear"], ["zoom"],
+    WORLD_FADE.from, ["case", sea, seaMaskOpacity, opacity],
+    WORLD_FADE.to, ["case", world, 0, sea, seaMaskOpacity, opacity],
+  ];
 }
 
 const GEOMETRY_BY_KIND: Readonly<Record<string, unknown>> = { fill: polygons, outline: polygons, line: lines, point: points };
@@ -93,29 +118,31 @@ function referenceLayerFilter(theme: string, kind: "fill" | "line", year: number
   return ["all", ["==", ["get", "theme"], theme], kind === "fill" ? polygons : ["any", polygons, lines], referenceFilter(year)];
 }
 
-function referenceLayers(theme: string, manifest: Manifest, year: number, visible: boolean): LayerSpec[] {
+function referenceLayers(theme: string, manifest: Manifest, year: number, visible: boolean, options: StyleOptions): LayerSpec[] {
   const color = THEME_COLORS[theme] ?? "#555555";
+  const fill = theme === "coast" ? coastFillColor(manifest, options.base, options.baseOpacity) : color;
+  const sea = seaMasked(manifest);
   const base = { source: SOURCE, "source-layer": manifest.sourceLayer, layout: { visibility: visible ? "visible" : "none" } };
   return [
-    { id: `ref-${theme}-fill`, type: "fill", ...base, filter: referenceLayerFilter(theme, "fill", year), paint: { "fill-color": color, "fill-opacity": 0.12 } },
+    { id: `ref-${theme}-fill`, type: "fill", ...base, filter: referenceLayerFilter(theme, "fill", year), paint: { "fill-color": fill, "fill-opacity": ["case", sea, 1, 0.12] } },
     {
       id: `ref-${theme}-line`, type: "line", ...base, filter: referenceLayerFilter(theme, "line", year),
-      paint: { "line-color": color, "line-width": 2, "line-opacity": 0.7, "line-dasharray": [2, 2] },
+      paint: { "line-color": color, "line-width": 2, "line-opacity": ["case", sea, 0, 0.7], "line-dasharray": [2, 2] },
     },
   ];
 }
 
-function themeLayers(theme: string, manifest: Manifest, year: number, visible: boolean): LayerSpec[] {
+function themeLayers(theme: string, manifest: Manifest, year: number, visible: boolean, options: StyleOptions): LayerSpec[] {
   const color = THEME_COLORS[theme] ?? "#555555";
-  const filled = theme === "polity" || theme === "sphere" ? hueColor : color;
+  const filled = theme === "polity" || theme === "sphere" ? hueColor : theme === "coast" ? coastFillColor(manifest, options.base, options.baseOpacity) : color;
   const base = { source: SOURCE, "source-layer": manifest.sourceLayer, layout: { visibility: visible ? "visible" : "none" } };
   const where = (kind: string) => themeFilter(theme, kind, year);
-  const fillOpacity = theme === "polity" ? 0.12 : theme === "sphere" ? 0.22 : 0.35;
+  const fillOpacity = theme === "polity" ? 0.12 : theme === "sphere" || theme === "artificial" ? 0.22 : 0.35;
   return [
     { id: `theme-${theme}-fill`, type: "fill", ...base, filter: where("fill"), paint: { "fill-color": filled, "fill-opacity": fading(manifest, fillOpacity) } },
     {
       id: `theme-${theme}-outline`, type: "line", ...base, filter: where("outline"),
-      paint: { "line-color": filled, "line-width": theme === "polity" ? 1.2 : 1, "line-opacity": fading(manifest, 0.9), ...(theme === "sphere" ? { "line-dasharray": [2, 1] } : {}) },
+      paint: { "line-color": filled, "line-width": theme === "polity" ? 1.2 : 1, "line-opacity": fading(manifest, 0.9, 0), ...(theme === "sphere" || theme === "artificial" ? { "line-dasharray": [2, 1] } : {}) },
     },
     {
       id: `theme-${theme}-line`, type: "line", ...base, filter: where("line"),
@@ -159,6 +186,7 @@ function labelFilter(manifest: Manifest, year: number, hiddenThemes: readonly st
     yearFilter(year),
     labelZooms(),
     ["any", ["!", worldScale(manifest)], ["<", ["zoom"], WORLD_FADE.to]],
+    ["!", seaMasked(manifest)],
   ];
 }
 
@@ -222,7 +250,7 @@ export function createStyle(manifest: Manifest, options: StyleOptions): StyleSpe
     [SOURCE]: { type: "vector", url: options.tilesUrl },
   };
   const layers: LayerSpec[] = [
-    { id: "background", type: "background", paint: { "background-color": "#f4f1ea" } },
+    { id: "background", type: "background", paint: { "background-color": BACKGROUND } },
     { id: "base", type: "raster", source: "base", paint: { "raster-opacity": options.baseOpacity } },
   ];
   for (const raster of manifest.rasters) {
@@ -244,10 +272,10 @@ export function createStyle(manifest: Manifest, options: StyleOptions): StyleSpe
     });
   }
   for (const theme of referenceThemes(manifest)) {
-    layers.push(...referenceLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme)));
+    layers.push(...referenceLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme), options));
   }
   for (const theme of orderedThemes(manifest)) {
-    layers.push(...themeLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme)));
+    layers.push(...themeLayers(theme, manifest, options.year, !options.hiddenThemes.includes(theme), options));
   }
   layers.push(labelLayer(manifest, options.year, options.hiddenThemes));
   const highlight = { source: SOURCE, "source-layer": manifest.sourceLayer };

@@ -57,6 +57,7 @@ THEME_DEFINITIONS = (
     ("battlefield", "古戦場", "Battlefields", ("battlefield",)),
     ("settlement", "集落・街・港", "Settlements, towns, and ports", ("settlement", "port")),
     ("route", "街道", "Routes", ("route",)),
+    ("artificial", "干拓地・埋立地（現代）", "Modern drained and reclaimed land", ("artificial-land",)),
     ("other", "その他", "Other", ("archaeological-site", "other")),
 )
 THEME_BY_ENTITY_TYPE = {
@@ -365,6 +366,7 @@ def build_tile_documents(datasets: Sequence[TileDataset]) -> TileDocuments:
                 "attribution": rights.get("attribution"),
                 "minZoom": zooms[0],
                 "maxZoom": zooms[1],
+                "seaMask": _mapping(source_dataset.get("display")).get("seaMask") is True,
                 "detailShards": len(shards),
                 "features": len(raw_features),
             }

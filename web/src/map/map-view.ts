@@ -5,7 +5,7 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { Protocol } from "pmtiles";
 import type { Manifest } from "../domain/manifest";
 import type { ViewState } from "../domain/view-state";
-import { BASE_MAPS, type BaseMapId, createStyle, HIGHLIGHT_LAYER_IDS, highlightFilter, interactiveLayerIds, layersOfTheme, yearDependentFilters } from "./style";
+import { BASE_MAPS, type BaseMapId, coastFillColor, createStyle, HIGHLIGHT_LAYER_IDS, highlightFilter, interactiveLayerIds, layersOfTheme, yearDependentFilters } from "./style";
 
 export interface PickedFeature {
   readonly featureVersionId: string;
@@ -34,7 +34,7 @@ export function createMapView(options: MapViewOptions) {
     protocolAdded = true;
   }
   const { manifest } = options;
-  const state = { year: options.initial.year, hiddenThemes: [...options.initial.hiddenThemes], rasters: [...options.initial.rasters], base: "pale" as BaseMapId };
+  const state = { year: options.initial.year, hiddenThemes: [...options.initial.hiddenThemes], rasters: [...options.initial.rasters], base: "pale" as BaseMapId, baseOpacity: 1 };
   const map = new maplibregl.Map({
     container: options.container,
     style: createStyle(manifest, {
@@ -94,6 +94,13 @@ export function createMapView(options: MapViewOptions) {
     map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
   }
 
+  /** Keep the period's sea in step with the base map's own sea colour. */
+  function applySeaColor() {
+    for (const id of ["theme-coast-fill", "ref-coast-fill"]) {
+      if (map.getLayer(id)) map.setPaintProperty(id, "fill-color", coastFillColor(manifest, state.base, state.baseOpacity) as maplibregl.DataDrivenPropertyValueSpecification<string>);
+    }
+  }
+
   function applyFilters() {
     for (const [id, filter] of Object.entries(yearDependentFilters(manifest, state.year, state.hiddenThemes))) {
       if (map.getLayer(id)) map.setFilter(id, filter as maplibregl.FilterSpecification);
@@ -124,9 +131,12 @@ export function createMapView(options: MapViewOptions) {
       state.base = base;
       const source = map.getSource("base") as maplibregl.RasterTileSource | undefined;
       source?.setTiles([BASE_MAPS[base].tiles]);
+      applySeaColor();
     },
     setBaseOpacity(opacity: number) {
+      state.baseOpacity = opacity;
       map.setPaintProperty("base", "raster-opacity", opacity);
+      applySeaColor();
     },
     highlight(featureVersionId: string | null) {
       for (const id of HIGHLIGHT_LAYER_IDS) map.setFilter(id, highlightFilter(id, featureVersionId) as maplibregl.FilterSpecification);

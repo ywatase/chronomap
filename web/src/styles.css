@@ -175,6 +175,12 @@ button {
   color: var(--muted);
 }
 
+.layer-note {
+  margin: -4px 0 6px 30px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .slider-option {
   display: grid;
   grid-template-columns: auto 1fr;

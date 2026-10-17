@@ -25,6 +25,7 @@
 
 - Tippecanoe 2.79.0で生成する。入力は決定順の改行区切りGeoJSONとし、ツールは一時ディレクトリを作業ディレクトリにして相対パスで起動する。
 - ベクタータイルレイヤーは `features` の1つ、ズーム範囲は0〜12とする。
+- Datasetの `display.seaMask` が `true` なら、その海岸線テーマの面は「当時の海」として背景地図の海の色で不透明に塗る（[江戸末期の海岸線・湖沼](edo.md)）。
 - 地物は、Datasetの `display.minZoom`（未指定なら4）から `display.maxZoom`（未指定なら12）までのタイルにだけ入る。GeoJSONSeqの各地物に `tippecanoe.minzoom`・`tippecanoe.maxzoom` を付けて指定する。世界規模の概略データを高ズームまで切り出すとアーカイブが数百MBに膨らむため、世界データは `maxZoom` 6とする。
 - 地物数・タイルサイズによる間引きを無効にし、`-r1` で低ズームのPoint地物も間引かない。形状簡略化はTippecanoeの既定値を使う。
 - 各地物の属性は次の9項目だけとする。
@@ -74,6 +75,7 @@ manifestの `years`（タイムラインの目盛り）は、延ばす前の可�
 | `battlefield` | 古戦場 | Battlefields | `battlefield` |
 | `settlement` | 集落・街・港 | Settlements, towns, and ports | `settlement`, `port` |
 | `route` | 街道 | Routes | `route` |
+| `artificial` | 干拓地・埋立地（現代） | Modern drained and reclaimed land | `artificial-land` |
 | `other` | その他 | Other | `archaeological-site`, `other` |
 
 ### Manifest
@@ -82,7 +84,7 @@ manifestの `years`（タイムラインの目盛り）は、延ばす前の可�
 
 - `yearRange` と `years` は、全地物の `from_year`・`to_year` から番兵値を除いて導出する。`years` は昇順・重複なしとする。有限な年が1つもなければ `yearRange` の `min` と `max` は `null`、`years` は空配列とする。
 - `defaultYear` は `years` のうち、その年に表示される地物（`from_year <= y <= to_year`）が最も多い年とする。同数なら古い年。`years` が空なら `null`。
-- `datasets` はslug昇順。各項目は `slug`、Dataset `id`、`title`、`defaultLanguage`、`bbox`、`rights.attribution`、`minZoom`、`maxZoom`、詳細索引のシャード数 `detailShards`、公開地物数 `features` を持つ。
+- `datasets` はslug昇順。各項目は `slug`、Dataset `id`、`title`、`defaultLanguage`、`bbox`、`rights.attribution`、`minZoom`、`maxZoom`、`seaMask`（真偽値）、詳細索引のシャード数 `detailShards`、公開地物数 `features` を持つ。
 - `rasters` は、Datasetの `historicalMapAssets` のうち `tileTemplate` を持つものを、slug順・Dataset内の記載順に並べる。各項目は `id`、`dataset`、`title`、`description`、`date`、`tileTemplate`、`attribution`、`bbox`、`minZoom`、`maxZoom` を持つ。
 - キーは既存の `_canonical_json` で直列化する。配列順はここで定めた順序とする。
 

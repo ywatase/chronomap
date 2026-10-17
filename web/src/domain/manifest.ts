@@ -27,6 +27,8 @@ export interface DatasetEntry {
   readonly attribution: string | null;
   readonly minZoom: number;
   readonly maxZoom: number;
+  /** Polygons of this dataset are drawn as the period's sea in the base map's sea colour. */
+  readonly seaMask?: boolean;
   readonly detailShards: number;
   readonly features: number;
 }

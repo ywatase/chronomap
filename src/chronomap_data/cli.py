@@ -36,7 +36,7 @@ def _parser() -> argparse.ArgumentParser:
     build_tiles_command.add_argument("package_roots", nargs="+")
     build_tiles_command.add_argument("--output", required=True)
     import_command = commands.add_parser("import")
-    import_command.add_argument("source", choices=("bakumatsu", "wikidata", "world"))
+    import_command.add_argument("source", choices=("bakumatsu", "edo", "landform", "wikidata", "world"))
     import_command.add_argument("--output", default="imports")
     import_command.add_argument("--cache", default=".cache/raw")
     return parser
@@ -58,10 +58,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         from .importers.bakumatsu import import_bakumatsu
         from .importers.common import RawDataError
+        from .importers.edo import import_edo
+        from .importers.landform import import_landform
         from .importers.wikidata import import_wikidata
         from .importers.world import import_world
 
-        importer = {"bakumatsu": import_bakumatsu, "wikidata": import_wikidata, "world": import_world}[arguments.source]
+        importer = {"bakumatsu": import_bakumatsu, "edo": import_edo, "landform": import_landform, "wikidata": import_wikidata, "world": import_world}[arguments.source]
         try:
             outputs = importer(Path(arguments.output), Path(arguments.cache))
         except (RawDataError, OSError) as error:

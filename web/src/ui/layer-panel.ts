@@ -11,7 +11,11 @@ export interface LayerPanelHandlers {
   readonly onPlace: (lng: number, lat: number) => void;
 }
 
-const SYMBOLS: Record<string, string> = { polity: "面", sphere: "面", coast: "面", lake: "面", river: "線", route: "線", settlement: "点", castle: "点", battlefield: "点", other: "点・線・面" };
+const SYMBOLS: Record<string, string> = { polity: "面", sphere: "面", coast: "面", lake: "面", river: "線", route: "線", settlement: "点", castle: "点", battlefield: "点", artificial: "面", other: "点・線・面" };
+
+const THEME_NOTES: Record<string, string> = {
+  artificial: "現代の地図では陸地の干拓地・海岸沿いの埋立地。造成年は不明で、その年に海・湖だったとは限りません。",
+};
 
 function swatch(theme: string) {
   const element = h("span", { class: `swatch swatch-${SYMBOLS[theme] === "線" ? "line" : SYMBOLS[theme] === "点" ? "point" : "area"}`, "aria-hidden": "true" });
@@ -63,7 +67,8 @@ export function mountLayerPanel(root: HTMLElement, manifest: Manifest, initial: 
   for (const theme of manifest.themes) {
     const checkbox = h("input", { type: "checkbox", name: "theme", value: theme.id, checked: !initial.hiddenThemes.includes(theme.id) });
     checkbox.addEventListener("change", () => handlers.onTheme(theme.id, checkbox.checked));
-    themes.append(h("label", { class: "layer-option" }, checkbox, swatch(theme.id), h("span", {}, text(theme.labels)), h("small", {}, SYMBOLS[theme.id] ?? "")));
+    themes.append(h("label", { class: "layer-option", title: THEME_NOTES[theme.id] }, checkbox, swatch(theme.id), h("span", {}, text(theme.labels)), h("small", {}, SYMBOLS[theme.id] ?? "")));
+    if (THEME_NOTES[theme.id]) themes.append(h("p", { class: "layer-note" }, THEME_NOTES[theme.id]));
   }
 
   const rasters = h("fieldset", { class: "layer-group" }, h("legend", {}, "歴史地図・空中写真"));

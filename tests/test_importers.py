@@ -147,3 +147,58 @@ def test_wikidata_castles_and_battles_become_valid_point_packages(tmp_path: Path
     for slug, entity_type, records in (("wikidata-castles", "fortification", castles), ("wikidata-battles", "battlefield", battles)):
         write_package(tmp_path / slug, *wikidata.package(slug, entity_type, "t", "d", records, "2026-10-12"))
         assert validate(tmp_path / slug) == []
+
+
+def test_landform_keeps_drained_land_and_only_coastal_reclaimed_land(tmp_path: Path):
+    from shapely.geometry import LineString, mapping
+
+    from chronomap_data.importers import landform
+
+    def tile(*items):
+        return {"features": [{"properties": {"code": code}, "geometry": mapping(geometry)} for code, geometry in items]}
+
+    tiles = [
+        tile(("4010101", box(135.70, 34.90, 135.75, 34.95)), ("4010201", box(139.77, 35.62, 139.78, 35.63))),
+        tile(("4010101", box(135.75, 34.90, 135.80, 34.95)), ("11005", box(139.40, 35.60, 139.41, 35.61)), ("999999", box(0, 0, 1, 1))),
+    ]
+    drained, filled = landform.collect(tiles)
+    assert len(drained) == 2 and len(filled) == 2
+
+    coastline = [LineString([(139.78, 35.60), (139.78, 35.64)])]
+    drained_parts, coastal_parts = landform.build_parts(drained, filled, coastline)
+
+    assert len(drained_parts) == 1
+    assert drained_parts[0].bounds == pytest.approx((135.70, 34.90, 135.80, 34.95))
+    assert len(coastal_parts) == 1
+    assert coastal_parts[0].bounds == pytest.approx((139.77, 35.62, 139.78, 35.63))
+
+    write_package(tmp_path / "gsi-artificial-land", *landform.package(drained_parts, coastal_parts, "2026-10-17"))
+    assert validate(tmp_path / "gsi-artificial-land") == []
+    features = json.loads((tmp_path / "gsi-artificial-land" / "feature-versions.geojson").read_text(encoding="utf-8"))["features"]
+    assert {feature["properties"]["labels"]["ja"] for feature in features} == {"干拓地（現代）", "埋立地（現代・海岸沿い）"}
+    assert all(feature["properties"]["temporal"]["end"] is None for feature in features)
+
+
+def test_edo_coast_band_is_sea_around_land_and_lakes_are_waterbodies(tmp_path: Path):
+    from shapely.geometry import shape
+
+    from chronomap_data.importers import edo
+
+    land = [box(139.0, 35.0, 140.0, 36.0), box(139.9, 35.9, 140.2, 36.2)]
+    band = edo.sea_band(land, width=0.1)
+    assert band.contains(shape({"type": "Point", "coordinates": [139.0 - 0.05, 35.5]}))
+    assert not band.contains(shape({"type": "Point", "coordinates": [139.5, 35.5]}))
+    assert not band.contains(shape({"type": "Point", "coordinates": [138.5, 35.5]}))
+
+    lakes = [
+        {"properties": {"id": "26007", "name": "巨椋池", "yomi": "おぐらいけ", "pref": "京都府", "remarks": "仮製2万参照"}, "geometry": {"type": "MultiPolygon", "coordinates": [[[[135.7, 34.9], [135.8, 34.9], [135.8, 34.95], [135.7, 34.9]]]]}},
+        {"properties": {"id": "99999", "name": "", "pref": "x"}, "geometry": None},
+    ]
+    for slug, package in (("edo-coast", edo.coast_package(band)), ("edo-lakes", edo.lake_package(lakes))):
+        write_package(tmp_path / slug, *package)
+        assert validate(tmp_path / slug) == []
+    dataset = json.loads((tmp_path / "edo-coast" / "dataset.json").read_text(encoding="utf-8"))
+    assert dataset["display"]["seaMask"] is True
+    lake_features = json.loads((tmp_path / "edo-lakes" / "feature-versions.geojson").read_text(encoding="utf-8"))["features"]
+    assert [feature["properties"]["labels"]["ja"] for feature in lake_features] == ["巨椋池"]
+    assert lake_features[0]["properties"]["temporal"]["end"]["latestYear"] == 1894

@@ -45,7 +45,7 @@
 | `rights` | `Rights` | 公開データセットではpublishableであること |
 | `files` | オブジェクト | `entities`、`sources`、`evidence`、`featureVersions`を持ち、それぞれ固定ファイル名を値にする |
 | `historicalMapAssets` | `HistoricalMapAsset[]` | 任意。出典・権利・対象範囲・測位限界を持つ古地図／歴史画像コンテキスト |
-| `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）と `maxZoom`（0〜12の整数、既定12）で、全国タイルにこのDatasetの地物を入れるズーム範囲を指定する。世界規模の概略データは `maxZoom` を小さくし、それより先はタイルに入れない |
+| `display` | オブジェクト | 任意。`minZoom`（0〜12の整数、既定4）と `maxZoom`（0〜12の整数、既定12）で、全国タイルにこのDatasetの地物を入れるズーム範囲を指定する。世界規模の概略データは `maxZoom` を小さくし、それより先はタイルに入れない。`seaMask`（真偽値、既定false）がtrueなら、海岸線の面を背景地図の海の色で塗る「当時の海」として表示する |
 
 `historicalMapAssets` はFeatureVersionのgeometryやEvidenceを代替しない。各アセットは`tileTemplate`（HTTPSのXYZテンプレート）または`imageUrl`（HTTPS画像URL）の一方だけを持ち、`bbox`、資料の`date`、取得日、`georeference.method`／`error`、出典URL、表示用帰属、権利、ズーム範囲を記録する。`tileTemplate` を持つアセットは `build-tiles` がmanifestの `rasters` に並べ、ビューアーの「歴史地図・空中写真」レイヤーになる。タイルの取得に失敗しても、現在地図・歴史geometry・詳細・根拠は使える。
 
@@ -53,7 +53,9 @@
 
 `HistoricalEntity`は時代や仮説をまたぐ対象の同一性である。`id`、`type`、`labels`、`description`をすべて持つ。`id`のkindは`entity`、`labels`と`description`はテキストマップであり、`labels`は`defaultLanguage`の値を含む。`type`は次のいずれかとし、geometry typeを拘束しない。
 
-`waterbody`、`watercourse`、`coastline`、`fortification`、`settlement`、`port`、`battlefield`、`route`、`boundary`、`polity`、`sphere-of-influence`、`archaeological-site`、`other`
+`waterbody`、`watercourse`、`coastline`、`fortification`、`settlement`、`port`、`battlefield`、`route`、`boundary`、`polity`、`sphere-of-influence`、`archaeological-site`、`artificial-land`、`other`
+
+`artificial-land` は干拓・埋立などで人が造った土地で、現代の地図では陸地でも、過去のある時点では海・湖だった範囲を示すために使う。
 
 ### Source
 
