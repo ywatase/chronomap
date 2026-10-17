@@ -1,0 +1,670 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "nagoya-coast:version:jomon",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              136.57,
+              35.3
+            ],
+            [
+              136.59,
+              35.34
+            ],
+            [
+              136.612,
+              35.338
+            ],
+            [
+              136.677,
+              35.342
+            ],
+            [
+              136.703,
+              35.318
+            ],
+            [
+              136.78,
+              35.32
+            ],
+            [
+              136.8,
+              35.29
+            ],
+            [
+              136.85,
+              35.268
+            ],
+            [
+              136.86,
+              35.24
+            ],
+            [
+              136.86,
+              35.2
+            ],
+            [
+              136.875,
+              35.17
+            ],
+            [
+              136.9,
+              35.13
+            ],
+            [
+              136.909,
+              35.114
+            ],
+            [
+              136.925,
+              35.116
+            ],
+            [
+              136.935,
+              35.13
+            ],
+            [
+              136.945,
+              35.115
+            ],
+            [
+              136.951,
+              35.088
+            ],
+            [
+              136.952,
+              35.06
+            ],
+            [
+              136.91,
+              35.03
+            ],
+            [
+              136.88,
+              35.02
+            ],
+            [
+              136.87,
+              34.96
+            ],
+            [
+              136.67,
+              34.96
+            ],
+            [
+              136.66,
+              35.02
+            ],
+            [
+              136.672,
+              35.06
+            ],
+            [
+              136.627,
+              35.13
+            ],
+            [
+              136.59,
+              35.22
+            ],
+            [
+              136.57,
+              35.3
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "nagoya-coast:entity:ise-bay-head",
+        "labels": {
+          "ja": "伊勢湾奥の海（約6000年前（縄文時代前期）・概略）"
+        },
+        "description": {
+          "ja": "縄文海進の最盛期で、海は大垣・羽島・一宮の南まで入り、名古屋台地（熱田台地）の両側に回り込んでいた。資料の推定海岸線をもとに、地名・台地の位置を手がかりに現在地図上へ置いた概略面で、精密な海岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": -4000,
+            "latestYear": -4000,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": -4000,
+            "latestYear": -4000,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「約6000年前（縄文時代前期）」の海岸線を代表年に置いた。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:jomon-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "小縮尺の推定図と本文の地名から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:jomon-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。入江・干潟・河口の形は表さない。南端は伊勢湾内で切っている。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:jomon-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "nagoya-coast:evidence:jomon-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "nagoya-coast:evidence:jomon-geometry",
+          "nagoya-coast:evidence:jomon-temporal",
+          "nagoya-coast:evidence:nagoya-jomon-text"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "nagoya-coast:version:yayoi",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              136.585,
+              35.27
+            ],
+            [
+              136.645,
+              35.262
+            ],
+            [
+              136.7,
+              35.24
+            ],
+            [
+              136.75,
+              35.222
+            ],
+            [
+              136.79,
+              35.2
+            ],
+            [
+              136.82,
+              35.19
+            ],
+            [
+              136.845,
+              35.184
+            ],
+            [
+              136.87,
+              35.165
+            ],
+            [
+              136.9,
+              35.13
+            ],
+            [
+              136.909,
+              35.114
+            ],
+            [
+              136.925,
+              35.112
+            ],
+            [
+              136.94,
+              35.11
+            ],
+            [
+              136.948,
+              35.085
+            ],
+            [
+              136.95,
+              35.06
+            ],
+            [
+              136.905,
+              35.03
+            ],
+            [
+              136.88,
+              35.02
+            ],
+            [
+              136.87,
+              34.96
+            ],
+            [
+              136.67,
+              34.96
+            ],
+            [
+              136.66,
+              35.02
+            ],
+            [
+              136.672,
+              35.06
+            ],
+            [
+              136.627,
+              35.13
+            ],
+            [
+              136.6,
+              35.2
+            ],
+            [
+              136.585,
+              35.27
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "nagoya-coast:entity:ise-bay-head",
+        "labels": {
+          "ja": "伊勢湾奥の海（弥生時代・概略）"
+        },
+        "description": {
+          "ja": "木曽三川の堆積で海岸線は南へ下がり、輪之内・稲沢の南から清須付近を結ぶ線付近にあった。資料の推定海岸線をもとに、地名・台地の位置を手がかりに現在地図上へ置いた概略面で、精密な海岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「弥生時代」の海岸線を代表年に置いた。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:yayoi-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "小縮尺の推定図と本文の地名から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:yayoi-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。入江・干潟・河口の形は表さない。南端は伊勢湾内で切っている。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:yayoi-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "nagoya-coast:evidence:yayoi-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "nagoya-coast:evidence:yayoi-geometry",
+          "nagoya-coast:evidence:yayoi-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "nagoya-coast:version:kofun",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              136.605,
+              35.2
+            ],
+            [
+              136.71,
+              35.17
+            ],
+            [
+              136.74,
+              35.165
+            ],
+            [
+              136.8,
+              35.165
+            ],
+            [
+              136.82,
+              35.163
+            ],
+            [
+              136.84,
+              35.15
+            ],
+            [
+              136.86,
+              35.145
+            ],
+            [
+              136.895,
+              35.128
+            ],
+            [
+              136.909,
+              35.114
+            ],
+            [
+              136.925,
+              35.108
+            ],
+            [
+              136.94,
+              35.1
+            ],
+            [
+              136.95,
+              35.065
+            ],
+            [
+              136.9,
+              35.03
+            ],
+            [
+              136.88,
+              35.02
+            ],
+            [
+              136.87,
+              34.96
+            ],
+            [
+              136.67,
+              34.96
+            ],
+            [
+              136.66,
+              35.02
+            ],
+            [
+              136.672,
+              35.06
+            ],
+            [
+              136.627,
+              35.13
+            ],
+            [
+              136.605,
+              35.2
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "nagoya-coast:entity:ise-bay-head",
+        "labels": {
+          "ja": "伊勢湾奥の海（古墳時代後期・概略）"
+        },
+        "description": {
+          "ja": "海岸線はさらに南へ下がり、佐屋・津島・七宝・岩塚の南付近にあった。熱田台地の東には年魚市潟（あゆちがた）が残る。資料の推定海岸線をもとに、地名・台地の位置を手がかりに現在地図上へ置いた概略面で、精密な海岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 550,
+            "latestYear": 550,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 550,
+            "latestYear": 550,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「古墳時代後期」の海岸線を代表年に置いた。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:kofun-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "小縮尺の推定図と本文の地名から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:kofun-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。入江・干潟・河口の形は表さない。南端は伊勢湾内で切っている。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:kofun-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "nagoya-coast:evidence:kofun-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "nagoya-coast:evidence:kofun-geometry",
+          "nagoya-coast:evidence:kofun-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "nagoya-coast:version:edo",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              136.62,
+              35.15
+            ],
+            [
+              136.69,
+              35.125
+            ],
+            [
+              136.725,
+              35.118
+            ],
+            [
+              136.76,
+              35.125
+            ],
+            [
+              136.787,
+              35.13
+            ],
+            [
+              136.807,
+              35.138
+            ],
+            [
+              136.855,
+              35.135
+            ],
+            [
+              136.88,
+              35.128
+            ],
+            [
+              136.905,
+              35.122
+            ],
+            [
+              136.909,
+              35.114
+            ],
+            [
+              136.92,
+              35.105
+            ],
+            [
+              136.935,
+              35.088
+            ],
+            [
+              136.945,
+              35.07
+            ],
+            [
+              136.948,
+              35.058
+            ],
+            [
+              136.895,
+              35.025
+            ],
+            [
+              136.88,
+              35.02
+            ],
+            [
+              136.87,
+              34.96
+            ],
+            [
+              136.67,
+              34.96
+            ],
+            [
+              136.66,
+              35.02
+            ],
+            [
+              136.672,
+              35.06
+            ],
+            [
+              136.627,
+              35.13
+            ],
+            [
+              136.62,
+              35.15
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "nagoya-coast:entity:ise-bay-head",
+        "labels": {
+          "ja": "伊勢湾奥の海（江戸時代初期（新田開発の前）・概略）"
+        },
+        "description": {
+          "ja": "海岸線は東海道（現在の国道1号）付近にあり、熱田から戸田・蟹江・弥富を結ぶ線より南は海だった。17世紀以降の干拓で南へ広がる。資料の推定海岸線をもとに、地名・台地の位置を手がかりに現在地図上へ置いた概略面で、精密な海岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 1600,
+            "latestYear": 1600,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 1600,
+            "latestYear": 1700,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「江戸時代初期（新田開発の前）」の海岸線を代表年に置いた。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:edo-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "小縮尺の推定図と本文の地名から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:edo-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。入江・干潟・河口の形は表さない。南端は伊勢湾内で切っている。",
+            "evidenceIds": [
+              "nagoya-coast:evidence:edo-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "nagoya-coast:evidence:edo-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "nagoya-coast:evidence:edo-geometry",
+          "nagoya-coast:evidence:edo-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    }
+  ]
+}

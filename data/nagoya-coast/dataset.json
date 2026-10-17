@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "nagoya-coast:dataset:pilot",
+  "title": {
+    "ja": "名古屋・伊勢湾奥の海岸線（縄文〜江戸初期）"
+  },
+  "description": {
+    "ja": "濃尾平野南部の海岸線の変遷を、縄文前期・弥生・古墳後期・江戸初期の概略面で示します。江戸末期以降は全国の江戸末期海岸線データに引き継ぎます。"
+  },
+  "defaultLanguage": "ja",
+  "bbox": [
+    136.5,
+    34.9,
+    137.0,
+    35.45
+  ],
+  "temporalExtent": {
+    "start": {
+      "earliestYear": -4000,
+      "latestYear": -4000,
+      "precision": "period",
+      "qualifier": "circa"
+    },
+    "end": {
+      "earliestYear": 1600,
+      "latestYear": 1700,
+      "precision": "period",
+      "qualifier": "circa"
+    }
+  },
+  "rights": {
+    "status": "open-license",
+    "attribution": "Chronomap contributors（概略復元）",
+    "terms": "形はChronomapの概略復元。個別Sourceの権利条件を併せて適用。"
+  },
+  "display": {
+    "minZoom": 6,
+    "seaMask": true
+  },
+  "files": {
+    "entities": "entities.json",
+    "sources": "sources.json",
+    "evidence": "evidence.json",
+    "featureVersions": "feature-versions.geojson"
+  }
+}

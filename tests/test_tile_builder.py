@@ -255,8 +255,9 @@ def test_build_tiles_cli_writes_every_public_dataset_and_all_z4_z12_features(tmp
     }
     assert (header["min_zoom"], header["max_zoom"]) == (0, 12)
     assert 3 not in by_zoom
+    min_zoom = {feature["properties"]["feature_version_id"]: feature["tippecanoe"]["minzoom"] for feature in expected.features}
     for zoom in (4, 12):
-        assert by_zoom[zoom] == expected_features
+        assert by_zoom[zoom] == {key: value for key, value in expected_features.items() if min_zoom[key] <= zoom}
         assert all(set(properties) == set(TILE_PROPERTIES) for properties in by_zoom[zoom].values())
 
 

@@ -1,0 +1,75 @@
+[
+  {
+    "id": "osaka-coast:source:mlit-yodogawa-history",
+    "type": "official-web-page",
+    "citation": "国土交通省近畿地方整備局 淀川河川事務所『淀川の成り立ちと人とのかかわり』",
+    "title": {
+      "ja": "淀川の成り立ちと人とのかかわり"
+    },
+    "creators": [
+      "国土交通省近畿地方整備局 淀川河川事務所"
+    ],
+    "publishedYear": 2020,
+    "url": "https://www.kkr.mlit.go.jp/yodogawa/know/history/now_and_then/kakawari.html",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。図は第三者の原図を含むため、本文・図は再現しない。"
+    }
+  },
+  {
+    "id": "osaka-coast:source:shape-notes",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『大阪湾奥・河内湖 形状作成メモ』",
+    "title": {
+      "ja": "大阪湾奥・河内湖 形状作成メモ"
+    },
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-coast-shape-notes.md",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "open-license",
+      "attribution": "Chronomap contributors",
+      "terms": "Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。"
+    }
+  },
+  {
+    "id": "osaka-coast:source:bay-vision",
+    "type": "official-report",
+    "citation": "大阪府『大阪広域ベイエリアまちづくりビジョン（素案）』",
+    "title": {
+      "ja": "大阪広域ベイエリアまちづくりビジョン（素案）"
+    },
+    "creators": [
+      "大阪府"
+    ],
+    "publishedYear": 2021,
+    "url": "https://www.pref.osaka.lg.jp/documents/2275/0520shiryou1-2_2.pdf",
+    "accessedDate": "2026-10-04",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。PDF本文・図版・地図画像は再現しない。"
+    }
+  },
+  {
+    "id": "osaka-coast:source:port-history",
+    "type": "official-web-page",
+    "citation": "大阪市『大阪港の景観特性をとらえる要素・歴史』",
+    "title": {
+      "ja": "大阪港の景観特性をとらえる要素・歴史"
+    },
+    "creators": [
+      "大阪市港湾局"
+    ],
+    "publishedYear": 2018,
+    "url": "https://www.city.osaka.lg.jp/port/page/0000432129.html",
+    "accessedDate": "2026-10-05",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。ページ本文・写真・図版は再現しない。"
+    }
+  }
+]

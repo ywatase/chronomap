@@ -27,8 +27,6 @@ def test_osaka_has_source_backed_core_historical_contexts():
     package = load_package(PACKAGE)
     entities = {entity["id"]: entity for entity in package.entities}
     expected = {
-        "osaka:entity:kawachi-bay": ("waterbody", "Polygon"),
-        "osaka:entity:ancient-coastline": ("coastline", "LineString"),
         "osaka:entity:ishiyama-honganji": ("fortification", "Point"),
         "osaka:entity:ishiyama-battlefield": ("battlefield", "Point"),
         "osaka:entity:ishiyama-teramachi": ("settlement", "Polygon"),
@@ -61,3 +59,11 @@ def test_osaka_package_passes_public_validation():
     package = load_package(PACKAGE)
     assert validate_package(package, ValidationProfile.PUBLIC) == []
     assert validate_semantics(package, ValidationProfile.PUBLIC) == []
+
+
+def test_ancient_kawachi_waters_live_in_the_osaka_coast_package():
+    package = load_package(PACKAGE)
+    assert not {"osaka:entity:kawachi-bay", "osaka:entity:ancient-coastline"} & {entity["id"] for entity in package.entities}
+    coast = load_package(ROOT / "data" / "osaka-coast")
+    assert {entity["type"] for entity in coast.entities} == {"coastline", "waterbody"}
+    assert validate_package(coast, ValidationProfile.PUBLIC) == []

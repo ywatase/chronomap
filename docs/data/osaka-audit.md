@@ -1,47 +1,19 @@
-# データ監査: 大坂・石山本願寺と河内湾パイロット
+# データ監査: 大坂・石山本願寺パイロット
 
 - データセットID: `osaka:dataset:ishiyama-pilot`
 - 既定言語: `ja`
-- 公開FeatureVersion: 7
+- 公開FeatureVersion: 5
 - 監査範囲: 公開FeatureVersionから到達できるEvidence／Sourceのメタデータ
 
 ## FeatureVersion監査
 
 | FeatureVersion | 地物 | geometry | 年代 | 権利 |
 |---|---|---|---|---|
-| `osaka:version:ancient-coastline-300` | 河内湾・古代海岸線（概略線） | LineString | -1000–300年 | open-license |
 | `osaka:version:ishiyama-battlefield-1570` | 石山合戦（1570〜1580年・代表点） | Point | 1570–1580年 | open-license |
 | `osaka:version:ishiyama-honganji-1533` | 石山（大坂）本願寺（1533〜1580年・代表点） | Point | 1533–1580年 | open-license |
 | `osaka:version:ishiyama-teramachi-1533` | 石山本願寺寺内町（1533〜1580年・概略） | Polygon | 1533–1580年 | open-license |
-| `osaka:version:kawachi-bay-300` | 河内湾・河内湖（古代・概略面） | Polygon | -1000–300年 | open-license |
 | `osaka:version:watanabe-port-1496` | 渡辺津（中世・代表点） | Point | 1400–1580年 | open-license |
 | `osaka:version:yodo-watercourse-1533` | 淀川水運（1533年頃・概略線） | LineString | 1533–1580年 | open-license |
-
-### `osaka:version:ancient-coastline-300`
-
-- 地物: 河内湾・古代海岸線（概略線） (`osaka:entity:ancient-coastline`)
-- geometry: `LineString`
-- 年代: -1000–300年
-- 権利: `open-license` — 表示: Chronomap（概略復元）、大阪市港湾局（引用メタデータ） — 外部資料の本文・写真・図版は再現しない。LineStringは正確な古代海岸線ではない。
-- 不確実性:
-  - `temporal`: `approximate` — 河内湾から河内湖への水域変化を含む古代の広い時期を代表する表示年です。線の存続期間や変化を確定しません。 (Evidence: `osaka:evidence:ancient-coastline`)
-  - `location`: `approximate` — 上町台地の半島状の地形と東側水域という相対関係を概略線で示します。 (Evidence: `osaka:evidence:ancient-coastline`, `osaka:evidence:ancient-coastline-shape`)
-  - `geometry`: `approximate` — 少数頂点の概略線で、古代の正確な海岸線、潮間帯、水深、河口、時期ごとの変化ではありません。 (Evidence: `osaka:evidence:ancient-coastline-shape`)
-  - `identity`: `well-supported` — 大阪市港湾局が説明する古代大阪の上町台地と河内湖の地形関係を示します。 (Evidence: `osaka:evidence:ancient-coastline`)
-
-- Evidence:
-
-| Evidence | 用途 | supports | locator | source |
-|---|---|---|---|---|
-| `osaka:evidence:ancient-coastline` | citation | identity, location, temporal | 古代大阪の河内湖と、半島のように突き出た上町台地に関する地形説明 | `osaka:source:port-history` |
-  - `osaka:evidence:ancient-coastline` — 大阪市港湾局の歴史説明を引用メタデータとして使用します。上町台地と水域の相対関係を示す資料であり、座標付きの古代海岸線測量ではありません。
-| `osaka:evidence:ancient-coastline-shape` | derived-geometry | geometry, location | 河内湾・古代海岸線概略LineStringの作成方法と限界 | `osaka:source:shape-notes` |
-  - `osaka:evidence:ancient-coastline-shape` — 上町台地の西側と河内湾・河内湖の相対関係を、少数頂点の概略線へ置き換えました。正確な古代海岸線、潮間帯、水深、河口を復元しません。 (publicationBasis: `original-reconstruction`)
-
-- Source:
-
-  - `osaka:source:port-history`: 大阪市『大阪港の景観特性をとらえる要素・歴史』 — 大阪港の景観特性をとらえる要素・歴史; 作成者: 大阪市港湾局; 2018年; 参照日: 2026-10-05 — rights: `restricted` — https://www.city.osaka.lg.jp/port/page/0000432129.html
-  - `osaka:source:shape-notes`: Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 — 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md
 
 ### `osaka:version:ishiyama-battlefield-1570`
 
@@ -121,32 +93,6 @@
   - `osaka:source:ishiyama-site`: 大阪市中央区『石山（大坂）本願寺推定地』 — 石山（大坂）本願寺推定地; 作成者: 大阪市中央区; 2026年; 参照日: 2026-10-04 — rights: `restricted` — https://www.city.osaka.lg.jp/chuo/page/0000641506.html
   - `osaka:source:shape-notes`: Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 — 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md
 
-### `osaka:version:kawachi-bay-300`
-
-- 地物: 河内湾・河内湖（古代・概略面） (`osaka:entity:kawachi-bay`)
-- geometry: `Polygon`
-- 年代: -1000–300年
-- 権利: `open-license` — 表示: Chronomap（概略復元）、大阪府（引用メタデータ） — 外部資料の本文・図版・地図画像は再現しない。概略面は正確な古代海岸線ではない。
-- 不確実性:
-  - `temporal`: `approximate` — 河内湾・河内湖の形成と縮小を、古代の広い時期を代表する表示年で示します。 (Evidence: `osaka:evidence:kawachi-bay`)
-  - `location`: `approximate` — 上町台地東側の水域という相対位置を概略面で示します。 (Evidence: `osaka:evidence:kawachi-bay`, `osaka:evidence:kawachi-bay-shape`)
-  - `geometry`: `approximate` — 少数頂点で作った概略面で、古代の正確な海岸線・水深・水面ではありません。 (Evidence: `osaka:evidence:kawachi-bay-shape`)
-  - `identity`: `well-supported` — 大阪府資料が説明する河内湾・河内湖の地形文脈を示します。 (Evidence: `osaka:evidence:kawachi-bay`)
-
-- Evidence:
-
-| Evidence | 用途 | supports | locator | source |
-|---|---|---|---|---|
-| `osaka:evidence:kawachi-bay` | citation | identity, location, temporal | 大阪湾・河内湾・河内湖の形成と古代の海岸線に関する歴史説明 | `osaka:source:bay-vision` |
-  - `osaka:evidence:kawachi-bay` — 大阪府資料が説明する、海水面変化と河内湾・河内湖の地形変化を引用メタデータとして使用します。正確な古代海岸線や水深を示す資料ではありません。
-| `osaka:evidence:kawachi-bay-shape` | derived-geometry | geometry, location | 河内湾・河内湖Polygonの作成方法と限界 | `osaka:source:shape-notes` |
-  - `osaka:evidence:kawachi-bay-shape` — 大阪府の地形説明と上町台地・東部大阪の相対関係を、少数頂点の概略面へ置き換えました。古代の正確な海岸線・水深・水面ではありません。 (publicationBasis: `original-reconstruction`)
-
-- Source:
-
-  - `osaka:source:bay-vision`: 大阪府『大阪広域ベイエリアまちづくりビジョン（素案）』 — 大阪広域ベイエリアまちづくりビジョン（素案）; 作成者: 大阪府; 2021年; 参照日: 2026-10-04 — rights: `restricted` — https://www.pref.osaka.lg.jp/documents/2275/0520shiryou1-2_2.pdf
-  - `osaka:source:shape-notes`: Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 — 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04 — rights: `open-license`; 表示: Chronomap contributors — https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md
-
 ### `osaka:version:watanabe-port-1496`
 
 - 地物: 渡辺津（中世・代表点） (`osaka:entity:watanabe-port`)
@@ -203,10 +149,8 @@
 
 | Source | citation | metadata | rights | terms |
 |---|---|---|---|---|
-| `osaka:source:bay-vision` | 大阪府『大阪広域ベイエリアまちづくりビジョン（素案）』 | 大阪広域ベイエリアまちづくりビジョン（素案）; 作成者: 大阪府; 2021年; 参照日: 2026-10-04; https://www.pref.osaka.lg.jp/documents/2275/0520shiryou1-2_2.pdf | restricted | 引用メタデータのみ。PDF本文・図版・地図画像は再現しない。 |
 | `osaka:source:city-history` | 大阪市『大阪市の歴史－タイムトリップ20,000年（飛鳥・奈良時代以降）』 | 大阪市の歴史－タイムトリップ20,000年（飛鳥・奈良時代以降）; 作成者: 大阪市; 2026年; 参照日: 2026-10-04; https://www.city.osaka.lg.jp/seisakukikakushitsu/page/0000010252.html | restricted | 引用メタデータのみ。ページ本文・写真・図版は再現しない。 |
 | `osaka:source:ishiyama-site` | 大阪市中央区『石山（大坂）本願寺推定地』 | 石山（大坂）本願寺推定地; 作成者: 大阪市中央区; 2026年; 参照日: 2026-10-04; https://www.city.osaka.lg.jp/chuo/page/0000641506.html | restricted | 引用メタデータのみ。本文・写真・説明板画像は再現しない。 |
-| `osaka:source:port-history` | 大阪市『大阪港の景観特性をとらえる要素・歴史』 | 大阪港の景観特性をとらえる要素・歴史; 作成者: 大阪市港湾局; 2018年; 参照日: 2026-10-05; https://www.city.osaka.lg.jp/port/page/0000432129.html | restricted | 引用メタデータのみ。ページ本文・写真・図版は再現しない。 |
 | `osaka:source:shape-notes` | Chronomap『大坂・石山本願寺と河内湾形状作成メモ』 | 大坂・石山本願寺と河内湾形状作成メモ; 作成者: Chronomap contributors; 2026年; 参照日: 2026-10-04; https://github.com/ywatase/chronomap/blob/main/docs/data/osaka-shape-notes.md | open-license; 表示: Chronomap contributors | 公開メタデータから作成した概略復元メモ。 |
 
 ## 監査上の注意

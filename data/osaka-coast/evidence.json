@@ -1,0 +1,185 @@
+[
+  {
+    "id": "osaka-coast:evidence:sea-jomon-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『縄文時代前期〜中期（約7000〜5500年前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-jomon-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『海と湖の底にあった大阪平野（古代）』の本文と図（松田順一郎氏原図）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-yayoi-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『弥生時代中期（約2000年前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-yayoi-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『海と湖の底にあった大阪平野（古代）』の本文と図（松田順一郎氏原図）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-kofun-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『古墳時代〜古代』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-kofun-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『海と湖の底にあった大阪平野（古代）』の本文と図（松田順一郎氏原図）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-edo-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『中世〜江戸初期（大和川付け替え前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:sea-edo-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『安治川を開削した河村瑞賢と大和川付け替えを実現させた中甚兵衛』の本文と中世の河川図",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-yayoi-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『弥生時代中期（約2000年前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-yayoi-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『海と湖の底にあった大阪平野（古代）』の本文と図（松田順一郎氏原図）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-kofun-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『古墳時代〜古代』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-kofun-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『海と湖の底にあった大阪平野（古代）』の本文と図（松田順一郎氏原図）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-edo-geometry",
+    "sourceId": "osaka-coast:source:shape-notes",
+    "locator": "『中世〜江戸初期（大和川付け替え前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の本文の地名と図の相対位置を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "osaka-coast:evidence:lake-edo-temporal",
+    "sourceId": "osaka-coast:source:mlit-yodogawa-history",
+    "locator": "『安治川を開削した河村瑞賢と大和川付け替えを実現させた中甚兵衛』の本文と中世の河川図",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "各時代の河内湾・河内湖・大阪湾岸の状態を確認する引用メタデータ。本文・図は再現しない。"
+  },
+  {
+    "id": "osaka-coast:evidence:bay-vision",
+    "sourceId": "osaka-coast:source:bay-vision",
+    "locator": "大阪湾・河内湾・河内湖の形成と古代の海岸線に関する歴史説明",
+    "usage": "citation",
+    "supports": [
+      "location",
+      "identity"
+    ],
+    "note": "海水面変化と河内湾・河内湖の地形変化を引用メタデータとして使う。正確な古代海岸線や水深を示す資料ではない。"
+  },
+  {
+    "id": "osaka-coast:evidence:port-history",
+    "sourceId": "osaka-coast:source:port-history",
+    "locator": "古代大阪の河内湖と、半島のように突き出た上町台地に関する地形説明",
+    "usage": "citation",
+    "supports": [
+      "location",
+      "identity"
+    ],
+    "note": "上町台地と水域の相対関係を示す引用メタデータ。座標付きの古代海岸線測量ではない。"
+  }
+]

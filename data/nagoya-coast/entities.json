@@ -1,0 +1,12 @@
+[
+  {
+    "id": "nagoya-coast:entity:ise-bay-head",
+    "type": "coastline",
+    "labels": {
+      "ja": "伊勢湾奥の海（濃尾平野）"
+    },
+    "description": {
+      "ja": "濃尾平野南部に入り込んでいた伊勢湾奥の海。木曽三川の堆積と近世以降の干拓で南へ後退した。"
+    }
+  }
+]

@@ -1,0 +1,75 @@
+[
+  {
+    "id": "nagoya-coast:source:env-chubu-history",
+    "type": "official-report",
+    "citation": "環境省中部地方環境事務所『伊勢・三河湾流域における土地の履歴』",
+    "title": {
+      "ja": "伊勢・三河湾流域における土地の履歴"
+    },
+    "creators": [
+      "環境省中部地方環境事務所"
+    ],
+    "publishedYear": 2010,
+    "url": "https://chubu.env.go.jp/to_2010/data/0518b_4.pdf",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。掲載図は書籍からの転載で、図・本文は再現しない。"
+    }
+  },
+  {
+    "id": "nagoya-coast:source:fujimae-history",
+    "type": "official-web-page",
+    "citation": "環境省中部地方環境事務所『藤前干潟の歴史』",
+    "title": {
+      "ja": "藤前干潟の歴史"
+    },
+    "creators": [
+      "環境省中部地方環境事務所"
+    ],
+    "publishedYear": 2010,
+    "url": "https://chubu.env.go.jp/wildlife/mat/m_1_1_11_1.html",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・図は再現しない。"
+    }
+  },
+  {
+    "id": "nagoya-coast:source:nagoya-city-history",
+    "type": "official-report",
+    "citation": "名古屋市『第2章 名古屋のまちの成り立ち』",
+    "title": {
+      "ja": "名古屋のまちの成り立ち"
+    },
+    "creators": [
+      "名古屋市"
+    ],
+    "publishedYear": 2015,
+    "url": "https://www.city.nagoya.jp/_res/projects/default_project/_page_/001/017/243/02honpen2.pdf",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "restricted",
+      "terms": "引用メタデータのみ。本文・図は再現しない。"
+    }
+  },
+  {
+    "id": "nagoya-coast:source:shape-notes",
+    "type": "original-reconstruction-notes",
+    "citation": "Chronomap『名古屋・伊勢湾奥の海岸線 形状作成メモ』",
+    "title": {
+      "ja": "名古屋・伊勢湾奥の海岸線 形状作成メモ"
+    },
+    "creators": [
+      "Chronomap contributors"
+    ],
+    "publishedYear": 2026,
+    "url": "https://github.com/ywatase/chronomap/blob/main/docs/data/nagoya-coast-shape-notes.md",
+    "accessedDate": "2026-10-17",
+    "rights": {
+      "status": "open-license",
+      "attribution": "Chronomap contributors",
+      "terms": "Chronomapのオリジナルな概略復元メモ。外部資料の権利条件は個別Sourceに従う。"
+    }
+  }
+]

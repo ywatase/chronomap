@@ -1,0 +1,104 @@
+[
+  {
+    "id": "nagoya-coast:evidence:jomon-geometry",
+    "sourceId": "nagoya-coast:source:shape-notes",
+    "locator": "『約6000年前（縄文時代前期）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の推定海岸線と本文の地名を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "nagoya-coast:evidence:jomon-temporal",
+    "sourceId": "nagoya-coast:source:env-chubu-history",
+    "locator": "p.3 図2『濃尾平野の各時代の推定海岸線』（出典: 上田篤・中村良夫・樋口忠彦『日本人はどのように国土をつくったか』）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "縄文前期・弥生・古墳後期の推定海岸線と近世以降の干拓地を示す図の引用メタデータ。図は再現しない。"
+  },
+  {
+    "id": "nagoya-coast:evidence:yayoi-geometry",
+    "sourceId": "nagoya-coast:source:shape-notes",
+    "locator": "『弥生時代』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の推定海岸線と本文の地名を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "nagoya-coast:evidence:yayoi-temporal",
+    "sourceId": "nagoya-coast:source:env-chubu-history",
+    "locator": "p.3 図2『濃尾平野の各時代の推定海岸線』（出典: 上田篤・中村良夫・樋口忠彦『日本人はどのように国土をつくったか』）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "縄文前期・弥生・古墳後期の推定海岸線と近世以降の干拓地を示す図の引用メタデータ。図は再現しない。"
+  },
+  {
+    "id": "nagoya-coast:evidence:kofun-geometry",
+    "sourceId": "nagoya-coast:source:shape-notes",
+    "locator": "『古墳時代後期』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の推定海岸線と本文の地名を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "nagoya-coast:evidence:kofun-temporal",
+    "sourceId": "nagoya-coast:source:env-chubu-history",
+    "locator": "p.3 図2『濃尾平野の各時代の推定海岸線』（出典: 上田篤・中村良夫・樋口忠彦『日本人はどのように国土をつくったか』）",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "縄文前期・弥生・古墳後期の推定海岸線と近世以降の干拓地を示す図の引用メタデータ。図は再現しない。"
+  },
+  {
+    "id": "nagoya-coast:evidence:edo-geometry",
+    "sourceId": "nagoya-coast:source:shape-notes",
+    "locator": "『江戸時代初期（新田開発の前）』の節",
+    "usage": "derived-geometry",
+    "supports": [
+      "geometry",
+      "location"
+    ],
+    "note": "資料の推定海岸線と本文の地名を、地理院の住所検索で得た基準点に当てはめて手作業で置いた概略面。図の画像はトレース・転載していない。",
+    "publicationBasis": "original-reconstruction"
+  },
+  {
+    "id": "nagoya-coast:evidence:edo-temporal",
+    "sourceId": "nagoya-coast:source:fujimae-history",
+    "locator": "「江戸時代初期の海岸線は東海道（現在の国道1号線）付近」の記述",
+    "usage": "citation",
+    "supports": [
+      "temporal",
+      "identity"
+    ],
+    "note": "江戸初期と後期（国道23号付近）の海岸線の位置を確認する引用メタデータ。本文は再現しない。"
+  },
+  {
+    "id": "nagoya-coast:evidence:nagoya-jomon-text",
+    "sourceId": "nagoya-coast:source:nagoya-city-history",
+    "locator": "p.7『地形』",
+    "usage": "citation",
+    "supports": [
+      "location"
+    ],
+    "note": "縄文前期の海岸線が名古屋台地に沿ってゾウの鼻のような形だったことの確認。"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "osaka-coast:entity:osaka-bay-head",
+    "type": "coastline",
+    "labels": {
+      "ja": "大阪湾・河内湾の海"
+    },
+    "description": {
+      "ja": "上町台地の東西に入り込んでいた大阪湾奥の海。淀川・大和川の堆積と近世の新田開発で西へ後退した。"
+    }
+  },
+  {
+    "id": "osaka-coast:entity:kawachi-lake",
+    "type": "waterbody",
+    "labels": {
+      "ja": "河内湖"
+    },
+    "description": {
+      "ja": "河内湾が砂州で閉ざされて淡水化した湖。縮小して深野池・新開池となり、1704年の大和川付け替え後に干拓された。"
+    }
+  }
+]

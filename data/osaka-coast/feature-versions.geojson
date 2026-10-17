@@ -1,0 +1,907 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:sea-jomon",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.465,
+              34.575
+            ],
+            [
+              135.494,
+              34.612
+            ],
+            [
+              135.508,
+              34.648
+            ],
+            [
+              135.511,
+              34.675
+            ],
+            [
+              135.518,
+              34.69
+            ],
+            [
+              135.527,
+              34.697
+            ],
+            [
+              135.537,
+              34.684
+            ],
+            [
+              135.535,
+              34.65
+            ],
+            [
+              135.54,
+              34.628
+            ],
+            [
+              135.6,
+              34.624
+            ],
+            [
+              135.622,
+              34.615
+            ],
+            [
+              135.656,
+              34.669
+            ],
+            [
+              135.647,
+              34.682
+            ],
+            [
+              135.645,
+              34.742
+            ],
+            [
+              135.662,
+              34.78
+            ],
+            [
+              135.65,
+              34.812
+            ],
+            [
+              135.616,
+              34.846
+            ],
+            [
+              135.565,
+              34.81
+            ],
+            [
+              135.56,
+              34.785
+            ],
+            [
+              135.52,
+              34.765
+            ],
+            [
+              135.5,
+              34.772
+            ],
+            [
+              135.42,
+              34.752
+            ],
+            [
+              135.38,
+              34.71
+            ],
+            [
+              135.38,
+              34.56
+            ],
+            [
+              135.465,
+              34.575
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:osaka-bay-head",
+        "labels": {
+          "ja": "大阪湾・河内湾の海（縄文時代前期〜中期（約7000〜5500年前）・概略）"
+        },
+        "description": {
+          "ja": "縄文海進で河内平野は河内湾の底にあり、上町台地が半島のように突き出ていた。湾は東は生駒山麓、南は八尾、北は高槻付近まで広がっていた。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": -4000,
+            "latestYear": -4000,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": -4000,
+            "latestYear": -4000,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「縄文時代前期〜中期（約7000〜5500年前）」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-jomon-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-jomon-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-jomon-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-jomon-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:bay-vision",
+          "osaka-coast:evidence:port-history",
+          "osaka-coast:evidence:sea-jomon-geometry",
+          "osaka-coast:evidence:sea-jomon-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:sea-yayoi",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.465,
+              34.575
+            ],
+            [
+              135.494,
+              34.612
+            ],
+            [
+              135.508,
+              34.648
+            ],
+            [
+              135.511,
+              34.675
+            ],
+            [
+              135.52,
+              34.694
+            ],
+            [
+              135.514,
+              34.711
+            ],
+            [
+              135.5,
+              34.728
+            ],
+            [
+              135.47,
+              34.742
+            ],
+            [
+              135.41,
+              34.742
+            ],
+            [
+              135.38,
+              34.71
+            ],
+            [
+              135.38,
+              34.56
+            ],
+            [
+              135.465,
+              34.575
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:osaka-bay-head",
+        "labels": {
+          "ja": "大阪湾・河内湾の海（弥生時代中期（約2000年前）・概略）"
+        },
+        "description": {
+          "ja": "天満〜長柄の砂州が北へ延びて河内湾が大阪湾から切り離され、海は上町台地の西側に残った。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「弥生時代中期（約2000年前）」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-yayoi-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-yayoi-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-yayoi-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-yayoi-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:bay-vision",
+          "osaka-coast:evidence:port-history",
+          "osaka-coast:evidence:sea-yayoi-geometry",
+          "osaka-coast:evidence:sea-yayoi-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:sea-kofun",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.465,
+              34.575
+            ],
+            [
+              135.494,
+              34.612
+            ],
+            [
+              135.508,
+              34.648
+            ],
+            [
+              135.511,
+              34.675
+            ],
+            [
+              135.518,
+              34.694
+            ],
+            [
+              135.51,
+              34.708
+            ],
+            [
+              135.49,
+              34.712
+            ],
+            [
+              135.46,
+              34.722
+            ],
+            [
+              135.41,
+              34.735
+            ],
+            [
+              135.38,
+              34.71
+            ],
+            [
+              135.38,
+              34.56
+            ],
+            [
+              135.465,
+              34.575
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:osaka-bay-head",
+        "labels": {
+          "ja": "大阪湾・河内湾の海（古墳時代〜古代・概略）"
+        },
+        "description": {
+          "ja": "淀川河口の堆積で海岸線はやや西へ下がった。難波津は上町台地北端付近にあった。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 500,
+            "latestYear": 500,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 500,
+            "latestYear": 500,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「古墳時代〜古代」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-kofun-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-kofun-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-kofun-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-kofun-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:sea-kofun-geometry",
+          "osaka-coast:evidence:sea-kofun-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:sea-edo",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.465,
+              34.575
+            ],
+            [
+              135.48,
+              34.61
+            ],
+            [
+              135.483,
+              34.646
+            ],
+            [
+              135.49,
+              34.662
+            ],
+            [
+              135.476,
+              34.675
+            ],
+            [
+              135.46,
+              34.69
+            ],
+            [
+              135.465,
+              34.715
+            ],
+            [
+              135.41,
+              34.73
+            ],
+            [
+              135.38,
+              34.71
+            ],
+            [
+              135.38,
+              34.56
+            ],
+            [
+              135.465,
+              34.575
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:osaka-bay-head",
+        "labels": {
+          "ja": "大阪湾・河内湾の海（中世〜江戸初期（大和川付け替え前）・概略）"
+        },
+        "description": {
+          "ja": "上町台地の西の船場が市街化し、海岸線は九条・伝法付近にあった。17世紀以降の新田開発・九条島の開発で西へ広がる。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 1600,
+            "latestYear": 1600,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 1600,
+            "latestYear": 1704,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「中世〜江戸初期（大和川付け替え前）」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-edo-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-edo-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-edo-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:sea-edo-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:sea-edo-geometry",
+          "osaka-coast:evidence:sea-edo-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:lake-yayoi",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.545,
+              34.7
+            ],
+            [
+              135.57,
+              34.73
+            ],
+            [
+              135.59,
+              34.745
+            ],
+            [
+              135.625,
+              34.76
+            ],
+            [
+              135.645,
+              34.74
+            ],
+            [
+              135.645,
+              34.69
+            ],
+            [
+              135.64,
+              34.665
+            ],
+            [
+              135.605,
+              34.655
+            ],
+            [
+              135.565,
+              34.66
+            ],
+            [
+              135.545,
+              34.675
+            ],
+            [
+              135.545,
+              34.7
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:kawachi-lake",
+        "labels": {
+          "ja": "河内湖（弥生時代中期（約2000年前）・概略）"
+        },
+        "description": {
+          "ja": "大阪湾から切り離された河内潟が淡水化した河内湖。上町台地の東麓から生駒山麓まで広がっていた。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": -100,
+            "latestYear": -100,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「弥生時代中期（約2000年前）」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-yayoi-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-yayoi-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-yayoi-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-yayoi-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:bay-vision",
+          "osaka-coast:evidence:lake-yayoi-geometry",
+          "osaka-coast:evidence:lake-yayoi-temporal",
+          "osaka-coast:evidence:port-history"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:lake-kofun",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              135.565,
+              34.705
+            ],
+            [
+              135.59,
+              34.73
+            ],
+            [
+              135.62,
+              34.745
+            ],
+            [
+              135.64,
+              34.73
+            ],
+            [
+              135.64,
+              34.69
+            ],
+            [
+              135.615,
+              34.675
+            ],
+            [
+              135.585,
+              34.68
+            ],
+            [
+              135.565,
+              34.69
+            ],
+            [
+              135.565,
+              34.705
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:kawachi-lake",
+        "labels": {
+          "ja": "河内湖（古墳時代〜古代・概略）"
+        },
+        "description": {
+          "ja": "堆積と仁徳期の治水で縮小した河内湖（草香江）。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 500,
+            "latestYear": 500,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 500,
+            "latestYear": 500,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「古墳時代〜古代」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-kofun-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-kofun-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-kofun-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-kofun-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:lake-kofun-geometry",
+          "osaka-coast:evidence:lake-kofun-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osaka-coast:version:lake-edo",
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                135.61,
+                34.725
+              ],
+              [
+                135.615,
+                34.74
+              ],
+              [
+                135.632,
+                34.735
+              ],
+              [
+                135.635,
+                34.71
+              ],
+              [
+                135.628,
+                34.695
+              ],
+              [
+                135.615,
+                34.7
+              ],
+              [
+                135.61,
+                34.725
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                135.583,
+                34.69
+              ],
+              [
+                135.585,
+                34.705
+              ],
+              [
+                135.605,
+                34.708
+              ],
+              [
+                135.612,
+                34.695
+              ],
+              [
+                135.598,
+                34.685
+              ],
+              [
+                135.583,
+                34.69
+              ]
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "entityId": "osaka-coast:entity:kawachi-lake",
+        "labels": {
+          "ja": "河内湖（中世〜江戸初期（大和川付け替え前）・概略）"
+        },
+        "description": {
+          "ja": "河内湖の名残の深野池（北）と新開池（南）。1704年の大和川付け替え後に干拓され新田となった。資料の本文の地名と図の相対位置をもとに現在地図上へ置いた概略面で、精密な岸線ではない。"
+        },
+        "temporal": {
+          "start": {
+            "earliestYear": 1600,
+            "latestYear": 1600,
+            "precision": "period",
+            "qualifier": "circa"
+          },
+          "end": {
+            "earliestYear": 1600,
+            "latestYear": 1704,
+            "precision": "period",
+            "qualifier": "circa"
+          }
+        },
+        "uncertainty": {
+          "temporal": {
+            "assessment": "approximate",
+            "note": "資料が示す「中世〜江戸初期（大和川付け替え前）」を代表年に置いた。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-edo-temporal"
+            ]
+          },
+          "location": {
+            "assessment": "approximate",
+            "note": "本文の地名（生駒山麓・八尾・高槻・天満・長柄など）と小さな図から置いた概略で、数km程度ずれうる。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-edo-geometry"
+            ]
+          },
+          "geometry": {
+            "assessment": "approximate",
+            "note": "少ない頂点の概略面。砂州・三角州・河道は表さない。",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-edo-geometry"
+            ]
+          },
+          "identity": {
+            "assessment": "well-supported",
+            "note": "",
+            "evidenceIds": [
+              "osaka-coast:evidence:lake-edo-temporal"
+            ]
+          }
+        },
+        "evidenceIds": [
+          "osaka-coast:evidence:lake-edo-geometry",
+          "osaka-coast:evidence:lake-edo-temporal"
+        ],
+        "publicationStatus": "public",
+        "rights": {
+          "status": "open-license",
+          "attribution": "Chronomap contributors（概略復元）",
+          "terms": "形はChronomapの概略復元。出典資料の図・本文は再現しない。"
+        }
+      }
+    }
+  ]
+}
