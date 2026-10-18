@@ -194,6 +194,7 @@ def test_edo_coast_band_is_sea_around_land_and_lakes_are_waterbodies(tmp_path: P
 
     lakes = [
         {"properties": {"id": "26007", "name": "巨椋池", "yomi": "おぐらいけ", "pref": "京都府", "remarks": "仮製2万参照"}, "geometry": {"type": "MultiPolygon", "coordinates": [[[[135.7, 34.9], [135.8, 34.9], [135.8, 34.95], [135.7, 34.9]]]]}},
+        {"properties": {"id": "26008", "name": "琵琶湖", "yomi": "びわこ", "pref": "滋賀県"}, "geometry": {"type": "MultiPolygon", "coordinates": [[[[136.0, 35.0], [136.1, 35.0], [136.1, 35.1], [136.0, 35.0]]]]}},
         {"properties": {"id": "99999", "name": "", "pref": "x"}, "geometry": None},
     ]
     for slug, package in (("edo-coast", edo.coast_package(band)), ("edo-lakes", edo.lake_package(lakes))):
@@ -202,5 +203,6 @@ def test_edo_coast_band_is_sea_around_land_and_lakes_are_waterbodies(tmp_path: P
     dataset = json.loads((tmp_path / "edo-coast" / "dataset.json").read_text(encoding="utf-8"))
     assert dataset["display"]["seaMask"] is True
     lake_features = json.loads((tmp_path / "edo-lakes" / "feature-versions.geojson").read_text(encoding="utf-8"))["features"]
-    assert [feature["properties"]["labels"]["ja"] for feature in lake_features] == ["巨椋池"]
+    assert [feature["properties"]["labels"]["ja"] for feature in lake_features] == ["琵琶湖"]
+    assert all(not feature["id"].endswith("lake-26007") for feature in lake_features)
     assert lake_features[0]["properties"]["temporal"]["end"]["latestYear"] == 1894

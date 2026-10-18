@@ -13,6 +13,7 @@ ACCESSED = "2026-10-17"
 JAPAN_BBOX = [122.0, 20.0, 154.0, 46.0]
 BAND_WIDTH = 0.08  # about 8 km
 SIMPLIFY_TOLERANCE = 0.0005
+EXCLUDED_LAKE_IDS = frozenset({"26007"})  # Maintained as the Ogurike historical time series in data/ogurike.
 # 江戸末期〜明治初期: Ino maps (to 1821) corrected over the 1884-1894 Shūsei 1:200,000 maps.
 PERIOD = {
     "start": {"earliestYear": 1800, "latestYear": 1868, "precision": "period", "qualifier": "circa"},
@@ -128,6 +129,8 @@ def lake_package(lakes: Iterable[Mapping[str, object]]):
     entities, features = [], []
     for lake in lakes:
         properties = lake.get("properties") or {}
+        if str(properties.get("id")).strip().lower() in EXCLUDED_LAKE_IDS:
+            continue
         name = str(properties.get("name") or "").strip()
         if not name or not lake.get("geometry"):
             continue

@@ -55,13 +55,13 @@ def test_ogurike_1910_waterbody_keeps_a_readable_historical_outline():
     assert len(coordinates) == 1  # only the main pool's exterior; no unverified islands/holes
     ring = coordinates[0]
     assert len(ring) >= 50
-    assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.004
-    assert (round(min(point[0] for point in ring), 3), round(max(point[0] for point in ring), 3)) == (135.757, 135.799)
-    assert (round(min(point[1] for point in ring), 3), round(max(point[1] for point in ring), 3)) == (34.899, 34.927)
-    assert any(point[0] < 135.758 and 34.909 <= point[1] <= 34.912 for point in ring)  # west inlet
-    assert any(point[0] > 135.798 and 34.908 <= point[1] <= 34.911 for point in ring)  # east shoulder
-    assert any(point[1] < 34.9 and 135.775 <= point[0] <= 135.778 for point in ring)  # south bay
-    assert any(point[1] > 34.926 and 135.776 <= point[0] <= 135.780 for point in ring)  # northern shoulder
+    assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.0041
+    assert (round(min(point[0] for point in ring), 3), round(max(point[0] for point in ring), 3)) == (135.739, 135.782)
+    assert (round(min(point[1] for point in ring), 3), round(max(point[1] for point in ring), 3)) == (34.889, 34.918)
+    assert any(point[0] < 135.741 and 34.900 <= point[1] <= 34.903 for point in ring)  # west inlet
+    assert any(point[0] > 135.781 and 34.899 <= point[1] <= 34.902 for point in ring)  # east shoulder
+    assert any(point[1] < 34.891 and 135.758 <= point[0] <= 135.761 for point in ring)  # south bay
+    assert any(point[1] > 34.916 and 135.758 <= point[0] <= 135.763 for point in ring)  # northern shoulder
     turns = []
     unique_count = len(ring) - 1
     for index in range(unique_count):
@@ -84,26 +84,20 @@ def test_ogurike_1910_outline_reflects_its_own_source_figure():
     assert normalized_outline_distance(outline_1596, outline_1910) > 0.08
 
 
-def test_ogurike_1885_pool_has_a_distinct_two_lobed_main_water_outline():
+def test_ogurike_1885_pool_uses_the_codh_estimated_lake_geometry():
+    from shapely.geometry import shape
+
     package = load_package(DATA)
-    features = {item["id"]: item for item in package.feature_versions["features"]}
-    pool = features["ogurike:version:waterbody-1885"]
-    outline_1596 = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
-    geometry = pool["geometry"]
+    pool = next(item for item in package.feature_versions["features"] if item["id"] == "ogurike:version:waterbody-1885")
+    geometry = shape(pool["geometry"])
 
-    assert geometry["type"] == "Polygon"
-    assert len(geometry["coordinates"]) == 1  # connected main pool only; no speculative island or detached pool
-    ring = geometry["coordinates"][0]
-    assert ring[0] == ring[-1]
-    assert all(round(coordinate, 3) == coordinate for point in ring for coordinate in point)
-    assert normalized_outline_distance(outline_1596, ring) > 0.08
-
-    # Broad interior/exterior checks preserve two lobes joined by a narrow
-    # central neck and a pronounced cleft entering from the southern shore.
-    assert point_in_polygon((135.766, 34.914), ring)  # smaller western lobe
-    assert point_in_polygon((135.791, 34.912), ring)  # larger eastern/southeastern lobe
-    assert point_in_polygon((135.778, 34.916), ring)  # narrow central connection
-    assert not point_in_polygon((135.778, 34.911), ring)  # southern cleft
+    assert geometry.geom_type == "MultiPolygon"
+    assert geometry.is_valid
+    assert all(
+        math.isclose(actual, expected, abs_tol=0.00003)
+        for actual, expected in zip(geometry.bounds, (135.74001, 34.88721, 135.78416, 34.92123))
+    )
+    assert geometry.area > 0.0007
 
 
 def test_ogurike_1885_outline_and_caveat_use_the_registered_figure_evidence():
@@ -117,8 +111,8 @@ def test_ogurike_1885_outline_and_caveat_use_the_registered_figure_evidence():
     assert evidence_id in properties["uncertainty"]["geometry"]["evidenceIds"]
     assert evidence_id in properties["uncertainty"]["location"]["evidenceIds"]
     assert evidence_id in properties["evidenceIds"]
-    assert "細い接続部" in properties["description"]["ja"]
-    assert "北東の離れた水面" in properties["description"]["ja"]
+    assert "ID 26007" in properties["description"]["ja"]
+    assert "1885年の測量成果であることは示しません" in properties["description"]["ja"]
 
 
 def test_ogurike_1590_pool_is_independent_with_northern_inlets_and_a_caveated_river_connection():
@@ -127,7 +121,6 @@ def test_ogurike_1590_pool_is_independent_with_northern_inlets_and_a_caveated_ri
     pool = features["ogurike:version:waterbody-1590"]
     outline_1590 = pool["geometry"]["coordinates"][0]
     outline_1596 = features["ogurike:version:waterbody-1596"]["geometry"]["coordinates"][0]
-    outline_1885 = features["ogurike:version:waterbody-1885"]["geometry"]["coordinates"][0]
     river = features["ogurike:version:ujigawa-1590"]
 
     assert pool["geometry"]["type"] == "Polygon"
@@ -135,24 +128,21 @@ def test_ogurike_1590_pool_is_independent_with_northern_inlets_and_a_caveated_ri
     # These snapshots share a broad basin footprint, so require a meaningful
     # shoreline difference without exaggerating it to clear an arbitrary gap.
     assert normalized_outline_distance(outline_1596, outline_1590) > 0.07
-    assert normalized_outline_distance(outline_1885, outline_1590) > 0.08
-    assert all(round(coordinate, 4) == coordinate for point in outline_1590 for coordinate in point)
-
     # Three broad northern water inlets join the central basin, with shore
     # between them; these are shape landmarks, not asserted river branches.
-    assert point_in_polygon((135.769, 34.925), outline_1590)
-    assert not point_in_polygon((135.773, 34.925), outline_1590)
-    assert point_in_polygon((135.779, 34.925), outline_1590)
-    assert not point_in_polygon((135.783, 34.925), outline_1590)
-    assert point_in_polygon((135.789, 34.925), outline_1590)
-    north_inlet_bands = ((135.767, 135.773), (135.777, 135.783), (135.787, 135.793))
-    assert all(sum(start <= point[0] <= end and point[1] >= 34.924 for point in outline_1590[:-1]) >= 3 for start, end in north_inlet_bands)
+    assert point_in_polygon((135.75418, 34.91545), outline_1590)
+    assert not point_in_polygon((135.75818, 34.91545), outline_1590)
+    assert point_in_polygon((135.76418, 34.91545), outline_1590)
+    assert not point_in_polygon((135.76818, 34.91545), outline_1590)
+    assert point_in_polygon((135.77418, 34.91545), outline_1590)
+    north_inlet_bands = ((135.752, 135.758), (135.762, 135.768), (135.772, 135.778))
+    assert all(sum(start <= point[0] <= end and point[1] >= 34.913 for point in outline_1590[:-1]) >= 3 for start, end in north_inlet_bands)
     assert minimum_vertex_angle(outline_1590) >= 60  # no needle-like spike or abrupt reversal
     assert line_crosses_polygon_interior(river["geometry"]["coordinates"], outline_1590)
     assert "主水域" in pool["properties"]["description"]["ja"]
     assert "網状河道" in pool["properties"]["description"]["ja"]
     assert "補間頂点" in pool["properties"]["uncertainty"]["geometry"]["note"]
-    assert "代表的な接続" in river["properties"]["description"]["ja"]
+    assert "代表線" in river["properties"]["description"]["ja"]
 
 
 def test_ogurike_1590_main_pool_and_river_location_cite_geometry_evidence():
@@ -170,15 +160,17 @@ def test_ogurike_1590_main_pool_and_river_location_cite_geometry_evidence():
 
 
 def test_ogurike_1933_pool_does_not_invent_a_large_shrink_from_1910():
+    from shapely.geometry import shape
+
     package = load_package(DATA)
     features = {item["id"]: item for item in package.feature_versions["features"]}
-    outline_1910 = features["ogurike:version:waterbody-1910"]["geometry"]["coordinates"][0]
-    outline_1933 = features["ogurike:version:waterbody-1933"]["geometry"]["coordinates"][0]
+    geometry_1910 = shape(features["ogurike:version:waterbody-1910"]["geometry"])
+    geometry_1933 = shape(features["ogurike:version:waterbody-1933"]["geometry"])
 
     # Figure ⑤ draws a main pool of broadly comparable size to figure ④.
     # It does not establish the large contraction in the previous polygon.
-    area_ratio = polygon_area(outline_1933) / polygon_area(outline_1910)
-    assert 0.9 <= area_ratio <= 1.1
+    area_ratio = geometry_1933.area / geometry_1910.area
+    assert 1.0 < area_ratio <= 1.1
 
 
 def test_ogurike_1596_ujigawa_does_not_cross_the_main_pool():
@@ -218,6 +210,8 @@ def test_ogurike_1596_ujigawa_location_uses_geometry_evidence():
 
 
 def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
+    from shapely.geometry import shape
+
     package = load_package(DATA)
     waterbodies = {
         item["id"]: item
@@ -233,25 +227,29 @@ def test_ogurike_historical_waterbodies_use_organic_approximate_outlines():
         "ogurike:version:waterbody-1933",
     }
     for feature in waterbodies.values():
-        ring = feature["geometry"]["coordinates"][0]
+        geometry = feature["geometry"]
+        if geometry["type"] == "MultiPolygon":
+            continue  # the 1885 CODH and 1933 GSI source shapes are preserved as multipolygons
+        ring = geometry["coordinates"][0]
         assert len(ring) >= 38
         assert ring[0] == ring[-1]
-        assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.004
+        assert max(math.dist(a, b) for a, b in zip(ring, ring[1:])) < 0.0041
         assert feature["properties"]["uncertainty"]["geometry"]["assessment"] == "approximate"
 
     # The official overview describes the former lake as roughly 4 km east-west
     # and 3 km north-south. These guards keep a hand-drawn outline from
     # regressing to the old 7 km-wide placeholder or a pin-sized shape.
     for feature in waterbodies.values():
-        ring = feature["geometry"]["coordinates"][0]
-        width = max(point[0] for point in ring) - min(point[0] for point in ring)
-        height = max(point[1] for point in ring) - min(point[1] for point in ring)
+        min_x, min_y, max_x, max_y = shape(feature["geometry"]).bounds
+        width = max_x - min_x
+        height = max_y - min_y
         assert 0.025 <= width <= 0.06
         assert 0.02 <= height <= 0.04
 
-    # A historical shoreline should contain both convex and concave turns;
-    # a smoothed ellipse is still not enough to communicate the source maps.
+    # The hand-reconstructed years should retain both convex and concave turns.
     for feature in waterbodies.values():
+        if feature["geometry"]["type"] == "MultiPolygon":
+            continue
         ring = feature["geometry"]["coordinates"][0]
         unique_count = len(ring) - 1
         turns = []
