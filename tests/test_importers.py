@@ -268,3 +268,38 @@ def test_katori_dem_flood_fill_uses_threshold_and_ocean_connectivity_only():
     mask = katori.flood_fill(elevations, threshold_m=4, seeds=[(0, 0)])
 
     assert [list(row) for row in mask] == [[1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]]
+
+
+def test_katori_dem_grid_loads_and_assembles_tiles(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    from array import array
+
+    from chronomap_data.importers import katori
+
+    def fake_fetch(_zoom: int, _x: int, _y: int, _cache_dir: Path):
+        return [array("h", [123]) * 256 for _ in range(256)], "dem5a_png/z13"
+
+    monkeypatch.setattr(katori, "fetch_dem_tile", fake_fetch)
+
+    rows, _origin_x, _origin_y, layers = katori.load_dem_grid(
+        bbox=(140.0, 35.0, 140.001, 35.001), cache_dir=tmp_path, padding=0
+    )
+
+    assert len(rows) == 256
+    assert len(rows[0]) == 256
+    assert rows[0][0] == 123
+    assert layers == {"dem5a_png/z13"}
+
+
+def test_katori_dem_parent_tile_is_upsampled_into_its_z13_child():
+    from array import array
+
+    from chronomap_data.importers import katori
+
+    parent = [array("h", range(256)) for _ in range(256)]
+
+    child = katori._upsample_parent(parent, child_x=1, child_y=0)
+
+    assert len(child) == 256
+    assert list(child[0][:6]) == [128, 128, 129, 129, 130, 130]
+    assert child[1][0] == 128
+    assert child[255][0] == 128

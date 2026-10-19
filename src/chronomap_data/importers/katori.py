@@ -244,7 +244,7 @@ def _upsample_parent(parent: list[array], child_x: int, child_y: int) -> list[ar
         expanded = array("h")
         for value in parent_row[left : left + 128]:
             expanded.extend((value, value))
-        result.extend((expanded, expanded.copy()))
+        result.extend((expanded, expanded[:]))
     return result
 
 
@@ -281,7 +281,7 @@ def load_dem_grid(
     width = (max(x for x, _y in tiles) - min_x + 1) * 256
     height = (max(y for _x, y in tiles) - min_y + 1) * 256
     blank = array("h", [MISSING]) * width
-    grid = [blank.copy() for _row in range(height)]
+    grid = [blank[:] for _row in range(height)]
     layers: set[str] = set()
 
     for tile_x, tile_y in tiles:
