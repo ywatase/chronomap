@@ -86,6 +86,7 @@ def test_imported_katori_periods_cover_the_two_inlets_and_join_sawara_to_choshi(
         "Sakura": Point(140.224197, 35.723396),
         "Hokota plateau (Otake)": Point(140.574371, 36.159828),
         "Tsukuba": Point(140.077118, 36.083504),
+        "Inbanuma connector ridge (28.75m)": Point(140.13618, 35.79275),
     }
 
     assert {feature["properties"]["temporal"]["start"]["earliestYear"] for feature in features} == {700, 1200, 1600}
@@ -96,9 +97,23 @@ def test_imported_katori_periods_cover_the_two_inlets_and_join_sawara_to_choshi(
         assert all(not geometry.covers(point) for point in highlands.values()), year
         parts = list(geometry.geoms)
         choshi_part = next(part for part in parts if part.covers(points["Choshi"]))
-        assert all(choshi_part.covers(point) for point in points.values()), year
+        assert all(choshi_part.covers(points[name]) for name in ("Sawara Tone", "Kasumigaura", "Kitaura")), year
+        assert not choshi_part.covers(points["Inbanuma"]), year
+        assert not choshi_part.covers(points["Teganuma"]), year
         sawara_part = next(part for part in parts if part.covers(points["Sawara Tone"]))
         assert sawara_part.equals(choshi_part), year
+
+
+def test_katori_excludes_unconnected_outer_ocean_components():
+    from shapely.geometry import Point, shape
+
+    package = load_package(Path(__file__).parents[1] / "data" / "katori-sea")
+    outer_ocean = [Point(140.62, 36.20), Point(140.70, 35.70)]
+
+    for feature in package.feature_versions["features"]:
+        year = feature["properties"]["temporal"]["start"]["earliestYear"]
+        geometry = shape(feature["geometry"])
+        assert all(not geometry.covers(point) for point in outer_ocean), year
 
 
 def test_katori_package_cites_named_inlet_and_sawara_corrections():

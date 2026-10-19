@@ -43,8 +43,17 @@ TEGANUMA_CONTROL_COORDINATE = (140.06, 35.86)  # PM指定の入り江検査点
 SAWARA_TONE_CONTROL_COORDINATE = (140.50, 35.90)  # PM指定の利根川検査点
 INBANUMA_LOCAL_THRESHOLD_M = 4.0
 TEGANUMA_LOCAL_THRESHOLD_M = 5.0
-INLET_CONNECTION_WIDTH_M = 300.0
 SAWARA_CONNECTION_WIDTH_M = {1200: 300.0, 1600: 700.0}
+KASUMIGAURA_CONTROL_COORDINATE = (140.396591780667, 36.0298025049868)
+KITAURA_CONTROL_COORDINATE = (140.561652034978, 36.0457649168077)
+SUPPORTED_WATER_COORDINATES = (
+    CHOSHI_SEED_COORDINATE,
+    INBANUMA_CONTROL_COORDINATE,
+    TEGANUMA_CONTROL_COORDINATE,
+    SAWARA_TONE_CONTROL_COORDINATE,
+    KASUMIGAURA_CONTROL_COORDINATE,
+    KITAURA_CONTROL_COORDINATE,
+)
 MIN_COMPONENT_AREA_M2 = 10_000.0
 MIN_HOLE_AREA_M2 = 10_000.0
 def _paeth(left: int, above: int, upper_left: int) -> int:
@@ -588,9 +597,9 @@ def sawara_tone_correction(base, year: int):
 
 
 def correct_katori_geometry(base, year: int, extra_additions: Sequence = ()):
-    """Apply the ocean cut, Choshi inlet, bbox clip, and 1ha cleanup."""
+    """Apply named corrections, discard unsupported components, and clean geometry."""
     from shapely import union_all
-    from shapely.geometry import MultiPolygon, Polygon, box
+    from shapely.geometry import MultiPolygon, Point, Polygon, box
 
     additions = list(extra_additions)
     if year in CHOSHI_OUTLET_YEARS:
@@ -608,7 +617,16 @@ def correct_katori_geometry(base, year: int, extra_additions: Sequence = ()):
             if Polygon(interior).area >= MIN_HOLE_AREA_M2
         ]
         cleaned.append(Polygon(polygon.exterior.coords, holes))
-    projected = union_all(cleaned) if cleaned else MultiPolygon()
+    supported_points = [
+        Point(*_lon_lat_to_web_mercator(*coordinate))
+        for coordinate in SUPPORTED_WATER_COORDINATES
+    ]
+    supported = [
+        polygon
+        for polygon in cleaned
+        if any(polygon.covers(point) for point in supported_points)
+    ]
+    projected = union_all(supported) if supported else MultiPolygon()
     geography = _transform_web_mercator_geometry(projected)
     return geography.intersection(box(*STUDY_BBOX))
 
@@ -829,14 +847,14 @@ def package(geometries: Mapping[int, object], accessed: str):
             "id": evidence_ids["inbanuma"], "sourceId": source_ids["notes"],
             "locator": "形状メモの『印旛沼の入り江』補正。PM指定点(140.20,35.77)、DEM局所成分4m以下、全3年代。",
             "usage": "derived-geometry", "supports": ["geometry", "location"],
-            "note": "香取市Vol.208は中世頃の香取海が印旛沼を含むと説明する。局所DEM低地成分を抽出し、最大主水域まで幅300mの概略回廊でつないだ。各代表年へ適用することは長期的な水域範囲を用いたモデル推定であり、各年の正確な湖岸を示さない。",
+            "note": "香取市Vol.208は中世頃の香取海が印旛沼を含むと説明する。指定点を含む局所DEM低地成分を抽出し、個別の接続水路は資料で特定できないため主水域との回廊を作らず保持した。各代表年へ適用することは長期的な水域範囲を用いたモデル推定であり、各年の正確な湖岸を示さない。",
             "publicationBasis": "original-reconstruction",
         },
         {
             "id": evidence_ids["teganuma"], "sourceId": source_ids["notes"],
             "locator": "形状メモの『手賀沼の入り江』補正。PM指定点(140.06,35.86)、DEM局所成分5m以下、全3年代。",
             "usage": "derived-geometry", "supports": ["geometry", "location"],
-            "note": "香取市Vol.208は中世頃の香取海が手賀沼を含むと説明する。局所DEM低地成分を抽出し、最大主水域まで幅300mの概略回廊でつないだ。各代表年へ適用することは長期的な水域範囲を用いたモデル推定であり、各年の正確な湖岸を示さない。",
+            "note": "香取市Vol.208は中世頃の香取海が手賀沼を含むと説明する。指定点を含む局所DEM低地成分を抽出し、個別の接続水路は資料で特定できないため主水域との回廊を作らず保持した。各代表年へ適用することは長期的な水域範囲を用いたモデル推定であり、各年の正確な湖岸を示さない。",
             "publicationBasis": "original-reconstruction",
         },
         {
@@ -886,9 +904,7 @@ def import_katori(output_root: Path, cache_dir: Path, today: datetime.date | Non
         base = polygonize_mask(mask, grid_transform, STUDY_BBOX)
         additions = [
             inbanuma_geometry,
-            connect_geometry_to_main(base, inbanuma_geometry, INLET_CONNECTION_WIDTH_M),
             teganuma_geometry,
-            connect_geometry_to_main(base, teganuma_geometry, INLET_CONNECTION_WIDTH_M),
         ]
         if year in SAWARA_CONNECTION_WIDTH_M:
             additions.append(sawara_tone_correction(base, year))

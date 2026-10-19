@@ -316,15 +316,33 @@ def test_katori_period_corrections_cut_ocean_and_restore_choshi_outlet():
     base = box(140.7, 35.736, 140.8, 35.738)
     choshi = Point(*katori.CHOSHI_SEED_COORDINATE)
 
-    medieval = katori.correct_katori_geometry(base, year=1200)
+    medieval_outlet = katori.choshi_outlet_correction(base)
     ancient = katori.correct_katori_geometry(base, year=700)
     outside_ocean = katori.outer_ocean_exclusion()
 
-    assert medieval.distance(choshi) < 1e-8
-    assert ancient.distance(choshi) > 0.01
+    assert medieval_outlet.covers(choshi)
+    assert 1200 in katori.CHOSHI_OUTLET_YEARS
+    assert 700 not in katori.CHOSHI_OUTLET_YEARS
+    assert ancient.is_empty
     assert outside_ocean.covers(Point(140.9, 36.1))
     assert outside_ocean.covers(Point(140.7, 35.66))
     assert not outside_ocean.covers(Point(140.5, 35.9))
+
+
+def test_katori_correction_discards_unconnected_nodata_components():
+    from shapely.geometry import MultiPolygon, Point, box
+
+    from chronomap_data.importers import katori
+
+    main = box(140.38, 36.02, 140.41, 36.04)
+    outer_ocean = box(140.61, 36.18, 140.80, 36.22)
+
+    corrected = katori.correct_katori_geometry(MultiPolygon([main, outer_ocean]), 700)
+
+    assert corrected.covers(Point(*katori.KASUMIGAURA_CONTROL_COORDINATE))
+    assert not corrected.covers(Point(140.62, 36.20))
+    parts = list(corrected.geoms) if hasattr(corrected, "geoms") else [corrected]
+    assert len(parts) == 1
 
 
 def test_katori_corrections_clip_to_study_bbox():

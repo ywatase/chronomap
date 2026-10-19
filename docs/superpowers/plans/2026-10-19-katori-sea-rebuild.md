@@ -27,6 +27,8 @@
 - 台地・尾根を横切る誤接続 — 閾値を超える1セルが経路を遮断する合成DEMテスト。
 - 東端の外洋面が研究範囲外へ広がる — 出力を指定bboxに切る。
 - 古地図画像の再配布 — 比較用コピーは`.cache/raw/katori-sea/`に限定し、パッケージとcommitには入れない。
+- 補正回廊が台地を横切る誤接続 — 指定水域点を個別に検査し、史料が裏付けない湖間接続は加えない。
+- 外洋カット後の孤立NoData成分 — 指定された水域点を含まない成分を除き、bbox内の無関係な外洋を残さない。
 
 ---
 
@@ -111,3 +113,7 @@
 - [x] **Step 4: Run `uv run chronomap-data build-tiles data imports --output web/public/chronomap`, `cd web && npm test`, and `npm run test:browser`** on a port other than 4173; capture year views and visual comparisons.
 - [x] **Step 5: Inspect screenshots** to confirm Joso, Hokuso, and Kashima plateaus remain land and the sea follows low valleys.
 - [x] **Step 6: Commit** final docs, audit, tests, screenshots, and state.
+
+## Review follow-up
+
+Fresh reviewで、印旛沼への直線回廊が28.75mの台地を水域化すること、外洋カット後に大きな孤立NoData成分が残ることを確認した。資料を更新した後、指定点の水域包含・台地除外・未採用外洋成分の除外を失敗テストで再現し、局所入り江は主水域に接続せず保持、名前のない孤立成分は除外する。佐原〜銚子の連結は維持する。
