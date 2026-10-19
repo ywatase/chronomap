@@ -8,8 +8,8 @@ The architecture is recorded in
 [ADR 0008](docs/adr/0008-seamless-national-map-with-temporal-vector-tiles.md).
 
 ```text
-data/<slug>/      hand-authored 5-file packages (in Git)
-imports/<slug>/   packages generated from pinned external data (not in Git)
+data/<slug>/      versioned 5-file packages (in Git), including selected generated datasets
+imports/<slug>/   temporary packages generated from external data (not in Git)
       │  chronomap-data build-tiles data imports
       ▼
 web/public/chronomap/   chronomap.pmtiles + manifest.json + details/ (not in Git)
@@ -40,9 +40,9 @@ tippecanoe --version
 
 ## Build the map data
 
-Import the external datasets. Raw files are downloaded once into `.cache/raw/`
-and rejected unless their SHA-256 matches the pinned value; packages are
-written to `imports/`.
+Import the external datasets. Raw inputs are cached under `.cache/raw/`;
+versioned datasets are written to `data/` only when their importer documents
+that destination, and other generated packages go to `imports/`.
 
 ```sh
 uv run chronomap-data import world       # historical-basemaps, GPL-3.0 (about 1 minute)
@@ -50,6 +50,7 @@ uv run chronomap-data import bakumatsu   # Bakumatsu villages, provinces, domain
 uv run chronomap-data import wikidata    # castles and battles in Japan, CC0 (live query; retrieval date is recorded)
 uv run chronomap-data import edo         # Edo-period coastline (as near-shore sea) and lakes, CC BY 4.0 (about 4 minutes)
 uv run chronomap-data import landform    # modern drained and coastal reclaimed land, GSI (first run fetches ~39,000 tiles, about 4 hours)
+uv run chronomap-data import katori      # DEM-based Katori Sea reconstruction (GSI elevation tiles; see docs/data/katori-sea-import.md)
 ```
 
 Build the national tiles and detail indexes from every package (about 10
