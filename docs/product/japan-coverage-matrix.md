@@ -2,11 +2,11 @@
 
 この表は、公開FeatureVersionから到達できる正規化メタデータだけを決定的に集計する。Source本文・画像・碑文などの第三者コンテンツは複製しない。
 
-- 対象地域: 9
-- 公開Entity: 33
-- 公開FeatureVersion: 53
-- 到達可能Evidence: 93
-- 到達可能Source: 45
+- 対象地域: 10
+- 公開Entity: 34
+- 公開FeatureVersion: 56
+- 到達可能Evidence: 104
+- 到達可能Source: 52
 - 不足型の扱い: 資料・権利・不確実性を確認できるまで推測で補完しない
 
 ## 地域別集計
@@ -21,6 +21,7 @@
 | 大坂・石山本願寺パイロット | `osaka:dataset:ishiyama-pilot` | 5 | 5 | 8 | 3 | 3/3 | `watercourse` × 1, `fortification` × 1, `settlement` × 1, `port` × 1, `battlefield` × 1 |
 | 関ケ原古戦場・中山道パイロット | `sekigahara:dataset:battlefield-pilot` | 3 | 3 | 7 | 4 | 4/4 | `settlement` × 1, `battlefield` × 1, `route` × 1 |
 | 名古屋・伊勢湾奥の海岸線（縄文〜江戸初期） | `nagoya-coast:dataset:pilot` | 1 | 4 | 9 | 4 | 4/4 | `coastline` × 1 |
+| 香取海の推定水域（DEM） | `katori-sea:dataset:dem-reconstruction` | 1 | 3 | 11 | 7 | 7/7 | `coastline` × 1 |
 | 大阪湾奥・河内湖（縄文〜江戸初期） | `osaka-coast:dataset:pilot` | 2 | 7 | 16 | 4 | 4/4 | `waterbody` × 1, `coastline` × 1 |
 
 ## 不足する許可Entity type
@@ -61,6 +62,11 @@
 - 欠落理由: 現行の公開bundleに、公開可能な根拠・権利・4次元不確実性を備えた該当Entityがないため。未確認資料から推測して追加しない。
 
 ### 名古屋・伊勢湾奥の海岸線（縄文〜江戸初期） (`nagoya-coast`)
+
+- 未収録: `waterbody`, `watercourse`, `fortification`, `settlement`, `port`, `battlefield`, `route`, `boundary`, `polity`, `sphere-of-influence`, `archaeological-site`, `other`
+- 欠落理由: 現行の公開bundleに、公開可能な根拠・権利・4次元不確実性を備えた該当Entityがないため。未確認資料から推測して追加しない。
+
+### 香取海の推定水域（DEM） (`katori-sea`)
 
 - 未収録: `waterbody`, `watercourse`, `fortification`, `settlement`, `port`, `battlefield`, `route`, `boundary`, `polity`, `sphere-of-influence`, `archaeological-site`, `other`
 - 欠落理由: 現行の公開bundleに、公開可能な根拠・権利・4次元不確実性を備えた該当Entityがないため。未確認資料から推測して追加しない。

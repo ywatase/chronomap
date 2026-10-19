@@ -12,7 +12,7 @@ from chronomap_data.schema_validation import validate_package
 ROOT = Path(__file__).parents[1]
 
 
-PUBLIC_SLUGS = ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka", "sekigahara", "nagoya-coast", "osaka-coast"]
+PUBLIC_SLUGS = ["ogurike", "tonegawa", "heijokyo", "azuchijo", "kinugawa", "osaka", "sekigahara", "nagoya-coast", "katori-sea", "osaka-coast"]
 
 
 @pytest.mark.parametrize("slug", PUBLIC_SLUGS)
@@ -40,8 +40,8 @@ def test_japan_coverage_matrix_is_deterministic_and_matches_checked_in_snapshot(
     assert snapshot.is_file()
     assert snapshot.read_text(encoding="utf-8") == render_coverage_matrix(report)
     assert [row.slug for row in report] == PUBLIC_SLUGS
-    assert sum(row.feature_count for row in report) == 53
-    assert sum(row.entity_count for row in report) == 33
+    assert sum(row.feature_count for row in report) == 56
+    assert sum(row.entity_count for row in report) == 34
     assert all(row.source_count > 0 and row.evidence_count > 0 for row in report)
     assert "polity" in render_coverage_matrix(report)
     assert "sphere-of-influence" in render_coverage_matrix(report)

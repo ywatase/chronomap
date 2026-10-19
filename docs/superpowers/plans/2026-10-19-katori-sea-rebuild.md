@@ -1,6 +1,6 @@
 # 香取海 DEM推定データ再作成 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 標高下地と根拠資料の比較から、香取海を再生成できる取込処理と公開データを追加する。
 
@@ -41,11 +41,11 @@
 - Produces: `decode_dem_png(data: bytes) -> list[array]`, `flood_fill(elevation_rows, threshold_m, seeds) -> list[bytearray]`。
 - Produces: XYZ tile-range, DEM5a→DEM10b→z12 DEM10b取得、missing/NoDataを区別するraw cache。
 
-- [ ] **Step 1: Write failing tests** for PNG height decoding and a small nested-array DEM where only below-threshold cells connected to an ocean seed are selected; cover a high cell barrier and diagonal-only contact.
-- [ ] **Step 2: Run `uv run pytest -q tests/test_importers.py -k katori_dem`** and confirm it fails because the decoder/flood fill do not exist.
-- [ ] **Step 3: Implement** PNG filters 0–4, the GSI RGB elevation formula, tile cache/fallback, and four-neighbor flood fill with unknown tiles excluded.
-- [ ] **Step 4: Run the focused tests** and confirm the expected mask and decoded elevations.
-- [ ] **Step 5: Commit** the DEM primitives and importer procedure.
+- [x] **Step 1: Write failing tests** for PNG height decoding and a small nested-array DEM where only below-threshold cells connected to an ocean seed are selected; cover a high cell barrier and diagonal-only contact.
+- [x] **Step 2: Run `uv run pytest -q tests/test_importers.py -k katori_dem`** and confirm it fails because the decoder/flood fill do not exist.
+- [x] **Step 3: Implement** PNG filters 0–4, the GSI RGB elevation formula, tile cache/fallback, and four-neighbor flood fill with unknown tiles excluded.
+- [x] **Step 4: Run the focused tests** and confirm the expected mask and decoded elevations.
+- [x] **Step 5: Commit** the DEM primitives and importer procedure.
 
 ### Task 2: DEM面化と根拠に基づく形状補正
 
@@ -59,15 +59,15 @@
 - Produces: one eastern-offshore seed on the GSI-geocoded Choshi Kawaguchi row; `polygonize_mask(mask, grid_transform, bbox)`, where the affine grid transform is in Web Mercator metres and output geometry is WGS84; and `apply_corrections(base, additions, exclusions)`.
 - Correction records carry a named place, period, operation, explanation, and source/evidence ID.
 
-- [ ] **Step 1: Update this plan and the import/shape notes first** to specify that only the GSI-geocoded Choshi Kawaguchi row is seeded, at its rightmost available NoData cell east of the geocoded address point (missing tile cells remain unknown), the complete tile mosaic is flood-filled, and the polygon is clipped to the geographic bbox after polygonization.
-- [ ] **Step 2: Write a failing test** for polygonizing a small connected raster mask, including a hole and bbox clipping.
-- [ ] **Step 3: Run `uv run pytest -q tests/test_importers.py -k katori_polygonize`** and confirm polygonization is missing.
-- [ ] **Step 4: Implement** raster boundary tracing, bbox clipping, ~100m simplification, small-hole/fragment removal, and source-supported open-ocean cuts at Kashimanada and Choshi; generate and inspect the DEM-only masks at 4m/3m/2m against the Chiba museum figure, Katori City map, and river-office materials. Use GSI address-search results as land/control points.
-- [ ] **Step 5: Record observed named differences and source evidence** in the shape notes before adding correction constants or tests.
-- [ ] **Step 6: Write failing addition/exclusion tests** for the named corrections, run `uv run pytest -q tests/test_importers.py -k katori_correction`, and confirm correction behavior is missing.
-- [ ] **Step 7: Implement** only documented additions/removals with period, place, operation, explanation, and evidence ID.
-- [ ] **Step 8: Run the focused importer tests** and confirm polygonization and correction behavior.
-- [ ] **Step 9: Commit** the correction notes and geometry operations.
+- [x] **Step 1: Update this plan and the import/shape notes first** to specify that only the GSI-geocoded Choshi Kawaguchi row is seeded, at its rightmost available NoData cell east of the geocoded address point (missing tile cells remain unknown), the complete tile mosaic is flood-filled, and the polygon is clipped to the geographic bbox after polygonization.
+- [x] **Step 2: Write a failing test** for polygonizing a small connected raster mask, including a hole and bbox clipping.
+- [x] **Step 3: Run `uv run pytest -q tests/test_importers.py -k katori_polygonize`** and confirm polygonization is missing.
+- [x] **Step 4: Implement** raster boundary tracing, bbox clipping, ~100m simplification, small-hole/fragment removal, and source-supported open-ocean cuts at Kashimanada and Choshi; generate and inspect the DEM-only masks at 4m/3m/2m against the Chiba museum figure, Katori City map, and river-office materials. Use GSI address-search results as land/control points.
+- [x] **Step 5: Record observed named differences and source evidence** in the shape notes before adding correction constants or tests.
+- [x] **Step 6: Write failing addition/exclusion tests** for the named corrections, run `uv run pytest -q tests/test_importers.py -k katori_correction`, and confirm correction behavior is missing.
+- [x] **Step 7: Implement** only documented additions/removals with period, place, operation, explanation, and evidence ID.
+- [x] **Step 8: Run the focused importer tests** and confirm polygonization and correction behavior.
+- [x] **Step 9: Commit** the correction notes and geometry operations.
 
 ### Task 3: Package generation and CLI
 
@@ -83,11 +83,11 @@
 - Produces: `import_katori(output_root, cache_dir, today=None) -> list[Path]`; `chronomap-data import katori` defaults to `data/` while explicit `--output` is respected.
 - Produces: one coastline entity and 3 public FeatureVersions for 700, 1200, and 1600–1654.
 
-- [ ] **Step 1: Write failing tests** for the generated package's entity/version count, thresholds/periods, seaMask display, rights, and public schema validation; add CLI dispatch test.
-- [ ] **Step 2: Run focused tests** and confirm package/CLI behavior is absent.
-- [ ] **Step 3: Implement** package metadata, uncertainties, evidence/source rights, CLI dispatch, and generation to `data/katori-sea`.
-- [ ] **Step 4: Run focused package/CLI tests** and validate the downloaded-data output.
-- [ ] **Step 5: Commit** the importer, CLI, tests, and generated package.
+- [x] **Step 1: Write failing tests** for the generated package's entity/version count, thresholds/periods, seaMask display, rights, and public schema validation; add CLI dispatch test.
+- [x] **Step 2: Run focused tests** and confirm package/CLI behavior is absent.
+- [x] **Step 3: Implement** package metadata, uncertainties, evidence/source rights, CLI dispatch, and generation to `data/katori-sea`.
+- [x] **Step 4: Run focused package/CLI tests** and validate the downloaded-data output.
+- [x] **Step 5: Commit** the importer, CLI, tests, and generated package.
 
 ### Task 4: Audit docs and browser validation
 
@@ -105,9 +105,9 @@
 - Produces: public coverage matrix and audit snapshot that match deterministic generators.
 - Produces: screenshots of the four years and DEM-only/corrected/source-map comparisons, with restricted source images kept in `.cache/raw/katori-sea/`.
 
-- [ ] **Step 1: Update docs first** with import instructions, source comparisons, correction table, uncertainty/limits, accepted and rejected claims, and the visual findings.
-- [ ] **Step 2: Update audit/coverage tests** with slug `katori-sea` and the resulting feature/entity totals.
-- [ ] **Step 3: Run `uv run pytest -q`** and regenerate `docs/data/katori-sea-audit.md` and the coverage matrix from package data.
-- [ ] **Step 4: Run `uv run chronomap-data build-tiles data imports --output web/public/chronomap`, `cd web && npm test`, and `npm run test:browser`** on a port other than 4173; capture year views and visual comparisons.
-- [ ] **Step 5: Inspect screenshots** to confirm Joso, Hokuso, and Kashima plateaus remain land and the sea follows low valleys.
-- [ ] **Step 6: Commit** final docs, audit, tests, screenshots, and state.
+- [x] **Step 1: Update docs first** with import instructions, source comparisons, correction table, uncertainty/limits, accepted and rejected claims, and the visual findings.
+- [x] **Step 2: Update audit/coverage tests** with slug `katori-sea` and the resulting feature/entity totals.
+- [x] **Step 3: Run `uv run pytest -q`** and regenerate `docs/data/katori-sea-audit.md` and the coverage matrix from package data.
+- [x] **Step 4: Run `uv run chronomap-data build-tiles data imports --output web/public/chronomap`, `cd web && npm test`, and `npm run test:browser`** on a port other than 4173; capture year views and visual comparisons.
+- [x] **Step 5: Inspect screenshots** to confirm Joso, Hokuso, and Kashima plateaus remain land and the sea follows low valleys.
+- [x] **Step 6: Commit** final docs, audit, tests, screenshots, and state.
