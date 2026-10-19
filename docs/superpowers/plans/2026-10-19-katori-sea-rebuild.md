@@ -59,12 +59,15 @@
 - Produces: `polygonize_mask(mask, grid_transform, bbox)`, `apply_corrections(base, additions, exclusions)`.
 - Correction records carry a named place, period, operation, explanation, and source/evidence ID.
 
-- [ ] **Step 1: Write failing tests** for an addition and an exclusion applied to a small synthetic raster-derived polygon.
-- [ ] **Step 2: Run `uv run pytest -q tests/test_importers.py -k katori_correction`** and confirm the correction behavior is missing.
-- [ ] **Step 3: Generate and inspect** the DEM-only masks at 4m/3m/2m against the Chiba museum figure, Katori City map, and river-office materials; use GSI address-search results as the control points. Record observed differences and correction evidence in the shape notes before implementing correction constants.
-- [ ] **Step 4: Implement** raster boundary tracing, bbox clipping, ~100m simplification, small-hole/fragment removal, and named correction constants using only documented observations.
-- [ ] **Step 5: Run the focused importer tests** and confirm addition/removal behavior.
-- [ ] **Step 6: Commit** the correction notes and geometry operations.
+- [ ] **Step 1: Update this plan and the import/shape notes first** to specify that the complete tile mosaic is flood-filled from NoData on its eastern edge and the polygon is clipped to the geographic bbox after polygonization.
+- [ ] **Step 2: Write a failing test** for polygonizing a small connected raster mask, including a hole and bbox clipping.
+- [ ] **Step 3: Run `uv run pytest -q tests/test_importers.py -k katori_polygonize`** and confirm polygonization is missing.
+- [ ] **Step 4: Implement** raster boundary tracing, bbox clipping, ~100m simplification, and small-hole/fragment removal; generate and inspect the DEM-only masks at 4m/3m/2m against the Chiba museum figure, Katori City map, and river-office materials. Use GSI address-search results as land/control points.
+- [ ] **Step 5: Record observed named differences and source evidence** in the shape notes before adding correction constants or tests.
+- [ ] **Step 6: Write failing addition/exclusion tests** for the named corrections, run `uv run pytest -q tests/test_importers.py -k katori_correction`, and confirm correction behavior is missing.
+- [ ] **Step 7: Implement** only documented additions/removals with period, place, operation, explanation, and evidence ID.
+- [ ] **Step 8: Run the focused importer tests** and confirm polygonization and correction behavior.
+- [ ] **Step 9: Commit** the correction notes and geometry operations.
 
 ### Task 3: Package generation and CLI
 
