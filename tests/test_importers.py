@@ -270,6 +270,132 @@ def test_katori_dem_flood_fill_uses_threshold_and_ocean_connectivity_only():
     assert [list(row) for row in mask] == [[1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]]
 
 
+def test_katori_offshore_seed_uses_geocoded_choshi_row_and_eastern_nodata():
+    from chronomap_data.importers import katori
+
+    rows = [[katori.MISSING] * 256 for _ in range(256)]
+    rows[127][240] = katori.NO_DATA
+    rows[128][100] = katori.NO_DATA
+    rows[128][240] = katori.NO_DATA
+    rows[128][245] = 500
+
+    seeds = katori.choshi_offshore_seeds(rows, origin_x=0, origin_y=0, coordinate=(0, 0), zoom=0)
+
+    assert seeds == [(128, 240)]
+
+
+def test_katori_corrections_add_and_remove_geometry():
+    from shapely.geometry import Point
+
+    from chronomap_data.importers import katori
+
+    base = katori.polygonize_mask(
+        [bytearray([1, 1]), bytearray([1, 1])],
+        grid_transform=(100.0, 0, 0.0, 0, -100.0, 200.0),
+        bbox=(-0.01, -0.01, 0.01, 0.01),
+        simplify_m=0,
+        min_component_area_m2=0,
+        min_hole_area_m2=0,
+    )
+    west, south, east, north = base.bounds
+    middle = (west + east) / 2
+    addition = box(east, south, east + 0.001, north)
+    exclusion = box(west, south, middle, north)
+
+    corrected = katori.apply_corrections(base, additions=[addition], exclusions=[exclusion])
+
+    assert corrected.covers(Point(east + 0.0005, (south + north) / 2))
+    assert not corrected.covers(Point((west + middle) / 2, (south + north) / 2))
+
+
+def test_katori_period_corrections_cut_ocean_and_restore_choshi_outlet():
+    from shapely.geometry import Point, box
+
+    from chronomap_data.importers import katori
+
+    base = box(140.7, 35.736, 140.8, 35.738)
+    choshi = Point(*katori.CHOSHI_SEED_COORDINATE)
+
+    medieval = katori.correct_katori_geometry(base, year=1200)
+    ancient = katori.correct_katori_geometry(base, year=700)
+    outside_ocean = katori.outer_ocean_exclusion()
+
+    assert medieval.distance(choshi) < 1e-8
+    assert ancient.distance(choshi) > 0.01
+    assert outside_ocean.covers(Point(140.9, 36.1))
+    assert outside_ocean.covers(Point(140.7, 35.66))
+    assert not outside_ocean.covers(Point(140.5, 35.9))
+
+
+def test_katori_corrections_clip_to_study_bbox():
+    from shapely.geometry import box
+
+    from chronomap_data.importers import katori
+
+    min_lon, min_lat, max_lon, max_lat = katori.STUDY_BBOX
+    base = box(min_lon, min_lat, max_lon, max_lat + 0.001)
+
+    corrected = katori.correct_katori_geometry(base, 700)
+
+    assert corrected.bounds[0] >= min_lon
+    assert corrected.bounds[1] >= min_lat
+    assert corrected.bounds[2] <= max_lon
+    assert corrected.bounds[3] <= max_lat
+
+
+def test_katori_corrections_remove_sub_hectare_components_and_holes():
+    from shapely.geometry import MultiPolygon, Point, Polygon, box
+
+    from chronomap_data.importers import katori
+
+    basin = Polygon(
+        [(140.45, 35.85), (140.55, 35.85), (140.55, 35.95), (140.45, 35.95)],
+        holes=[[(140.5000, 35.9000), (140.5001, 35.9000), (140.5001, 35.9001), (140.5000, 35.9001)]],
+    )
+    fragment = box(140.57, 35.86, 140.5701, 35.8601)
+
+    corrected = katori.correct_katori_geometry(MultiPolygon([basin, fragment]), 700)
+    polygons = list(corrected.geoms) if corrected.geom_type == "MultiPolygon" else [corrected]
+
+    assert len(polygons) == 1
+    assert len(polygons[0].interiors) == 0
+    assert polygons[0].covers(Point(140.50005, 35.90005))
+
+
+def test_katori_local_lowland_component_keeps_only_seed_connected_cells():
+    from chronomap_data.importers import katori
+
+    rows = [
+        [500, 500, 500, 500, 500, 500, 500],
+        [500, 100, 100, 300, 100, 100, 500],
+        [500, 100, 200, 300, 100, 500, 500],
+        [500, 100, 100, 300, 100, 100, 500],
+        [500, 500, 500, 500, 500, 500, 500],
+    ]
+
+    mask, row_offset, column_offset = katori.lowland_component_mask(rows, 1.0, (1, 1))
+
+    assert (row_offset, column_offset) == (1, 1)
+    assert len(mask) == 3
+    assert [list(row) for row in mask] == [[1, 1], [1, 0], [1, 1]]
+
+
+def test_katori_inlet_connector_joins_dem_component_to_main_sea():
+    from shapely import union_all
+    from shapely.geometry import Point, box
+
+    from chronomap_data.importers import katori
+
+    main_sea = box(140.3, 35.8, 140.4, 35.9)
+    inlet = box(140.1, 35.8, 140.2, 35.9)
+
+    correction = katori.connect_geometry_to_main(main_sea, inlet, width_m=300)
+    connected = union_all([main_sea, inlet, correction])
+
+    assert connected.geom_type == "Polygon"
+    assert connected.covers(Point(140.15, 35.85))
+
+
 def test_katori_dem_grid_loads_and_assembles_tiles(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     from array import array
 
@@ -303,3 +429,56 @@ def test_katori_dem_parent_tile_is_upsampled_into_its_z13_child():
     assert list(child[0][:6]) == [128, 128, 129, 129, 130, 130]
     assert child[1][0] == 128
     assert child[255][0] == 128
+
+
+def test_katori_polygonize_traces_holes_drops_small_fragments_and_clips_bbox():
+    from chronomap_data.importers import katori
+
+    mask = [
+        bytearray([1, 1, 1, 0, 0, 0]),
+        bytearray([1, 0, 1, 0, 0, 0]),
+        bytearray([1, 1, 1, 0, 0, 0]),
+        bytearray([0, 0, 0, 0, 0, 1]),
+    ]
+    grid_transform = (100.0, 0, 0.0, 0, -100.0, 400.0)
+
+    geometry = katori.polygonize_mask(
+        mask,
+        grid_transform,
+        bbox=(0.0004, 0.0013, 0.0022, 0.0032),
+        simplify_m=0,
+        min_component_area_m2=10_001,
+        min_hole_area_m2=0,
+    )
+
+    assert geometry.geom_type == "Polygon"
+    assert len(geometry.interiors) == 1
+    min_lon, min_lat, max_lon, max_lat = 0.0004, 0.0013, 0.0022, 0.0032
+    west, south, east, north = geometry.bounds
+    assert west == pytest.approx(min_lon, abs=1e-8)
+    assert south == pytest.approx(min_lat, abs=1e-8)
+    assert east == pytest.approx(max_lon, abs=1e-8)
+    assert north == pytest.approx(max_lat, abs=1e-8)
+
+
+def test_katori_multipolygon_rounds_geojson_coordinates_to_five_places():
+    from shapely.geometry import Polygon
+
+    from chronomap_data.importers import katori
+
+    geometry = Polygon(
+        [
+            (140.123456789, 36.24999999999999),
+            (140.223456789, 36.24999999999999),
+            (140.223456789, 36.25000000000001),
+            (140.123456789, 36.25000000000001),
+            (140.123456789, 36.24999999999999),
+        ]
+    )
+
+    geojson = katori._multipolygon(geometry)
+
+    ring = geojson["coordinates"][0][0]
+    assert all(len(position) == 2 for position in ring)
+    assert all(round(value, 5) == value for position in ring for value in position)
+    assert max(position[1] for position in ring) == 36.25
