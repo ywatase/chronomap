@@ -56,7 +56,7 @@
 
 **Interfaces:**
 - Consumes: Task 1's nested elevation rows, `flood_fill`, and tile-range output.
-- Produces: `polygonize_mask(mask, grid_transform, bbox)`, `apply_corrections(base, additions, exclusions)`.
+- Produces: `polygonize_mask(mask, grid_transform, bbox)`, where the affine grid transform is in Web Mercator metres; output geometry is WGS84. Also produces `apply_corrections(base, additions, exclusions)`.
 - Correction records carry a named place, period, operation, explanation, and source/evidence ID.
 
 - [ ] **Step 1: Update this plan and the import/shape notes first** to specify that the complete tile mosaic is flood-filled from NoData on its eastern edge and the polygon is clipped to the geographic bbox after polygonization.
