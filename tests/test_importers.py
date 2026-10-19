@@ -206,3 +206,65 @@ def test_edo_coast_band_is_sea_around_land_and_lakes_are_waterbodies(tmp_path: P
     assert [feature["properties"]["labels"]["ja"] for feature in lake_features] == ["琵琶湖"]
     assert all(not feature["id"].endswith("lake-26007") for feature in lake_features)
     assert lake_features[0]["properties"]["temporal"]["end"]["latestYear"] == 1894
+
+
+def _synthetic_rgb_png(rows: list[list[tuple[int, int, int]]], filter_type: int) -> bytes:
+    import struct
+    import zlib
+
+    def paeth(left: int, above: int, upper_left: int) -> int:
+        estimate = left + above - upper_left
+        distances = (abs(estimate - left), abs(estimate - above), abs(estimate - upper_left))
+        return (left, above, upper_left)[distances.index(min(distances))]
+
+    width = len(rows[0])
+    previous = bytes(width * 3)
+    scanlines = bytearray()
+    for row in rows:
+        raw = bytes(channel for pixel in row for channel in pixel)
+        filtered = bytearray(len(raw))
+        for index, value in enumerate(raw):
+            left = raw[index - 3] if index >= 3 else 0
+            above = previous[index]
+            upper_left = previous[index - 3] if index >= 3 else 0
+            predictor = (0, left, above, (left + above) // 2, paeth(left, above, upper_left))[filter_type]
+            filtered[index] = (value - predictor) & 255
+        scanlines.append(filter_type)
+        scanlines.extend(filtered)
+        previous = raw
+
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    header = struct.pack(">IIBBBBB", width, len(rows), 8, 2, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(scanlines)) + chunk(b"IEND", b"")
+
+
+@pytest.mark.parametrize("filter_type", range(5))
+def test_katori_dem_png_decodes_signed_values_and_nodata(filter_type: int):
+    from chronomap_data.importers import katori
+
+    pixels = [
+        [(0, 0, 123), (255, 255, 22), (128, 0, 0)],
+        [(0, 3, 232), (0, 0, 0), (128, 0, 0)],
+    ]
+
+    elevations = katori.decode_dem_png(_synthetic_rgb_png(pixels, filter_type))
+
+    assert [list(row) for row in elevations] == [[123, -234, katori.NO_DATA], [1000, 0, katori.NO_DATA]]
+
+
+def test_katori_dem_flood_fill_uses_threshold_and_ocean_connectivity_only():
+    from array import array
+
+    from chronomap_data.importers import katori
+
+    elevations = [
+        array("h", [katori.NO_DATA, 350, 500, 100]),
+        array("h", [300, 500, 100, katori.MISSING]),
+        array("h", [500, 100, 500, 200]),
+    ]
+
+    mask = katori.flood_fill(elevations, threshold_m=4, seeds=[(0, 0)])
+
+    assert [list(row) for row in mask] == [[1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]]
