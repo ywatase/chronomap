@@ -56,10 +56,10 @@
 
 **Interfaces:**
 - Consumes: Task 1's nested elevation rows, `flood_fill`, and tile-range output.
-- Produces: `polygonize_mask(mask, grid_transform, bbox)`, where the affine grid transform is in Web Mercator metres; output geometry is WGS84. Also produces `apply_corrections(base, additions, exclusions)`.
+- Produces: eastern-offshore seeds from each row's rightmost available NoData cell; `polygonize_mask(mask, grid_transform, bbox)`, where the affine grid transform is in Web Mercator metres and output geometry is WGS84; and `apply_corrections(base, additions, exclusions)`.
 - Correction records carry a named place, period, operation, explanation, and source/evidence ID.
 
-- [ ] **Step 1: Update this plan and the import/shape notes first** to specify that the complete tile mosaic is flood-filled from NoData on its eastern edge and the polygon is clipped to the geographic bbox after polygonization.
+- [ ] **Step 1: Update this plan and the import/shape notes first** to specify that each row is seeded only when its rightmost available tile cell is NoData (missing tile cells remain unknown), the complete tile mosaic is flood-filled, and the polygon is clipped to the geographic bbox after polygonization.
 - [ ] **Step 2: Write a failing test** for polygonizing a small connected raster mask, including a hole and bbox clipping.
 - [ ] **Step 3: Run `uv run pytest -q tests/test_importers.py -k katori_polygonize`** and confirm polygonization is missing.
 - [ ] **Step 4: Implement** raster boundary tracing, bbox clipping, ~100m simplification, and small-hole/fragment removal; generate and inspect the DEM-only masks at 4m/3m/2m against the Chiba museum figure, Katori City map, and river-office materials. Use GSI address-search results as land/control points.
